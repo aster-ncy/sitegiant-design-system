@@ -2,6 +2,10 @@
 export { AppFeatureCard } from './AppFeatureCard';
 export type { AppFeatureCardProps, AppFeatureCardTitleWeight } from './AppFeatureCard';
 
+// AppImageCard
+export { AppImageCard } from './AppImageCard';
+export type { AppImageCardProps, AppImageCardType } from './AppImageCard';
+
 // AppTag
 export { AppTag } from './AppTag';
 export type { AppTagProps, AppTagType, AppTagSize } from './AppTag';
@@ -67,6 +71,10 @@ export { iconNames } from './Icon';
 // Input
 export { Input } from './Input';
 export type { InputProps, InputState, InputAddonButton } from './Input';
+
+// ModuleCard
+export { ModuleCard } from './ModuleCard';
+export type { ModuleCardProps } from './ModuleCard';
 
 // Pagination
 export { Pagination } from './Pagination';
