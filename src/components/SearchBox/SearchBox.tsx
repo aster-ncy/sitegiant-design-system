@@ -1,4 +1,3 @@
-import { useState as useLocalState } from 'react';
 import { Icon } from '../Icon/Icon';
 
 export type SearchBoxState = 'default' | 'focus' | 'danger' | 'disabled' | 'readonly';
@@ -50,8 +49,20 @@ export interface SearchBoxProps {
   className?: string;
 }
 
-/* ── State → border class ────────────────────────────── */
+/* ── State → border class (OUTER wrapper only) ───────── */
 const stateBorderClasses: Record<SearchBoxState, string> = {
+  default:  'border-[var(--searchbox-default-border)]',
+  focus:    'border-[var(--searchbox-focus-border)]',
+  danger:   'border-[var(--searchbox-danger-border)]',
+  disabled: 'border-[var(--searchbox-default-border)]',
+  readonly: 'border-transparent',
+};
+
+/* ── State → divider color (between segments) ────────── */
+// Internal dividers are subtle — they separate sibling segments without
+// drawing a second hard border. Kept the same default hue as the outer
+// border so the compound reads as a single field, not multiple.
+const stateDividerClasses: Record<SearchBoxState, string> = {
   default:  'border-[var(--searchbox-default-border)]',
   focus:    'border-[var(--searchbox-focus-border)]',
   danger:   'border-[var(--searchbox-danger-border)]',
@@ -112,14 +123,38 @@ export const SearchBox = ({
 
   const wrapperBorder = stateBorderClasses[resolvedState];
   const wrapperFill = stateFillClasses[resolvedState];
+  const dividerBorder = stateDividerClasses[resolvedState];
   const padding = sizePaddingClasses[size];
 
-  const focusWithin = !hasForcedFocus && !isDanger && !isDisabled && !isReadonly
+  // Focus-within always wins over default/danger/readonly so tabbing into
+  // the input repaints the wrapper border. Disabled stays unresponsive.
+  // Applies to the OUTER wrapper now that segments share it.
+  const focusWithin = !hasForcedFocus && !isDisabled && !isReadonly
     ? 'focus-within:border-[var(--searchbox-focus-border)]'
     : '';
+  // Keep divider colour in sync with focus — otherwise inner dividers would
+  // still read as the default border color while the outer went focused.
+  const focusWithinDivider = !hasForcedFocus && !isDisabled && !isReadonly
+    ? 'group-focus-within:border-[var(--searchbox-focus-border)]'
+    : '';
+
+  /* ── Outer wrapper — OWNS the border + radius + state ─
+     Children sit flush; their own edges draw only internal dividers via
+     border-l / border-r on segments that need to separate from neighbors. */
+  const wrapperClasses = [
+    'group inline-flex items-stretch',
+    'border border-solid',
+    'rounded-[var(--radius-4)]',
+    'overflow-hidden',
+    'transition-colors duration-150',
+    wrapperBorder,
+    focusWithin,
+    isDisabled ? 'opacity-60' : '',
+    className,
+  ].filter(Boolean).join(' ');
 
   /* ── Category dropdown segment ─────────────────────── */
-  const CategorySegment = ({ roundedLeft, roundedRight }: { roundedLeft?: boolean; roundedRight?: boolean }) => (
+  const CategorySegment = ({ dividerRight }: { dividerRight?: boolean }) => (
     <button
       type="button"
       disabled={isDisabled}
@@ -128,12 +163,9 @@ export const SearchBox = ({
         'flex items-center justify-between w-[160px]',
         padding,
         wrapperFill,
-        'border border-solid',
-        wrapperBorder,
-        roundedLeft ? 'rounded-l-[var(--radius-4)]' : '',
-        roundedRight ? 'rounded-r-[var(--radius-4)]' : '',
-        'shrink-0 cursor-pointer',
-        isDisabled ? 'cursor-not-allowed opacity-60' : '',
+        dividerRight ? `border-r border-solid ${dividerBorder} ${focusWithinDivider}` : '',
+        'shrink-0',
+        isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
       ].filter(Boolean).join(' ')}
     >
       <span className={[
@@ -150,19 +182,13 @@ export const SearchBox = ({
   );
 
   /* ── Search input segment ──────────────────────────── */
-  const SearchInputSegment = ({ roundedLeft, roundedRight, showIcon }: { roundedLeft?: boolean; roundedRight?: boolean; showIcon?: boolean }) => (
+  const SearchInputSegment = ({ showIcon }: { showIcon?: boolean }) => (
     <div
       className={[
         'flex items-center gap-[var(--spacing-8)] flex-1',
         padding,
         wrapperFill,
-        'border border-solid',
-        wrapperBorder,
-        focusWithin,
-        roundedLeft ? 'rounded-l-[var(--radius-4)]' : '',
-        roundedRight ? 'rounded-r-[var(--radius-4)]' : '',
-        'transition-colors duration-150',
-        isDisabled ? 'cursor-not-allowed opacity-60' : '',
+        isDisabled ? 'cursor-not-allowed' : '',
       ].filter(Boolean).join(' ')}
     >
       {showIcon && (
@@ -213,11 +239,8 @@ export const SearchBox = ({
         'flex items-center justify-center shrink-0',
         size === 'small' ? 'p-[var(--spacing-8)]' : 'p-[var(--spacing-12)]',
         wrapperFill,
-        'border border-solid',
-        wrapperBorder,
-        'rounded-r-[var(--radius-4)]',
-        'cursor-pointer',
-        isDisabled ? 'cursor-not-allowed opacity-60' : '',
+        `border-l border-solid ${dividerBorder} ${focusWithinDivider}`,
+        isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
       ].filter(Boolean).join(' ')}
       style={{ color: 'var(--color-text-primary)' }}
     >
@@ -235,11 +258,8 @@ export const SearchBox = ({
         'flex items-center shrink-0',
         size === 'small' ? 'px-[var(--spacing-16)] py-[var(--spacing-8)]' : 'px-[var(--spacing-16)] py-[var(--spacing-12)]',
         wrapperFill,
-        'border border-solid',
-        wrapperBorder,
-        'rounded-r-[var(--radius-4)]',
-        'cursor-pointer',
-        isDisabled ? 'cursor-not-allowed opacity-60' : '',
+        `border-l border-solid ${dividerBorder} ${focusWithinDivider}`,
+        isDisabled ? 'cursor-not-allowed' : 'cursor-pointer',
       ].filter(Boolean).join(' ')}
     >
       <span className={[
@@ -253,17 +273,13 @@ export const SearchBox = ({
   );
 
   /* ── Date range segment ────────────────────────────── */
-  const DateRangeSegment = ({ roundedLeft, roundedRight }: { roundedLeft?: boolean; roundedRight?: boolean }) => (
+  const DateRangeSegment = () => (
     <div
       className={[
         'flex items-center gap-[var(--spacing-8)] w-[256px]',
         padding,
         wrapperFill,
-        'border border-solid',
-        wrapperBorder,
-        roundedLeft ? 'rounded-l-[var(--radius-4)]' : '',
-        roundedRight ? 'rounded-r-[var(--radius-4)]' : '',
-      ].filter(Boolean).join(' ')}
+      ].join(' ')}
     >
       <span className="shrink-0 flex items-center" style={{ color: 'var(--searchbox-search-icon)' }}>
         <Icon name="calendar" size={17} />
@@ -280,7 +296,7 @@ export const SearchBox = ({
     </div>
   );
 
-  /* ── Dropdown-only segment ─────────────────────────── */
+  /* ── Dropdown-only segment (standalone — keeps its own border) ─ */
   const DropdownSegment = () => (
     <button
       type="button"
@@ -293,8 +309,8 @@ export const SearchBox = ({
         'border border-solid',
         wrapperBorder,
         'rounded-[var(--radius-4)]',
-        'shrink-0 cursor-pointer',
-        isDisabled ? 'cursor-not-allowed opacity-60' : '',
+        'shrink-0',
+        isDisabled ? 'cursor-not-allowed opacity-60' : 'cursor-pointer',
       ].filter(Boolean).join(' ')}
     >
       <span className={[
@@ -326,8 +342,8 @@ export const SearchBox = ({
   /* Type: Default — search icon + input */
   if (type === 'default') {
     return (
-      <div className={['inline-flex items-center', className].filter(Boolean).join(' ')}>
-        <SearchInputSegment roundedLeft roundedRight showIcon />
+      <div className={wrapperClasses}>
+        <SearchInputSegment showIcon />
       </div>
     );
   }
@@ -335,9 +351,9 @@ export const SearchBox = ({
   /* Type: with Categories — category dropdown + search input (+ optional search button) */
   if (type === 'with-categories') {
     return (
-      <div className={['inline-flex items-center', className].filter(Boolean).join(' ')}>
-        <CategorySegment roundedLeft />
-        <SearchInputSegment roundedRight={!showSearchButton} />
+      <div className={wrapperClasses}>
+        <CategorySegment dividerRight />
+        <SearchInputSegment />
         {showSearchButton && <SearchButtonSegment />}
       </div>
     );
@@ -346,14 +362,14 @@ export const SearchBox = ({
   /* Type: Search Placeholder only — input + search button */
   if (type === 'search-placeholder-only') {
     return (
-      <div className={['inline-flex items-center', className].filter(Boolean).join(' ')}>
-        <SearchInputSegment roundedLeft roundedRight={!showSearchButton} />
+      <div className={wrapperClasses}>
+        <SearchInputSegment />
         {showSearchButton && <SearchButtonSegment />}
       </div>
     );
   }
 
-  /* Type: Dropdown — label + dropdown */
+  /* Type: Dropdown — label + dropdown (standalone, outer wrapper has no border) */
   if (type === 'dropdown') {
     return (
       <div className={['inline-flex items-center gap-[var(--spacing-12)]', className].filter(Boolean).join(' ')}>
@@ -368,7 +384,9 @@ export const SearchBox = ({
     return (
       <div className={['inline-flex items-center gap-[var(--spacing-12)]', className].filter(Boolean).join(' ')}>
         {LabelElement}
-        <DateRangeSegment roundedLeft roundedRight />
+        <div className={wrapperClasses.replace(className, '')}>
+          <DateRangeSegment />
+        </div>
       </div>
     );
   }
@@ -378,8 +396,8 @@ export const SearchBox = ({
     return (
       <div className={['inline-flex items-center gap-[var(--spacing-12)]', className].filter(Boolean).join(' ')}>
         {LabelElement}
-        <div className="inline-flex items-center">
-          <DateRangeSegment roundedLeft />
+        <div className={wrapperClasses.replace(className, '')}>
+          <DateRangeSegment />
           <SearchTextButtonSegment />
         </div>
       </div>
