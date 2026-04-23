@@ -1,0 +1,672 @@
+@import "tailwindcss";
+
+@theme {
+  /* ========================================
+     FONT FAMILY (Core Primitives)
+     ======================================== */
+  --font-sans: "Roboto", system-ui, sans-serif;
+  --font-tc: "Noto Sans CJK TC", sans-serif;
+  --font-sc: "Noto Sans CJK SC", sans-serif;
+
+  /* ========================================
+     BASE UTILITY COLORS
+     Figma: Basic/White, Basic/Black
+     ======================================== */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+  --color-basic-white: var(--color-white);
+  --color-basic-black: var(--color-black);
+
+  /* ========================================
+     BRAND COLORS - Primary (Core Primitives)
+     ======================================== */
+  --color-brand-green-100: #F3FFF3;
+  --color-brand-green-200: #DEFFDE;
+  --color-brand-green-300: #BCEFB9;
+  --color-brand-green-400: #7BDD76;
+  --color-brand-green-DEFAULT: #5ACC5A;
+  --color-brand-green-600: #35BA5A;
+  --color-brand-green-700: #11AA4F;
+  --color-brand-green-800: #197855;
+  --color-brand-green-900: #004A39;
+
+  --color-brand-blue-300: #4178DF;
+  --color-brand-blue-400: #2151AA;
+  --color-brand-blue-DEFAULT: #13387D;
+  --color-brand-blue-600: #002366;
+  --color-brand-blue-700: #001332;
+
+  /* ========================================
+     BRAND COLORS - Secondary
+     ======================================== */
+  --color-brand-highlight-1: #D4FFEA;
+  --color-brand-highlight-2: #E6FF00;
+  --color-brand-highlight-3: #16FF00;
+
+  /* ========================================
+     SYSTEM COLORS - Neutrals (Core Primitives)
+     ======================================== */
+  --color-space-lighter: #FAFAFB;
+  --color-space-light: #F6F6F6;
+  --color-space-mid: #EFEFEF;
+  --color-space-DEFAULT: #E5E5E5;
+  --color-space-dark: #D4D4D4;
+
+  --color-set-lightest: #90999D;
+  --color-set-lighter: #647176;
+  --color-set-light: #38484F;
+  --color-set-DEFAULT: #0C2028;
+
+  /* ========================================
+     SYSTEM COLORS - Semantic (Core Primitives)
+     ======================================== */
+  /* Green */
+  --color-sys-green-lighter: #F3FFF3;
+  --color-sys-green-light: #BCEFB9;
+  --color-sys-green-DEFAULT: #5ACC5A;
+  --color-sys-green-dark: #11AA4F;
+  --color-sys-green-darker: #005C34;
+  --color-sys-green-text: #35454C;
+
+  /* Blue */
+  --color-sys-blue-lighter: #D0F4FF;
+  --color-sys-blue-light: #8ED7FF;
+  --color-sys-blue-DEFAULT: #007CE0;
+  --color-sys-blue-dark: #0058B6;
+  --color-sys-blue-darker: #002C83;
+  --color-sys-blue-text: #323F47;
+
+  /* Yellow */
+  --color-sys-yellow-lighter: #FFF5C4;
+  --color-sys-yellow-light: #F9E477;
+  --color-sys-yellow-DEFAULT: #F2CB0C;
+  --color-sys-yellow-dark: #BF9C00;
+  --color-sys-yellow-darker: #6D5900;
+  --color-sys-yellow-text: #514B32;
+
+  /* Orange */
+  --color-sys-orange-lighter: #FFE5CC;
+  --color-sys-orange-light: #FFAE4C;
+  --color-sys-orange-DEFAULT: #FF7F00;
+  --color-sys-orange-dark: #BF5F00;
+  --color-sys-orange-darker: #5B2D00;
+  --color-sys-orange-text: #442F0F;
+
+  /* Red */
+  --color-sys-red-lighter: #FFE0E0;
+  --color-sys-red-light: #FFADAD;
+  --color-sys-red-DEFAULT: #E0241A;
+  --color-sys-red-dark: #99140A;
+  --color-sys-red-darker: #440505;
+  --color-sys-red-text: #49302C;
+
+  /* Tiffany */
+  --color-sys-tiffany-lighter: #C9F8F2;
+  --color-sys-tiffany-light: #7AF1E2;
+  --color-sys-tiffany-DEFAULT: #12D2BB;
+  --color-sys-tiffany-dark: #088A8A;
+  --color-sys-tiffany-darker: #0F4C58;
+
+  /* Basic */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+
+  /* ========================================
+     STATUS TOKENS (Status/*)
+     ======================================== */
+
+  /* Success → System Color/Green */
+  --status-success-text: var(--color-sys-green-text);
+  --status-success-fill: var(--color-sys-green-lighter);
+  --status-success-dark-fill: var(--color-sys-green-light);
+  --status-success-border: var(--color-sys-green-light);
+  --status-success-solid-text: var(--color-text-ondark);
+  --status-success-solid-fill: var(--color-sys-green-DEFAULT);
+
+  /* Info → System Color/Blue */
+  --status-info-text: var(--color-sys-blue-text);
+  --status-info-fill: var(--color-sys-blue-lighter);
+  --status-info-border: var(--color-sys-blue-light);
+  --status-info-solid-text: var(--color-text-ondark);
+  --status-info-solid-fill: var(--color-sys-blue-DEFAULT);
+
+  /* Warning → System Color/Yellow */
+  --status-warning-text: var(--color-sys-yellow-text);
+  --status-warning-fill: var(--color-sys-yellow-lighter);
+  --status-warning-border: var(--color-sys-yellow-light);
+  --status-warning-solid-text: var(--color-sys-yellow-text);
+  --status-warning-solid-fill: var(--color-sys-yellow-DEFAULT);
+
+  /* Alert → System Color/Orange */
+  --status-alert-text: var(--color-sys-orange-text);
+  --status-alert-fill: var(--color-sys-orange-lighter);
+  --status-alert-border: var(--color-sys-orange-light);
+  --status-alert-solid-text: var(--color-text-ondark);
+  --status-alert-solid-fill: var(--color-sys-orange-DEFAULT);
+
+  /* Danger → System Color/Red */
+  --status-danger-text: var(--color-sys-red-text);
+  --status-danger-fill: var(--color-sys-red-lighter);
+  --status-danger-border: var(--color-sys-red-light);
+  --status-danger-solid-text: var(--color-text-ondark);
+  --status-danger-solid-fill: var(--color-sys-red-DEFAULT);
+
+  /* Highlight → System Color/Tiffany */
+  --status-highlight-text: var(--color-set-DEFAULT);
+  --status-highlight-fill: var(--color-sys-tiffany-lighter);
+  --status-highlight-border: var(--color-sys-tiffany-light);
+  --status-highlight-solid-text: var(--color-set-DEFAULT);
+  --status-highlight-solid-fill: var(--color-sys-tiffany-DEFAULT);
+
+  /* Muted → Space/Set neutrals */
+  --status-muted-text: var(--color-set-lighter);
+  --status-muted-light-text: var(--color-set-lightest);
+  --status-muted-fill: var(--color-space-light);
+  --status-muted-border: var(--color-space-dark);
+  --status-muted-light-border: var(--color-space-DEFAULT);
+  --status-muted-solid-text: var(--color-set-lighter);
+  --status-muted-solid-fill: var(--color-space-DEFAULT);
+
+  /* Blocked → Set neutrals (dark) */
+  --status-blocked-text: var(--color-space-lighter);
+  --status-blocked-fill: var(--color-set-lighter);
+  --status-blocked-border: var(--color-set-light);
+  --status-blocked-solid-text: var(--color-space-lighter);
+  --status-blocked-solid-fill: var(--color-set-lighter);
+
+  /* White */
+  --status-white-text: var(--color-set-DEFAULT);
+  --status-white-fill: var(--color-white);
+  --status-white-border: var(--color-space-dark);
+  --status-white-solid-fill: var(--color-white);
+
+  /* ========================================
+     SEMANTIC SURFACE TOKENS (Color-Token/Light)
+     ======================================== */
+  --color-surface-bg: #F6F6F6;
+  --color-surface-card: #FFFFFF;
+  --color-surface-card-border: #E5E5E5;
+  --color-surface-card-inset: #FAFAFB;
+  --color-surface-basic: #007CE0;
+  --color-surface-secondary: #90999D;
+  --color-surface-subtle: #D4D4D4;
+  --color-surface-default: #0C2028;
+  --color-surface-success: #5ACC5A;
+  --color-surface-alert: #FF7F00;
+  --color-surface-danger: #E0241A;
+
+  /* Overlays */
+  --color-overlay-80: rgb(0 0 0 / 0.8);
+  --color-overlay-50: rgb(0 0 0 / 0.5);
+  --color-overlay-0: rgb(255 255 255 / 0);
+  --color-overlay-success: #BCEFB9;
+  --color-overlay-w30: rgb(255 255 255 / 0.3);
+  --color-overlay-w60: rgb(255 255 255 / 0.6);
+
+  /* Dividers */
+  --color-divider-DEFAULT: #D4D4D4;
+  --color-divider-light: #E5E5E5;
+  --color-divider-lighter: #F6F6F6;
+
+  /* ========================================
+     TEXT COLORS (Color-Token/Light)
+     ======================================== */
+  --color-text-primary: #0C2028;
+  --color-text-secondary: #38484F;
+  --color-text-info: #647176;
+  --color-text-muted: #90999D;
+  --color-text-ondark: #FFFFFF;
+
+  /* ========================================
+     ICON COLORS (Color-Token/Light)
+     ======================================== */
+  --color-icon-primary: var(--color-sys-blue-DEFAULT);
+  --color-icon-secondary: var(--color-set-lightest);
+  --color-icon-subtle: var(--color-space-dark);
+  --color-icon-muted: var(--color-space-DEFAULT);
+  --color-icon-default: var(--color-set-DEFAULT);
+  --color-icon-success: var(--color-sys-green-DEFAULT);
+  --color-icon-success-dark: var(--color-sys-green-darker);
+  --color-icon-warning: var(--color-sys-yellow-DEFAULT);
+  --color-icon-alert: var(--color-sys-orange-DEFAULT);
+  --color-icon-danger: var(--color-sys-red-DEFAULT);
+
+  /* ========================================
+     BUTTON COLORS — Figma: Button/*
+     ======================================== */
+  /* Button/primary */
+  --button-primary-text: #FFFFFF;
+  --button-primary-icon: #FFFFFF;
+  --button-primary-default-fill: #5ACC5A;
+  --button-primary-hover-fill: #11AA4F;
+  --button-primary-clicked-fill: #005C34;
+
+  /* Button/basic */
+  --button-basic-text: #007CE0;
+  --button-basic-icon: #007CE0;
+  --button-basic-default-fill: rgba(255, 255, 255, 0);
+  --button-basic-default-border: #007CE0;
+  --button-basic-hover-fill: #D0F4FF;
+  --button-basic-clicked-fill: #8ED7FF;
+
+  /* Button/outline */
+  --button-outline-text: #0C2028;
+  --button-outline-icon: #0C2028;
+  --button-outline-default-fill: rgba(255, 255, 255, 0);
+  --button-outline-default-border: #D4D4D4;
+  --button-outline-hover-fill: #FAFAFB;
+  --button-outline-clicked-fill: #E5E5E5;
+
+  /* Button/danger */
+  --button-danger-text: #FFFFFF;
+  --button-danger-default-fill: #E0241A;
+  --button-danger-hover-fill: #99140A;
+  --button-danger-clicked-fill: #440505;
+
+  /* Button/danger-outline */
+  --button-danger-outline-text: #E0241A;
+  --button-danger-outline-default-fill: rgba(255, 255, 255, 0);
+  --button-danger-outline-default-border: #E0241A;
+  --button-danger-outline-hover-fill: #FFE0E0;
+  --button-danger-outline-clicked-fill: #FFADAD;
+
+  /* Button/special */
+  --button-special-text: #FFFFFF;
+  --button-special-default-fill: #007CE0;
+  --button-special-hover-fill: #0058B6;
+  --button-special-clicked-fill: #002C83;
+
+  /* Button/disabled */
+  --button-disabled-default-text: #FAFAFB;
+  --button-disabled-default-fill: #E5E5E5;
+  --button-disabled-default-icon: #FAFAFB;
+
+  /* Button/disabled-outline */
+  --button-disabled-outline-text: #D4D4D4;
+  --button-disabled-outline-icon: #D4D4D4;
+  --button-disabled-outline-border: #E5E5E5;
+
+  /* Button/ellipsis */
+  --button-ellipsis-default-icon: #647176;
+  --button-ellipsis-hover-icon: #0C2028;
+  --button-ellipsis-clicked-icon: #0C2028;
+  --button-ellipsis-disabled-icon: #D4D4D4;
+  --button-ellipsis-default-fill: rgba(255, 255, 255, 0);
+  --button-ellipsis-hover-fill: #FAFAFB;
+  --button-ellipsis-clicked-fill: #E5E5E5;
+  --button-ellipsis-disabled-fill: rgba(255, 255, 255, 0);
+  --button-ellipsis-ondark-fill: #FFFFFF;
+
+  /* Button/ellipsis-basic (icon only) */
+  --button-ellipsis-basic-icon: #007CE0;
+
+  /* Button/ellipsis-danger (icon only) */
+  --button-ellipsis-danger-icon: #E0241A;
+
+  /* Button/ellipsis-danger-subtle (icon only) */
+  --button-ellipsis-danger-subtle-icon: #647176;
+
+  /* ========================================
+     BADGE COLORS (Color-Token/Light)
+     ======================================== */
+  --color-badge-default: #90999D;
+  --color-badge-subtle: #E5E5E5;
+  --color-badge-primary: #007CE0;
+  --color-badge-primary-light: #D0F4FF;
+  --color-badge-success: #5ACC5A;
+  --color-badge-warning: #F2CB0C;
+  --color-badge-alert: #FF7F00;
+  --color-badge-danger: #E0241A;
+  --color-badge-text-ondark: #FFFFFF;
+  --color-badge-text-onlight: #0C2028;
+
+  /* ========================================
+     ICON COLORS (Color-Token/Light)
+     ======================================== */
+  --color-icon-primary: #007CE0;
+  --color-icon-secondary: #90999D;
+  --color-icon-subtle: #D4D4D4;
+  --color-icon-muted: #E5E5E5;
+  --color-icon-default: #0C2028;
+  --color-icon-success: #5ACC5A;
+  --color-icon-success-dark: #005C34;
+  --color-icon-warning: #F2CB0C;
+  --color-icon-alert: #FF7F00;
+  --color-icon-danger: #E0241A;
+
+  /* ========================================
+     FORM FIELD COLORS (Color-Token/Light)
+     ======================================== */
+  --form-label-text: #0C2028;
+  --form-label-info-text: #647176;
+  --form-icon: #90999D;
+  --form-input-default-fill: #FFFFFF;
+  --form-input-value-text: #0C2028;
+  --form-input-placeholder-text: #90999D;
+  --form-input-disabled-text: #647176;
+  --form-input-default-border: #D4D4D4;
+  --form-input-focus-border: #007CE0;
+  --form-input-danger-border: #E0241A;
+  --form-input-disabled-fill: #F6F6F6;
+  --form-button-default-fill: #E5E5E5;
+  --form-button-disabled-fill: #EFEFEF;
+  --form-button-text: #0C2028;
+  --form-button-icon: #38484F;
+  --form-button-disabled-icon: #90999D;
+  --form-button-border: #D4D4D4;
+
+  /* ========================================
+     FORM — SEARCH BOX (Color-Token/Light)
+     ======================================== */
+  --searchbox-default-fill: #FFFFFF;
+  --searchbox-value-text: #0C2028;
+  --searchbox-placeholder-text: #90999D;
+  --searchbox-search-icon: #90999D;
+  --searchbox-default-border: #D4D4D4;
+  --searchbox-focus-border: #007CE0;
+  --searchbox-danger-border: #E0241A;
+  --searchbox-disabled-fill: #F6F6F6;
+
+  /* ========================================
+     FORM — DROPDOWN (Color-Token/Light)
+     ======================================== */
+  --dropdown-default-fill: transparent;
+  --dropdown-hover-fill: #F6F6F6;
+  --dropdown-selected-fill: var(--color-sys-blue-lighter);
+  --dropdown-value-text: #0C2028;
+  --dropdown-icon: #38484F;
+  --dropdown-disabled-icon: #90999D;
+  --dropdown-default-border: #D4D4D4;
+  --dropdown-divider: #E5E5E5;
+  --dropdown-disabled-fill: #F6F6F6;
+  --dropdown-disabled-text: #90999D;
+
+  /* ========================================
+     TEXT LINK (Color-Token/Light)
+     Figma: Text/link/basic & Text/link/subtle
+     ======================================== */
+  --text-link-basic-default: var(--color-sys-blue-DEFAULT);
+  --text-link-basic-hover: var(--color-sys-blue-dark);
+  --text-link-basic-icon: var(--color-sys-blue-DEFAULT);
+  --text-link-subtle-default: var(--color-text-info);
+  --text-link-subtle-hover: var(--color-text-primary);
+
+  /* ========================================
+     CHECKBOX COLORS (Color-Token/Light)
+     ======================================== */
+  --checkbox-default: #D4D4D4;
+  --checkbox-fill: #FFFFFF;
+  --checkbox-checked: #5ACC5A;
+  --checkbox-disabled: #E5E5E5;
+  --checkbox-disabled-inset: #F6F6F6;
+
+  /* ========================================
+     RADIO COLORS (Color-Token/Light)
+     ======================================== */
+  --form-radio-default-fill: #FFFFFF;
+  --form-radio-default-border: #D4D4D4;
+  --form-radio-selected-dot: #5ACC5A;
+  --form-radio-selected-border: #5ACC5A;
+  --form-radio-disabled-fill: #F6F6F6;
+  --form-radio-disabled-border: #E5E5E5;
+
+  /* ========================================
+     TOGGLE COLORS (Color-Token/Light)
+     ======================================== */
+  --form-toggle-default-fill: #E5E5E5;
+  --form-toggle-default-border: #E5E5E5;
+  --form-toggle-default-knob-fill: #FFFFFF;
+  --form-toggle-default-knob-border: #E5E5E5;
+  --form-toggle-checked-fill: #5ACC5A;
+  --form-toggle-checked-border: #5ACC5A;
+  --form-toggle-special-fill: #007CE0;
+  --form-toggle-special-border: #007CE0;
+  --form-toggle-checked-knob-fill: #FFFFFF;
+  --form-toggle-checked-knob-border: #5ACC5A;
+
+  /* ========================================
+     SEARCH BOX COLORS (Color-Token/Light)
+     ======================================== */
+  --searchbox-default-fill: #FFFFFF;
+  --searchbox-value-text: #0C2028;
+  --searchbox-placeholder-text: #90999D;
+  --searchbox-search-icon: #90999D;
+  --searchbox-default-border: #D4D4D4;
+  --searchbox-focus-border: #007CE0;
+  --searchbox-danger-border: #E0241A;
+  --searchbox-disabled-fill: #F6F6F6;
+
+  /* ========================================
+     DROPDOWN COLORS (Color-Token/Light)
+     ======================================== */
+  --dropdown-default-fill: rgba(255,255,255,0);
+  --dropdown-hover-fill: #F6F6F6;
+  --dropdown-selected-fill: var(--color-sys-blue-lighter);
+  --dropdown-value-text: #0C2028;
+  --dropdown-icon: #38484F;
+  --dropdown-disabled-icon: #90999D;
+  --dropdown-default-border: #D4D4D4;
+  --dropdown-divider: #E5E5E5;
+  --dropdown-disabled-fill: #F6F6F6;
+  --dropdown-disabled-text: #90999D;
+
+  /* ========================================
+     TEXT LINK (Color-Token/Light)
+     Figma: Text/link/basic & Text/link/subtle
+     ======================================== */
+  --text-link-basic-default: var(--color-sys-blue-DEFAULT);
+  --text-link-basic-hover: var(--color-sys-blue-dark);
+  --text-link-basic-icon: var(--color-sys-blue-DEFAULT);
+  --text-link-subtle-default: var(--color-text-info);
+  --text-link-subtle-hover: var(--color-text-primary);
+
+  /* ========================================
+     FORM — FILTER COLORS (Color-Token/Light)
+     ======================================== */
+  --filter-label-text: #0C2028;
+  --filter-option-active-text: #0C2028;
+  --filter-option-text: #38484F;
+  --filter-option-active-fill: #F3FFF3;
+  --filter-option-fill: #FAFAFB;
+  --filter-option-active-border: #5ACC5A;
+
+  /* ========================================
+     FORM — TAG COLORS (Color-Token/Light)
+     ======================================== */
+  --tag-fill: #007CE0;
+  --tag-text: #FFFFFF;
+  --tag-icon: #D0F4FF;
+  --tag-subtle-text: #D0F4FF;
+
+  /* ========================================
+     APP TAG COLORS
+     Semantic fills for app/feature status tags.
+     Gradient variants expose -start / -end pair.
+     ======================================== */
+  --app-tag-beta-fill: var(--color-basic-white);
+  --app-tag-beta-border: var(--color-surface-secondary);
+  --app-tag-beta-text: var(--color-text-primary);
+
+  --app-tag-basic-fill: var(--color-basic-white);
+  --app-tag-basic-border: var(--color-surface-secondary);
+  --app-tag-basic-text: var(--color-text-info);
+
+  --app-tag-new-fill-start: #007ADE;
+  --app-tag-new-fill-end: #0159B7;
+  --app-tag-new-border: var(--color-basic-white);
+  --app-tag-new-text: var(--color-text-ondark);
+
+  --app-tag-addon-fill: #7700FF;
+  --app-tag-addon-border: var(--color-basic-white);
+  --app-tag-addon-text: var(--color-sys-yellow-DEFAULT);
+
+  --app-tag-freetrial-fill: var(--color-sys-tiffany-DEFAULT);
+  --app-tag-freetrial-text: var(--color-text-ondark);
+
+  --app-tag-premium-fill-start: #11A94F;
+  --app-tag-premium-fill-end: #015E35;
+  --app-tag-premium-border: var(--color-basic-white);
+  --app-tag-premium-text: var(--color-text-ondark);
+
+  --app-tag-hot-fill-start: #DE2319;
+  --app-tag-hot-fill-end: #9C150B;
+  --app-tag-hot-border: var(--color-basic-white);
+  --app-tag-hot-text: var(--color-text-ondark);
+
+  --app-tag-shadow: 0 1px 6px 0 rgb(0 0 0 / 0.16);
+
+  /* ========================================
+     BADGE COLORS (Color-Token/Light)
+     ======================================== */
+  --badge-alert-fill: #FF7F00;
+  --badge-success-fill: #5ACC5A;
+  --badge-primary-fill: #007CE0;
+  --badge-primary-light-fill: #D0F4FF;
+  --badge-subtle-fill: #E5E5E5;
+  --badge-default-fill: #90999D;
+  --badge-attention-fill: #E0241A;
+  --badge-border: #FAFAFB;
+  --badge-text: #FFFFFF;
+  --badge-onlight-text: #0C2028;
+
+  /* ========================================
+     SPACING (Core Primitives)
+     ======================================== */
+  --spacing-0: 0px;
+  --spacing-1: 1px;
+  --spacing-2: 2px;
+  --spacing-4: 4px;
+  --spacing-5: 5px;
+  --spacing-6: 6px;
+  --spacing-8: 8px;
+  --spacing-10: 10px;
+  --spacing-12: 12px;
+  --spacing-14: 14px;
+  --spacing-16: 16px;
+  --spacing-20: 20px;
+  --spacing-24: 24px;
+  --spacing-32: 32px;
+  --spacing-36: 36px;
+  --spacing-40: 40px;
+  --spacing-48: 48px;
+  --spacing-64: 64px;
+  --spacing-96: 96px;
+  --spacing-120: 120px;
+
+  /* ========================================
+     BORDER RADIUS (Core Primitives)
+     ======================================== */
+  --radius-0: 0px;
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-8: 8px;
+  --radius-12: 12px;
+  --radius-16: 16px;
+  --radius-20: 20px;
+  --radius-24: 24px;
+  --radius-32: 32px;
+  --radius-48: 48px;
+  --radius-64: 64px;
+  --radius-96: 96px;
+  --radius-120: 120px;
+
+  /* Semantic radii (Number-Token) */
+  --radius-card: 20px;
+  --radius-card-inset: 12px;
+
+  /* ========================================
+     BORDER WIDTH / STROKE (Core Primitives)
+     ======================================== */
+  --border-0: 0px;
+  --border-1: 1px;
+  --border-2: 2px;
+  --border-3: 3px;
+  --border-4: 4px;
+  --border-5: 5px;
+  --border-6: 6px;
+
+  /* ========================================
+     FONT SIZE — Figma: Typeface/Size/*
+     ======================================== */
+  --text-10: 10px;
+  --text-11: 11px;
+  --text-12: 12px;
+  --text-13: 13px;
+  --text-14: 14px;
+  --text-15: 15px;
+  --text-16: 16px;
+  --text-17: 17px;
+  --text-18: 18px;
+  --text-19: 19px;
+  --text-20: 20px;
+  --text-22: 22px;
+  --text-24: 24px;
+  --text-26: 26px;
+  --text-28: 28px;
+  --text-30: 30px;
+  --text-32: 32px;
+  --text-36: 36px;
+  --text-42: 42px;
+
+  /* ========================================
+     LINE HEIGHT — Figma: Typeface/Lineheight/*
+     ======================================== */
+  --leading-12: 12px;
+  --leading-13: 13px;
+  --leading-14: 14px;
+  --leading-15: 15px;
+  --leading-16: 16px;
+  --leading-17: 17px;
+  --leading-18: 18px;
+  --leading-19: 19px;
+  --leading-20: 20px;
+  --leading-21: 21px;
+  --leading-22: 22px;
+  --leading-23: 23px;
+  --leading-24: 24px;
+  --leading-25: 25px;
+  --leading-28: 28px;
+  --leading-30: 30px;
+  --leading-32: 32px;
+  --leading-37: 37px;
+  --leading-43: 43px;
+  --leading-44: 44px;
+
+  /* ========================================
+     FONT WEIGHT — Figma: Typeface/Weight/*
+     ======================================== */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ========================================
+     GENERAL / TYPOGRAPHY
+     ======================================== */
+  --general-font-family: 'Roboto', sans-serif;
+  
+  --general-button-primary-size: 14px;
+  --general-button-primary-lineheight: 17px;
+  --general-button-primary-weight: 400;
+
+  --general-badge-size: 14px;
+  --general-badge-lineheight: 16px;
+  --general-badge-smaller-lineheight: 15px;
+
+  /* ========================================
+     SHADOWS — Figma: Shadow/*
+     ======================================== */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.1);
+  --shadow-md: 0 2px 6px 0 rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 6px 12px 0 rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 12px 24px 0 rgb(0 0 0 / 0.16);
+  --shadow-2xl: 0 12px 48px 0 rgb(0 0 0 / 0.4);
+}
+
+/* Base reset */
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
