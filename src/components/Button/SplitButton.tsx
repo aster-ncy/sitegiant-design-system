@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { PlusIcon } from './Button';
 
 export type SplitButtonVariant = 'primary' | 'outline';
@@ -12,7 +12,7 @@ export interface SplitButtonProps {
   /** Show plus icon before text */
   hasIcon?: boolean;
   /** Icon element (overrides default PlusIcon) */
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   /** Disabled state */
   disabled?: boolean;
   /** Main button click handler */

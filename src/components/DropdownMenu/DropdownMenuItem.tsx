@@ -13,10 +13,15 @@ export interface DropdownMenuItemProps {
   state?: DropdownMenuItemState;
   /** Show the check icon at the end (true for selected items) */
   selected?: boolean;
-  /** Called when the row is clicked */
+  /** Called when the row is clicked or activated via keyboard */
   onClick?: () => void;
   disabled?: boolean;
   className?: string;
+  /**
+   * Managed by DropdownMenu for roving-tabindex keyboard navigation.
+   * Consumers should not set this manually.
+   */
+  tabIndex?: number;
 }
 
 const stateBackground: Record<DropdownMenuItemState, string> = {
@@ -34,19 +39,26 @@ export const DropdownMenuItem = ({
   onClick,
   disabled = false,
   className = '',
+  tabIndex,
 }: DropdownMenuItemProps) => {
   const forcedBg = state ? stateBackground[state] : '';
   const autoHover = state ? '' : 'hover:bg-[var(--dropdown-hover-fill)]';
 
   return (
-    <div
+    <button
+      type="button"
       role="option"
       aria-selected={selected}
+      aria-disabled={disabled || undefined}
+      disabled={disabled}
+      tabIndex={tabIndex ?? -1}
       onClick={disabled ? undefined : onClick}
       className={[
-        'flex items-center gap-[var(--spacing-8)]',
+        'flex items-center gap-[var(--spacing-8)] w-full text-left',
         'px-[var(--spacing-14)] py-[var(--spacing-6)]',
         'font-[family-name:var(--font-sans)]',
+        'bg-transparent border-0',
+        'outline-none focus-visible:bg-[var(--dropdown-hover-fill)]',
         disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer',
         forcedBg || 'bg-[var(--dropdown-default-fill)]',
         autoHover,
@@ -60,7 +72,7 @@ export const DropdownMenuItem = ({
           {leading}
         </span>
       )}
-      <div className="flex-1 flex items-center gap-[var(--spacing-4)] overflow-hidden">
+      <span className="flex-1 flex items-center gap-[var(--spacing-4)] overflow-hidden">
         <span
           className={[
             'text-[length:var(--text-14)] leading-[var(--leading-16)]',
@@ -82,10 +94,10 @@ export const DropdownMenuItem = ({
             {highlight}
           </span>
         )}
-      </div>
+      </span>
       {selected && (
         <Icon name="check-stroke" size={18} color="var(--color-icon-primary)" />
       )}
-    </div>
+    </button>
   );
 };

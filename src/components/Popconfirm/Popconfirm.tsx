@@ -1,4 +1,3 @@
-import React from 'react';
 import { Button } from '../Button/Button';
 import { Checkbox } from '../Checkbox/Checkbox';
 
@@ -141,7 +140,7 @@ export const Popconfirm = ({
         'bg-[var(--color-surface-card)]',
         'px-[var(--spacing-24)] py-[var(--spacing-20)]',
         'rounded-[var(--radius-12)]',
-        'shadow-[0_3px_12px_0_rgba(0,0,0,0.16)]',
+        'shadow-[var(--shadow-lg)]',
         'gap-[var(--spacing-20)]',
         className,
       ].filter(Boolean).join(' ')}

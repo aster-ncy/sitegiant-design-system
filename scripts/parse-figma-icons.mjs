@@ -118,7 +118,7 @@ function parsePathTag(tag) {
 // Context-aware suffix rules for duplicate names in the Figma dump.
 // When the same `data-layer` appears twice (e.g. outline + filled), we apply
 // these suffixes so both variants coexist in the library.
-function resolveDuplicateName(baseName) {
+function resolveDuplicateName(baseName, existing) {
   const rules = {
     'shopping-bag': 'shopping-bag-solid',
     'share': 'share-solid',
@@ -132,7 +132,18 @@ function resolveDuplicateName(baseName) {
     'tablet': 'tablet-solid',
     'mobile': 'mobile-solid',
   };
-  return rules[baseName] || `${baseName}-alt`;
+  const mapped = rules[baseName];
+  if (mapped && !existing.has(mapped)) return mapped;
+  // Counter-based fallback for anything the ruleset doesn't cover, or where
+  // the mapped name is also taken (3rd+ duplicate). Starts at -alt, then
+  // -alt-2, -alt-3, etc., rather than silently colliding.
+  let counter = 1;
+  let candidate = `${baseName}-alt`;
+  while (existing.has(candidate)) {
+    counter += 1;
+    candidate = `${baseName}-alt-${counter}`;
+  }
+  return candidate;
 }
 
 const wrappers = extractWrappers(html);
@@ -199,21 +210,23 @@ for (const { name: rawName, inner } of wrappers) {
   }
 
   if (icons.has(name)) {
-    const resolved = resolveDuplicateName(name);
+    const resolved = resolveDuplicateName(name, icons);
     duplicatesResolved.push(`${name} → ${resolved}`);
     name = resolved;
-    // If the resolved name also collides, bail noisily so the user notices
-    if (icons.has(name)) {
-      console.error(`[parse-figma-icons] Unresolved duplicate: ${rawName} → ${name}`);
-      continue;
-    }
   }
   icons.set(name, iconData);
 }
 
 // Preserve the existing `check-stroke` icon (added manually, not in Figma dump)
 // so we don't lose it during regeneration. It's a Figma-style stroke check.
+// If a future Figma dump adds a real `check-stroke`, the parser will pick it
+// up above and this fallback becomes dead code — the warn below makes that
+// visible so we can remove the fallback when it's no longer needed.
 if (!icons.has('check-stroke')) {
+  console.warn(
+    '[parse-figma-icons] Using hand-written check-stroke fallback. ' +
+    'If Figma now exports a check-stroke layer, remove this fallback block.',
+  );
   icons.set('check-stroke', {
     viewBox: '0 0 18 18',
     paths: ['M15 5L6.75 13.25L3 9.5'],

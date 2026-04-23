@@ -1,5 +1,5 @@
 // Auto-generated from Figma Core SiteGiant Library
-// Regenerated: 2026-04-23T07:55:40.479Z
+// Regenerated: 2026-04-23T08:29:11.161Z
 // Source: scripts/figma-icons-source.html → scripts/parse-figma-icons.mjs
 // Total: 155 icons
 

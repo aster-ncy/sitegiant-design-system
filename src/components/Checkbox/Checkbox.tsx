@@ -1,4 +1,4 @@
-import React from 'react';
+import type { KeyboardEvent } from 'react';
 import { Icon } from '../Icon';
 
 export interface CheckboxProps {
@@ -41,7 +41,7 @@ export const Checkbox = ({
 }: CheckboxProps) => {
   const isActive = checked || indeterminate;
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (disabled) return;
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();

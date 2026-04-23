@@ -198,10 +198,14 @@
   /* Overlays */
   --color-overlay-80: rgb(0 0 0 / 0.8);
   --color-overlay-50: rgb(0 0 0 / 0.5);
+  --color-overlay-5: rgb(0 0 0 / 0.05);
   --color-overlay-0: rgb(255 255 255 / 0);
   --color-overlay-success: #BCEFB9;
   --color-overlay-w30: rgb(255 255 255 / 0.3);
   --color-overlay-w60: rgb(255 255 255 / 0.6);
+
+  /* Banner dismiss button hover — subtle tint over whatever banner variant */
+  --banner-dismiss-hover-fill: var(--color-overlay-5);
 
   /* Dividers */
   --color-divider-DEFAULT: #D4D4D4;

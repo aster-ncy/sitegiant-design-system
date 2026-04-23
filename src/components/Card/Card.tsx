@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 
 export type CardVariant = 'default' | 'inset';
 export type CardPadding = 'sm' | 'md' | 'lg';
@@ -11,7 +11,7 @@ export interface CardProps {
   /** Optional card title */
   title?: string;
   /** Card content */
-  children?: React.ReactNode;
+  children?: ReactNode;
   /** Extra Tailwind classes */
   className?: string;
 }

@@ -11,6 +11,22 @@ Primary policy file: `../AGENTS.md`
 4. Cover all variants, sizes, and states in stories.
 5. Treat Storybook visual verification as required before done.
 
+## Raw Color Exceptions
+
+The token-only rule applies to SiteGiant-owned visual primitives. Raw hex
+color values are acceptable in two narrow cases:
+
+1. **Third-party brand identities** — e.g., marketplace brand colors
+   (Shopee, Lazada, TikTok Shop) rendered inside a tile representing that
+   brand. These are not SiteGiant's colors to own; tokenizing them would
+   misleadingly couple the design system to external rebrands. Document
+   the exception in a comment where the raw hex lives.
+2. **Storybook story mocks** — decorative placeholders inside `*.stories.tsx`
+   that stand in for consumer-supplied imagery (e.g., country flags in a
+   DropdownMenu example).
+
+Any other raw hex inside the `src/components` runtime is a token violation.
+
 ## Start Prompt For Any Agent
 
 ```text

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Icon } from '../Icon';
 
 export type ButtonVariant =
@@ -22,9 +22,9 @@ export interface ButtonProps {
   /** Button label text */
   label?: string;
   /** Icon element to show before the label (Figma: hasIcon=true) */
-  leftIcon?: React.ReactNode;
+  leftIcon?: ReactNode;
   /** Content inside the button (overrides label) */
-  children?: React.ReactNode;
+  children?: ReactNode;
   /** Click handler */
   onClick?: () => void;
   /** Extra Tailwind classes */

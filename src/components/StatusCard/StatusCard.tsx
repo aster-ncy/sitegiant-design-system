@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Icon } from '../Icon';
 
 export type StatusCardStatus =
@@ -22,7 +22,7 @@ export interface StatusCardProps {
   /** Label text below the count */
   label?: string;
   /** Custom icon — receives a color prop for the icon fill */
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   /** Click handler */
   onClick?: () => void;
   /** Extra classes on the root wrapper */

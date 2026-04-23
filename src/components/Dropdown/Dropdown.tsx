@@ -7,6 +7,8 @@ export interface DropdownOption {
   disabled?: boolean;
 }
 
+export type DropdownState = 'default' | 'danger';
+
 export interface DropdownProps {
   /** List of selectable options */
   options: DropdownOption[];
@@ -18,6 +20,10 @@ export interface DropdownProps {
   disabled?: boolean;
   /** Makes the dropdown readonly */
   readonly?: boolean;
+  /** Visual state — 'danger' paints the border red and tints helper text */
+  state?: DropdownState;
+  /** Helper/error text shown below the dropdown */
+  helperText?: string;
   /** Optional label above the dropdown */
   label?: string;
   /** Optional secondary info text beside the label */
@@ -51,6 +57,8 @@ export const Dropdown = ({
   placeholder,
   disabled = false,
   readonly = false,
+  state = 'default',
+  helperText,
   label,
   labelInfo,
   onChange,
@@ -59,6 +67,7 @@ export const Dropdown = ({
 }: DropdownProps) => {
   const isDisabled = disabled;
   const isReadonly = readonly;
+  const isDanger = state === 'danger' && !isDisabled && !isReadonly;
   const [isOpen, setIsOpen] = useState(false);
 
   /* ── Wrapper classes ─────────────────────────────────── */
@@ -77,6 +86,15 @@ export const Dropdown = ({
           'bg-transparent',
           'border-transparent',
           'cursor-default',
+        ].join(' ')
+      : isDanger
+      ? [
+          'bg-[var(--dropdown-default-fill)]',
+          'border-[var(--form-input-danger-border)]',
+          'hover:bg-[var(--dropdown-hover-fill)]',
+          // Focus still wins so a user tabbing into a danger field sees focus
+          'focus-within:border-[var(--form-input-focus-border)]',
+          'cursor-pointer',
         ].join(' ')
       : [
           'bg-[var(--dropdown-default-fill)]',
@@ -193,6 +211,21 @@ export const Dropdown = ({
           </span>
         )}
       </div>
+
+      {/* ── Helper text ────────────────────────────────── */}
+      {helperText && (
+        <span
+          className={[
+            'text-[length:var(--text-12)] leading-[var(--leading-15)]',
+            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            isDanger
+              ? 'text-[color:var(--badge-attention-fill)]'
+              : 'text-[color:var(--form-label-info-text)]',
+          ].join(' ')}
+        >
+          {helperText}
+        </span>
+      )}
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import type { ReactNode } from 'react';
 import { Icon, type IconName } from '../Icon';
 
 export type BannerVariant = 'success' | 'info' | 'warning' | 'danger';
@@ -17,7 +17,7 @@ export interface BannerProps {
   /** Dismiss callback */
   onDismiss?: () => void;
   /** Children for custom content */
-  children?: React.ReactNode;
+  children?: ReactNode;
   /** Extra Tailwind classes */
   className?: string;
 }
@@ -116,10 +116,11 @@ export const Banner = ({
         <button
           type="button"
           onClick={onDismiss}
+          aria-label="Dismiss"
           className={[
             'shrink-0 p-[var(--spacing-2)]',
             'rounded-[var(--radius-4)]',
-            'hover:bg-black/5',
+            'hover:bg-[var(--banner-dismiss-hover-fill)]',
             'transition-colors',
             'cursor-pointer',
           ].join(' ')}

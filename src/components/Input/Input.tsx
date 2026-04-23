@@ -1,4 +1,5 @@
-import React, { useState as useLocalState } from 'react';
+import { useState as useLocalState } from 'react';
+import type { ReactNode } from 'react';
 import { Icon } from '../Icon/Icon';
 
 export type InputState = 'default' | 'focus' | 'danger' | 'disabled' | 'readonly';
@@ -6,7 +7,7 @@ export type InputType = 'text' | 'password' | 'email' | 'number' | 'tel' | 'url'
 
 export interface InputAddonButton {
   label?: string;
-  icon?: React.ReactNode;
+  icon?: ReactNode;
   onClick?: () => void;
 }
 
@@ -32,7 +33,7 @@ export interface InputProps {
   /** Helper text shown below the input */
   helperText?: string;
   /** Optional trailing icon inside the input */
-  trailingIcon?: React.ReactNode;
+  trailingIcon?: ReactNode;
   /** Optional button attached to the right side of the input */
   addonButton?: InputAddonButton;
   /** Disables the input */
@@ -104,8 +105,11 @@ export const Input = ({
   const wrapperFill   = stateFillClasses[resolvedState];
 
   /* ── Focus-within override (real interactive focus) ─── */
-  // Only apply focus-within when not already in a forced state
-  const focusWithin = !hasForcedFocus && !isDanger && !isDisabled && !isReadonly
+  // Focus-within always wins over default/danger states so users in a danger
+  // field still get a focus indicator when they tab in. Disabled/readonly
+  // stay unresponsive by design; `state='focus'` is a forced Storybook state
+  // and skips the override so it renders a static focus look.
+  const focusWithin = !hasForcedFocus && !isDisabled && !isReadonly
     ? 'focus-within:border-[var(--form-input-focus-border)]'
     : '';
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { iconPaths, type IconName } from './iconPaths';
 
 export type { IconName } from './iconPaths';
@@ -74,7 +73,7 @@ export const Icon = ({
       height={px}
       className={`shrink-0 ${onClick ? 'cursor-pointer' : ''} ${className}`}
       fill="none"
-      role={label ? 'img' : 'presentation'}
+      role={label ? 'img' : undefined}
       aria-label={label}
       aria-hidden={label ? undefined : true}
       onClick={onClick}

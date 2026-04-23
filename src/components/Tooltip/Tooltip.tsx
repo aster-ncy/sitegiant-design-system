@@ -9,6 +9,13 @@ export interface TooltipProps {
   arrow?: TooltipArrow;
   /** Fixed width in px. Omit for auto. */
   width?: number;
+  /**
+   * HTML id for the tooltip's message box. Pair with `aria-describedby` on the
+   * trigger element to expose this tooltip to assistive technology, e.g.:
+   *   <button aria-describedby="save-hint">Save</button>
+   *   <Tooltip id="save-hint" message="Saves to the cloud" />
+   */
+  id?: string;
   className?: string;
 }
 
@@ -60,12 +67,13 @@ export const Tooltip = ({
   message,
   arrow = 'none',
   width,
+  id,
   className = '',
 }: TooltipProps) => {
   const wrapperStyle: CSSProperties | undefined = width ? { width } : undefined;
 
   const renderBox = () => (
-    <div className={messageBoxClasses}>
+    <div role="tooltip" id={id} className={messageBoxClasses}>
       <span className="flex-1 self-stretch">{message}</span>
     </div>
   );

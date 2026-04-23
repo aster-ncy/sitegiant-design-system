@@ -1,4 +1,4 @@
-import React from 'react';
+import type { KeyboardEvent } from 'react';
 
 export interface RadioOption {
   /** Unique value for this radio option */
@@ -63,7 +63,7 @@ export const Radio = ({
   onChange,
   className = '',
 }: RadioProps) => {
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent) => {
     if (disabled) return;
     if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
