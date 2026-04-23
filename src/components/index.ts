@@ -1,3 +1,7 @@
+// AccountingCard
+export { AccountingCard } from './AccountingCard';
+export type { AccountingCardProps } from './AccountingCard';
+
 // AppFeatureCard
 export { AppFeatureCard } from './AppFeatureCard';
 export type { AppFeatureCardProps, AppFeatureCardTitleWeight } from './AppFeatureCard';
