@@ -14,6 +14,10 @@ export type { AppImageCardProps, AppImageCardType } from './AppImageCard';
 export { AppTag } from './AppTag';
 export type { AppTagProps, AppTagType, AppTagSize } from './AppTag';
 
+// Avatar
+export { Avatar } from './Avatar';
+export type { AvatarProps, AvatarSize } from './Avatar';
+
 // AppTagGroup
 export { AppTagGroup } from './AppTagGroup';
 export type { AppTagGroupProps, AppTagGroupItem } from './AppTagGroup';
@@ -83,6 +87,15 @@ export type { ModuleCardProps } from './ModuleCard';
 // Pagination
 export { Pagination } from './Pagination';
 export type { PaginationProps, PaginationSize } from './Pagination';
+
+// ProductImageList
+export { ProductImage, ProductImageList } from './ProductImageList';
+export type {
+  ProductImageProps,
+  ProductImageSize,
+  ProductImageListProps,
+  ProductImageListItem,
+} from './ProductImageList';
 
 // ProgressBar
 export { ProgressBar } from './ProgressBar';

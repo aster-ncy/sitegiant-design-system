@@ -194,10 +194,10 @@
   --color-surface-success: #5ACC5A;
   --color-surface-alert: #FF7F00;
   --color-surface-danger: #E0241A;
-  --color-surface-empty-state-placeholder-fill: #E5E5E5;
+  --color-surface-empty-state-placeholder-fill: var(--color-space-DEFAULT);
 
   /* Product tokens */
-  --color-product-image-border: #E5E5E5;
+  --color-product-image-border: var(--color-space-DEFAULT);
 
   /* Overlays */
   --color-overlay-80: rgb(0 0 0 / 0.8);
