@@ -40,6 +40,7 @@ const imageClasses = [
   'self-stretch',
   'aspect-[325/175]',
   'object-cover',
+  'rounded-[var(--radius-4)]',
 ].join(' ');
 
 const infoClasses = [

@@ -50,7 +50,7 @@ export const AccountingCard = ({
         'inline-flex items-start gap-[var(--spacing-12)]',
         // Asymmetric padding per Figma: extra right padding reserves space for
         // the absolutely-positioned ellipsis button.
-        'pl-[var(--spacing-20)] pr-[var(--spacing-32)] py-[var(--spacing-20)]',
+        'pl-[var(--spacing-20)] pr-[var(--spacing-48)] py-[var(--spacing-20)]',
         'bg-[var(--color-surface-card)]',
         'rounded-[var(--radius-12)]',
         'border border-[var(--color-surface-card-border)]',
@@ -72,7 +72,7 @@ export const AccountingCard = ({
       <img
         src={logoSrc}
         alt={logoAlt}
-        className="shrink-0 w-[48px] h-[48px] object-contain"
+        className="shrink-0 w-[48px] h-[48px] object-contain rounded-[var(--radius-4)]"
       />
 
       {/* Label — clamped to 3 lines, capped width for predictable wrapping */}
