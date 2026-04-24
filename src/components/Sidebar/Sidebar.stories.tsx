@@ -66,15 +66,15 @@ const NavContent = ({ mode, theme }: { mode: Mode; theme: Theme }) => {
 
       <SidebarItem
         label="Webstore"
-        leadingIcon="web"
+        leadingIcon="channel-webstore"
         trailingIcon={isExpanded ? 'eye' : undefined}
         collapsed={!isExpanded}
         theme={theme}
       />
-      <SidebarItem label="Shopee" leadingIcon="shopping-bag" collapsed={!isExpanded} theme={theme} />
-      <SidebarItem label="Lazada" leadingIcon="shopping-bag" collapsed={!isExpanded} theme={theme} />
-      <SidebarItem label="TikTok" leadingIcon="mobile" collapsed={!isExpanded} theme={theme} />
-      <SidebarItem label="Zalora" leadingIcon="tag" collapsed={!isExpanded} theme={theme} />
+      <SidebarItem label="Shopee" leadingIcon="channel-shopee" collapsed={!isExpanded} theme={theme} />
+      <SidebarItem label="Lazada" leadingIcon="channel-lazada" collapsed={!isExpanded} theme={theme} />
+      <SidebarItem label="TikTok" leadingIcon="channel-tiktok" collapsed={!isExpanded} theme={theme} />
+      <SidebarItem label="Zalora" leadingIcon="channel-zalora" collapsed={!isExpanded} theme={theme} />
     </>
   );
 };
