@@ -63,7 +63,7 @@ export const TopBar = ({
         // `min-h-14` + `py-3` so the bar never collapses below 56px but
         // content (33px buttons) can still breathe without overflowing
         // the content-box.
-        'relative w-full min-h-14',
+        'relative w-full min-h-[56px]',
         'py-[var(--spacing-12)]',
         'bg-[var(--color-navigator-topbar-fill)]',
         'shadow-[inset_0_-1px_0_0_var(--color-navigator-border)]',
@@ -125,7 +125,7 @@ const TopBarBack = ({
       onClick={onBack}
       aria-label={backLabel}
       className={[
-        'size-7 inline-flex items-center justify-center shrink-0',
+        'size-[28px] inline-flex items-center justify-center shrink-0',
         'text-[color:var(--color-navigator-topbar-icon)]',
         'transition-colors duration-150',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1',
