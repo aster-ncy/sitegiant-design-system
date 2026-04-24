@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Icon } from './Icon';
 import { iconNames } from './iconPaths';
+import { channelIconNames } from './channelIconPaths';
 
 const meta = {
   title: 'Components/Icon',
@@ -150,6 +151,28 @@ export const VideoCamStates: Story = {
           Stopped
         </span>
       </div>
+    </div>
+  ),
+};
+
+/* ── Channel Icons ─────────────────────────────────────── */
+
+export const ChannelIcons: Story = {
+  name: 'All channel icons',
+  render: () => (
+    <div className="grid grid-cols-8 gap-4 max-w-[600px]">
+      {channelIconNames.map((name) => (
+        <div
+          key={name}
+          className="flex flex-col items-center gap-2 rounded-[var(--radius-8)] p-3 hover:bg-[var(--color-surface-card-inset-fill)] transition-colors"
+          title={name}
+        >
+          <Icon name={name} size="lg" />
+          <span className="text-[10px] text-[var(--color-text-info)] text-center leading-tight truncate w-full">
+            {name.replace('channel-', '')}
+          </span>
+        </div>
+      ))}
     </div>
   ),
 };

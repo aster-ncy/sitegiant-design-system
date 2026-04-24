@@ -1,7 +1,12 @@
 // Auto-generated from Figma Core SiteGiant Library
 // Regenerated: 2026-04-23T08:29:11.161Z
 // Source: scripts/figma-icons-source.html → scripts/parse-figma-icons.mjs
-// Total: 155 icons
+//
+// Channel brand icons (channel-*) live in channelIconPaths.ts and are
+// merged into this record at export time. Regenerate them via
+// `python scripts/build-channel-icons.py`.
+
+import { channelIconPaths } from './channelIconPaths';
 
 export interface IconPathData {
   viewBox: string;
@@ -1045,6 +1050,7 @@ export const iconPaths: Record<string, IconPathData> = {
     ],
     "fillRule": "evenodd"
   },
+  ...channelIconPaths,
 };
 
 export type IconName = keyof typeof iconPaths;
