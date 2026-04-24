@@ -114,6 +114,46 @@ export const ColorVariants: Story = {
   ),
 };
 
+/* ── Video Cam States ──────────────────────────────────── */
+
+export const VideoCamStates: Story = {
+  render: () => (
+    <div className="flex items-center gap-[var(--spacing-20)]">
+      <div className="flex flex-col items-center gap-[var(--spacing-8)]">
+        <Icon
+          name="videocam"
+          size="lg"
+          color="var(--color-icon-danger)"
+          label="Recording"
+        />
+        <span className="text-[11px] text-[var(--color-text-info)]">
+          Recording
+        </span>
+      </div>
+      <div className="flex flex-col items-center gap-[var(--spacing-8)]">
+        <Icon
+          name="videocam"
+          size="lg"
+          color="var(--color-icon-subtle)"
+          label="Idle"
+        />
+        <span className="text-[11px] text-[var(--color-text-info)]">Idle</span>
+      </div>
+      <div className="flex flex-col items-center gap-[var(--spacing-8)]">
+        <Icon
+          name="videocam-off"
+          size="lg"
+          color="var(--color-icon-secondary)"
+          label="Stopped"
+        />
+        <span className="text-[11px] text-[var(--color-text-info)]">
+          Stopped
+        </span>
+      </div>
+    </div>
+  ),
+};
+
 /* ── Arrows & Chevrons ─────────────────────────────────── */
 
 export const NavigationIcons: Story = {
