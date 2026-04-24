@@ -44,6 +44,16 @@
   --color-brand-highlight-3: #16FF00;
 
   /* ========================================
+     BRAND LOGO — SiteGiant wordmark & favicon
+     Figma: Brand-Color-Logo/<Background>/SiteGiant-*
+     Aliased to primitives per token-linking rule.
+     ======================================== */
+  --color-brand-logo-light-sitegiant-blue: var(--color-brand-blue-DEFAULT);
+  --color-brand-logo-light-sitegiant-green: var(--color-brand-green-700);
+  --color-brand-logo-dark-sitegiant-blue: var(--color-white);
+  --color-brand-logo-dark-sitegiant-green: var(--color-brand-green-700);
+
+  /* ========================================
      SYSTEM COLORS - Neutrals (Core Primitives)
      ======================================== */
   --color-space-lighter: #FAFAFB;

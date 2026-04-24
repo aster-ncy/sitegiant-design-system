@@ -76,6 +76,10 @@ export { Icon } from './Icon';
 export type { IconProps, IconSize, IconName } from './Icon';
 export { iconNames } from './Icon';
 
+// Logo
+export { Logo } from './Logo';
+export type { LogoProps, LogoBackground, LogoMode } from './Logo';
+
 // Input
 export { Input } from './Input';
 export type { InputProps, InputState, InputAddonButton } from './Input';
