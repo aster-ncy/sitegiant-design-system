@@ -16,7 +16,7 @@ const containerClasses = [
   'inline-flex items-center justify-start',
   'gap-[var(--spacing-4)]',
   'pl-[var(--spacing-8)] pr-[var(--spacing-4)]',
-  'py-[1px]',
+  'py-[var(--spacing-1)]',
   'bg-[var(--tag-fill)]',
   'rounded-[var(--radius-4)]',
   'font-[family-name:var(--font-sans)]',

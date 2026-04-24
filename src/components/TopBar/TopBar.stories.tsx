@@ -10,7 +10,6 @@ import { Badge } from '../Badge';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { Logo } from '../Logo';
-import { Dropdown } from '../Dropdown';
 
 const meta = {
   title: 'Components/TopBar',

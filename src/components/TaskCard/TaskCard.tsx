@@ -67,7 +67,7 @@ export const TaskCard = ({
         'border border-[var(--color-surface-card-border)]',
         'rounded-[var(--radius-card)]',
         'shadow-[var(--shadow-sm)]',
-        !isCompleted ? 'hover:shadow-[var(--shadow-md)] hover:-translate-y-[2px]' : '',
+        !isCompleted ? 'hover:shadow-[var(--shadow-md)] hover:-translate-y-[var(--spacing-2)]' : '',
         'transition-all duration-200',
         isCompleted ? 'opacity-80' : '',
         className,
@@ -76,7 +76,7 @@ export const TaskCard = ({
       {/* Illustration area */}
       <div className={[
         'flex items-center justify-center',
-        'h-[120px]',
+        'h-[var(--spacing-120)]',
         illustrationBg[status],
       ].join(' ')}>
         <Icon name={icon} size={48} color={illustrationIconColor[status]} />

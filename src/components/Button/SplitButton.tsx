@@ -55,7 +55,7 @@ const variantStyles: Record<SplitButtonVariant, {
     hover: 'hover:bg-[var(--button-primary-hover-fill)]',
     active: 'active:bg-[var(--button-primary-clicked-fill)]',
     disabled: 'bg-[var(--button-disabled-default-fill)] text-[color:var(--button-disabled-default-text)] cursor-not-allowed pointer-events-none',
-    separator: 'border-r border-[rgb(0_0_0/0.1)]',
+    separator: 'border-r border-[var(--color-overlay-10)]',
   },
   outline: {
     base: 'bg-[var(--button-outline-default-fill)] text-[color:var(--button-outline-text)] border border-[var(--button-outline-default-border)]',

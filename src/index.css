@@ -248,6 +248,7 @@
   /* Overlays */
   --color-overlay-80: rgb(0 0 0 / 0.8);
   --color-overlay-50: rgb(0 0 0 / 0.5);
+  --color-overlay-10: rgb(0 0 0 / 0.1);
   --color-overlay-5: rgb(0 0 0 / 0.05);
   --color-overlay-0: rgb(255 255 255 / 0);
   --color-overlay-success: #BCEFB9;

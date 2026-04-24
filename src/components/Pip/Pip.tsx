@@ -91,7 +91,7 @@ export const Pip = ({
     <span
       className={[
         'inline-flex items-center justify-start',
-        'px-[var(--spacing-8)] py-[1px]',
+        'px-[var(--spacing-8)] py-[var(--spacing-1)]',
         'rounded-[var(--radius-4)]',
         'text-[length:var(--text-12)] leading-[var(--leading-16)]',
         'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',

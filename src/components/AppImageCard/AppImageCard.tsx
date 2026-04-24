@@ -92,7 +92,7 @@ export const AppImageCard = ({
 
       {/* Top-right tag overlay. Positioned inside the card chrome, at the top edge. */}
       {overlay && (
-        <div className="absolute top-[6px] right-[5px] inline-flex items-start justify-end gap-[var(--spacing-4)]">
+        <div className="absolute top-[var(--spacing-6)] right-[var(--spacing-5)] inline-flex items-start justify-end gap-[var(--spacing-4)]">
           {overlay}
         </div>
       )}

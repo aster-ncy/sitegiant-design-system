@@ -116,7 +116,7 @@ export const Pagination = ({
   const nextDisabled = currentPage >= totalPages;
 
   const iconPx = size === 'compact' ? 12 : 12;
-  const itemGap = size === 'compact' ? 'gap-[2px]' : 'gap-[var(--spacing-8)]';
+  const itemGap = size === 'compact' ? 'gap-[var(--spacing-2)]' : 'gap-[var(--spacing-8)]';
   const rightGap = size === 'compact' ? 'gap-[var(--spacing-8)]' : 'gap-[var(--spacing-16)]';
 
   return (

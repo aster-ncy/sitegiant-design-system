@@ -72,7 +72,7 @@ export const AccountingCard = ({
       <img
         src={logoSrc}
         alt={logoAlt}
-        className="shrink-0 w-[48px] h-[48px] object-contain rounded-[var(--radius-4)]"
+        className="shrink-0 w-[var(--spacing-48)] h-[var(--spacing-48)] object-contain rounded-[var(--radius-4)]"
       />
 
       {/* Label — clamped to 3 lines, capped width for predictable wrapping */}

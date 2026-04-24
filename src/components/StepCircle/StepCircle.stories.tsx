@@ -45,9 +45,9 @@ export const ProgressSequence: Story = {
   render: () => (
     <div className="flex items-center gap-2">
       <StepCircle status="completed" step={1} />
-      <div className="w-8 h-[2px] bg-[var(--color-brand-green-DEFAULT)]" />
+      <div className="w-8 h-[var(--spacing-2)] bg-[var(--color-brand-green-DEFAULT)]" />
       <StepCircle status="active" step={2} />
-      <div className="w-8 h-[2px] bg-[var(--color-space-DEFAULT)]" />
+      <div className="w-8 h-[var(--spacing-2)] bg-[var(--color-space-DEFAULT)]" />
       <StepCircle status="pending" step={3} />
     </div>
   ),

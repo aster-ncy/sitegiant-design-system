@@ -25,28 +25,28 @@ export interface BannerProps {
 const variantClasses: Record<BannerVariant, { bg: string; border: string; iconColor: string; titleColor: string; descColor: string }> = {
   success: {
     bg: 'bg-[var(--color-sys-green-lighter)]',
-    border: 'border-l-[4px] border-l-[var(--color-sys-green-DEFAULT)]',
+    border: 'border-l-[var(--border-4)] border-l-[var(--color-sys-green-DEFAULT)]',
     iconColor: 'var(--color-sys-green-dark)',
     titleColor: 'text-[color:var(--color-sys-green-darker)]',
     descColor: 'text-[color:var(--color-sys-green-text)]',
   },
   info: {
     bg: 'bg-[var(--color-sys-blue-lighter)]',
-    border: 'border-l-[4px] border-l-[var(--color-sys-blue-DEFAULT)]',
+    border: 'border-l-[var(--border-4)] border-l-[var(--color-sys-blue-DEFAULT)]',
     iconColor: 'var(--color-sys-blue-dark)',
     titleColor: 'text-[color:var(--color-sys-blue-darker)]',
     descColor: 'text-[color:var(--color-sys-blue-text)]',
   },
   warning: {
     bg: 'bg-[var(--color-sys-yellow-lighter)]',
-    border: 'border-l-[4px] border-l-[var(--color-sys-yellow-DEFAULT)]',
+    border: 'border-l-[var(--border-4)] border-l-[var(--color-sys-yellow-DEFAULT)]',
     iconColor: 'var(--color-sys-yellow-dark)',
     titleColor: 'text-[color:var(--color-sys-yellow-darker)]',
     descColor: 'text-[color:var(--color-sys-yellow-text)]',
   },
   danger: {
     bg: 'bg-[var(--color-sys-red-lighter)]',
-    border: 'border-l-[4px] border-l-[var(--color-sys-red-DEFAULT)]',
+    border: 'border-l-[var(--border-4)] border-l-[var(--color-sys-red-DEFAULT)]',
     iconColor: 'var(--color-sys-red-dark)',
     titleColor: 'text-[color:var(--color-sys-red-darker)]',
     descColor: 'text-[color:var(--color-sys-red-text)]',
@@ -85,7 +85,7 @@ export const Banner = ({
         className,
       ].filter(Boolean).join(' ')}
     >
-      <div className="shrink-0 mt-[1px]">
+      <div className="shrink-0 mt-[var(--spacing-1)]">
         <Icon name={iconName} size="md" color={styles.iconColor} />
       </div>
 

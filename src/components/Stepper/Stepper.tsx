@@ -67,9 +67,9 @@ export const Stepper = ({
                 StepCircle (size="md" = 32px) so the line sits vertically
                 centered against the circle row, not the full step column. */}
             {!isLast && (
-              <li role="presentation" aria-hidden="true" className="flex-1 flex items-center h-[32px] mx-[var(--spacing-8)]">
+              <li role="presentation" aria-hidden="true" className="flex-1 flex items-center h-[var(--spacing-32)] mx-[var(--spacing-8)]">
                 <div className={[
-                  'flex-1 h-[2px]',
+                  'flex-1 h-[var(--spacing-2)]',
                   isCompleted
                     ? 'bg-[var(--color-brand-green-DEFAULT)]'
                     : 'bg-[var(--color-space-DEFAULT)]',
