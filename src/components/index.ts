@@ -148,3 +148,16 @@ export type { ToggleProps, ToggleVariant } from './Toggle';
 // Tooltip
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipArrow } from './Tooltip';
+
+// TopBar
+export { TopBar, IconButton, SegmentedButton } from './TopBar';
+export type {
+  TopBarProps,
+  TopBarContainer,
+  TopBarBackProps,
+  IconButtonProps,
+  IconButtonVariant,
+  IconButtonSize,
+  SegmentedButtonProps,
+  SegmentedOption,
+} from './TopBar';

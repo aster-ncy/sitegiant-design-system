@@ -209,6 +209,42 @@
   /* Product tokens */
   --color-product-image-border: var(--color-space-DEFAULT);
 
+  /* ========================================
+     NAVIGATOR / TOPBAR — Figma: Navigator/*
+     All values alias existing primitives; never duplicate hex.
+     Source of truth: figma-design-system/Color-Token/Light.tokens.json
+     ======================================== */
+  /* topbar-fill → System Color/Light/Space Light (#F6F6F6) */
+  --color-navigator-topbar-fill: var(--color-space-light);
+  /* topbar-text / topbar-icon → System Color/Light/Set (#0C2028) */
+  --color-navigator-topbar-text: var(--color-set-DEFAULT);
+  --color-navigator-topbar-icon: var(--color-set-DEFAULT);
+  /* navigator-divider-border → System Color/Light/Space Dark (#D4D4D4) */
+  --color-navigator-divider-border: var(--color-space-dark);
+  /* navigator-border → System Color/Light/Space (#E5E5E5) */
+  --color-navigator-border: var(--color-space-DEFAULT);
+  /* sidebar-premium-icon-default → same tone as topbar-fill (#F6F6F6) */
+  --color-navigator-mobile-fill: var(--color-space-light);
+
+  /* ========================================
+     TAB / SMALL — Figma: Tab/Small (segmented button)
+     ======================================== */
+  --color-tab-small-default-fill: var(--color-white);
+  --color-tab-small-selected-primary-fill: var(--button-primary-default-fill);
+  --color-tab-small-border: var(--color-space-dark);
+  --color-tab-small-icon-default: var(--color-icon-secondary);
+  --color-tab-small-icon-ondark: var(--color-white);
+
+  /* ========================================
+     FORM / DROPDOWN — Figma: Form/dropdown
+     (Topbar language switcher uses these directly. The base Dropdown
+     component has its own --dropdown-* tokens; these mirror them for
+     the topbar context so intent is obvious at the call site.)
+     ======================================== */
+  --color-form-dropdown-default-fill: var(--color-overlay-0);
+  --color-form-dropdown-default-border: var(--color-space-dark);
+  --color-form-dropdown-value-text: var(--color-text-primary);
+
   /* Overlays */
   --color-overlay-80: rgb(0 0 0 / 0.8);
   --color-overlay-50: rgb(0 0 0 / 0.5);
