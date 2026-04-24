@@ -149,6 +149,28 @@ export type { ToggleProps, ToggleVariant } from './Toggle';
 export { Tooltip } from './Tooltip';
 export type { TooltipProps, TooltipArrow } from './Tooltip';
 
+// SidebarItem
+export { SidebarItem, SidebarTag } from './SidebarItem';
+export type {
+  SidebarItemProps,
+  SidebarItemTheme,
+  SidebarItemState,
+  SidebarItemVariant,
+  SidebarTagProps,
+  SidebarTagVariant,
+} from './SidebarItem';
+
+// Sidebar
+export { Sidebar } from './Sidebar';
+export type {
+  SidebarProps,
+  SidebarMode,
+  SidebarTheme,
+  SidebarSectionProps,
+  SidebarFooterProps,
+  SidebarFooterAction,
+} from './Sidebar';
+
 // TopBar
 export { TopBar, IconButton, SegmentedButton } from './TopBar';
 export type {

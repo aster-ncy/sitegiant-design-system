@@ -227,6 +227,55 @@
   --color-navigator-mobile-fill: var(--color-space-light);
 
   /* ========================================
+     NAVIGATOR / SIDEBAR — Figma: Navigator/sidebar-*
+     All Color-Token values alias existing primitives per the
+     token-linking rule. Source: Color-Token/Light.tokens.json.
+     ======================================== */
+  --color-navigator-sidebar-fill: var(--color-white);
+  /* sidebar-hover-fill / sidebar-focus-fill → Space Lighter (#FAFAFB) */
+  --color-navigator-sidebar-hover-fill: var(--color-space-lighter);
+  --color-navigator-sidebar-focus-fill: var(--color-space-lighter);
+  /* sidebar-text-default / sidebar-icon-default → Set Lightest (#90999D) */
+  --color-navigator-sidebar-text-default: var(--color-set-lightest);
+  --color-navigator-sidebar-icon-default: var(--color-set-lightest);
+  /* sidebar-text-hover/focus / sidebar-icon-hover/focus → Set (#0C2028) */
+  --color-navigator-sidebar-text-hover: var(--color-set-DEFAULT);
+  --color-navigator-sidebar-text-focus: var(--color-set-DEFAULT);
+  --color-navigator-sidebar-icon-hover: var(--color-set-DEFAULT);
+  --color-navigator-sidebar-icon-focus: var(--color-set-DEFAULT);
+  /* sidebar-tooltip-fill → Overlay B80 */
+  --color-navigator-sidebar-tooltip-fill: var(--color-overlay-80);
+  --color-navigator-sidebar-tooltip-text: var(--color-white);
+
+  /* Premium sidebar theme. The rail paints a top-to-bottom gradient
+   * from the signature teal (#005D70) down to a near-black green
+   * (#072E20). Hover/focus tints are custom teal accents not aliased
+   * in Figma, so they live as named primitives. */
+  --color-brand-teal-DEFAULT: #005D70;
+  --color-brand-teal-900: #072E20;
+  --color-brand-teal-600: #009284;
+  --color-brand-teal-400: #00BFAD;
+  --color-navigator-sidebar-premium-fill: linear-gradient(var(--color-brand-teal-DEFAULT), var(--color-brand-teal-900));
+  --color-navigator-sidebar-premium-hover-fill: var(--color-brand-teal-600);
+  --color-navigator-sidebar-premium-focus-fill: var(--color-brand-teal-400);
+  --color-navigator-sidebar-premium-text-default: var(--color-space-light);
+  --color-navigator-sidebar-premium-text-hover: var(--color-white);
+  --color-navigator-sidebar-premium-text-focus: var(--color-white);
+  --color-navigator-sidebar-premium-icon-default: var(--color-space-light);
+  --color-navigator-sidebar-premium-icon-hover: var(--color-white);
+  --color-navigator-sidebar-premium-icon-focus: var(--color-white);
+
+  /* ========================================
+     SIDEBAR HOT TAG — Figma: sidebar "Hot" badge gradient
+     The two red stops aren't in Figma's named primitives; they're
+     defined locally so the gradient stays token-driven.
+     ======================================== */
+  --color-sidebar-hot-tag-from: #DE2319;
+  --color-sidebar-hot-tag-to: #9C150B;
+  --color-sidebar-hot-tag-border: var(--color-white);
+  --color-sidebar-hot-tag-text: var(--color-white);
+
+  /* ========================================
      TAB / SMALL — Figma: Tab/Small (segmented button)
      ======================================== */
   --color-tab-small-default-fill: var(--color-white);
@@ -248,6 +297,7 @@
   /* Overlays */
   --color-overlay-80: rgb(0 0 0 / 0.8);
   --color-overlay-50: rgb(0 0 0 / 0.5);
+  --color-overlay-16: rgb(0 0 0 / 0.16);
   --color-overlay-10: rgb(0 0 0 / 0.1);
   --color-overlay-5: rgb(0 0 0 / 0.05);
   --color-overlay-0: rgb(255 255 255 / 0);
@@ -724,4 +774,72 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   Sidebar scrollbar — slim, non-overlapping, theme-aware.
+
+   - `scrollbar-gutter: stable` reserves the scrollbar column so content
+     doesn't reflow and the thumb never sits on top of labels/icons.
+   - Firefox reads `scrollbar-width` + `scrollbar-color` directly.
+   - WebKit/Chromium uses the `::-webkit-scrollbar-*` pseudo-elements.
+   - The `.sidebar-scroll-premium` variant paints the track to match the
+     premium gradient so the scrollbar blends into the dark rail.
+   - `.sidebar-scroll-compact` is used in collapse mode where the rail
+     is only 44px wide — a 6px gutter would squeeze the 16px icon; a
+     3px gutter keeps the icon visually uncompressed.
+   ======================================== */
+.sidebar-scroll {
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-space-dark) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--color-space-dark);
+  border-radius: var(--radius-120);
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-set-lightest);
+}
+
+/* Collapse rail: Chrome on Windows clamps `::-webkit-scrollbar` width
+ * to a platform minimum (~5–6px), so we can't make the scrollbar
+ * visually slimmer than expand mode. Instead we flip the strategy —
+ * the scrollbar OVERLAYS content (no reserved gutter) and the icon
+ * gets the full 44px column. The thumb appears only while scrolling
+ * and fades out, so it doesn't permanently eat into the icon space. */
+/* Collapse rail: hide the scrollbar entirely so the 16px icon gets
+ * the full 44px column. Chromium's `scrollbar-width: thin` clamps the
+ * scrollbar to a native minimum that can't be overridden via
+ * `::-webkit-scrollbar { width }`, so the only way to give collapse a
+ * slimmer (zero-width) scrollbar is to hide it. Content still scrolls
+ * with the wheel / touchpad / keyboard — just no visible indicator. */
+.sidebar-scroll-compact {
+  scrollbar-gutter: auto;
+  scrollbar-width: none; /* Firefox */
+}
+.sidebar-scroll-compact::-webkit-scrollbar {
+  display: none; /* WebKit/Chromium */
+}
+
+.sidebar-scroll-premium {
+  /* Transparent track lets the gradient rail show through; thumb is a
+     soft white wash rather than a bright teal so it blends into the
+     dark surface and only hints at scroll position. */
+  scrollbar-color: var(--color-overlay-w30) transparent;
+}
+.sidebar-scroll-premium::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll-premium::-webkit-scrollbar-thumb {
+  background-color: var(--color-overlay-w30);
+}
+.sidebar-scroll-premium::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-overlay-w60);
 }
