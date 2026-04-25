@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useRef } from 'react';
 import { Input } from './Input';
 import { Icon } from '../Icon';
+import { Button } from '../Button';
 
 const meta = {
   title: 'Components/Input',
@@ -175,4 +177,20 @@ export const AllStates: Story = {
       />
     </div>
   ),
+};
+
+/* ── Programmatic ref focus ────────────────────────────── */
+
+const RefFocusDemo = () => {
+  const ref = useRef<HTMLInputElement>(null);
+  return (
+    <div className="flex flex-col gap-[var(--spacing-12)]">
+      <Input label="Email" placeholder="you@example.com" inputRef={ref} />
+      <Button label="Focus the input" onClick={() => ref.current?.focus()} />
+    </div>
+  );
+};
+
+export const RefFocus: Story = {
+  render: () => <RefFocusDemo />,
 };

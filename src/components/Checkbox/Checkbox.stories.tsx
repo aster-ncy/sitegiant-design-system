@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Checkbox } from './Checkbox';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { Button } from '../Button';
 
 const meta = {
   title: 'Components/Checkbox',
@@ -165,4 +166,45 @@ const CheckboxGroup = () => {
 
 export const Group: Story = {
   render: () => <CheckboxGroup />,
+};
+
+/* ── Danger state ─────────────────────────────────────── */
+
+export const Danger: Story = {
+  args: {
+    state: 'danger',
+    label: 'I agree',
+  },
+};
+
+export const DangerChecked: Story = {
+  args: {
+    state: 'danger',
+    checked: true,
+    label: 'I agree',
+  },
+};
+
+export const DangerWithHelperText: Story = {
+  args: {
+    state: 'danger',
+    label: 'I agree',
+    helperText: 'This is informational copy, not an error',
+  },
+};
+
+/* ── Programmatic ref focus ───────────────────────────── */
+
+const RefFocusDemo = () => {
+  const ref = useRef<HTMLInputElement>(null);
+  return (
+    <div className="flex flex-col gap-[var(--spacing-12)]">
+      <Checkbox label="I agree" inputRef={ref} />
+      <Button label="Focus the checkbox" onClick={() => ref.current?.focus()} />
+    </div>
+  );
+};
+
+export const RefFocus: Story = {
+  render: () => <RefFocusDemo />,
 };

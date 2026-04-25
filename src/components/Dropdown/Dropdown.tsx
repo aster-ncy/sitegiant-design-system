@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
 export interface DropdownOption {
@@ -34,6 +35,8 @@ export interface DropdownProps {
   id?: string;
   /** Extra classes on the root wrapper */
   className?: string;
+  /** Ref forwarded to the native <select> for programmatic focus. */
+  selectRef?: Ref<HTMLSelectElement>;
 }
 
 /**
@@ -64,6 +67,7 @@ export const Dropdown = ({
   onChange,
   id,
   className = '',
+  selectRef,
 }: DropdownProps) => {
   const isDisabled = disabled;
   const isReadonly = readonly;
@@ -153,9 +157,11 @@ export const Dropdown = ({
 
         {/* Native select — fills the wrapper, invisible arrow */}
         <select
+          ref={selectRef}
           id={id}
           value={value ?? ''}
           disabled={isDisabled || isReadonly}
+          aria-invalid={state === 'danger' || undefined}
           onMouseDown={() => {
             if (!isDisabled && !isReadonly) setIsOpen((prev) => !prev);
           }}

@@ -1,5 +1,5 @@
 import { useState as useLocalState } from 'react';
-import type { ReactNode } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { Icon } from '../Icon/Icon';
 
 export type InputState = 'default' | 'focus' | 'danger' | 'disabled' | 'readonly';
@@ -46,6 +46,8 @@ export interface InputProps {
   id?: string;
   /** Extra classes on the root wrapper */
   className?: string;
+  /** Ref forwarded to the native <input> for programmatic focus. */
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 /* ── State → border class lookup ────────────────────── */
@@ -90,6 +92,7 @@ export const Input = ({
   onChange,
   id,
   className = '',
+  inputRef,
 }: InputProps) => {
   const [passwordVisible, setPasswordVisible] = useLocalState(false);
   const isPassword = type === 'password';
@@ -200,6 +203,7 @@ export const Input = ({
         >
           {/* Native input */}
           <input
+            ref={inputRef}
             id={id}
             type={resolvedType}
             placeholder={placeholder}
@@ -207,6 +211,7 @@ export const Input = ({
             defaultValue={defaultValue}
             disabled={isDisabled}
             readOnly={isReadonly}
+            aria-invalid={isDanger || undefined}
             onChange={(e) => onChange?.(e.target.value)}
             className={[
               'flex-1 min-w-0',

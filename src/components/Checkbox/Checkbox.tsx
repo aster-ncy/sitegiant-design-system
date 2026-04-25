@@ -1,4 +1,4 @@
-import type { KeyboardEvent } from 'react';
+import type { KeyboardEvent, Ref } from 'react';
 import { Icon } from '../Icon';
 
 export interface CheckboxProps {
@@ -8,6 +8,8 @@ export interface CheckboxProps {
   indeterminate?: boolean;
   /** Whether the checkbox is disabled */
   disabled?: boolean;
+  /** Visual state — 'danger' paints the box border red. */
+  state?: 'default' | 'danger';
   /** Label text next to the checkbox */
   label?: string;
   /** Helper/info text below the label */
@@ -18,6 +20,8 @@ export interface CheckboxProps {
   className?: string;
   /** HTML id for the checkbox input */
   id?: string;
+  /** Ref forwarded to the hidden native checkbox input. */
+  inputRef?: Ref<HTMLInputElement>;
 }
 
 /**
@@ -33,13 +37,16 @@ export const Checkbox = ({
   checked = false,
   indeterminate = false,
   disabled = false,
+  state = 'default',
   label,
   helperText,
   onChange,
   className = '',
   id,
+  inputRef,
 }: CheckboxProps) => {
   const isActive = checked || indeterminate;
+  const isDanger = state === 'danger' && !disabled;
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (disabled) return;
@@ -64,6 +71,11 @@ export const Checkbox = ({
     boxState = isActive
       ? 'bg-[var(--checkbox-disabled)] border-[var(--checkbox-disabled)]'
       : 'bg-[var(--checkbox-disabled-inset)] border-[var(--checkbox-disabled)]';
+  } else if (isDanger) {
+    // Danger overrides hover/checked border — error state takes priority.
+    boxState = isActive
+      ? 'bg-[var(--checkbox-checked)] border-[var(--form-input-danger-border)]'
+      : 'bg-[var(--checkbox-fill)] border-[var(--form-input-danger-border)] hover:border-[var(--form-input-danger-border)]';
   } else if (isActive) {
     boxState = 'bg-[var(--checkbox-checked)] border-[var(--checkbox-checked)]';
   } else {
@@ -79,6 +91,7 @@ export const Checkbox = ({
     >
       {/* Hidden native input for a11y */}
       <input
+        ref={inputRef}
         type="checkbox"
         id={id}
         checked={checked}
@@ -86,6 +99,7 @@ export const Checkbox = ({
         onChange={() => onChange?.(!checked)}
         className="sr-only"
         aria-checked={indeterminate ? 'mixed' : checked}
+        aria-invalid={isDanger || undefined}
       />
 
       {/* Custom checkbox box */}

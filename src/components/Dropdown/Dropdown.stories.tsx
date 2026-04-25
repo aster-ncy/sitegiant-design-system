@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Dropdown } from './Dropdown';
+import { Button } from '../Button';
 
 const sampleOptions = [
   { value: 'electronics', label: 'Electronics' },
@@ -136,4 +137,20 @@ export const AllStates: Story = {
       />
     </div>
   ),
+};
+
+/* ── Programmatic ref focus ────────────────────────────── */
+
+const RefFocusDemo = () => {
+  const ref = useRef<HTMLSelectElement>(null);
+  return (
+    <div className="flex flex-col gap-[var(--spacing-12)] max-w-xs">
+      <Dropdown label="Product category" options={sampleOptions} selectRef={ref} />
+      <Button label="Focus the dropdown" onClick={() => ref.current?.focus()} />
+    </div>
+  );
+};
+
+export const RefFocus: Story = {
+  render: () => <RefFocusDemo />,
 };
