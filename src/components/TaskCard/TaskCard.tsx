@@ -1,4 +1,3 @@
-import React from 'react';
 import { Icon, type IconName } from '../Icon';
 import { Badge } from '../Badge';
 import { Button } from '../Button';

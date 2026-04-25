@@ -117,7 +117,6 @@ export const SearchBox = ({
   const resolvedState: SearchBoxState = disabled ? 'disabled' : readonly ? 'readonly' : state;
   const isDisabled = resolvedState === 'disabled';
   const isReadonly = resolvedState === 'readonly';
-  const isDanger = resolvedState === 'danger';
   const hasForcedFocus = resolvedState === 'focus';
   const hasValue = Boolean(value && value.length > 0);
 
