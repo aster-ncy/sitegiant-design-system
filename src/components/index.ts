@@ -121,6 +121,16 @@ export type { StepperProps, StepperStep } from './Stepper';
 export { StepCircle } from './StepCircle';
 export type { StepCircleProps, StepCircleStatus, StepCircleSize } from './StepCircle';
 
+// Tab
+export { Tab } from './Tab';
+export type {
+  TabProps,
+  TabSegmentProps,
+  TabSize,
+  TabSelectedVariant,
+  TabSegmentType,
+} from './Tab';
+
 // TaskCard
 export { TaskCard } from './TaskCard';
 export type { TaskCardProps, TaskStatus, TaskPriority } from './TaskCard';

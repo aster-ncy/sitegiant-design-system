@@ -277,12 +277,16 @@
 
   /* ========================================
      TAB / SMALL — Figma: Tab/Small (segmented button)
+     Used by: <Tab>, <SegmentedButton>
      ======================================== */
-  --color-tab-small-default-fill: var(--color-white);
-  --color-tab-small-selected-primary-fill: var(--button-primary-default-fill);
-  --color-tab-small-border: var(--color-space-dark);
+  --color-tab-small-text: var(--color-text-primary);
+  --color-tab-small-text-ondark: var(--color-text-ondark);
   --color-tab-small-icon-default: var(--color-icon-secondary);
   --color-tab-small-icon-ondark: var(--color-white);
+  --color-tab-small-border: var(--color-space-dark);
+  --color-tab-small-default-fill: var(--color-space-lighter);
+  --color-tab-small-selected-fill: var(--color-space-DEFAULT);
+  --color-tab-small-selected-primary-fill: var(--button-primary-default-fill);
 
   /* ========================================
      FORM / DROPDOWN — Figma: Form/dropdown
@@ -757,6 +761,11 @@
   --general-badge-size: 14px;
   --general-badge-lineheight: 16px;
   --general-badge-smaller-lineheight: 15px;
+
+  /* Tab/Small typography — Figma: General/Tab/Small */
+  --tab-small-size: var(--text-14);
+  --tab-small-lineheight: var(--leading-17);
+  --tab-small-weight: var(--font-weight-regular);
 
   /* ========================================
      SHADOWS — Figma: Shadow/*
