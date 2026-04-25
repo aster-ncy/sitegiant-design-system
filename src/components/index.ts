@@ -42,6 +42,14 @@ export type { EllipsisButtonProps, EllipsisButtonVariant, EllipsisButtonSize } f
 export { Card } from './Card';
 export type { CardProps, CardVariant, CardPadding } from './Card';
 
+// CardBrand
+export { CardBrand } from './CardBrand';
+export type { CardBrandProps, CardBrandName } from './CardBrand';
+
+// CardNumberInput
+export { CardNumberInput } from './CardNumberInput';
+export type { CardNumberInputProps } from './CardNumberInput';
+
 // Checkbox
 export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';

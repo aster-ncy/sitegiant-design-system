@@ -44,6 +44,12 @@ export interface InputProps {
   validation?: InputValidation;
   /** Helper text shown below the input */
   helperText?: string;
+  /**
+   * Optional leading slot rendered INSIDE the input wrapper, to the LEFT
+   * of the value text. Used by composed components like CardNumberInput
+   * to render a brand badge before the field content.
+   */
+  leadingNode?: ReactNode;
   /** Optional trailing icon inside the input */
   trailingIcon?: ReactNode;
   /** Optional button attached to the right side of the input */
@@ -104,6 +110,7 @@ export const Input = ({
   state = 'default',
   validation = 'default',
   helperText,
+  leadingNode,
   trailingIcon,
   addonButton,
   disabled = false,
@@ -237,6 +244,21 @@ export const Input = ({
             isReadonly ? 'cursor-default' : '',
           ].filter(Boolean).join(' ')}
         >
+            {/* Leading slot (e.g. brand badge for CardNumberInput) — sits inside
+                the wrapper, before the value text. In normal states the badge
+                gets pl-12 to match the wrapper's left edge; in readonly the
+                wrapper has no border and the badge sits flush at pl-0. */}
+            {leadingNode && (
+              <span
+                className={[
+                  'flex items-center shrink-0',
+                  isReadonly ? 'pl-0' : 'pl-[var(--spacing-12)]',
+                ].join(' ')}
+              >
+                {leadingNode}
+              </span>
+            )}
+
             {/* Native input */}
             <input
               ref={inputRef}
@@ -256,7 +278,13 @@ export const Input = ({
               className={[
                 'flex-1 min-w-0',
                 'bg-transparent outline-none border-none',
-                isReadonly ? 'px-0 py-[var(--spacing-6)]' : 'px-[var(--spacing-12)] py-[var(--spacing-8)]',
+                isReadonly
+                  ? leadingNode
+                    ? 'pl-[var(--spacing-8)] pr-0 py-[var(--spacing-6)]'
+                    : 'px-0 py-[var(--spacing-6)]'
+                  : leadingNode
+                    ? 'pl-[var(--spacing-8)] pr-[var(--spacing-12)] py-[var(--spacing-8)]'
+                    : 'px-[var(--spacing-12)] py-[var(--spacing-8)]',
                 'text-[length:var(--text-14)] leading-[var(--leading-17)]',
                 'font-[family-name:var(--font-sans)]',
                 isReadonlyBold
