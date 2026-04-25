@@ -96,6 +96,18 @@ export type { FormLabelProps, FormLabelSize, FormLabelWeight } from './FormLabel
 export { Input } from './Input';
 export type { InputProps, InputState, InputValidation, InputAddonButton } from './Input';
 
+// NumberInput
+export { NumberInput } from './NumberInput';
+export type {
+  NumberInputProps,
+  NumberInputState,
+  NumberInputValidation,
+} from './NumberInput';
+
+// NumberRange
+export { NumberRange } from './NumberRange';
+export type { NumberRangeProps, NumberRangeValue } from './NumberRange';
+
 // LoginInput
 export { LoginInput } from './LoginInput';
 export type {
