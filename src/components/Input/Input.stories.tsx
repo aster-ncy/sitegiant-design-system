@@ -206,7 +206,7 @@ export const RefFocus: Story = {
 export const ValidationSuccess: Story = {
   args: {
     label: 'Email',
-    defaultValue: 'aster.ng@sitegiant.com',
+    defaultValue: 'jane.doe@example.com',
     validation: 'success',
     helperText: 'Looks good.',
   },
@@ -226,7 +226,7 @@ export const ValidationError: Story = {
 export const ReadonlyBold: Story = {
   args: {
     label: 'Email',
-    defaultValue: 'aster.ng@sitegiant.com',
+    defaultValue: 'jane.doe@example.com',
     state: 'readonly-bold',
     helperText: 'Bold value, no border, no padding.',
   },

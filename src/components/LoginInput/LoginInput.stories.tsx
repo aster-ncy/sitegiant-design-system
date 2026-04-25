@@ -51,7 +51,7 @@ export const Default: Story = {
 };
 
 export const Filled: Story = {
-  args: { placeholder: 'Email', defaultValue: 'aster.ng@sitegiant.com', hintText: 'Hint text' },
+  args: { placeholder: 'Email', defaultValue: 'jane.doe@example.com', hintText: 'Hint text' },
 };
 
 export const Password: Story = {
@@ -75,7 +75,7 @@ export const Error: Story = {
 export const Success: Story = {
   args: {
     placeholder: 'Email',
-    defaultValue: 'aster.ng@sitegiant.com',
+    defaultValue: 'jane.doe@example.com',
     validation: 'success',
     hintText: 'Looks good.',
   },
@@ -88,7 +88,7 @@ export const Disabled: Story = {
 export const Readonly: Story = {
   args: {
     state: 'readonly',
-    defaultValue: 'aster.ng@sitegiant.com',
+    defaultValue: 'jane.doe@example.com',
     hintText: 'Hint text',
   },
 };
@@ -96,7 +96,7 @@ export const Readonly: Story = {
 export const ReadonlyBold: Story = {
   args: {
     state: 'readonly-bold',
-    defaultValue: 'aster.ng@sitegiant.com',
+    defaultValue: 'jane.doe@example.com',
     hintText: 'Hint text',
   },
 };

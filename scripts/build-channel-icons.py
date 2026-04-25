@@ -13,16 +13,20 @@ from __future__ import annotations
 import os
 import re
 import sys
+from pathlib import Path
 
-SRC = (
-    r"C:\Users\Aster\SiteGiant File\D\Aster\Aster Testing"
-    r"\sitegiant-design-system\figma-design-system\icon\channel icon"
-)
-OUT = (
-    r"C:\Users\Aster\SiteGiant File\D\Aster\Aster Testing"
-    r"\sitegiant-design-system\sitegiant-storybook\src\components\Icon"
-    r"\channelIconPaths.ts"
-)
+# Resolve paths relative to this script so the build is portable across
+# machines. Layout assumed:
+#   <workspace>/
+#     figma-design-system/icon/channel icon/*.svg     (private, source)
+#     sitegiant-storybook/scripts/build-channel-icons.py
+#     sitegiant-storybook/src/components/Icon/channelIconPaths.ts (output)
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_STORYBOOK_ROOT = _SCRIPT_DIR.parent
+_WORKSPACE_ROOT = _STORYBOOK_ROOT.parent
+
+SRC = str(_WORKSPACE_ROOT / "figma-design-system" / "icon" / "channel icon")
+OUT = str(_STORYBOOK_ROOT / "src" / "components" / "Icon" / "channelIconPaths.ts")
 
 NAME_MAP = {
     "168live": "channel-168live",

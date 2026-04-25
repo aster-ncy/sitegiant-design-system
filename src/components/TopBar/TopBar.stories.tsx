@@ -164,7 +164,7 @@ const HomepageDemo = () => {
                 'text-[length:var(--text-14)] leading-[var(--leading-19)]',
               ].join(' ')}
             >
-              Andy Lam
+              Jane Doe
             </span>
           </div>
         </div>

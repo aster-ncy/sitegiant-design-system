@@ -19,7 +19,7 @@ export const Default: Story = {
 };
 
 export const LongerValue: Story = {
-  args: { children: 'aster.ng@sitegiant.com' },
+  args: { children: 'jane.doe@example.com' },
 };
 
 export const InAList: Story = {
@@ -30,13 +30,13 @@ export const InAList: Story = {
         <span className="w-[120px] text-[length:var(--text-12)] text-[color:var(--color-text-info)]">
           Name
         </span>
-        <UnderlinedTextField>Aster Ng</UnderlinedTextField>
+        <UnderlinedTextField>Jane Doe</UnderlinedTextField>
       </div>
       <div className="flex items-center gap-[var(--spacing-8)]">
         <span className="w-[120px] text-[length:var(--text-12)] text-[color:var(--color-text-info)]">
           Email
         </span>
-        <UnderlinedTextField>aster.ng@sitegiant.com</UnderlinedTextField>
+        <UnderlinedTextField>jane.doe@example.com</UnderlinedTextField>
       </div>
       <div className="flex items-center gap-[var(--spacing-8)]">
         <span className="w-[120px] text-[length:var(--text-12)] text-[color:var(--color-text-info)]">
