@@ -1,8 +1,24 @@
 {
   "name": "sitegiant-storybook",
+  "private": true,
   "version": "0.0.0",
   "type": "module",
   "license": "MIT",
+  "main": "./src/components/index.ts",
+  "module": "./src/components/index.ts",
+  "types": "./src/components/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/components/index.ts",
+      "import": "./src/components/index.ts",
+      "default": "./src/components/index.ts"
+    },
+    "./index.css": "./src/index.css",
+    "./*.css": "./src/*.css"
+  },
+  "files": [
+    "src"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
