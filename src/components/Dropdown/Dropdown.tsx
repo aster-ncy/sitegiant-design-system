@@ -161,7 +161,7 @@ export const Dropdown = ({
           id={id}
           value={value ?? ''}
           disabled={isDisabled || isReadonly}
-          aria-invalid={state === 'danger' || undefined}
+          aria-invalid={isDanger || undefined}
           onMouseDown={() => {
             if (!isDisabled && !isReadonly) setIsOpen((prev) => !prev);
           }}
