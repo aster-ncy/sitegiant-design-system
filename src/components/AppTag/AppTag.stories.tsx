@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppTag } from './AppTag';
 
 const meta = {
-  title: 'Components/AppTag',
+  title: 'Display/AppTag',
   component: AppTag,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

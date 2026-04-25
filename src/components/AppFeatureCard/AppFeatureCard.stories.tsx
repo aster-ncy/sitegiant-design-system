@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { AppFeatureCard } from './AppFeatureCard';
 
 const meta = {
-  title: 'Components/AppFeatureCard',
+  title: 'Surfaces/AppFeatureCard',
   component: AppFeatureCard,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

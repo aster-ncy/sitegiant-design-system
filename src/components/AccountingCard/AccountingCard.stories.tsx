@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { AccountingCard } from './AccountingCard';
 
 const meta = {
-  title: 'Components/AccountingCard',
+  title: 'Surfaces/AccountingCard',
   component: AccountingCard,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

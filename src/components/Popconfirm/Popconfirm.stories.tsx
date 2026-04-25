@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { Popconfirm } from './Popconfirm';
 
 const meta = {
-  title: 'Components/Popconfirm',
+  title: 'Feedback/Popconfirm',
   component: Popconfirm,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

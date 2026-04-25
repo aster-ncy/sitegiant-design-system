@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { CardBrand, type CardBrandName } from './CardBrand';
 
 const meta = {
-  title: 'Components/CardBrand',
+  title: 'Display/CardBrand',
   component: CardBrand,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

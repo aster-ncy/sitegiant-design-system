@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { UnderlinedTextField } from './UnderlinedTextField';
 
 const meta = {
-  title: 'Components/UnderlinedTextField',
+  title: 'Forms/UnderlinedTextField',
   component: UnderlinedTextField,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

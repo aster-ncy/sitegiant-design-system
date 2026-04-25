@@ -4,7 +4,7 @@ import { TextLink } from './TextLink';
 import { Icon } from '../Icon';
 
 const meta = {
-  title: 'Components/TextLink',
+  title: 'Actions/TextLink',
   component: TextLink,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

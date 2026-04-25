@@ -13,7 +13,7 @@ import { Logo } from '../Logo';
 import { Dropdown } from '../Dropdown';
 
 const meta = {
-  title: 'Components/TopBar',
+  title: 'Navigation/TopBar',
   component: TopBar,
   parameters: { layout: 'fullscreen' },
   tags: ['autodocs'],

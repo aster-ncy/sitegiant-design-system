@@ -4,7 +4,7 @@ import { StatusCard } from './StatusCard';
 import type { StatusCardStatus } from './StatusCard';
 
 const meta = {
-  title: 'Components/StatusCard',
+  title: 'Feedback/StatusCard',
   component: StatusCard,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

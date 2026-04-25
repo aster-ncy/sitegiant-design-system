@@ -3,7 +3,7 @@ import { AppImageCard } from './AppImageCard';
 import { AppTagGroup } from '../AppTagGroup';
 
 const meta = {
-  title: 'Components/AppImageCard',
+  title: 'Surfaces/AppImageCard',
   component: AppImageCard,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

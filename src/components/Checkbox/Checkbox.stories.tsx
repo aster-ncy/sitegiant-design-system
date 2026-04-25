@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { Button } from '../Button';
 
 const meta = {
-  title: 'Components/Checkbox',
+  title: 'Forms/Checkbox',
   component: Checkbox,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

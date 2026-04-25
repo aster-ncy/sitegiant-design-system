@@ -3,7 +3,7 @@ import { Sidebar } from './Sidebar';
 import { SidebarItem, SidebarTag } from '../SidebarItem';
 
 const meta = {
-  title: 'Components/Sidebar/Sidebar',
+  title: 'Navigation/Sidebar/Sidebar',
   component: Sidebar,
   parameters: {
     layout: 'fullscreen',

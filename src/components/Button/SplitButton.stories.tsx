@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { SplitButton } from './SplitButton';
 
 const meta = {
-  title: 'Components/SplitButton',
+  title: 'Actions/SplitButton',
   component: SplitButton,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

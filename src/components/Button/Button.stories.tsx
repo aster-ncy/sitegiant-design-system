@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { Button, PlusIcon } from './Button';
 
 const meta = {
-  title: 'Components/Button',
+  title: 'Actions/Button',
   component: Button,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

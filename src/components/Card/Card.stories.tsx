@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Card } from './Card';
 
 const meta = {
-  title: 'Components/Card',
+  title: 'Surfaces/Card',
   component: Card,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

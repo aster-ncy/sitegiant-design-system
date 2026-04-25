@@ -4,7 +4,7 @@ import { iconNames } from './iconPaths';
 import { channelIconNames } from './channelIconPaths';
 
 const meta = {
-  title: 'Components/Icon',
+  title: 'Foundations/Icon',
   component: Icon,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { ModuleCard } from './ModuleCard';
 
 const meta = {
-  title: 'Components/ModuleCard',
+  title: 'Surfaces/ModuleCard',
   component: ModuleCard,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

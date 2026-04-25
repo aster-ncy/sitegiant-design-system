@@ -3,7 +3,7 @@ import { SidebarItem } from './SidebarItem';
 import { SidebarTag } from './SidebarTag';
 
 const meta = {
-  title: 'Components/Sidebar/Item',
+  title: 'Navigation/Sidebar/Item',
   component: SidebarItem,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

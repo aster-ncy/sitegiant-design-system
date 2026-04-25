@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TaskCard } from './TaskCard';
 
 const meta = {
-  title: 'Components/TaskCard',
+  title: 'Surfaces/TaskCard',
   component: TaskCard,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

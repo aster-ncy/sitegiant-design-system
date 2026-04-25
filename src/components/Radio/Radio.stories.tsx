@@ -5,7 +5,7 @@ import { useState } from 'react';
 /* ── Single Radio stories ──────────────────────────────── */
 
 const radioMeta = {
-  title: 'Components/Radio',
+  title: 'Forms/Radio',
   component: Radio,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

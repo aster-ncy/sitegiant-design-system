@@ -3,7 +3,7 @@ import { fn } from 'storybook/test';
 import { EllipsisButton } from './EllipsisButton';
 
 const meta = {
-  title: 'Components/EllipsisButton',
+  title: 'Actions/EllipsisButton',
   component: EllipsisButton,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

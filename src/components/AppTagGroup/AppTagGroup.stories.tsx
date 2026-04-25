@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AppTagGroup } from './AppTagGroup';
 
 const meta = {
-  title: 'Components/AppTagGroup',
+  title: 'Display/AppTagGroup',
   component: AppTagGroup,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

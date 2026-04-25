@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SearchBox } from './SearchBox';
 
 const meta = {
-  title: 'Components/SearchBox',
+  title: 'Forms/SearchBox',
   component: SearchBox,
   tags: ['autodocs'],
   parameters: { layout: 'padded' },

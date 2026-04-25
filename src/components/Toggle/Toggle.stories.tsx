@@ -3,7 +3,7 @@ import { Toggle } from './Toggle';
 import { useState } from 'react';
 
 const meta = {
-  title: 'Components/Toggle',
+  title: 'Actions/Toggle',
   component: Toggle,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

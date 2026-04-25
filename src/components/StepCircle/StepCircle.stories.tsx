@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StepCircle } from './StepCircle';
 
 const meta = {
-  title: 'Components/StepCircle',
+  title: 'Navigation/StepCircle',
   component: StepCircle,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

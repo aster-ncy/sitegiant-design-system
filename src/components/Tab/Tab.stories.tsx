@@ -4,7 +4,7 @@ import { Tab } from './Tab';
 import type { TabSize, TabSelectedVariant } from './TabSegment';
 
 const meta = {
-  title: 'Components/Tab',
+  title: 'Navigation/Tab',
   component: Tab,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

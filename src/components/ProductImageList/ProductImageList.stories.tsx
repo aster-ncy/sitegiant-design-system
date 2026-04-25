@@ -21,7 +21,7 @@ const items = (count: number) =>
   }));
 
 const meta = {
-  title: 'Components/ProductImageList',
+  title: 'Surfaces/ProductImageList',
   component: ProductImageList,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

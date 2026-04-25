@@ -7,7 +7,7 @@ import { DropdownMenuCustomInput } from './DropdownMenuCustomInput';
 import { DropdownMenuActions } from './DropdownMenuActions';
 
 const meta = {
-  title: 'Components/DropdownMenu',
+  title: 'Navigation/DropdownMenu',
   component: DropdownMenu,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

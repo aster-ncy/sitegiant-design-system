@@ -12,7 +12,7 @@ const sampleOptions = [
 ];
 
 const meta = {
-  title: 'Components/Dropdown',
+  title: 'Forms/Dropdown',
   component: Dropdown,
   tags: ['autodocs'],
   parameters: {

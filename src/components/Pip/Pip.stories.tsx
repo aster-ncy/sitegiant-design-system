@@ -3,7 +3,7 @@ import { Pip } from './Pip';
 import type { PipType } from './Pip';
 
 const meta = {
-  title: 'Components/Pip',
+  title: 'Foundations/Pip',
   component: Pip,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

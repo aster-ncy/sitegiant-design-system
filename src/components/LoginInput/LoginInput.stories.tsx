@@ -8,7 +8,7 @@ import {
 } from './LoginInput';
 
 const meta = {
-  title: 'Components/LoginInput',
+  title: 'Forms/LoginInput',
   component: LoginInput,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

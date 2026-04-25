@@ -3,7 +3,7 @@ import { CardNumberInput } from './CardNumberInput';
 import { CardBrand } from '../CardBrand';
 
 const meta = {
-  title: 'Components/CardNumberInput',
+  title: 'Forms/CardNumberInput',
   component: CardNumberInput,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
