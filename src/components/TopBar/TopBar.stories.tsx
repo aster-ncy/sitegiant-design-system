@@ -10,6 +10,7 @@ import { Badge } from '../Badge';
 import { Icon } from '../Icon';
 import { Avatar } from '../Avatar';
 import { Logo } from '../Logo';
+import { Dropdown } from '../Dropdown';
 
 const meta = {
   title: 'Components/TopBar',
@@ -105,16 +106,25 @@ export const WebstoreBuilder: Story = {
 
 /* ── Homepage (full desktop topbar) ────────────────────────────────── */
 
-export const Homepage: Story = {
-  render: () => (
+const LANGUAGE_OPTIONS = [
+  { value: 'en', label: 'English' },
+  { value: 'ms', label: 'Bahasa Malaysia' },
+  { value: 'zh-cn', label: '简体中文' },
+  { value: 'zh-tw', label: '繁體中文' },
+];
+
+const HomepageDemo = () => {
+  const [language, setLanguage] = useState('en');
+  return (
     <TopBar container="full">
       {/* Left slot intentionally empty per Figma — the homepage variant
           centres its cluster with everything aligned right. */}
       <div className="flex-1" />
       <div className="flex items-center gap-[var(--spacing-20)]">
-        <div className="relative inline-flex">
+        {/* Refer A Friend — pill button with attention badge tucked into the top-right corner. */}
+        <div className="relative inline-flex items-center">
           <Button variant="special" size="md" label="Refer A Friend" />
-          <span className="absolute -top-0.5 -right-1">
+          <span className="absolute left-[106px] top-[-2px] pointer-events-none">
             <Badge variant="attention" label="1" size="default" />
           </span>
         </div>
@@ -124,50 +134,47 @@ export const Homepage: Story = {
           iconPosition="left"
           icon={<Icon name="help-circle" size={17} />}
         />
-        <div
-          className="h-8 w-px"
-          style={{ backgroundColor: 'var(--color-navigator-divider-border)' }}
-          aria-hidden="true"
-        />
-        <div className="relative">
-          <IconButton name="bell" label="Notifications" />
-          <span className="absolute top-1 right-1 pointer-events-none">
-            <Badge variant="attention" dotOnly />
-          </span>
-        </div>
-        <IconButton name="alert-circle" label="System alerts" />
-        {/* Language switcher — compact form-dropdown shell inline. */}
-        <button
-          type="button"
-          className={[
-            'h-8 w-24 pl-3 pr-2 inline-flex items-center justify-between',
-            'rounded-[var(--radius-4)]',
-            'bg-[var(--color-form-dropdown-default-fill)]',
-            'border border-[color:var(--color-form-dropdown-default-border)]',
-            'text-[color:var(--color-form-dropdown-value-text)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-            'text-[length:var(--text-14)] leading-[var(--leading-16)]',
-          ].join(' ')}
-        >
-          <span>English</span>
-          <Icon name="chevron-down" size={17} />
-        </button>
-        <IconButton name="server" label="Apps" />
-        <div className="flex items-center gap-[var(--spacing-8)]">
-          <Avatar size="sm" initials="A" />
-          <span
-            className={[
-              'text-[color:var(--color-text-primary)]',
-              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-              'text-[length:var(--text-14)] leading-[var(--leading-20)]',
-            ].join(' ')}
-          >
-            Andy Lam
-          </span>
+        {/* Notification cluster (divider + bell + alert) sits inside its own gap-16 group per Figma. */}
+        <div className="flex items-center gap-[var(--spacing-16)]">
+          <div
+            className="h-[33px] w-px bg-[var(--color-navigator-divider-border)]"
+            aria-hidden="true"
+          />
+          <div className="relative inline-flex">
+            <IconButton name="bell" label="Notifications" />
+            <span className="absolute left-[19px] top-[6px] pointer-events-none">
+              <Badge variant="attention" dotOnly />
+            </span>
+          </div>
+          <IconButton name="alert-circle" label="System alerts" />
+          <Dropdown
+            id="topbar-language"
+            options={LANGUAGE_OPTIONS}
+            value={language}
+            onChange={setLanguage}
+            className="w-[103px]"
+          />
+          <IconButton name="server" label="Apps" />
+          <div className="flex items-center gap-[var(--spacing-8)]">
+            <Avatar size="sm" initials="A" />
+            <span
+              className={[
+                'text-[color:var(--color-text-primary)]',
+                'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+                'text-[length:var(--text-14)] leading-[var(--leading-19)]',
+              ].join(' ')}
+            >
+              Andy Lam
+            </span>
+          </div>
         </div>
       </div>
     </TopBar>
-  ),
+  );
+};
+
+export const Homepage: Story = {
+  render: () => <HomepageDemo />,
 };
 
 /* ── Mobile Homepage ───────────────────────────────────────────────── */
