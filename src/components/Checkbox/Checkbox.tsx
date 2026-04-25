@@ -1,4 +1,4 @@
-import type { KeyboardEvent, Ref } from 'react';
+import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
 export interface CheckboxProps {
@@ -30,6 +30,12 @@ export interface CheckboxProps {
  * Token-driven implementation from Figma Form/checkbox section.
  * States: unchecked, checked, indeterminate, disabled (+checked), disabled (+unchecked)
  *
+ * Focus model: the hidden native <input> is the canonical focus target —
+ * the browser handles space/enter/tab natively, and the visible <span> box
+ * paints a focus ring via Tailwind's `peer-focus-visible:` prefix when the
+ * sibling input has visible focus. This avoids a double-tab-stop and makes
+ * `inputRef.current?.focus()` produce a visible focus indicator.
+ *
  * @example
  * <Checkbox label="Agree to terms" checked={true} onChange={setChecked} />
  */
@@ -48,14 +54,6 @@ export const Checkbox = ({
   const isActive = checked || indeterminate;
   const isDanger = state === 'danger' && !disabled;
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (disabled) return;
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      onChange?.(!checked);
-    }
-  };
-
   /* ── Box styles (token-driven) ─────────────────────── */
   const boxBase = [
     'relative shrink-0',
@@ -64,6 +62,10 @@ export const Checkbox = ({
     'border-2 border-solid',
     'transition-all duration-150',
     'flex items-center justify-center',
+    // Focus ring driven by sibling <input>'s :focus-visible state.
+    'peer-focus-visible:outline-none',
+    'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1',
+    'peer-focus-visible:ring-[var(--button-primary-default-fill)]',
   ].join(' ');
 
   let boxState: string;
@@ -89,7 +91,8 @@ export const Checkbox = ({
       } ${className}`}
       htmlFor={id}
     >
-      {/* Hidden native input for a11y */}
+      {/* Native input — canonical focus target. `peer` makes the visible box
+          react to its :focus-visible state via peer-focus-visible: classes. */}
       <input
         ref={inputRef}
         type="checkbox"
@@ -97,18 +100,13 @@ export const Checkbox = ({
         checked={checked}
         disabled={disabled}
         onChange={() => onChange?.(!checked)}
-        className="sr-only"
+        className="peer sr-only"
         aria-checked={indeterminate ? 'mixed' : checked}
         aria-invalid={isDanger || undefined}
       />
 
-      {/* Custom checkbox box */}
-      <span
-        className={`${boxBase} ${boxState}`}
-        role="presentation"
-        onKeyDown={handleKeyDown}
-        tabIndex={disabled ? -1 : 0}
-      >
+      {/* Visible box — purely presentational, focus ring driven by peer. */}
+      <span className={`${boxBase} ${boxState}`} aria-hidden="true">
         {isActive && (
           indeterminate ? (
             <Icon name="minus" size={12} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
