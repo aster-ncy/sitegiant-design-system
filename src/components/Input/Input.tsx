@@ -161,14 +161,18 @@ export const Input = ({
     : 'var(--form-icon)';
 
   /* ── Addon button classes ────────────────────────────── */
+  // Per Figma (874:2811), the addon button sits INSIDE the wrapper border
+  // and shares its right edge. The wrapper has overflow-hidden + rounded-4
+  // which clips the button's right rounded corners against the wrapper.
+  // self-stretch makes the button fill the wrapper's height; the left
+  // border-l acts as the divider between input value and button.
   const addonBase = [
     'flex items-center gap-[var(--spacing-4)]',
     'px-[var(--spacing-12)] py-[var(--spacing-8)]',
-    'rounded-r-[var(--radius-4)]',
-    'border-l border-[var(--form-button-border)]',
+    'border-l border-solid border-[var(--form-button-border)]',
     'text-[length:var(--text-14)] leading-[var(--leading-17)]',
     'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-    'shrink-0',
+    'shrink-0 self-stretch',
   ].join(' ');
 
   const addonStateClasses = isDisabled
@@ -220,22 +224,19 @@ export const Input = ({
 
       {/* ── Input row with addon + optional external status icon ─── */}
       <div className="flex items-center gap-[var(--spacing-8)]">
-        <div className="flex flex-row items-stretch flex-1 min-w-0">
-          <div
-            className={[
-              'flex items-stretch flex-1',
-              isReadonly ? '' : 'border border-solid rounded-[var(--radius-4)]',
-              'overflow-hidden',
-              'transition-colors duration-150',
-              wrapperBorder,
-              wrapperFill,
-              focusWithin,
-              isDisabled ? 'cursor-not-allowed opacity-60' : '',
-              isReadonly ? 'cursor-default' : '',
-              // When addon button is present, square off the right radius on the inner input
-              addonButton ? 'rounded-r-none' : '',
-            ].filter(Boolean).join(' ')}
-          >
+        <div
+          className={[
+            'flex items-stretch flex-1 min-w-0',
+            isReadonly ? '' : 'border border-solid rounded-[var(--radius-4)]',
+            'overflow-hidden',
+            'transition-colors duration-150',
+            wrapperBorder,
+            wrapperFill,
+            focusWithin,
+            isDisabled ? 'cursor-not-allowed opacity-60' : '',
+            isReadonly ? 'cursor-default' : '',
+          ].filter(Boolean).join(' ')}
+        >
             {/* Native input */}
             <input
               ref={inputRef}
@@ -311,25 +312,26 @@ export const Input = ({
                 {trailingIcon}
               </span>
             )}
-          </div>
 
-          {/* ── Addon button (outside the border wrapper) ─── */}
-          {addonButton && (
-            <button
-              type="button"
-              disabled={isDisabled}
-              onClick={!isDisabled ? addonButton.onClick : undefined}
-              className={[addonBase, addonStateClasses].join(' ')}
-            >
-              {addonButton.icon && (
-                <span style={{ color: isDisabled ? 'var(--form-button-disabled-icon)' : 'var(--form-button-icon)' }}>
-                  {addonButton.icon}
-                </span>
-              )}
-              {addonButton.label && addonButton.label}
-            </button>
-          )}
-        </div>
+            {/* Addon button — sits INSIDE the wrapper border per Figma 874:2811.
+                Negative -my-px / -mr-px lets its border overlap the wrapper's
+                border so they visually merge into one line. */}
+            {addonButton && (
+              <button
+                type="button"
+                disabled={isDisabled}
+                onClick={!isDisabled ? addonButton.onClick : undefined}
+                className={[addonBase, addonStateClasses].join(' ')}
+              >
+                {addonButton.icon && (
+                  <span style={{ color: isDisabled ? 'var(--form-button-disabled-icon)' : 'var(--form-button-icon)' }}>
+                    {addonButton.icon}
+                  </span>
+                )}
+                {addonButton.label && addonButton.label}
+              </button>
+            )}
+          </div>
 
         {/* External status icon — bare glyph, red close on error / green check on success.
             Sits to the right of the entire input + addon group, per Figma. */}
