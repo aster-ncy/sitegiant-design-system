@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { useRef } from 'react';
+import { Fragment, useRef } from 'react';
 import { Input } from './Input';
 import { Icon } from '../Icon';
 import { Button } from '../Button';
@@ -14,8 +14,14 @@ const meta = {
   argTypes: {
     state: {
       control: 'select',
-      options: ['default', 'focus', 'danger', 'disabled', 'readonly'],
+      options: ['default', 'focus', 'danger', 'disabled', 'readonly', 'readonly-bold'],
     },
+    validation: {
+      control: 'inline-radio',
+      options: ['default', 'error', 'success'],
+    },
+    showCount: { control: 'boolean' },
+    maxLength: { control: 'number' },
   },
 } satisfies Meta<typeof Input>;
 
@@ -193,4 +199,100 @@ const RefFocusDemo = () => {
 
 export const RefFocus: Story = {
   render: () => <RefFocusDemo />,
+};
+
+/* ── Validation: success / error ───────────────────────── */
+
+export const ValidationSuccess: Story = {
+  args: {
+    label: 'Email',
+    defaultValue: 'aster.ng@sitegiant.com',
+    validation: 'success',
+    helperText: 'Looks good.',
+  },
+};
+
+export const ValidationError: Story = {
+  args: {
+    label: 'Email',
+    defaultValue: 'not-an-email',
+    validation: 'error',
+    helperText: 'Please enter a valid email address.',
+  },
+};
+
+/* ── State: readonly-bold ──────────────────────────────── */
+
+export const ReadonlyBold: Story = {
+  args: {
+    label: 'Email',
+    defaultValue: 'aster.ng@sitegiant.com',
+    state: 'readonly-bold',
+    helperText: 'Bold value, no border, no padding.',
+  },
+};
+
+/* ── Word-count counter inside the field ───────────────── */
+
+export const WithWordCount: Story = {
+  args: {
+    label: 'Bio',
+    placeholder: 'Tell us about yourself...',
+    showCount: true,
+    maxLength: 50,
+  },
+};
+
+export const WithWordCountFilled: Story = {
+  args: {
+    label: 'Bio',
+    defaultValue: 'I sell electronics on multiple channels.',
+    showCount: true,
+    maxLength: 50,
+  },
+};
+
+/* ── State × Validation matrix (per Figma Form Value) ──── */
+
+const matrixStates = [
+  { label: 'default', state: 'default' as const },
+  { label: 'filled', state: 'default' as const, value: 'Value' },
+  { label: 'disabled', state: 'disabled' as const },
+  { label: 'readonly', state: 'readonly' as const, value: 'Value' },
+  { label: 'readonly-bold', state: 'readonly-bold' as const, value: 'Value' },
+];
+const matrixValidations: Array<'default' | 'error' | 'success'> = ['default', 'error', 'success'];
+
+export const FullMatrix: Story = {
+  args: { placeholder: 'Label' },
+  render: () => (
+    <div className="grid grid-cols-[140px_repeat(3,_minmax(0,_320px))] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-20)]">
+      <span />
+      {matrixValidations.map((v) => (
+        <span
+          key={v}
+          className="text-[length:var(--text-12)] font-[var(--font-weight-medium)] text-[color:var(--color-text-info)]"
+        >
+          validation = {v}
+        </span>
+      ))}
+      {matrixStates.map((row) => (
+        <Fragment key={row.label}>
+          <span className="text-[length:var(--text-12)] font-[var(--font-weight-medium)] text-[color:var(--color-text-info)] self-center">
+            state = {row.label}
+          </span>
+          {matrixValidations.map((v) => (
+            <Input
+              key={`${row.label}-${v}`}
+              state={row.state}
+              validation={v}
+              placeholder="Label"
+              defaultValue={row.value}
+              helperText="Hint text"
+            />
+          ))}
+        </Fragment>
+      ))}
+    </div>
+  ),
 };

@@ -1,2 +1,2 @@
 export { Input } from './Input';
-export type { InputProps, InputState, InputAddonButton } from './Input';
+export type { InputProps, InputState, InputValidation, InputAddonButton } from './Input';

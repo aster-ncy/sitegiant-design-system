@@ -2,7 +2,8 @@ import { useState as useLocalState } from 'react';
 import type { ReactNode, Ref } from 'react';
 import { Icon } from '../Icon/Icon';
 
-export type InputState = 'default' | 'focus' | 'danger' | 'disabled' | 'readonly';
+export type InputState = 'default' | 'focus' | 'danger' | 'disabled' | 'readonly' | 'readonly-bold';
+export type InputValidation = 'default' | 'error' | 'success';
 export type InputType = 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';
 
 export interface InputAddonButton {
@@ -28,8 +29,19 @@ export interface InputProps {
    * Force a visual state — used in Storybook stories only.
    * In production, focus is handled by CSS focus-within and
    * danger/disabled are driven by props.
+   *
+   * `'readonly-bold'` matches Figma's "Readonly Bold" state — no border,
+   * no horizontal padding, value text rendered in bold weight.
    */
   state?: InputState;
+  /**
+   * Validation status — controls the trailing external status icon.
+   * Figma: `'success'` shows a green check beside the field; `'error'`
+   * shows a red X. Mutually exclusive with `state='danger'` (which
+   * paints a red border instead). Both can be set together if the
+   * consumer wants both the red border AND the red X icon.
+   */
+  validation?: InputValidation;
   /** Helper text shown below the input */
   helperText?: string;
   /** Optional trailing icon inside the input */
@@ -40,6 +52,10 @@ export interface InputProps {
   disabled?: boolean;
   /** Makes the input readonly */
   readonly?: boolean;
+  /** Maximum allowed characters. Pairs with `showCount`. */
+  maxLength?: number;
+  /** Show a `0/maxLength` counter inside the field, right-aligned. */
+  showCount?: boolean;
   /** Change handler */
   onChange?: (value: string) => void;
   /** HTML id for the input element */
@@ -52,19 +68,21 @@ export interface InputProps {
 
 /* ── State → border class lookup ────────────────────── */
 const stateBorderClasses: Record<InputState, string> = {
-  default:  'border-[var(--form-input-default-border)]',
-  focus:    'border-[var(--form-input-focus-border)]',
-  danger:   'border-[var(--form-input-danger-border)]',
-  disabled: 'border-[var(--form-input-default-border)]',
-  readonly: 'border-transparent',
+  default:        'border-[var(--form-input-default-border)]',
+  focus:          'border-[var(--form-input-focus-border)]',
+  danger:         'border-[var(--form-input-danger-border)]',
+  disabled:       'border-[var(--form-input-default-border)]',
+  readonly:       'border-transparent',
+  'readonly-bold':'border-transparent',
 };
 
 const stateFillClasses: Record<InputState, string> = {
-  default:  'bg-[var(--form-input-default-fill)]',
-  focus:    'bg-[var(--form-input-default-fill)]',
-  danger:   'bg-[var(--form-input-default-fill)]',
-  disabled: 'bg-[var(--form-input-disabled-fill)]',
-  readonly: 'bg-transparent',
+  default:        'bg-[var(--form-input-default-fill)]',
+  focus:          'bg-[var(--form-input-default-fill)]',
+  danger:         'bg-[var(--form-input-default-fill)]',
+  disabled:       'bg-[var(--form-input-disabled-fill)]',
+  readonly:       'bg-transparent',
+  'readonly-bold':'bg-transparent',
 };
 
 /**
@@ -84,24 +102,40 @@ export const Input = ({
   value,
   defaultValue,
   state = 'default',
+  validation = 'default',
   helperText,
   trailingIcon,
   addonButton,
   disabled = false,
   readonly = false,
+  maxLength,
+  showCount = false,
   onChange,
   id,
   className = '',
   inputRef,
 }: InputProps) => {
   const [passwordVisible, setPasswordVisible] = useLocalState(false);
+  // Track value internally so the word-count counter updates on uncontrolled
+  // usage. Always reflects the latest value, controlled or not.
+  const isControlled = value !== undefined;
+  const [internalValue, setInternalValue] = useLocalState<string>(defaultValue ?? '');
+  const currentValue = isControlled ? value : internalValue;
+
   const isPassword = type === 'password';
   const resolvedType = isPassword && passwordVisible ? 'text' : type;
-  const resolvedState: InputState = disabled ? 'disabled' : readonly ? 'readonly' : state;
+  const resolvedState: InputState = disabled
+    ? 'disabled'
+    : readonly
+      ? 'readonly'
+      : state;
   const isDisabled = resolvedState === 'disabled';
-  const isReadonly = resolvedState === 'readonly';
+  const isReadonly = resolvedState === 'readonly' || resolvedState === 'readonly-bold';
+  const isReadonlyBold = resolvedState === 'readonly-bold';
   const isDanger   = resolvedState === 'danger';
   const hasForcedFocus = resolvedState === 'focus';
+  const isError = validation === 'error' && !isDisabled && !isReadonly;
+  const isSuccess = validation === 'success' && !isDisabled && !isReadonly;
 
   /* ── Wrapper border/fill based on resolved state ────── */
   const wrapperBorder = stateBorderClasses[resolvedState];
@@ -184,91 +218,132 @@ export const Input = ({
         </div>
       )}
 
-      {/* ── Input row with addon ──────────────────────── */}
-      <div className="flex flex-row items-stretch">
-        <div
-          className={[
-            'flex items-stretch flex-1',
-            isReadonly ? '' : 'border border-solid rounded-[var(--radius-4)]',
-            'overflow-hidden',
-            'transition-colors duration-150',
-            wrapperBorder,
-            wrapperFill,
-            focusWithin,
-            isDisabled ? 'cursor-not-allowed opacity-60' : '',
-            isReadonly ? 'cursor-default' : '',
-            // When addon button is present, square off the right radius on the inner input
-            addonButton ? 'rounded-r-none' : '',
-          ].filter(Boolean).join(' ')}
-        >
-          {/* Native input */}
-          <input
-            ref={inputRef}
-            id={id}
-            type={resolvedType}
-            placeholder={placeholder}
-            value={value}
-            defaultValue={defaultValue}
-            disabled={isDisabled}
-            readOnly={isReadonly}
-            aria-invalid={isDanger || undefined}
-            onChange={(e) => onChange?.(e.target.value)}
+      {/* ── Input row with addon + optional external status icon ─── */}
+      <div className="flex items-center gap-[var(--spacing-8)]">
+        <div className="flex flex-row items-stretch flex-1 min-w-0">
+          <div
             className={[
-              'flex-1 min-w-0',
-              'bg-transparent outline-none border-none',
-              isReadonly ? 'px-0 py-[var(--spacing-6)]' : 'px-[var(--spacing-12)] py-[var(--spacing-8)]',
-              'text-[length:var(--text-14)] leading-[var(--leading-17)]',
-              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-              inputTextClass,
-              'placeholder:text-[color:var(--form-input-placeholder-text)]',
-              isDisabled ? 'cursor-not-allowed' : '',
+              'flex items-stretch flex-1',
+              isReadonly ? '' : 'border border-solid rounded-[var(--radius-4)]',
+              'overflow-hidden',
+              'transition-colors duration-150',
+              wrapperBorder,
+              wrapperFill,
+              focusWithin,
+              isDisabled ? 'cursor-not-allowed opacity-60' : '',
               isReadonly ? 'cursor-default' : '',
+              // When addon button is present, square off the right radius on the inner input
+              addonButton ? 'rounded-r-none' : '',
             ].filter(Boolean).join(' ')}
-          />
+          >
+            {/* Native input */}
+            <input
+              ref={inputRef}
+              id={id}
+              type={resolvedType}
+              placeholder={placeholder}
+              value={value}
+              defaultValue={defaultValue}
+              disabled={isDisabled}
+              readOnly={isReadonly}
+              maxLength={maxLength}
+              aria-invalid={isDanger || isError || undefined}
+              onChange={(e) => {
+                if (!isControlled) setInternalValue(e.target.value);
+                onChange?.(e.target.value);
+              }}
+              className={[
+                'flex-1 min-w-0',
+                'bg-transparent outline-none border-none',
+                isReadonly ? 'px-0 py-[var(--spacing-6)]' : 'px-[var(--spacing-12)] py-[var(--spacing-8)]',
+                'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                'font-[family-name:var(--font-sans)]',
+                isReadonlyBold
+                  ? 'font-[var(--font-weight-bold)]'
+                  : 'font-[var(--font-weight-regular)]',
+                inputTextClass,
+                'placeholder:text-[color:var(--form-input-placeholder-text)]',
+                isDisabled ? 'cursor-not-allowed' : '',
+                isReadonly ? 'cursor-default' : '',
+              ].filter(Boolean).join(' ')}
+            />
 
-          {/* Password visibility toggle */}
-          {isPassword && !isDisabled && !isReadonly && (
+            {/* Word-count counter — sits inside the field, right-aligned, before any
+                trailing icon / password toggle. Hidden in readonly variants per Figma. */}
+            {showCount && !isReadonly && (
+              <span
+                aria-hidden="true"
+                className={[
+                  'flex items-center pr-[var(--spacing-12)] shrink-0',
+                  'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                  'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                  'text-[color:var(--form-input-placeholder-text)]',
+                ].join(' ')}
+              >
+                {(currentValue ?? '').length}
+                {maxLength != null ? `/${maxLength}` : ''}
+              </span>
+            )}
+
+            {/* Password visibility toggle */}
+            {isPassword && !isDisabled && !isReadonly && (
+              <button
+                type="button"
+                tabIndex={-1}
+                onClick={() => setPasswordVisible(prev => !prev)}
+                className={[
+                  'flex items-center pr-[var(--spacing-12)]',
+                  'cursor-pointer bg-transparent border-none outline-none',
+                ].join(' ')}
+                style={{ color: 'var(--form-icon)' }}
+                aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+              >
+                <Icon name={passwordVisible ? 'eye-open' : 'eye-close'} size={17} />
+              </button>
+            )}
+
+            {/* Trailing icon */}
+            {trailingIcon && !addonButton && !isPassword && (
+              <span
+                className="flex items-center pr-[var(--spacing-12)]"
+                style={{ color: iconColorToken }}
+              >
+                {trailingIcon}
+              </span>
+            )}
+          </div>
+
+          {/* ── Addon button (outside the border wrapper) ─── */}
+          {addonButton && (
             <button
               type="button"
-              tabIndex={-1}
-              onClick={() => setPasswordVisible(prev => !prev)}
-              className={[
-                'flex items-center pr-[var(--spacing-12)]',
-                'cursor-pointer bg-transparent border-none outline-none',
-              ].join(' ')}
-              style={{ color: 'var(--form-icon)' }}
-              aria-label={passwordVisible ? 'Hide password' : 'Show password'}
+              disabled={isDisabled}
+              onClick={!isDisabled ? addonButton.onClick : undefined}
+              className={[addonBase, addonStateClasses].join(' ')}
             >
-              <Icon name={passwordVisible ? 'eye-open' : 'eye-close'} size={17} />
+              {addonButton.icon && (
+                <span style={{ color: isDisabled ? 'var(--form-button-disabled-icon)' : 'var(--form-button-icon)' }}>
+                  {addonButton.icon}
+                </span>
+              )}
+              {addonButton.label && addonButton.label}
             </button>
-          )}
-
-          {/* Trailing icon */}
-          {trailingIcon && !addonButton && !isPassword && (
-            <span
-              className="flex items-center pr-[var(--spacing-12)]"
-              style={{ color: iconColorToken }}
-            >
-              {trailingIcon}
-            </span>
           )}
         </div>
 
-        {/* ── Addon button (outside the border wrapper) ─── */}
-        {addonButton && (
-          <button
-            type="button"
-            disabled={isDisabled}
-            onClick={!isDisabled ? addonButton.onClick : undefined}
-            className={[addonBase, addonStateClasses].join(' ')}
-          >
-            {addonButton.icon && (
-              <span style={{ color: isDisabled ? 'var(--form-button-disabled-icon)' : 'var(--form-button-icon)' }}>
-                {addonButton.icon}
-              </span>
-            )}
-            {addonButton.label && addonButton.label}
-          </button>
+        {/* External status icon — bare glyph, red close on error / green check on success.
+            Sits to the right of the entire input + addon group, per Figma. */}
+        {(isError || isSuccess) && (
+          <Icon
+            name={isError ? 'close' : 'check'}
+            size={21}
+            className={[
+              'shrink-0',
+              isError
+                ? 'text-[color:var(--color-sys-red-DEFAULT)]'
+                : 'text-[color:var(--color-sys-green-DEFAULT)]',
+            ].join(' ')}
+          />
         )}
       </div>
 
@@ -278,8 +353,8 @@ export const Input = ({
           className={[
             'text-[length:var(--text-12)] leading-[var(--leading-15)]',
             'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-            isDanger
-              ? 'text-[color:var(--badge-attention-fill)]'
+            isDanger || isError
+              ? 'text-[color:var(--color-sys-red-DEFAULT)]'
               : 'text-[color:var(--form-label-info-text)]',
           ].join(' ')}
         >

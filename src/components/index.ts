@@ -86,7 +86,7 @@ export type { FormLabelProps, FormLabelSize, FormLabelWeight } from './FormLabel
 
 // Input
 export { Input } from './Input';
-export type { InputProps, InputState, InputAddonButton } from './Input';
+export type { InputProps, InputState, InputValidation, InputAddonButton } from './Input';
 
 // LoginInput
 export { LoginInput } from './LoginInput';
