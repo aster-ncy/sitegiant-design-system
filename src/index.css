@@ -767,6 +767,26 @@
   --tab-small-lineheight: var(--leading-17);
   --tab-small-weight: var(--font-weight-regular);
 
+  /* Form-label typography — Figma: General/Form/form-label-* */
+  --general-form-label-size: var(--text-14);
+  --general-form-label-lineheight: var(--leading-21);
+  --general-form-label-small-size: var(--text-12);
+  --general-form-label-small-lineheight: var(--leading-17);
+  --general-form-label-large-size: var(--text-16);
+  --general-form-label-large-lineheight: var(--leading-22);
+  --general-form-value-size: var(--text-14);
+  --general-form-value-lineheight: var(--leading-21);
+
+  /* Caption typography — Figma: General/Caption */
+  --general-caption-size: var(--text-12);
+  --general-caption-lineheight: var(--leading-17);
+  --general-caption-small-size: var(--text-11);
+  --general-caption-small-lineheight: var(--leading-12);
+
+  /* Body typography — Figma: General/Body (body-large used by LoginInput) */
+  --general-body-large-size: var(--text-16);
+  --general-body-large-lineheight: var(--leading-22);
+
   /* ========================================
      SHADOWS — Figma: Shadow/*
      ======================================== */

@@ -80,9 +80,26 @@ export { iconNames } from './Icon';
 export { Logo } from './Logo';
 export type { LogoProps, LogoBackground, LogoMode } from './Logo';
 
+// FormLabel
+export { FormLabel } from './FormLabel';
+export type { FormLabelProps, FormLabelSize, FormLabelWeight } from './FormLabel';
+
 // Input
 export { Input } from './Input';
 export type { InputProps, InputState, InputAddonButton } from './Input';
+
+// LoginInput
+export { LoginInput } from './LoginInput';
+export type {
+  LoginInputProps,
+  LoginInputType,
+  LoginInputState,
+  LoginInputValidation,
+} from './LoginInput';
+
+// UnderlinedTextField
+export { UnderlinedTextField } from './UnderlinedTextField';
+export type { UnderlinedTextFieldProps } from './UnderlinedTextField';
 
 // ModuleCard
 export { ModuleCard } from './ModuleCard';
