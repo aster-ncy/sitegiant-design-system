@@ -898,3 +898,10 @@ body {
   background-color: var(--button-primary-clicked-fill);
   border-color: var(--button-primary-clicked-fill);
 }
+
+/* Today indicator: blue 1px outline ring on the cell. Antd ships with a
+   ::before border on .ant-picker-cell-today; force its color to the
+   SiteGiant primary blue so it reads as a clear indicator. */
+.ant-picker-cell-today .ant-picker-cell-inner::before {
+  border-color: var(--color-sys-blue-DEFAULT) !important;
+}
