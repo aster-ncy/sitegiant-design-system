@@ -32,7 +32,7 @@ export interface DateRangePickerProps {
   validation?: DateRangePickerValidation;
   /** Helper text below the field. */
   helperText?: string;
-  /** Display format. Default 'DD MMM YYYY'. */
+  /** Display format. Default 'DD-MM-YYYY' (matches live SiteGiant ERP). */
   format?: string;
   /** Show time picker on both ends. */
   showTime?: boolean;
@@ -87,7 +87,7 @@ export const DateRangePicker = ({
   state = 'default',
   validation = 'default',
   helperText,
-  format = 'DD MMM YYYY',
+  format,
   showTime = false,
   presets = true,
   onChange,
@@ -100,7 +100,8 @@ export const DateRangePicker = ({
   const isError = validation === 'error' && !isDisabled && !isReadonly;
   const isSuccess = validation === 'success' && !isDisabled && !isReadonly;
 
-  const displayFormat = format ?? (showTime ? 'DD MMM YYYY HH:mm' : 'DD MMM YYYY');
+  // Display format matches live SiteGiant ERP: DD-MM-YYYY (+ HH:mm:ss when showTime).
+  const displayFormat = format ?? (showTime ? 'DD-MM-YYYY HH:mm:ss' : 'DD-MM-YYYY');
   const isoFormat = showTime ? 'YYYY-MM-DDTHH:mm:ss' : 'YYYY-MM-DD';
 
   const dayjsValue = useMemo<[Dayjs | null, Dayjs | null] | undefined>(() => {

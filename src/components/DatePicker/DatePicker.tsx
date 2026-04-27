@@ -19,7 +19,7 @@ export interface DatePickerProps {
   validation?: DatePickerValidation;
   /** Helper text shown below the field. */
   helperText?: string;
-  /** Display format. Default 'DD MMM YYYY' (matches Figma "12 May 2025"). */
+  /** Display format. Default 'DD-MM-YYYY' (matches live SiteGiant ERP). */
   format?: string;
   /** Show time picker columns and an Ok confirmation button. */
   showTime?: boolean;
@@ -68,8 +68,8 @@ export const DatePicker = ({
   const isError = validation === 'error' && !isDisabled && !isReadonly;
   const isSuccess = validation === 'success' && !isDisabled && !isReadonly;
 
-  // Default display format: 'DD MMM YYYY' for date-only, '+ HH:mm' if showTime
-  const displayFormat = format ?? (showTime ? 'DD MMM YYYY HH:mm' : 'DD MMM YYYY');
+  // Display format matches live SiteGiant ERP: DD-MM-YYYY (+ HH:mm:ss when showTime).
+  const displayFormat = format ?? (showTime ? 'DD-MM-YYYY HH:mm:ss' : 'DD-MM-YYYY');
   const isoFormat = showTime ? 'YYYY-MM-DDTHH:mm:ss' : 'YYYY-MM-DD';
 
   // Convert ISO string ↔ Dayjs for antd
