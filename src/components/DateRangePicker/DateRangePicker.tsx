@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { DatePicker as AntDatePicker } from 'antd';
 import dayjs, { type Dayjs } from 'dayjs';
 import { Icon } from '../Icon';
+import { Chip } from '../Chip';
 
 const { RangePicker } = AntDatePicker;
 
@@ -117,8 +118,11 @@ export const DateRangePicker = ({
   const antdPresets = useMemo(() => {
     if (presets === false) return undefined;
     const list = Array.isArray(presets) ? presets : defaultPresets;
+    // Wrap each label in a Chip so antd's preset <li> renders the
+    // SiteGiant pill styling. Antd handles the click on the parent
+    // <li>, so the Chip itself takes no onClick (purely visual here).
     return list.map((p) => ({
-      label: p.label,
+      label: <Chip>{p.label}</Chip>,
       value: [isoToDayjs(p.value.start), isoToDayjs(p.value.end)] as [Dayjs, Dayjs],
     }));
   }, [presets]);

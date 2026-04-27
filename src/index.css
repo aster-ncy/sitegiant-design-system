@@ -906,13 +906,18 @@ body {
   border-color: var(--color-sys-blue-DEFAULT) !important;
 }
 
-/* Range-picker preset chips.
-   Actual rc-picker DOM (antd v6 wraps it):
+/* Range-picker preset row layout.
+   The <Chip> component handles all visual styling for each preset
+   (see src/components/Chip/Chip.tsx). This CSS block only handles
+   the LAYOUT — flipping antd's default left-rail to a bottom row,
+   lifting clipping, and stripping antd's default <li> chrome so it
+   doesn't double up with the Chip's own border.
+
+   Actual DOM:
      <div class="ant-picker-panel-layout">       row-flex by default
        <div class="ant-picker-presets">          left rail
          <ul>
-           <li>Today</li>                        plain text, no .ant-tag
-           <li>Yesterday</li>
+           <li><Chip>Today</Chip></li>           Chip handles styling
            ...
          </ul>
        </div>
@@ -920,21 +925,29 @@ body {
          <PopupPanel/> <Footer/>
        </div>
      </div>
-   Live SiteGiant ERP shows presets as a horizontal row BELOW the
-   calendar. Flip .ant-picker-panel-layout to column, push presets to
-   the end with order, re-flow the <ul> horizontally, and lift any
-   height/overflow constraints on the popup container so the row
-   isn't clipped. Style each <li> directly as a SiteGiant basic-button
-   pill (no .ant-tag wrapper exists). */
-
-.ant-picker-panel-container,
-.ant-picker-panel-container > .ant-picker-panel-layout {
+*/
+/* Antd sets a JS-measured fixed height on .ant-picker-panel-container
+   based on the calendar alone — clamping the chip row out of view.
+   Force the container to grow with its column-flex content. */
+.ant-picker-dropdown .ant-picker-panel-container {
+  height: auto !important;
   max-height: none !important;
+  min-height: 0 !important;
   overflow: visible !important;
 }
-.ant-picker-panel-container .ant-picker-panel-layout {
+.ant-picker-dropdown .ant-picker-panel-container > .ant-picker-panel-layout {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
   display: flex !important;
   flex-direction: column !important;
+  overflow: visible !important;
+}
+/* Also let the inner panel (calendar) sit at its natural height
+   instead of stretching to fill — otherwise alignItems:stretch on
+   the parent flex pushes it tall and the presets row gets cropped. */
+.ant-picker-dropdown .ant-picker-panel {
+  height: auto !important;
 }
 .ant-picker-presets {
   width: auto !important;
@@ -943,8 +956,8 @@ body {
   border-right: none !important;
   border-top: 1px solid var(--form-input-default-border);
   order: 99;
-  overflow: visible !important;
   max-height: none !important;
+  background-color: var(--form-input-default-fill);
 }
 .ant-picker-presets ul {
   display: flex !important;
@@ -953,32 +966,22 @@ body {
   padding: var(--spacing-12) !important;
   margin: 0 !important;
   list-style: none !important;
+  /* Antd ships `height: 0; flex: auto; overflow: auto` on this <ul>
+     for the side-rail layout. In our column-flex layout that collapses
+     the chips out of view — restore natural height + visible. */
+  height: auto !important;
   max-height: none !important;
+  flex: 0 0 auto !important;
   overflow: visible !important;
 }
+/* Strip antd's default <li> chrome so the inner <Chip> stands alone. */
 .ant-picker-presets ul li {
   display: inline-flex !important;
-  align-items: center;
-  padding: var(--spacing-2) var(--spacing-8) !important;
+  padding: 0 !important;
   margin: 0 !important;
-  background-color: var(--button-basic-default-fill) !important;
-  color: var(--button-basic-text) !important;
-  border: 1px solid var(--button-basic-default-border) !important;
-  border-radius: var(--radius-120) !important;
-  font-family: var(--general-font-family);
-  font-size: var(--text-12);
-  line-height: var(--leading-15);
-  font-weight: var(--font-weight-regular);
-  cursor: pointer;
-  transition: background-color 0.15s ease;
+  background: none !important;
+  border: none !important;
   list-style: none !important;
-}
-.ant-picker-presets ul li:hover {
-  background-color: var(--button-basic-hover-fill) !important;
-  color: var(--button-basic-text) !important;
-}
-.ant-picker-presets ul li:active {
-  background-color: var(--button-basic-clicked-fill) !important;
 }
 
 /* Weekday header row (Su Mo Tu We Th Fr Sa) gets a subtle inset

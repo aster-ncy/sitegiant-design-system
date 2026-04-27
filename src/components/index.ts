@@ -58,6 +58,10 @@ export type { CardNumberInputProps } from './CardNumberInput';
 export { Checkbox } from './Checkbox';
 export type { CheckboxProps } from './Checkbox';
 
+// Chip
+export { Chip } from './Chip';
+export type { ChipProps } from './Chip';
+
 // DatePicker
 export { DatePicker } from './DatePicker';
 export type {
