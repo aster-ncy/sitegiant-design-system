@@ -906,14 +906,36 @@ body {
   border-color: var(--color-sys-blue-DEFAULT) !important;
 }
 
-/* Range-picker preset chips: antd renders presets as .ant-picker-preset >
-   .ant-tag. Restyle them as SiteGiant basic-button pills (blue outline,
+/* Range-picker preset chips: antd renders presets as a left-side rail
+   inside a row-flex .ant-picker-panel-layout. The live SiteGiant ERP
+   shows them as a horizontal bar BELOW the calendar, so flip the
+   layout to column and let the preset list flow horizontally. */
+.ant-picker-panel-layout {
+  flex-direction: column !important;
+}
+.ant-picker-presets {
+  width: auto !important;
+  max-width: none !important;
+  border-right: none !important;
+  border-top: 1px solid var(--form-input-default-border);
+}
+.ant-picker-presets ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-8);
+  padding: var(--spacing-12);
+  margin: 0;
+  list-style: none;
+  max-height: none;
+}
+
+/* Restyle each chip as a SiteGiant basic-button pill (blue outline,
    blue text, light-blue hover). */
 .ant-picker-presets ul li {
   display: inline-flex;
   align-items: center;
   padding: var(--spacing-4) var(--spacing-12);
-  margin: 0 var(--spacing-4) var(--spacing-4) 0;
+  margin: 0;
   background-color: var(--button-basic-default-fill);
   color: var(--button-basic-text);
   border: 1px solid var(--button-basic-default-border);
