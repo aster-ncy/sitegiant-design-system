@@ -214,6 +214,19 @@ export type { StatusCardProps, StatusCardStatus, StatusCardSize } from './Status
 export { Tag } from './Tag';
 export type { TagProps } from './Tag';
 
+// TagSelect
+export { TagSelect } from './TagSelect';
+export type {
+  TagSelectProps,
+  TagSelectOption,
+  TagSelectState,
+  TagSelectValidation,
+} from './TagSelect';
+
+// MultiTagSelect
+export { MultiTagSelect } from './MultiTagSelect';
+export type { MultiTagSelectProps } from './MultiTagSelect';
+
 // Toggle
 export { Toggle } from './Toggle';
 export type { ToggleProps, ToggleVariant } from './Toggle';
