@@ -179,7 +179,7 @@ export const DateRangePicker = ({
           defaultValue={dayjsDefault}
           placeholder={[startPlaceholder, endPlaceholder]}
           format={displayFormat}
-          showTime={showTime}
+          showTime={showTime ? { format: 'HH:mm:ss' } : false}
           disabled={isDisabled}
           status={isError ? 'error' : undefined}
           allowClear

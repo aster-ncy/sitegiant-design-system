@@ -138,7 +138,7 @@ export const DatePicker = ({
           defaultValue={dayjsDefault}
           placeholder={placeholder ?? 'Select date'}
           format={displayFormat}
-          showTime={showTime}
+          showTime={showTime ? { format: 'HH:mm:ss' } : false}
           disabled={isDisabled}
           status={isError ? 'error' : undefined}
           allowClear

@@ -872,3 +872,29 @@ body {
 .sidebar-scroll-premium::-webkit-scrollbar-thumb:hover {
   background-color: var(--color-overlay-w60);
 }
+
+/* ========================================
+   Antd date picker overrides — match live SiteGiant ERP visuals.
+   AntdThemeProvider handles token-level theming; these target selectors
+   antd doesn't expose as theme tokens (Ok button, today indicator,
+   range presets).
+   ======================================== */
+
+/* Time popover Ok button: green pill matching SiteGiant primary button. */
+.ant-picker-ranges .ant-picker-ok .ant-btn-primary {
+  background-color: var(--button-primary-default-fill);
+  border-color: var(--button-primary-default-fill);
+  color: var(--button-primary-text);
+  border-radius: var(--radius-120);
+  font-family: var(--general-font-family);
+  font-weight: var(--font-weight-regular);
+}
+.ant-picker-ranges .ant-picker-ok .ant-btn-primary:hover {
+  background-color: var(--button-primary-hover-fill);
+  border-color: var(--button-primary-hover-fill);
+  color: var(--button-primary-text);
+}
+.ant-picker-ranges .ant-picker-ok .ant-btn-primary:active {
+  background-color: var(--button-primary-clicked-fill);
+  border-color: var(--button-primary-clicked-fill);
+}
