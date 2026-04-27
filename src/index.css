@@ -906,40 +906,32 @@ body {
   border-color: var(--color-sys-blue-DEFAULT) !important;
 }
 
-/* Range-picker preset chips: antd renders presets as a left-side rail
-   inside a row-flex .ant-picker-panel-layout. The live SiteGiant ERP
-   shows them as a horizontal bar BELOW the calendar, so flip the
-   layout to column and let the preset list flow horizontally. */
-.ant-picker-panel-layout {
-  flex-direction: column !important;
-}
-.ant-picker-presets {
-  width: auto !important;
-  max-width: none !important;
-  border-right: none !important;
-  border-top: 1px solid var(--form-input-default-border);
-}
-.ant-picker-presets ul {
-  display: flex;
+/* Range-picker preset chips. Antd v6 renders the preset list as a <ul
+   class="ant-picker-ranges"> in the footer, each preset as
+   <li class="ant-picker-preset"> wrapping <span class="ant-tag ant-tag-blue">.
+   Restyle the chips as SiteGiant basic-button pills (blue outline,
+   blue text, light-blue hover) and ensure the row wraps cleanly. */
+.ant-picker-ranges {
+  display: flex !important;
   flex-wrap: wrap;
   gap: var(--spacing-8);
-  padding: var(--spacing-12);
-  margin: 0;
+  padding: var(--spacing-8) var(--spacing-12) !important;
+  margin: 0 !important;
   list-style: none;
-  max-height: none;
 }
-
-/* Restyle each chip as a SiteGiant basic-button pill (blue outline,
-   blue text, light-blue hover). */
-.ant-picker-presets ul li {
+.ant-picker-preset {
+  margin: 0 !important;
+}
+.ant-picker-preset > .ant-tag,
+.ant-picker-preset > .ant-tag-blue {
   display: inline-flex;
   align-items: center;
-  padding: var(--spacing-4) var(--spacing-12);
-  margin: 0;
-  background-color: var(--button-basic-default-fill);
-  color: var(--button-basic-text);
-  border: 1px solid var(--button-basic-default-border);
-  border-radius: var(--radius-120);
+  padding: var(--spacing-4) var(--spacing-12) !important;
+  margin: 0 !important;
+  background-color: var(--button-basic-default-fill) !important;
+  color: var(--button-basic-text) !important;
+  border: 1px solid var(--button-basic-default-border) !important;
+  border-radius: var(--radius-120) !important;
   font-family: var(--general-font-family);
   font-size: var(--text-14);
   line-height: var(--leading-17);
@@ -947,10 +939,12 @@ body {
   cursor: pointer;
   transition: background-color 0.15s ease;
 }
-.ant-picker-presets ul li:hover {
-  background-color: var(--button-basic-hover-fill);
-  color: var(--button-basic-text);
+.ant-picker-preset > .ant-tag:hover,
+.ant-picker-preset > .ant-tag-blue:hover {
+  background-color: var(--button-basic-hover-fill) !important;
+  color: var(--button-basic-text) !important;
 }
-.ant-picker-presets ul li:active {
-  background-color: var(--button-basic-clicked-fill);
+.ant-picker-preset > .ant-tag:active,
+.ant-picker-preset > .ant-tag-blue:active {
+  background-color: var(--button-basic-clicked-fill) !important;
 }
