@@ -907,28 +907,44 @@ body {
 }
 
 /* Range-picker preset chips.
-   Antd v6 renders presets as a left-side rail: <div
-   class="ant-picker-presets"><ul><li class="ant-picker-preset">
-   <span class="ant-tag ant-tag-blue">Today</span></li>...</ul></div>.
-   The popup wraps this in a row-flex container alongside the calendar
-   panels. The live SiteGiant ERP shows the chips as a horizontal row
-   at the BOTTOM of the calendar, so flip the popup container to
-   column flex, reset the rail's fixed width, and re-flow the <ul>
-   horizontally. Then restyle each chip as a SiteGiant basic-button
-   pill. */
+   Actual rc-picker DOM (antd v6 wraps it):
+     <div class="ant-picker-panel-layout">       row-flex by default
+       <div class="ant-picker-presets">          left rail
+         <ul>
+           <li>Today</li>                        plain text, no .ant-tag
+           <li>Yesterday</li>
+           ...
+         </ul>
+       </div>
+       <div>                                     calendar + footer
+         <PopupPanel/> <Footer/>
+       </div>
+     </div>
+   Live SiteGiant ERP shows presets as a horizontal row BELOW the
+   calendar. Flip .ant-picker-panel-layout to column, push presets to
+   the end with order, re-flow the <ul> horizontally, and lift any
+   height/overflow constraints on the popup container so the row
+   isn't clipped. Style each <li> directly as a SiteGiant basic-button
+   pill (no .ant-tag wrapper exists). */
 
-/* The popup root in antd v6: .ant-picker-panel-container holds
-   .ant-picker-panel-layout which is row-flex (presets + calendar). */
+.ant-picker-panel-container,
+.ant-picker-panel-container > .ant-picker-panel-layout {
+  max-height: none !important;
+  overflow: visible !important;
+}
 .ant-picker-panel-container .ant-picker-panel-layout {
   display: flex !important;
   flex-direction: column !important;
 }
 .ant-picker-presets {
   width: auto !important;
+  min-width: 0 !important;
   max-width: none !important;
   border-right: none !important;
   border-top: 1px solid var(--form-input-default-border);
   order: 99;
+  overflow: visible !important;
+  max-height: none !important;
 }
 .ant-picker-presets ul {
   display: flex !important;
@@ -936,21 +952,12 @@ body {
   gap: var(--spacing-8);
   padding: var(--spacing-12) !important;
   margin: 0 !important;
-  list-style: none;
+  list-style: none !important;
   max-height: none !important;
   overflow: visible !important;
 }
-.ant-picker-preset,
 .ant-picker-presets ul li {
-  margin: 0 !important;
-  padding: 0 !important;
-  list-style: none;
-}
-.ant-picker-preset > .ant-tag,
-.ant-picker-preset > .ant-tag-blue,
-.ant-picker-presets ul li > .ant-tag,
-.ant-picker-presets ul li > .ant-tag-blue {
-  display: inline-flex;
+  display: inline-flex !important;
   align-items: center;
   padding: var(--spacing-4) var(--spacing-12) !important;
   margin: 0 !important;
@@ -964,17 +971,12 @@ body {
   font-weight: var(--font-weight-regular);
   cursor: pointer;
   transition: background-color 0.15s ease;
+  list-style: none !important;
 }
-.ant-picker-preset > .ant-tag:hover,
-.ant-picker-preset > .ant-tag-blue:hover,
-.ant-picker-presets ul li > .ant-tag:hover,
-.ant-picker-presets ul li > .ant-tag-blue:hover {
+.ant-picker-presets ul li:hover {
   background-color: var(--button-basic-hover-fill) !important;
   color: var(--button-basic-text) !important;
 }
-.ant-picker-preset > .ant-tag:active,
-.ant-picker-preset > .ant-tag-blue:active,
-.ant-picker-presets ul li > .ant-tag:active,
-.ant-picker-presets ul li > .ant-tag-blue:active {
+.ant-picker-presets ul li:active {
   background-color: var(--button-basic-clicked-fill) !important;
 }
