@@ -9,6 +9,8 @@ export interface DropdownMenuCustomInputProps {
   onChange?: (value: string) => void;
   addLabel?: string;
   onAdd?: (value: string) => void;
+  /** Hide the trailing "+ Add" button (search-only mode). Default false. */
+  hideAdd?: boolean;
   className?: string;
 }
 
@@ -18,6 +20,7 @@ export const DropdownMenuCustomInput = ({
   onChange,
   addLabel = 'Add Item',
   onAdd,
+  hideAdd = false,
   className = '',
 }: DropdownMenuCustomInputProps) => {
   const [internalValue, setInternalValue] = useState('');
@@ -67,14 +70,16 @@ export const DropdownMenuCustomInput = ({
           ].join(' ')}
         />
       </div>
-      <TextLink
-        className="shrink-0"
-        variant="basic"
-        label={addLabel}
-        iconPosition="left"
-        icon={<Icon name="plus" size={17} />}
-        onClick={handleAdd}
-      />
+      {!hideAdd && (
+        <TextLink
+          className="shrink-0"
+          variant="basic"
+          label={addLabel}
+          iconPosition="left"
+          icon={<Icon name="plus" size={17} />}
+          onClick={handleAdd}
+        />
+      )}
     </div>
   );
 };
