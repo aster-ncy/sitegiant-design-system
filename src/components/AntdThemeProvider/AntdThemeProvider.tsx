@@ -48,8 +48,9 @@ export const AntdThemeProvider = ({ children }: AntdThemeProviderProps) => {
         },
         components: {
           DatePicker: {
-            // The popup calendar
+            // Calendar popup cell colors. Range-band uses --color-sys-blue-lighter.
             cellHoverBg: '#F3FFF3',
+            cellBgInRange: '#D0F4FF',
             cellActiveWithRangeBg: '#D0F4FF',
             cellRangeBorderColor: '#007CE0',
             cellHoverWithRangeBg: '#D0F4FF',

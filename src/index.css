@@ -905,3 +905,30 @@ body {
 .ant-picker-cell-today .ant-picker-cell-inner::before {
   border-color: var(--color-sys-blue-DEFAULT) !important;
 }
+
+/* Range-picker preset chips: antd renders presets as .ant-picker-preset >
+   .ant-tag. Restyle them as SiteGiant basic-button pills (blue outline,
+   blue text, light-blue hover). */
+.ant-picker-presets ul li {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-4) var(--spacing-12);
+  margin: 0 var(--spacing-4) var(--spacing-4) 0;
+  background-color: var(--button-basic-default-fill);
+  color: var(--button-basic-text);
+  border: 1px solid var(--button-basic-default-border);
+  border-radius: var(--radius-120);
+  font-family: var(--general-font-family);
+  font-size: var(--text-14);
+  line-height: var(--leading-17);
+  font-weight: var(--font-weight-regular);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+.ant-picker-presets ul li:hover {
+  background-color: var(--button-basic-hover-fill);
+  color: var(--button-basic-text);
+}
+.ant-picker-presets ul li:active {
+  background-color: var(--button-basic-clicked-fill);
+}
