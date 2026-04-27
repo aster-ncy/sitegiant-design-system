@@ -183,6 +183,7 @@ export const DateRangePicker = ({
           disabled={isDisabled}
           status={isError ? 'error' : undefined}
           allowClear
+          placement="topLeft"
           presets={antdPresets}
           separator={
             <Icon

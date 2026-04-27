@@ -142,6 +142,7 @@ export const DatePicker = ({
           disabled={isDisabled}
           status={isError ? 'error' : undefined}
           allowClear
+          placement="topLeft"
           className="w-full"
           onChange={(d) => {
             const next = d && (d as Dayjs).isValid?.() ? (d as Dayjs).format(isoFormat) : '';
