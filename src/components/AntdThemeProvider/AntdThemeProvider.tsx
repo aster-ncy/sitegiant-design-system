@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { ConfigProvider, theme as antdTheme } from 'antd';
 
 export interface AntdThemeProviderProps {
@@ -10,55 +10,53 @@ export interface AntdThemeProviderProps {
  * design tokens so antd-driven components (DatePicker, DateRangePicker,
  * DateTimePicker) match the rest of the SiteGiant UI.
  *
- * Token mapping rationale:
- * - colorPrimary = --color-sys-blue-DEFAULT (#007CE0) — antd uses this for
- *   the focused-field ring + selected-day chip on the calendar (matches the
- *   AntD screenshots Aster shared).
- * - colorBorder = --form-input-default-border (#D4D4D4)
- * - colorBgContainer = --form-input-default-fill (white)
- * - borderRadius = --radius-4 (4px)
- * - fontFamily = --general-font-family (Roboto)
+ * Antd's ConfigProvider takes literal hex/px values, not CSS var()
+ * references — it inlines them into generated styles. To stay token-
+ * driven, we resolve CSS variables from :root at render time. The hex
+ * fallback covers SSR (window undefined) and the brief first-paint
+ * window before stylesheets attach.
  *
- * Wrap any tree that needs themed antd components in this provider. The
- * design-system Storybook applies it globally via .storybook/preview.tsx;
- * consumer apps using <DatePicker> etc. should wrap their root with it.
+ * If a token's value changes in src/index.css, antd picks it up on the
+ * next mount of this provider. No manual hex sync needed.
  */
+
+const cssVar = (name: string, fallback: string): string => {
+  if (typeof window === 'undefined') return fallback;
+  const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return v || fallback;
+};
+
 export const AntdThemeProvider = ({ children }: AntdThemeProviderProps) => {
-  return (
-    <ConfigProvider
-      theme={{
-        algorithm: antdTheme.defaultAlgorithm,
-        token: {
-          colorPrimary: '#007CE0',
-          colorInfo: '#007CE0',
-          colorBorder: '#D4D4D4',
-          colorBgContainer: '#FFFFFF',
-          colorText: '#0C2028',
-          colorTextPlaceholder: '#90999D',
-          colorTextDisabled: '#90999D',
-          colorError: '#E0241A',
-          colorSuccess: '#5ACC5A',
-          colorWarning: '#FF7F00',
-          borderRadius: 4,
-          borderRadiusSM: 4,
-          borderRadiusLG: 4,
-          fontFamily: 'Roboto, sans-serif',
-          fontSize: 14,
-          controlHeight: 33,
-        },
-        components: {
-          DatePicker: {
-            // Calendar popup cell colors. Range-band uses --color-sys-blue-lighter.
-            cellHoverBg: '#F3FFF3',
-            cellBgInRange: '#D0F4FF',
-            cellActiveWithRangeBg: '#D0F4FF',
-            cellRangeBorderColor: '#007CE0',
-            cellHoverWithRangeBg: '#D0F4FF',
-          },
-        },
-      }}
-    >
-      {children}
-    </ConfigProvider>
-  );
+  const themeConfig = useMemo(() => ({
+    algorithm: antdTheme.defaultAlgorithm,
+    token: {
+      colorPrimary: cssVar('--color-sys-blue-DEFAULT', '#007CE0'),
+      colorInfo: cssVar('--color-sys-blue-DEFAULT', '#007CE0'),
+      colorBorder: cssVar('--form-input-default-border', '#D4D4D4'),
+      colorBgContainer: cssVar('--form-input-default-fill', '#FFFFFF'),
+      colorText: cssVar('--color-surface-default', '#0C2028'),
+      colorTextPlaceholder: cssVar('--form-input-placeholder-text', '#90999D'),
+      colorTextDisabled: cssVar('--form-input-placeholder-text', '#90999D'),
+      colorError: cssVar('--color-sys-red-DEFAULT', '#E0241A'),
+      colorSuccess: cssVar('--color-sys-green-DEFAULT', '#5ACC5A'),
+      colorWarning: cssVar('--color-sys-orange-DEFAULT', '#FF7F00'),
+      borderRadius: 4,
+      borderRadiusSM: 4,
+      borderRadiusLG: 4,
+      fontFamily: 'Roboto, sans-serif',
+      fontSize: 14,
+      controlHeight: 33,
+    },
+    components: {
+      DatePicker: {
+        cellHoverBg: cssVar('--color-sys-green-lighter', '#F3FFF3'),
+        cellBgInRange: cssVar('--color-sys-blue-lighter', '#D0F4FF'),
+        cellActiveWithRangeBg: cssVar('--color-sys-blue-lighter', '#D0F4FF'),
+        cellRangeBorderColor: cssVar('--color-sys-blue-DEFAULT', '#007CE0'),
+        cellHoverWithRangeBg: cssVar('--color-sys-blue-lighter', '#D0F4FF'),
+      },
+    },
+  }), []);
+
+  return <ConfigProvider theme={themeConfig}>{children}</ConfigProvider>;
 };
