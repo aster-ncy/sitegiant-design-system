@@ -11,6 +11,10 @@ export interface DropdownMenuCustomInputProps {
   onAdd?: (value: string) => void;
   /** Hide the trailing "+ Add" button (search-only mode). Default false. */
   hideAdd?: boolean;
+  /** Render the inner input flush (no border / radius / fill). Use when this
+   *  component is embedded inside a larger bordered container (e.g.
+   *  TagSelect popover). Default false (keeps the legacy boxed look). */
+  flush?: boolean;
   className?: string;
 }
 
@@ -21,6 +25,7 @@ export const DropdownMenuCustomInput = ({
   addLabel = 'Add Item',
   onAdd,
   hideAdd = false,
+  flush = false,
   className = '',
 }: DropdownMenuCustomInputProps) => {
   const [internalValue, setInternalValue] = useState('');
@@ -50,11 +55,11 @@ export const DropdownMenuCustomInput = ({
       <div
         className={[
           'flex-1 min-w-0 flex items-center',
-          'px-[var(--spacing-8)] py-[var(--spacing-4)]',
-          'bg-[var(--form-input-default-fill)]',
-          'border border-[var(--form-input-default-border)]',
-          'rounded-[var(--radius-4)]',
-        ].join(' ')}
+          flush ? 'px-0 py-0' : 'px-[var(--spacing-8)] py-[var(--spacing-4)]',
+          flush ? '' : 'bg-[var(--form-input-default-fill)]',
+          flush ? '' : 'border border-[var(--form-input-default-border)]',
+          flush ? '' : 'rounded-[var(--radius-4)]',
+        ].filter(Boolean).join(' ')}
       >
         <input
           type="text"

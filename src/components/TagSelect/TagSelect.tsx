@@ -213,21 +213,28 @@ export const TagSelect = ({
                 'absolute z-50 left-0 right-0 mt-[var(--spacing-4)]',
                 'bg-[var(--form-input-default-fill)]',
                 'border border-solid border-[var(--form-input-default-border)]',
-                'rounded-[var(--radius-4)]',
+                'rounded-[var(--radius-2)]',
                 'shadow-[0_4px_12px_rgba(0,0,0,0.08)]',
                 'overflow-hidden',
               ].join(' ')}
             >
-              <DropdownMenuCustomInput
-                placeholder={searchPlaceholder}
-                value={menu.query}
-                onChange={menu.setQuery}
-                onAdd={handleCreate}
-                addLabel="Add"
-                hideAdd={!creatable || queryMatchesExisting || !menu.query.trim()}
-              />
+              <div className="border-b border-solid border-[var(--color-divider-light)]">
+                <DropdownMenuCustomInput
+                  placeholder={searchPlaceholder}
+                  value={menu.query}
+                  onChange={menu.setQuery}
+                  onAdd={handleCreate}
+                  addLabel="Add"
+                  hideAdd={!creatable || queryMatchesExisting || !menu.query.trim()}
+                  flush
+                />
+              </div>
               <div className="max-h-[280px] overflow-y-auto">
-                <DropdownMenu aria-label="Options" onEscape={menu.close}>
+                <DropdownMenu
+                  aria-label="Options"
+                  onEscape={menu.close}
+                  className="!border-0 !rounded-none !shadow-none !bg-transparent !py-0"
+                >
                   {menu.filteredOptions.length === 0 && !creatable ? (
                     <div
                       className={[
