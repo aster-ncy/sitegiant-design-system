@@ -959,15 +959,15 @@ body {
 .ant-picker-presets ul li {
   display: inline-flex !important;
   align-items: center;
-  padding: var(--spacing-4) var(--spacing-12) !important;
+  padding: var(--spacing-2) var(--spacing-8) !important;
   margin: 0 !important;
   background-color: var(--button-basic-default-fill) !important;
   color: var(--button-basic-text) !important;
   border: 1px solid var(--button-basic-default-border) !important;
   border-radius: var(--radius-120) !important;
   font-family: var(--general-font-family);
-  font-size: var(--text-14);
-  line-height: var(--leading-17);
+  font-size: var(--text-12);
+  line-height: var(--leading-15);
   font-weight: var(--font-weight-regular);
   cursor: pointer;
   transition: background-color 0.15s ease;
@@ -979,4 +979,11 @@ body {
 }
 .ant-picker-presets ul li:active {
   background-color: var(--button-basic-clicked-fill) !important;
+}
+
+/* Weekday header row (Su Mo Tu We Th Fr Sa) gets a subtle inset
+   background to match the live SiteGiant ERP banded calendar look. */
+.ant-picker-content thead th {
+  background-color: var(--color-surface-card-inset) !important;
+  font-weight: var(--font-weight-regular);
 }
