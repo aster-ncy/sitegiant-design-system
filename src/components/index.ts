@@ -107,7 +107,8 @@ export type { TextLinkProps, TextLinkVariant, TextLinkIconPosition } from './Tex
 
 // Icon
 export { Icon } from './Icon';
-export type { IconProps, IconSize, IconName } from './Icon';
+export type { IconProps, IconSize } from './Icon';
+export type { IconName } from './Icon';
 export { iconNames } from './Icon';
 
 // Logo

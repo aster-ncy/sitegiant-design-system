@@ -153,7 +153,7 @@ export const SearchBox = ({
   ].filter(Boolean).join(' ');
 
   /* ── Category dropdown segment ─────────────────────── */
-  const CategorySegment = ({ dividerRight }: { dividerRight?: boolean }) => (
+  const renderCategorySegment = ({ dividerRight }: { dividerRight?: boolean }) => (
     <button
       type="button"
       disabled={isDisabled}
@@ -181,7 +181,7 @@ export const SearchBox = ({
   );
 
   /* ── Search input segment ──────────────────────────── */
-  const SearchInputSegment = ({ showIcon }: { showIcon?: boolean }) => (
+  const renderSearchInputSegment = ({ showIcon }: { showIcon?: boolean }) => (
     <div
       className={[
         'flex items-center gap-[var(--spacing-8)] flex-1',
@@ -229,7 +229,7 @@ export const SearchBox = ({
   );
 
   /* ── Search button segment (icon) ──────────────────── */
-  const SearchButtonSegment = () => (
+  const renderSearchButtonSegment = () => (
     <button
       type="button"
       disabled={isDisabled}
@@ -248,7 +248,7 @@ export const SearchBox = ({
   );
 
   /* ── Search text button segment ────────────────────── */
-  const SearchTextButtonSegment = () => (
+  const renderSearchTextButtonSegment = () => (
     <button
       type="button"
       disabled={isDisabled}
@@ -272,7 +272,7 @@ export const SearchBox = ({
   );
 
   /* ── Date range segment ────────────────────────────── */
-  const DateRangeSegment = () => (
+  const renderDateRangeSegment = () => (
     <div
       className={[
         'flex items-center gap-[var(--spacing-8)] w-[256px]',
@@ -296,7 +296,7 @@ export const SearchBox = ({
   );
 
   /* ── Dropdown-only segment (standalone — keeps its own border) ─ */
-  const DropdownSegment = () => (
+  const renderDropdownSegment = () => (
     <button
       type="button"
       disabled={isDisabled}
@@ -341,8 +341,8 @@ export const SearchBox = ({
   /* Type: Default — search icon + input */
   if (type === 'default') {
     return (
-      <div className={wrapperClasses}>
-        <SearchInputSegment showIcon />
+        <div className={wrapperClasses}>
+        {renderSearchInputSegment({ showIcon: true })}
       </div>
     );
   }
@@ -351,9 +351,9 @@ export const SearchBox = ({
   if (type === 'with-categories') {
     return (
       <div className={wrapperClasses}>
-        <CategorySegment dividerRight />
-        <SearchInputSegment />
-        {showSearchButton && <SearchButtonSegment />}
+        {renderCategorySegment({ dividerRight: true })}
+        {renderSearchInputSegment({})}
+        {showSearchButton && renderSearchButtonSegment()}
       </div>
     );
   }
@@ -362,8 +362,8 @@ export const SearchBox = ({
   if (type === 'search-placeholder-only') {
     return (
       <div className={wrapperClasses}>
-        <SearchInputSegment />
-        {showSearchButton && <SearchButtonSegment />}
+        {renderSearchInputSegment({})}
+        {showSearchButton && renderSearchButtonSegment()}
       </div>
     );
   }
@@ -373,7 +373,7 @@ export const SearchBox = ({
     return (
       <div className={['inline-flex items-center gap-[var(--spacing-12)]', className].filter(Boolean).join(' ')}>
         {LabelElement}
-        <DropdownSegment />
+        {renderDropdownSegment()}
       </div>
     );
   }
@@ -384,7 +384,7 @@ export const SearchBox = ({
       <div className={['inline-flex items-center gap-[var(--spacing-12)]', className].filter(Boolean).join(' ')}>
         {LabelElement}
         <div className={wrapperClasses.replace(className, '')}>
-          <DateRangeSegment />
+          {renderDateRangeSegment()}
         </div>
       </div>
     );
@@ -396,8 +396,8 @@ export const SearchBox = ({
       <div className={['inline-flex items-center gap-[var(--spacing-12)]', className].filter(Boolean).join(' ')}>
         {LabelElement}
         <div className={wrapperClasses.replace(className, '')}>
-          <DateRangeSegment />
-          <SearchTextButtonSegment />
+          {renderDateRangeSegment()}
+          {renderSearchTextButtonSegment()}
         </div>
       </div>
     );

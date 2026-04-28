@@ -8,6 +8,9 @@ const meta = {
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
   args: {
+    icon: 'settings',
+    title: 'General',
+    description: 'Update your store and default language',
     onClick: fn(),
   },
 } satisfies Meta<typeof ModuleCard>;
@@ -54,6 +57,7 @@ export const Disabled: Story = {
 
 export const Grid: Story = {
   name: 'Settings index grid',
+  args: {},
   render: () => (
     <div className="grid grid-cols-2 gap-[var(--spacing-16)]">
       <ModuleCard icon="settings" title="General" description="Update your store and default language" onClick={fn()} />
