@@ -156,6 +156,16 @@ export type { ModuleCardProps } from './ModuleCard';
 export { Pagination } from './Pagination';
 export type { PaginationProps, PaginationSize } from './Pagination';
 
+// PrefixInput
+export { PrefixInput } from './PrefixInput';
+export type {
+  PrefixInputProps,
+  PrefixInputState,
+  PrefixInputValidation,
+  PrefixInputSize,
+  PrefixOption,
+} from './PrefixInput';
+
 // ProductImageList
 export { ProductImage, ProductImageList } from './ProductImageList';
 export type {
