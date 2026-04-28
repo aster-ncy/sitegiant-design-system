@@ -215,6 +215,14 @@ export type { StatusCardProps, StatusCardStatus, StatusCardSize } from './Status
 export { Tag } from './Tag';
 export type { TagProps } from './Tag';
 
+// Textarea
+export { Textarea } from './Textarea';
+export type {
+  TextareaProps,
+  TextareaState,
+  TextareaValidation,
+} from './Textarea';
+
 // TagSelect
 export { TagSelect } from './TagSelect';
 export type {

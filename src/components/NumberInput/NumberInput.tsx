@@ -113,7 +113,7 @@ export const NumberInput = ({
   const wrapperClasses = [
     'inline-flex items-stretch',
     isReadonly ? 'w-fit' : 'w-full',
-    !isReadonly ? (size === 'slim' ? 'h-[25px]' : 'h-[33px]') : '',
+    !isReadonly ? (size === 'slim' ? 'h-[27px]' : 'h-[35px]') : '',
     'rounded-[var(--radius-4)]',
     'overflow-hidden',
     isReadonly ? '' : 'border border-solid',
@@ -173,7 +173,7 @@ export const NumberInput = ({
             'bg-transparent outline-none border-none',
             // Hide native browser stepper — we render our own.
             '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-            `pl-[var(--spacing-12)] pr-[var(--spacing-8)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+            `pl-[var(--spacing-12)] pr-[var(--spacing-8)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
             isDisabled

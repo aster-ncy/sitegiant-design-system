@@ -167,7 +167,7 @@ export const MultiTagSelect = ({
 
   const triggerClass = [
     'relative flex items-center w-full gap-[var(--spacing-8)]',
-    `${size === 'slim' ? 'min-h-[25px]' : 'min-h-[33px]'} px-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+    `${size === 'slim' ? 'min-h-[27px]' : 'min-h-[35px]'} px-[var(--spacing-12)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
     'rounded-[var(--radius-4)] border border-solid',
     borderClass,
     fillClass,
