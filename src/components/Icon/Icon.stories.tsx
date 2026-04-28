@@ -19,6 +19,9 @@ const meta = {
     },
     color: { control: 'color' },
   },
+  args: {
+    name: 'home',
+  },
 } satisfies Meta<typeof Icon>;
 
 export default meta;
@@ -43,6 +46,7 @@ export const CustomSize: Story = {
 /* ── All Sizes ──────────────────────────────────────────── */
 
 export const AllSizes: Story = {
+  args: {},
   render: () => (
     <div className="flex items-end gap-6">
       {(['xs', 'sm', 'md', 'lg', 'xl'] as const).map((size) => (
@@ -58,6 +62,7 @@ export const AllSizes: Story = {
 /* ── Icon Grid — All Icons ─────────────────────────────── */
 
 export const AllIcons: Story = {
+  args: {},
   render: () => (
     <div className="grid grid-cols-8 gap-4">
       {iconNames.map((name) => (
@@ -79,6 +84,7 @@ export const AllIcons: Story = {
 /* ── Color Variants ────────────────────────────────────── */
 
 export const ColorVariants: Story = {
+  args: {},
   render: () => (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
@@ -118,6 +124,7 @@ export const ColorVariants: Story = {
 /* ── Video Cam States ──────────────────────────────────── */
 
 export const VideoCamStates: Story = {
+  args: {},
   render: () => (
     <div className="flex items-center gap-[var(--spacing-20)]">
       <div className="flex flex-col items-center gap-[var(--spacing-8)]">
@@ -159,6 +166,7 @@ export const VideoCamStates: Story = {
 
 export const ChannelIcons: Story = {
   name: 'All channel icons',
+  args: {},
   render: () => (
     <div className="grid grid-cols-8 gap-4 max-w-[600px]">
       {channelIconNames.map((name) => (
@@ -180,6 +188,7 @@ export const ChannelIcons: Story = {
 /* ── Arrows & Chevrons ─────────────────────────────────── */
 
 export const NavigationIcons: Story = {
+  args: {},
   render: () => (
     <div className="flex flex-col gap-6">
       <div>

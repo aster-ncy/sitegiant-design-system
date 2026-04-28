@@ -53,12 +53,10 @@ export const Sidebar = ({
   const rootCls = [
     'relative self-stretch flex flex-col shrink-0',
     isCollapsed ? 'w-[44px]' : 'w-[214px]',
-    // Premium rail is a gradient (background-image), default is a flat
-    // fill (background-color). Using `[image:var(...)]` routes the
-    // value to background-image so the gradient renders instead of
-    // being ignored as an invalid background-color.
+    // Premium rail is a gradient token, so it must target
+    // `background-image` rather than `background-color`.
     isPremium
-      ? 'bg-[image:var(--color-navigator-sidebar-premium-fill)]'
+      ? '[background-image:var(--color-navigator-sidebar-premium-fill)]'
       : 'bg-[var(--color-navigator-sidebar-fill)]',
     // Right-side divider separating the sidebar from page content.
     'border-r border-[color:var(--color-navigator-border)]',

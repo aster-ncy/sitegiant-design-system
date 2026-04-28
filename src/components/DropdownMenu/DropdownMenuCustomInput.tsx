@@ -7,6 +7,7 @@ export interface DropdownMenuCustomInputProps {
   /** Initial value (uncontrolled). For controlled use, pass value + onChange */
   value?: string;
   onChange?: (value: string) => void;
+  autoFocus?: boolean;
   addLabel?: string;
   onAdd?: (value: string) => void;
   /** Hide the trailing "+ Add" button (search-only mode). Default false. */
@@ -22,6 +23,7 @@ export const DropdownMenuCustomInput = ({
   placeholder = 'Option',
   value: valueProp,
   onChange,
+  autoFocus = false,
   addLabel = 'Add Item',
   onAdd,
   hideAdd = false,
@@ -63,6 +65,7 @@ export const DropdownMenuCustomInput = ({
       >
         <input
           type="text"
+          autoFocus={autoFocus}
           placeholder={placeholder}
           value={value}
           onChange={(e) => handleChange(e.target.value)}

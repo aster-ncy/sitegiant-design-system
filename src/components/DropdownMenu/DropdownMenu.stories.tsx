@@ -11,6 +11,10 @@ const meta = {
   component: DropdownMenu,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
+  args: {
+    children: undefined,
+    width: 240,
+  },
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;
@@ -25,6 +29,7 @@ const AppIcon = () => (
 );
 
 export const DefaultItems: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={240}>
       <DropdownMenuItem label="Option" highlight="Option Highlight" state="default" />
@@ -35,6 +40,7 @@ export const DefaultItems: Story = {
 };
 
 export const CountryItems: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={240}>
       <DropdownMenuItem leading={<MyFlag />} label="Option" highlight="Option Highlight" state="default" />
@@ -45,6 +51,7 @@ export const CountryItems: Story = {
 };
 
 export const AppIconItems: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={240}>
       <DropdownMenuItem leading={<AppIcon />} label="Option" highlight="Option Highlight" state="default" />
@@ -55,6 +62,7 @@ export const AppIconItems: Story = {
 };
 
 export const WithDivider: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={240}>
       <DropdownMenuItem label="Option 1" />
@@ -67,6 +75,7 @@ export const WithDivider: Story = {
 };
 
 export const WithCustomInput: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={260}>
       <DropdownMenuItem label="Small" />
@@ -79,6 +88,7 @@ export const WithCustomInput: Story = {
 };
 
 export const WithActions: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={280}>
       <DropdownMenuItem label="Option 1" selected />
@@ -91,6 +101,7 @@ export const WithActions: Story = {
 };
 
 export const FullExample: Story = {
+  args: {},
   render: () => (
     <DropdownMenu width={280}>
       <DropdownMenuItem leading={<MyFlag />} label="Malaysia" highlight="+60" />

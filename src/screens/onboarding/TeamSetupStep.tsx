@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button, PlusIcon } from '../../components/Button';
 import { Card } from '../../components/Card';
 import { Input } from '../../components/Input';

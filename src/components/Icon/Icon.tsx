@@ -1,8 +1,5 @@
 import { iconPaths, type IconName } from './iconPaths';
 
-export type { IconName } from './iconPaths';
-export { iconNames } from './iconPaths';
-
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 export interface IconProps {

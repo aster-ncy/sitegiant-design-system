@@ -7,6 +7,11 @@ const meta = {
   component: AppImageCard,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
+  args: {
+    imageSrc: 'https://placehold.co/280x90',
+    caption:
+      'Encourage customers to shop more by create Store Vouchers for storewide, or Product Vouchers for specific products.',
+  },
 } satisfies Meta<typeof AppImageCard>;
 
 export default meta;
@@ -188,6 +193,7 @@ export const CustomTagGroup: Story = {
 
 export const AllVariants: Story = {
   name: 'All Variants (matrix)',
+  args: {},
   render: () => (
     <div className="grid grid-cols-2 gap-[var(--spacing-20)]">
       <AppImageCard imageSrc={placeholderImage} caption={sampleCaption} type="default" />

@@ -80,7 +80,16 @@ export const MultiTagSelect = ({
     onChange?.(next);
   };
 
-  const menu = useTagSelectMenu(options);
+  const {
+    isOpen,
+    close,
+    query,
+    setQuery,
+    filteredOptions,
+    toggle,
+    triggerRef,
+    popoverRef,
+  } = useTagSelectMenu(options);
 
   const selectedOptions = useMemo(
     () => value.map((v) => options.find((o) => o.value === v) ?? { value: v, label: v }),
@@ -88,10 +97,10 @@ export const MultiTagSelect = ({
   );
 
   const queryMatchesExisting = useMemo(() => {
-    const q = menu.query.trim().toLowerCase();
+    const q = query.trim().toLowerCase();
     if (!q) return false;
     return options.some((o) => o.label.toLowerCase() === q);
-  }, [options, menu.query]);
+  }, [options, query]);
 
   const toggleOption = (optionValue: string) => {
     if (value.includes(optionValue)) {
@@ -117,7 +126,7 @@ export const MultiTagSelect = ({
     if (!value.includes(trimmed)) {
       setValue([...value, trimmed]);
     }
-    menu.setQuery('');
+    setQuery('');
   };
 
   if (isReadonly) {
@@ -178,21 +187,21 @@ export const MultiTagSelect = ({
       <div className="flex items-center gap-[var(--spacing-8)] w-full">
         <div className="relative flex-1 min-w-0">
           <div
-            ref={menu.triggerRef}
+            ref={triggerRef}
             id={id}
             role="combobox"
-            aria-expanded={menu.isOpen}
+            aria-expanded={isOpen}
             aria-haspopup="listbox"
             tabIndex={isDisabled ? -1 : 0}
             onClick={() => {
               if (isDisabled) return;
-              menu.toggle();
+              toggle();
             }}
             onKeyDown={(e) => {
               if (isDisabled) return;
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
-                menu.toggle();
+                toggle();
               }
             }}
             className={triggerClass}
@@ -240,9 +249,9 @@ export const MultiTagSelect = ({
             )}
           </div>
 
-          {menu.isOpen && (
+          {isOpen && (
             <div
-              ref={menu.popoverRef}
+              ref={popoverRef}
               role="listbox"
               className={[
                 'absolute z-50 left-0 right-0 mt-[var(--spacing-4)]',
@@ -255,22 +264,23 @@ export const MultiTagSelect = ({
             >
               <div className="border-b border-solid border-[var(--color-divider-light)]">
                 <DropdownMenuCustomInput
+                  autoFocus
                   placeholder={searchPlaceholder}
-                  value={menu.query}
-                  onChange={menu.setQuery}
+                  value={query}
+                  onChange={setQuery}
                   onAdd={handleCreate}
                   addLabel="Add"
-                  hideAdd={!creatable || queryMatchesExisting || !menu.query.trim()}
+                  hideAdd={!creatable || queryMatchesExisting || !query.trim()}
                   flush
                 />
               </div>
               <div className="max-h-[280px] overflow-y-auto">
                 <DropdownMenu
                   aria-label="Options"
-                  onEscape={menu.close}
+                  onEscape={close}
                   className="!border-0 !rounded-none !shadow-none !bg-transparent !py-0"
                 >
-                  {menu.filteredOptions.length === 0 && !creatable ? (
+                  {filteredOptions.length === 0 && !creatable ? (
                     <div
                       className={[
                         'px-[var(--spacing-14)] py-[var(--spacing-8)]',
@@ -282,7 +292,7 @@ export const MultiTagSelect = ({
                       Select
                     </div>
                   ) : (
-                    menu.filteredOptions.map((opt) => (
+                    filteredOptions.map((opt) => (
                       <DropdownMenuItem
                         key={opt.value}
                         label={opt.label}

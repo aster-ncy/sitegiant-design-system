@@ -8,6 +8,9 @@ const meta = {
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
   args: {
+    logoSrc: 'https://placehold.co/48x48/5a2d8c/ffffff?text=SQL',
+    logoAlt: 'SQL Accounting',
+    label: 'Test Company Sdn Bhd - Test Company Account (No. ABCDEFG - 12345678)',
     onClick: fn(),
     onMenuClick: fn(),
   },
@@ -69,6 +72,7 @@ export const NoCardClick: Story = {
 
 export const Grid: Story = {
   name: 'List of connected accounts',
+  args: {},
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)] max-w-[360px]">
       <AccountingCard

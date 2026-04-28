@@ -15,6 +15,10 @@ const radioMeta = {
     label: { control: 'text' },
     helperText: { control: 'text' },
   },
+  args: {
+    value: 'opt1',
+    label: 'Option 1',
+  },
 } satisfies Meta<typeof Radio>;
 
 export default radioMeta;
@@ -43,6 +47,7 @@ export const DisabledSelected: Story = {
 /* ── All States ────────────────────────────────────────── */
 
 export const AllStates: Story = {
+  args: {},
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-16)]">
       <p className="text-[length:var(--text-14)] font-[var(--font-weight-semibold)] text-[color:var(--color-text-primary)]">
@@ -86,6 +91,7 @@ const VerticalGroupDemo = () => {
 };
 
 export const GroupVertical: Story = {
+  args: {},
   render: () => <VerticalGroupDemo />,
 };
 
@@ -115,6 +121,7 @@ const HorizontalGroupDemo = () => {
 };
 
 export const GroupHorizontal: Story = {
+  args: {},
   render: () => <HorizontalGroupDemo />,
 };
 
@@ -137,5 +144,6 @@ const MixedDisabledDemo = () => {
 };
 
 export const WithDisabledOptions: Story = {
+  args: {},
   render: () => <MixedDisabledDemo />,
 };
