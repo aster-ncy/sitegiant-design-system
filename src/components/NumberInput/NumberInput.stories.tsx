@@ -89,3 +89,10 @@ export const ReadonlyBold: Story = {
     state: 'readonly-bold',
   },
 };
+
+export const Slim: Story = {
+  args: {
+    placeholder: '0',
+    size: 'slim',
+  },
+};

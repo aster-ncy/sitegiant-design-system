@@ -102,3 +102,7 @@ export const HideClearAll: Story = {
     hideClearAll: true,
   },
 };
+
+export const Slim: Story = {
+  args: { size: 'slim' },
+};

@@ -148,3 +148,10 @@ const ControlledExample = () => {
 export const Controlled: Story = {
   render: () => <ControlledExample />,
 };
+
+export const Slim: Story = {
+  args: {
+    size: 'slim',
+    placeholder: 'Select date',
+  },
+};

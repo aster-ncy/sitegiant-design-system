@@ -5,4 +5,5 @@ export type {
   DateRangePickerState,
   DateRangePickerValidation,
   DateRangePreset,
+  DateRangePickerSize,
 } from './DateRangePicker';

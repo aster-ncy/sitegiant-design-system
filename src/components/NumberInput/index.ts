@@ -3,4 +3,5 @@ export type {
   NumberInputProps,
   NumberInputState,
   NumberInputValidation,
+  NumberInputSize,
 } from './NumberInput';

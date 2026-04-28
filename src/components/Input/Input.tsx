@@ -5,6 +5,7 @@ import { Icon } from '../Icon/Icon';
 export type InputState = 'default' | 'focus' | 'danger' | 'disabled' | 'readonly' | 'readonly-bold';
 export type InputValidation = 'default' | 'error' | 'success';
 export type InputType = 'text' | 'password' | 'email' | 'number' | 'tel' | 'url';
+export type InputSize = 'default' | 'slim';
 
 export interface InputAddonButton {
   label?: string;
@@ -66,6 +67,8 @@ export interface InputProps {
   onChange?: (value: string) => void;
   /** HTML id for the input element */
   id?: string;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: InputSize;
   /** Extra classes on the root wrapper */
   className?: string;
   /** Ref forwarded to the native <input> for programmatic focus. */
@@ -117,6 +120,7 @@ export const Input = ({
   readonly = false,
   maxLength,
   showCount = false,
+  size = 'default',
   onChange,
   id,
   className = '',
@@ -173,11 +177,12 @@ export const Input = ({
   // which clips the button's right rounded corners against the wrapper.
   // self-stretch makes the button fill the wrapper's height; the left
   // border-l acts as the divider between input value and button.
+  const addonPy = size === 'slim' ? 'py-px' : 'py-[5px]';
   const addonBase = [
     'flex items-center gap-[var(--spacing-4)]',
-    'px-[var(--spacing-12)] py-[var(--spacing-8)]',
+    `px-[var(--spacing-12)] ${addonPy}`,
     'border-l border-solid border-[var(--form-button-border)]',
-    'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+    'text-[length:var(--text-14)] leading-[var(--leading-21)]',
     'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
     'shrink-0 self-stretch',
   ].join(' ');
@@ -206,7 +211,7 @@ export const Input = ({
             <label
               htmlFor={id}
               className={[
-                'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
                 'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
                 'text-[color:var(--form-label-text)]',
                 isDisabled ? 'opacity-60' : '',
@@ -252,7 +257,9 @@ export const Input = ({
               <span
                 className={[
                   'flex items-center shrink-0',
-                  isReadonly ? 'pl-0' : 'pl-[var(--spacing-12)]',
+                  isReadonly
+                    ? 'pl-0'
+                    : `pl-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
                 ].join(' ')}
               >
                 {leadingNode}
@@ -280,12 +287,12 @@ export const Input = ({
                 'bg-transparent outline-none border-none',
                 isReadonly
                   ? leadingNode
-                    ? 'pl-[var(--spacing-8)] pr-0 py-[var(--spacing-6)]'
-                    : 'px-0 py-[var(--spacing-6)]'
+                    ? `pl-[var(--spacing-8)] pr-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
+                    : `px-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
                   : leadingNode
-                    ? 'pl-[var(--spacing-8)] pr-[var(--spacing-12)] py-[var(--spacing-8)]'
-                    : 'px-[var(--spacing-12)] py-[var(--spacing-8)]',
-                'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                    ? `pl-[var(--spacing-8)] pr-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`
+                    : `px-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
                 'font-[family-name:var(--font-sans)]',
                 isReadonlyBold
                   ? 'font-[var(--font-weight-bold)]'
@@ -304,7 +311,7 @@ export const Input = ({
                 aria-hidden="true"
                 className={[
                   'flex items-center pr-[var(--spacing-12)] shrink-0',
-                  'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                  'text-[length:var(--text-14)] leading-[var(--leading-21)]',
                   'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
                   'text-[color:var(--form-input-placeholder-text)]',
                 ].join(' ')}

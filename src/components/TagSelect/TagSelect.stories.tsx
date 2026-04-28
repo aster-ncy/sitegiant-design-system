@@ -97,3 +97,7 @@ export const LongList: Story = {
 export const LongLabels: Story = {
   args: { options: longLabelOptions, defaultValue: 'a' },
 };
+
+export const Slim: Story = {
+  args: { size: 'slim' },
+};

@@ -5,6 +5,7 @@ import { Icon } from '../Icon';
 
 export type DatePickerState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
 export type DatePickerValidation = 'default' | 'error' | 'success';
+export type DatePickerSize = 'default' | 'slim';
 
 export interface DatePickerProps {
   /** Controlled value as ISO date string ('YYYY-MM-DD') or '' for empty. */
@@ -27,6 +28,8 @@ export interface DatePickerProps {
   onChange?: (isoValue: string) => void;
   /** HTML id forwarded to the antd input. */
   id?: string;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: DatePickerSize;
   /** Name attribute. */
   name?: string;
   className?: string;
@@ -57,6 +60,7 @@ export const DatePicker = ({
   helperText,
   format,
   showTime = false,
+  size = 'default',
   onChange,
   id,
   name,
@@ -97,7 +101,7 @@ export const DatePicker = ({
         <span
           aria-readonly="true"
           className={[
-            'inline-flex items-center py-[var(--spacing-6)] w-fit',
+            `inline-flex items-center ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'} w-fit`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--general-font-family)]',
             isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
@@ -143,6 +147,7 @@ export const DatePicker = ({
           status={isError ? 'error' : undefined}
           allowClear
           className="w-full"
+          style={{ height: size === 'slim' ? 25 : 33 }}
           onChange={(d) => {
             const next = d && (d as Dayjs).isValid?.() ? (d as Dayjs).format(isoFormat) : '';
             onChange?.(next);

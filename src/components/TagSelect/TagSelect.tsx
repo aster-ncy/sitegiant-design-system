@@ -17,6 +17,7 @@ export interface TagSelectOption {
 
 export type TagSelectState = 'default' | 'disabled' | 'readonly';
 export type TagSelectValidation = 'default' | 'error' | 'success';
+export type TagSelectSize = 'default' | 'slim';
 
 export interface TagSelectProps {
   options: TagSelectOption[];
@@ -36,6 +37,8 @@ export interface TagSelectProps {
   /** Fires when user adds a new tag via the creatable flow. */
   onCreate?: (label: string) => void;
   onChange?: (value: string) => void;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: TagSelectSize;
   id?: string;
   className?: string;
 }
@@ -60,6 +63,7 @@ export const TagSelect = ({
   creatable = false,
   onCreate,
   onChange,
+  size = 'default',
   id,
   className = '',
 }: TagSelectProps) => {
@@ -112,7 +116,7 @@ export const TagSelect = ({
         <span
           aria-readonly="true"
           className={[
-            'inline-flex items-center py-[var(--spacing-6)] w-fit',
+            `inline-flex items-center ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'} w-fit`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
             'text-[color:var(--form-input-value-text)]',
@@ -145,7 +149,7 @@ export const TagSelect = ({
 
   const triggerClass = [
     'relative flex items-center w-full gap-[var(--spacing-8)]',
-    'min-h-[33px] px-[var(--spacing-12)] py-[var(--spacing-4)]',
+    `${size === 'slim' ? 'min-h-[25px]' : 'min-h-[33px]'} px-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
     'rounded-[var(--radius-4)] border border-solid',
     borderClass,
     fillClass,

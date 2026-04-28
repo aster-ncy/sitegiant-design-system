@@ -8,6 +8,7 @@ export type NumberInputState =
   | 'readonly'
   | 'readonly-bold';
 export type NumberInputValidation = 'default' | 'error' | 'success';
+export type NumberInputSize = 'default' | 'slim';
 
 export interface NumberInputProps {
   /** Controlled value. Use empty string for "no value". */
@@ -32,6 +33,8 @@ export interface NumberInputProps {
   id?: string;
   /** Name attribute for the native <input>. */
   name?: string;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: NumberInputSize;
   className?: string;
   /** Ref forwarded to the native <input>. */
   inputRef?: Ref<HTMLInputElement>;
@@ -76,6 +79,7 @@ export const NumberInput = ({
   step = 1,
   state = 'default',
   validation = 'default',
+  size = 'default',
   onChange,
   id,
   name,
@@ -109,6 +113,7 @@ export const NumberInput = ({
   const wrapperClasses = [
     'inline-flex items-stretch',
     isReadonly ? 'w-fit' : 'w-full',
+    !isReadonly ? (size === 'slim' ? 'h-[25px]' : 'h-[33px]') : '',
     'rounded-[var(--radius-4)]',
     'overflow-hidden',
     isReadonly ? '' : 'border border-solid',
@@ -136,7 +141,7 @@ export const NumberInput = ({
           aria-readonly="true"
           className={[
             'inline-flex items-center',
-            'py-[var(--spacing-6)]',
+            size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]',
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--font-sans)]',
             isReadonlyBold
@@ -168,7 +173,7 @@ export const NumberInput = ({
             'bg-transparent outline-none border-none',
             // Hide native browser stepper — we render our own.
             '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
-            'pl-[var(--spacing-12)] pr-[var(--spacing-8)] py-[var(--spacing-6)]',
+            `pl-[var(--spacing-12)] pr-[var(--spacing-8)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
             isDisabled
@@ -190,7 +195,7 @@ export const NumberInput = ({
       {!hideStepper && !isReadonly && !isDisabled && (
         <div
           aria-hidden="true"
-          className="flex flex-col self-stretch shrink-0 border-l border-solid border-[var(--form-input-default-border)]"
+          className="flex flex-col self-stretch shrink-0 py-px border-l border-solid border-[var(--form-input-default-border)]"
         >
           <button
             type="button"
@@ -198,17 +203,18 @@ export const NumberInput = ({
             onClick={() => adjust(step)}
             aria-label="Increment"
             className={[
-              'flex flex-1 items-center justify-center',
+              'flex flex-1 items-center justify-center overflow-hidden min-h-0',
               'w-[16px]',
               'bg-[var(--form-input-default-fill)]',
               'cursor-pointer outline-none',
               'hover:bg-[var(--color-space-lighter)]',
+              'rounded-tr-[var(--radius-4)]',
             ].join(' ')}
           >
             <Icon
               name="arrow-up"
               size={15}
-              className="text-[color:var(--color-icon-secondary)]"
+              className="text-[color:var(--color-icon-secondary)] shrink-0"
             />
           </button>
           <div
@@ -221,11 +227,12 @@ export const NumberInput = ({
             onClick={() => adjust(-step)}
             aria-label="Decrement"
             className={[
-              'flex flex-1 items-center justify-center',
+              'flex flex-1 items-center justify-center overflow-hidden min-h-0',
               'w-[16px]',
               'bg-[var(--form-input-default-fill)]',
               'cursor-pointer outline-none',
               'hover:bg-[var(--color-space-lighter)]',
+              'rounded-br-[var(--radius-4)]',
             ].join(' ')}
           >
             <Icon

@@ -296,3 +296,47 @@ export const FullMatrix: Story = {
     </div>
   ),
 };
+
+/* ── Slim size variant ─────────────────────────────────── */
+
+export const Slim: Story = {
+  args: {
+    placeholder: 'Enter text...',
+    size: 'slim',
+  },
+};
+
+export const SlimMatrix: Story = {
+  args: { placeholder: 'Label' },
+  render: () => (
+    <div className="grid grid-cols-[140px_repeat(3,_minmax(0,_320px))] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-20)]">
+      <span />
+      {matrixValidations.map((v) => (
+        <span
+          key={v}
+          className="text-[length:var(--text-12)] font-[var(--font-weight-medium)] text-[color:var(--color-text-info)]"
+        >
+          validation = {v}
+        </span>
+      ))}
+      {matrixStates.map((row) => (
+        <Fragment key={row.label}>
+          <span className="text-[length:var(--text-12)] font-[var(--font-weight-medium)] text-[color:var(--color-text-info)] self-center">
+            state = {row.label}
+          </span>
+          {matrixValidations.map((v) => (
+            <Input
+              key={`${row.label}-${v}`}
+              size="slim"
+              state={row.state}
+              validation={v}
+              placeholder="Label"
+              defaultValue={row.value}
+              helperText="Hint text"
+            />
+          ))}
+        </Fragment>
+      ))}
+    </div>
+  ),
+};

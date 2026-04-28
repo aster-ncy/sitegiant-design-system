@@ -8,6 +8,7 @@ const { RangePicker } = AntDatePicker;
 
 export type DateRangePickerState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
 export type DateRangePickerValidation = 'default' | 'error' | 'success';
+export type DateRangePickerSize = 'default' | 'slim';
 
 export interface DateRangePickerValue {
   start: string;
@@ -45,6 +46,8 @@ export interface DateRangePickerProps {
   presets?: boolean | DateRangePreset[];
   /** Called with the new range — empty strings if cleared. */
   onChange?: (value: DateRangePickerValue) => void;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: DateRangePickerSize;
   /** HTML id forwarded to the antd input. */
   id?: string;
   className?: string;
@@ -91,6 +94,7 @@ export const DateRangePicker = ({
   format,
   showTime = false,
   presets = true,
+  size = 'default',
   onChange,
   id,
   className = '',
@@ -136,7 +140,7 @@ export const DateRangePicker = ({
         <span
           aria-readonly="true"
           className={[
-            'inline-flex items-center gap-[var(--spacing-6)] py-[var(--spacing-6)] w-fit',
+            `inline-flex items-center gap-[var(--spacing-6)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'} w-fit`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--general-font-family)]',
             isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
@@ -197,6 +201,7 @@ export const DateRangePicker = ({
             />
           }
           className="w-full"
+          style={{ height: size === 'slim' ? 25 : 33 }}
           onChange={(range) => {
             const [start, end] = range ?? [null, null];
             onChange?.({

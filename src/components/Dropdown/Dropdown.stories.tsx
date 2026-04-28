@@ -154,3 +154,15 @@ const RefFocusDemo = () => {
 export const RefFocus: Story = {
   render: () => <RefFocusDemo />,
 };
+
+export const Slim: Story = {
+  args: {
+    placeholder: 'Select...',
+    size: 'slim',
+    options: [
+      { value: 'electronics', label: 'Electronics' },
+      { value: 'fashion', label: 'Fashion' },
+      { value: 'home', label: 'Home & Living' },
+    ],
+  },
+};

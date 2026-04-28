@@ -12,6 +12,7 @@ import type {
   TagSelectOption,
   TagSelectState,
   TagSelectValidation,
+  TagSelectSize,
 } from '../TagSelect/TagSelect';
 
 export interface MultiTagSelectProps {
@@ -34,6 +35,8 @@ export interface MultiTagSelectProps {
   onChange?: (value: string[]) => void;
   /** Hide the trailing clear-all (×) circle. Default false (shown). */
   hideClearAll?: boolean;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: TagSelectSize;
   id?: string;
   className?: string;
 }
@@ -60,6 +63,7 @@ export const MultiTagSelect = ({
   onCreate,
   onChange,
   hideClearAll = false,
+  size = 'default',
   id,
   className = '',
 }: MultiTagSelectProps) => {
@@ -122,7 +126,7 @@ export const MultiTagSelect = ({
         <span
           aria-readonly="true"
           className={[
-            'inline-flex items-center py-[var(--spacing-6)] w-fit',
+            `inline-flex items-center ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'} w-fit`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
             'text-[color:var(--form-input-value-text)]',
@@ -154,7 +158,7 @@ export const MultiTagSelect = ({
 
   const triggerClass = [
     'relative flex items-center w-full gap-[var(--spacing-8)]',
-    'min-h-[33px] px-[var(--spacing-12)] py-[var(--spacing-4)]',
+    `${size === 'slim' ? 'min-h-[25px]' : 'min-h-[33px]'} px-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
     'rounded-[var(--radius-4)] border border-solid',
     borderClass,
     fillClass,

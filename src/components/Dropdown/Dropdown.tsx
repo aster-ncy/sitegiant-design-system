@@ -9,6 +9,7 @@ export interface DropdownOption {
 }
 
 export type DropdownState = 'default' | 'danger';
+export type DropdownSize = 'default' | 'slim';
 
 export interface DropdownProps {
   /** List of selectable options */
@@ -33,6 +34,8 @@ export interface DropdownProps {
   onChange?: (value: string) => void;
   /** HTML id for the select element */
   id?: string;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: DropdownSize;
   /** Extra classes on the root wrapper */
   className?: string;
   /** Ref forwarded to the native <select> for programmatic focus. */
@@ -64,6 +67,7 @@ export const Dropdown = ({
   helperText,
   label,
   labelInfo,
+  size = 'default',
   onChange,
   id,
   className = '',
@@ -129,7 +133,7 @@ export const Dropdown = ({
             <label
               htmlFor={id}
               className={[
-                'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
                 'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
                 'text-[color:var(--form-label-text)]',
                 isDisabled ? 'opacity-60' : '',
@@ -177,8 +181,10 @@ export const Dropdown = ({
           }}
           className={[
             'w-full appearance-none bg-transparent outline-none border-none',
-            isReadonly ? 'px-0 py-[var(--spacing-6)]' : 'pl-[var(--spacing-12)] pr-[var(--spacing-36)] py-[var(--spacing-8)]',
-            'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+            isReadonly
+              ? `px-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
+              : `pl-[var(--spacing-12)] pr-[var(--spacing-36)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
             selectTextClass,
             isDisabled ? 'cursor-not-allowed' : isReadonly ? 'cursor-default pointer-events-none' : 'cursor-pointer',

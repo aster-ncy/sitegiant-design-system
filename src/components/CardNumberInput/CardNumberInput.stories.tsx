@@ -110,3 +110,11 @@ export const MastercardSample: Story = {
   },
 };
 
+export const Slim: Story = {
+  args: {
+    brand: VisaBrand,
+    size: 'slim',
+    defaultValue: '4111 1111 1111 1111',
+  },
+};
+

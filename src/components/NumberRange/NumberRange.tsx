@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Icon } from '../Icon';
-import { NumberInput, type NumberInputState, type NumberInputValidation } from '../NumberInput';
+import { NumberInput, type NumberInputState, type NumberInputValidation, type NumberInputSize } from '../NumberInput';
 
 export interface NumberRangeValue {
   min: string;
@@ -26,6 +26,8 @@ export interface NumberRangeProps {
   state?: NumberInputState;
   /** Validation status — applied to BOTH fields. */
   validation?: NumberInputValidation;
+  /** Form size — 'slim' reduces vertical padding for compact layouts */
+  size?: NumberInputSize;
   /** Helper text below the field row. */
   helperText?: string;
   /** Change handler — fires when either field changes. */
@@ -57,6 +59,7 @@ export const NumberRange = ({
   min,
   max,
   step,
+  size = 'default',
   state = 'default',
   validation = 'default',
   helperText,
@@ -97,6 +100,7 @@ export const NumberRange = ({
             min={min}
             max={max}
             step={step}
+            size={size}
             state={state}
             validation={validation}
             onChange={(next) => update({ min: next, max: current.max })}
@@ -116,6 +120,7 @@ export const NumberRange = ({
             min={min}
             max={max}
             step={step}
+            size={size}
             state={state}
             validation={validation}
             onChange={(next) => update({ min: current.min, max: next })}
