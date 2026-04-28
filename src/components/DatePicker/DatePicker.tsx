@@ -147,7 +147,7 @@ export const DatePicker = ({
           status={isError ? 'error' : undefined}
           allowClear
           className="w-full"
-          style={{ height: size === 'slim' ? 25 : 33 }}
+          style={{ height: size === 'slim' ? 27 : 35 }}
           onChange={(d) => {
             const next = d && (d as Dayjs).isValid?.() ? (d as Dayjs).format(isoFormat) : '';
             onChange?.(next);

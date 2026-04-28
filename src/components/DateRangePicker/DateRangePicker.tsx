@@ -201,7 +201,7 @@ export const DateRangePicker = ({
             />
           }
           className="w-full"
-          style={{ height: size === 'slim' ? 25 : 33 }}
+          style={{ height: size === 'slim' ? 27 : 35 }}
           onChange={(range) => {
             const [start, end] = range ?? [null, null];
             onChange?.({

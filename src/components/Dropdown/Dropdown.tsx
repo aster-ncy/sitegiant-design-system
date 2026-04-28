@@ -183,7 +183,7 @@ export const Dropdown = ({
             'w-full appearance-none bg-transparent outline-none border-none',
             isReadonly
               ? `px-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
-              : `pl-[var(--spacing-12)] pr-[var(--spacing-36)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+              : `pl-[var(--spacing-12)] pr-[var(--spacing-36)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
             selectTextClass,

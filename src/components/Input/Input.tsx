@@ -177,7 +177,7 @@ export const Input = ({
   // which clips the button's right rounded corners against the wrapper.
   // self-stretch makes the button fill the wrapper's height; the left
   // border-l acts as the divider between input value and button.
-  const addonPy = size === 'slim' ? 'py-px' : 'py-[5px]';
+  const addonPy = size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]';
   const addonBase = [
     'flex items-center gap-[var(--spacing-4)]',
     `px-[var(--spacing-12)] ${addonPy}`,
@@ -259,7 +259,7 @@ export const Input = ({
                   'flex items-center shrink-0',
                   isReadonly
                     ? 'pl-0'
-                    : `pl-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+                    : `pl-[var(--spacing-12)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
                 ].join(' ')}
               >
                 {leadingNode}
@@ -290,8 +290,8 @@ export const Input = ({
                     ? `pl-[var(--spacing-8)] pr-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
                     : `px-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
                   : leadingNode
-                    ? `pl-[var(--spacing-8)] pr-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`
-                    : `px-[var(--spacing-12)] ${size === 'slim' ? 'py-px' : 'py-[5px]'}`,
+                    ? `pl-[var(--spacing-8)] pr-[var(--spacing-12)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
+                    : `px-[var(--spacing-12)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
                 'text-[length:var(--text-14)] leading-[var(--leading-21)]',
                 'font-[family-name:var(--font-sans)]',
                 isReadonlyBold
