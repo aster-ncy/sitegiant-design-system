@@ -4,4 +4,5 @@ export type {
   NumberInputState,
   NumberInputValidation,
   NumberInputSize,
+  NumberInputType,
 } from './NumberInput';

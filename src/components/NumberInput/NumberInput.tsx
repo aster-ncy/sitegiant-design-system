@@ -9,6 +9,12 @@ export type NumberInputState =
   | 'readonly-bold';
 export type NumberInputValidation = 'default' | 'error' | 'success' | 'warning';
 export type NumberInputSize = 'default' | 'slim';
+/**
+ * Stepper layout:
+ * - 'default': vertical chevron up/down stack on the right edge.
+ * - 'stepper': horizontal `−` / `+` buttons flanking a centered value.
+ */
+export type NumberInputType = 'default' | 'stepper';
 
 export interface NumberInputProps {
   /** Controlled value. Use empty string for "no value". */
@@ -45,6 +51,8 @@ export interface NumberInputProps {
    * per-field, so this defaults to false).
    */
   hideStepper?: boolean;
+  /** Stepper layout — 'default' (vertical chevrons) or 'stepper' (−/+ flanks). */
+  type?: NumberInputType;
 }
 
 const wrapperBorderByValidation: Record<NumberInputValidation, string> = {
@@ -89,6 +97,7 @@ export const NumberInput = ({
   className = '',
   inputRef,
   hideStepper = false,
+  type = 'default',
 }: NumberInputProps) => {
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<string>(defaultValue ?? '');
@@ -133,6 +142,105 @@ export const NumberInput = ({
   ]
     .filter(Boolean)
     .join(' ');
+
+  // ── Type 'stepper': horizontal − / + buttons flanking a centered value ───
+  if (type === 'stepper' && !isReadonly) {
+    return (
+      <div
+        className={[
+          'inline-flex items-center justify-center gap-[var(--spacing-4)]',
+          'rounded-[var(--radius-4)] border border-solid',
+          wrapperBorderByValidation[validation],
+          'p-[var(--spacing-4)]',
+          'w-[106px]',
+          isDisabled
+            ? 'bg-[var(--form-input-disabled-fill)] cursor-not-allowed opacity-60'
+            : 'bg-[var(--form-input-default-fill)]',
+          !isDisabled && !isError
+            ? 'focus-within:border-[var(--form-input-focus-border)]'
+            : '',
+          'transition-colors duration-150',
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={() => adjust(-step)}
+          disabled={isDisabled}
+          aria-label="Decrement"
+          className={[
+            'inline-flex items-center justify-center shrink-0',
+            'p-[var(--spacing-2)]',
+            'rounded-[var(--radius-2)]',
+            'bg-[var(--form-button-default-fill)]',
+            'border-none outline-none',
+            isDisabled ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--color-space-light)]',
+            'transition-colors duration-100',
+          ].join(' ')}
+        >
+          <Icon
+            name="minus"
+            size={21}
+            className="text-[color:var(--color-icon-secondary)] shrink-0"
+          />
+        </button>
+        <input
+          ref={inputRef}
+          id={id}
+          name={name}
+          type="number"
+          inputMode="numeric"
+          value={currentValue}
+          placeholder={placeholder}
+          min={min}
+          max={max}
+          step={step}
+          disabled={isDisabled}
+          aria-invalid={isError || undefined}
+          onChange={(e) => setValue(e.target.value)}
+          className={[
+            'flex-1 min-w-0',
+            'bg-transparent outline-none border-none',
+            // Hide native browser stepper — we use the surrounding buttons.
+            '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
+            'p-0',
+            'text-center',
+            'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            isDisabled
+              ? 'text-[color:var(--form-input-disabled-text)] cursor-not-allowed'
+              : 'text-[color:var(--form-input-value-text)]',
+            'placeholder:text-[color:var(--form-input-placeholder-text)]',
+          ].join(' ')}
+        />
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={() => adjust(step)}
+          disabled={isDisabled}
+          aria-label="Increment"
+          className={[
+            'inline-flex items-center justify-center shrink-0',
+            'p-[var(--spacing-2)]',
+            'rounded-[var(--radius-2)]',
+            'bg-[var(--form-button-default-fill)]',
+            'border-none outline-none',
+            isDisabled ? 'cursor-not-allowed' : 'cursor-pointer hover:bg-[var(--color-space-light)]',
+            'transition-colors duration-100',
+          ].join(' ')}
+        >
+          <Icon
+            name="plus"
+            size={21}
+            className="text-[color:var(--color-icon-secondary)] shrink-0"
+          />
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className={[wrapperClasses, className].filter(Boolean).join(' ')}>
