@@ -7,13 +7,17 @@ const meta = {
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
   argTypes: {
+    type: {
+      control: 'inline-radio',
+      options: ['default', 'stepper'],
+    },
     state: {
       control: 'select',
       options: ['default', 'disabled', 'readonly', 'readonly-bold'] satisfies NumberInputState[],
     },
     validation: {
       control: 'inline-radio',
-      options: ['default', 'error', 'success'] satisfies NumberInputValidation[],
+      options: ['default', 'error', 'success', 'warning'] satisfies NumberInputValidation[],
     },
     min: { control: 'number' },
     max: { control: 'number' },
@@ -94,5 +98,50 @@ export const Slim: Story = {
   args: {
     placeholder: '0',
     size: 'slim',
+  },
+};
+
+/* ── Stepper variant (horizontal − / + buttons) ──────── */
+
+export const Stepper: Story = {
+  args: {
+    type: 'stepper',
+    defaultValue: '1',
+    min: 0,
+    max: 99,
+  },
+};
+
+export const StepperFocus: Story = {
+  args: {
+    type: 'stepper',
+    defaultValue: '1',
+  },
+  render: (args) => (
+    <NumberInput {...args} inputRef={(el) => el?.focus()} />
+  ),
+};
+
+export const StepperError: Story = {
+  args: {
+    type: 'stepper',
+    defaultValue: '1',
+    validation: 'error',
+  },
+};
+
+export const StepperWarning: Story = {
+  args: {
+    type: 'stepper',
+    defaultValue: '1',
+    validation: 'warning',
+  },
+};
+
+export const StepperDisabled: Story = {
+  args: {
+    type: 'stepper',
+    defaultValue: '1',
+    state: 'disabled',
   },
 };

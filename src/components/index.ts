@@ -129,6 +129,8 @@ export type {
   NumberInputProps,
   NumberInputState,
   NumberInputValidation,
+  NumberInputSize,
+  NumberInputType,
 } from './NumberInput';
 
 // NumberRange
@@ -166,6 +168,10 @@ export type { ModuleCardProps } from './ModuleCard';
 // Pagination
 export { Pagination } from './Pagination';
 export type { PaginationProps, PaginationSize } from './Pagination';
+
+// OTP
+export { OTP } from './OTP';
+export type { OTPProps, OTPState, OTPValidation } from './OTP';
 
 // PrefixInput
 export { PrefixInput } from './PrefixInput';
@@ -256,6 +262,15 @@ export type {
 // MultiTagSelect
 export { MultiTagSelect } from './MultiTagSelect';
 export type { MultiTagSelectProps } from './MultiTagSelect';
+
+// SuffixInput
+export { SuffixInput } from './SuffixInput';
+export type {
+  SuffixInputProps,
+  SuffixInputState,
+  SuffixInputValidation,
+  SuffixInputSize,
+} from './SuffixInput';
 
 // TimeRange
 export { TimeRange } from './TimeRange';
