@@ -55,7 +55,9 @@ const wrapperBorderByValidation: Record<QuantityValidation, string> = {
   default: 'border-[var(--form-input-default-border)]',
   error: 'border-[var(--form-input-danger-border)]',
   success: 'border-[var(--form-input-default-border)]',
-  warning: 'border-[var(--color-sys-yellow-DEFAULT)]',
+  // Warning uses the same danger red as error per Figma — the
+  // semantic difference is icon shape (triangle vs X), not color.
+  warning: 'border-[var(--form-input-danger-border)]',
 };
 
 const clamp = (n: number, min?: number, max?: number) => {
@@ -289,11 +291,9 @@ export const Quantity = ({
               size={21}
               className={[
                 'shrink-0',
-                isError
+                isError || isWarning
                   ? 'text-[color:var(--color-sys-red-DEFAULT)]'
-                  : isWarning
-                    ? 'text-[color:var(--color-sys-yellow-DEFAULT)]'
-                    : 'text-[color:var(--color-sys-green-DEFAULT)]',
+                  : 'text-[color:var(--color-sys-green-DEFAULT)]',
               ].join(' ')}
             />
           )}
@@ -304,11 +304,9 @@ export const Quantity = ({
             className={[
               'text-[length:var(--text-12)] leading-[var(--leading-15)]',
               'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-              isError
+              isError || isWarning
                 ? 'text-[color:var(--color-sys-red-DEFAULT)]'
-                : isWarning
-                  ? 'text-[color:var(--color-sys-yellow-DEFAULT)]'
-                  : 'text-[color:var(--form-label-info-text)]',
+                : 'text-[color:var(--form-label-info-text)]',
             ].join(' ')}
           >
             {helperText}
