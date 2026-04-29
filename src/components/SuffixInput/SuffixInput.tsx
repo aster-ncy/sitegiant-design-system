@@ -110,9 +110,17 @@ export const SuffixInput = ({
     suffixRef.current?.focus();
   }, []);
 
-  // Close dropdown when the component becomes disabled / readonly while
-  // open. Derived during render to avoid `react-hooks/set-state-in-effect`
-  // (matches the lint rule's "compute, don't sync" guidance).
+  // Close dropdown when the component becomes disabled / readonly. The
+  // visibility check (`effectiveDropdownOpen`) is also derived in render
+  // for immediate UI hiding, but we ALSO need to clear the persistent
+  // `dropdownOpen` state — otherwise switching back to default would
+  // unexpectedly reopen the menu without user action.
+  useEffect(() => {
+    if (isDisabled || isReadonly) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- legitimate cross-prop sync
+      setDropdownOpen(false);
+    }
+  }, [isDisabled, isReadonly]);
   const effectiveDropdownOpen = dropdownOpen && !isDisabled && !isReadonly;
 
   // Click-outside dismiss.
