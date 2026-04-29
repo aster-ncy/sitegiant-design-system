@@ -245,3 +245,113 @@ export const Controlled: Story = {
   args: { value: 'b' },
   render: () => <ControlledExample />,
 };
+
+/* ──────────────────────────────────────────────────────────────────────── *
+ * Composition examples — editor-toolbar usage of <Tab>.
+ *
+ * Figma 3709:5178 (Text Alignment) and 3710:5300 (Text Format) are
+ * editor-toolbar compositions. The toolbar look (white fill + muted-grey
+ * text on unselected segments) is screen-level styling and lives here as
+ * className overrides — Tab itself stays a faithful 1:1 of the
+ * `Tab/Small` Figma primitive.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+// Editor-toolbar look for *unselected* segments: white fill + muted-grey
+// glyph. Wrapper styling rides on `className`; the icon's color must be
+// applied via `iconClassName` because <Icon> sets its own text-[color:...]
+// directly and the wrapper-level class can't reach it.
+const TOOLBAR_UNSELECTED_WRAPPER = 'bg-[var(--status-white-fill)]';
+const TOOLBAR_UNSELECTED_ICON = 'text-[color:var(--status-muted-light-text)]';
+
+const TextAlignmentExample = () => {
+  const [value, setValue] = useState<'left' | 'center' | 'right'>('left');
+  const segments = [
+    { v: 'left', icon: 'align-left' as const, label: 'Align left' },
+    { v: 'center', icon: 'align-center' as const, label: 'Align center' },
+    { v: 'right', icon: 'align-right' as const, label: 'Align right' },
+  ];
+  return (
+    <Tab
+      value={value}
+      onChange={(v) => setValue(v as 'left' | 'center' | 'right')}
+      size="sm"
+      selectedVariant="primary"
+      aria-label="Text alignment"
+    >
+      {segments.map(({ v, icon, label }) => (
+        <Tab.Segment
+          key={v}
+          value={v}
+          type="icon"
+          icon={icon}
+          aria-label={label}
+          className={value === v ? '' : TOOLBAR_UNSELECTED_WRAPPER}
+          iconClassName={value === v ? '' : TOOLBAR_UNSELECTED_ICON}
+        />
+      ))}
+    </Tab>
+  );
+};
+
+/** Figma node 3709:5178 — Text Alignment toolbar (left / center / right). */
+export const TextAlignment: Story = {
+  args: { value: 'left' },
+  render: () => <TextAlignmentExample />,
+};
+
+const FONT_SIZE_ICONS = [
+  { value: 'xs', icon: 'text-size-1' as const, label: 'Smallest' },
+  { value: 'sm', icon: 'text-size-2' as const, label: 'Small' },
+  { value: 'md', icon: 'text-size-3' as const, label: 'Large' },
+  { value: 'lg', icon: 'text-size-4' as const, label: 'Largest' },
+];
+
+const TextFormatExample = () => {
+  const [size, setSize] = useState<'xs' | 'sm' | 'md' | 'lg'>('md');
+  const [bold, setBold] = useState(false);
+  return (
+    <div className="flex items-center gap-[var(--spacing-8)]">
+      <Tab
+        value={size}
+        onChange={(v) => setSize(v as 'xs' | 'sm' | 'md' | 'lg')}
+        size="sm"
+        selectedVariant="primary"
+        aria-label="Font size"
+      >
+        {FONT_SIZE_ICONS.map((opt) => (
+          <Tab.Segment
+            key={opt.value}
+            value={opt.value}
+            type="icon"
+            icon={opt.icon}
+            aria-label={opt.label}
+            className={size === opt.value ? '' : TOOLBAR_UNSELECTED_WRAPPER}
+            iconClassName={size === opt.value ? '' : TOOLBAR_UNSELECTED_ICON}
+          />
+        ))}
+      </Tab>
+      <Tab
+        value={bold ? 'b' : '__none__'}
+        onChange={() => setBold((b) => !b)}
+        size="sm"
+        selectedVariant="primary"
+        aria-label="Bold"
+      >
+        <Tab.Segment
+          value="b"
+          type="icon"
+          icon="text-bold"
+          aria-label="Bold"
+          className={bold ? '' : TOOLBAR_UNSELECTED_WRAPPER}
+          iconClassName={bold ? '' : TOOLBAR_UNSELECTED_ICON}
+        />
+      </Tab>
+    </div>
+  );
+};
+
+/** Figma node 3710:5300 — Text Format toolbar (4-step font-size picker + Bold toggle). */
+export const TextFormat: Story = {
+  args: { value: 'md' },
+  render: () => <TextFormatExample />,
+};
