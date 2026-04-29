@@ -1,12 +1,7 @@
 // Auto-generated from Figma Core SiteGiant Library
-// Regenerated: 2026-04-23T08:29:11.161Z
+// Regenerated: 2026-04-29T10:16:50.382Z
 // Source: scripts/figma-icons-source.html → scripts/parse-figma-icons.mjs
-//
-// Channel brand icons (channel-*) live in channelIconPaths.ts and are
-// merged into this record at export time. Regenerate them via
-// `python scripts/build-channel-icons.py`.
-
-import { channelIconPaths } from './channelIconPaths';
+// Total: 158 icons
 
 export interface IconPathData {
   viewBox: string;
@@ -35,14 +30,6 @@ export const iconPaths: Record<string, IconPathData> = {
     ],
     "fillRule": "evenodd"
   },
-  // align-center / align-left / align-right — added 2026-04-29 (manually
-  // maintained; not in the parser's HTML source dump yet).
-  // Source: Figma assets at the Text Alignment toolbar (3709:5178). Native
-  // path space is 14.1667×9.9167 (a 4-line stack ~14 wide × ~10 tall). The
-  // viewBox below pads to a 14.1667-square and centers the path vertically,
-  // so when rendered at size=17 the icon occupies the full 17×17 box width
-  // with proportional height — matches the visual weight of the rest of the
-  // text-formatting icon family (text-bold, text-italic, text-size-1..4).
   "align-center": {
     "viewBox": "0 -2.125 14.1667 14.1667",
     "paths": [
@@ -1079,7 +1066,6 @@ export const iconPaths: Record<string, IconPathData> = {
     ],
     "fillRule": "evenodd"
   },
-  ...channelIconPaths,
 };
 
 export type IconName = keyof typeof iconPaths;

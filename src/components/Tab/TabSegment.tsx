@@ -19,6 +19,11 @@ export interface TabSegmentProps {
    * Use this when the toolbar context needs to override icon color — the
    * segment's wrapper-level `className` cannot reach the icon, which sets
    * its own `text-[color:...]` directly.
+   *
+   * When non-empty, the segment's built-in `iconColor` class is dropped so the
+   * caller fully owns icon color (Tailwind v4 resolves utility conflicts by
+   * stylesheet insertion order, not class-string order — appending classes
+   * isn't a reliable override mechanism).
    */
   iconClassName?: string;
   /** Injected by <Tab>. Do not pass directly. */
@@ -123,7 +128,7 @@ export const TabSegment = ({
           <Icon
             name={icon}
             size={17}
-            className={[iconColor, iconClassName].filter(Boolean).join(' ')}
+            className={iconClassName || iconColor}
           />
         ) : null
       ) : (
