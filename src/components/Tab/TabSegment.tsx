@@ -14,6 +14,13 @@ export interface TabSegmentProps {
   'aria-label'?: string;
   disabled?: boolean;
   className?: string;
+  /**
+   * Extra classes applied to the inner <Icon> element (icon-type segments only).
+   * Use this when the toolbar context needs to override icon color — the
+   * segment's wrapper-level `className` cannot reach the icon, which sets
+   * its own `text-[color:...]` directly.
+   */
+  iconClassName?: string;
   /** Injected by <Tab>. Do not pass directly. */
   __position?: SegmentPosition;
   /** Injected by <Tab>. Do not pass directly. */
@@ -50,6 +57,7 @@ export const TabSegment = ({
   children,
   disabled = false,
   className = '',
+  iconClassName = '',
   'aria-label': ariaLabel,
   __position = 'single',
   __isSelected = false,
@@ -112,7 +120,11 @@ export const TabSegment = ({
     >
       {type === 'icon' ? (
         icon ? (
-          <Icon name={icon} size={17} className={iconColor} />
+          <Icon
+            name={icon}
+            size={17}
+            className={[iconColor, iconClassName].filter(Boolean).join(' ')}
+          />
         ) : null
       ) : (
         <span
