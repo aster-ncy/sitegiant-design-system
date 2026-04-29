@@ -238,6 +238,30 @@ export type { PopconfirmProps, PopconfirmType, PopconfirmButtonCount } from './P
 export { StatusCard } from './StatusCard';
 export type { StatusCardProps, StatusCardStatus, StatusCardSize } from './StatusCard';
 
+// TableCell
+export { TableCell } from './TableCell';
+export type {
+  TableCellProps,
+  TableCellWeight,
+  TableRowPosition,
+} from './TableCell';
+
+// TableHeaderCell
+export { TableHeaderCell, sortDirectionToAria } from './TableHeaderCell';
+export type {
+  TableHeaderCellProps,
+  TableHeaderCellType,
+  TableColumnPosition,
+  TableTextAlignment,
+} from './TableHeaderCell';
+
+// TableSelectionBar
+export { TableSelectionBar } from './TableSelectionBar';
+export type {
+  TableSelectionBarProps,
+  TableSelectionBarAction,
+} from './TableSelectionBar';
+
 // Tag
 export { Tag } from './Tag';
 export type { TagProps } from './Tag';
