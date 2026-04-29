@@ -115,6 +115,10 @@ export const Dropdown = ({
   ].join(' ');
 
   /* ── Select text color ───────────────────────────────── */
+  // The trigger uses muted gray when the placeholder is showing,
+  // value color otherwise. Each <option> below gets its own value
+  // color override so the open dropdown list is NOT inherited by
+  // this muted color.
   const isPlaceholderShown = !isDisabled && (value === undefined || value === '');
   const selectTextClass = isDisabled
     ? 'text-[color:var(--dropdown-disabled-text)]'
@@ -213,6 +217,9 @@ export const Dropdown = ({
               key={opt.value}
               value={opt.value}
               disabled={opt.disabled}
+              // Explicit color so the open dropdown list does not
+              // inherit the placeholder muted color from the <select>.
+              style={{ color: 'var(--dropdown-value-text)' }}
             >
               {opt.label}
             </option>
