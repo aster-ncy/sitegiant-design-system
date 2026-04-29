@@ -7,7 +7,7 @@ export type NumberInputState =
   | 'disabled'
   | 'readonly'
   | 'readonly-bold';
-export type NumberInputValidation = 'default' | 'error' | 'success';
+export type NumberInputValidation = 'default' | 'error' | 'success' | 'warning';
 export type NumberInputSize = 'default' | 'slim';
 
 export interface NumberInputProps {
@@ -51,6 +51,7 @@ const wrapperBorderByValidation: Record<NumberInputValidation, string> = {
   default: 'border-[var(--form-input-default-border)]',
   error: 'border-[var(--form-input-danger-border)]',
   success: 'border-[var(--form-input-default-border)]',
+  warning: 'border-[var(--color-sys-yellow-DEFAULT)]',
 };
 
 const clamp = (n: number, min?: number, max?: number) => {
