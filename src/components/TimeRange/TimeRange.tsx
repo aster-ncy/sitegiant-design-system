@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { Ref } from 'react';
+import { createPortal } from 'react-dom';
 import { Icon } from '../Icon';
 
 export type TimeRangeState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
@@ -136,13 +137,18 @@ export const TimeRange = ({
   const pickerEnabled = showPicker && !isDisabled && !isReadonly;
   const [activeCell, setActiveCell] = useState<'start' | 'end' | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const shellRef = useRef<HTMLDivElement | null>(null);
 
   // Close popover when focus leaves the whole component, or click-outside.
+  // The popover itself lives in a portal under <body>, so we mark its root
+  // with [data-tr-popover] to recognize it as "inside" for click-outside.
   useEffect(() => {
     if (!activeCell) return;
     const onPointerDown = (e: PointerEvent) => {
-      if (!containerRef.current) return;
-      if (e.target instanceof Node && containerRef.current.contains(e.target)) return;
+      const t = e.target;
+      if (!(t instanceof Element)) return;
+      if (containerRef.current && containerRef.current.contains(t)) return;
+      if (t.closest('[data-tr-popover]')) return;
       setActiveCell(null);
     };
     const onKeyDown = (e: KeyboardEvent) => {
@@ -249,6 +255,7 @@ export const TimeRange = ({
       <div className="flex flex-col gap-[var(--spacing-4)] items-start relative">
         <div className="flex items-center gap-[var(--spacing-8)]">
           <div
+            ref={shellRef}
             className={shellBaseClass}
             onClick={isReadonly ? undefined : focusStart}
           >
@@ -348,9 +355,10 @@ export const TimeRange = ({
           </span>
         )}
 
-        {/* ── Time-picker popover ─────────────────────────── */}
+        {/* ── Time-picker popover (portaled to <body>) ─────── */}
         {pickerEnabled && activeCell && (
           <TimePickerPopover
+            anchorRef={shellRef}
             selectedH={selH}
             selectedM={selM}
             onPick={(hh, mm) => writeCell(activeCell, hh, mm)}
@@ -365,6 +373,7 @@ export const TimeRange = ({
 /* ── Time-picker popover ───────────────────────────────── */
 
 interface TimePickerPopoverProps {
+  anchorRef: React.RefObject<HTMLDivElement | null>;
   selectedH: string | null;
   selectedM: string | null;
   onPick: (hh: string, mm: string) => void;
@@ -372,6 +381,7 @@ interface TimePickerPopoverProps {
 }
 
 const TimePickerPopover = ({
+  anchorRef,
   selectedH,
   selectedM,
   onPick,
@@ -379,28 +389,61 @@ const TimePickerPopover = ({
 }: TimePickerPopoverProps) => {
   const hourCol = useRef<HTMLDivElement | null>(null);
   const minuteCol = useRef<HTMLDivElement | null>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+
+  // Position the portal popover beneath the anchor field. Recompute on
+  // mount and on scroll/resize so the popover tracks the field.
+  useLayoutEffect(() => {
+    const reposition = () => {
+      const el = anchorRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      // 4px gap matches the inline mt-[var(--spacing-4)] from the previous impl.
+      setPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX });
+    };
+    reposition();
+    window.addEventListener('resize', reposition);
+    window.addEventListener('scroll', reposition, true);
+    return () => {
+      window.removeEventListener('resize', reposition);
+      window.removeEventListener('scroll', reposition, true);
+    };
+  }, [anchorRef]);
 
   // Auto-scroll selected row into view on open and when selection changes.
+  // Depend on `pos` so the effect re-runs once the popover has actually
+  // mounted (it returns null until pos is computed, so refs aren't valid
+  // on the first commit). Scrolls the column only — never the page.
   useEffect(() => {
+    if (!pos) return;
     const scrollToSelected = (col: HTMLDivElement | null, value: string | null) => {
       if (!col || !value) return;
       const row = col.querySelector<HTMLButtonElement>(`[data-value="${value}"]`);
-      if (row) row.scrollIntoView({ block: 'center' });
+      if (row) {
+        const colRect = col.getBoundingClientRect();
+        const rowRect = row.getBoundingClientRect();
+        const offset = rowRect.top - colRect.top - col.clientHeight / 2 + row.clientHeight / 2;
+        col.scrollTop += offset;
+      }
     };
     scrollToSelected(hourCol.current, selectedH);
     scrollToSelected(minuteCol.current, selectedM);
-  }, [selectedH, selectedM]);
+  }, [pos, selectedH, selectedM]);
 
   const safeH = selectedH ?? '00';
   const safeM = selectedM ?? '00';
 
-  return (
+  if (!pos) return null;
+  if (typeof document === 'undefined') return null;
+
+  return createPortal(
     <div
       role="dialog"
       aria-label="Select time"
-      // Sits below the field shell, left-aligned with the input row.
+      data-tr-popover=""
+      style={{ position: 'absolute', top: pos.top, left: pos.left }}
       className={[
-        'absolute z-50 top-full left-0 mt-[var(--spacing-4)]',
+        'z-50',
         'flex flex-col',
         'bg-[var(--form-input-default-fill)]',
         'border border-solid border-[var(--form-input-default-border)]',
@@ -453,7 +496,8 @@ const TimePickerPopover = ({
           Ok
         </button>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 };
 
