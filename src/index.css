@@ -639,6 +639,40 @@
   --badge-onlight-text: #0C2028;
 
   /* ========================================
+     TABLE COLORS (Color-Token/Light)
+     ======================================== */
+  --table-header-text: #647176;
+  --table-header-disabled-text: #90999D;
+  --table-header-icon: #90999D;
+  --table-header-fill: #FFFFFF;
+  --table-body-text: #0C2028;
+  --table-body-hover-text: #5ACC5A;
+  --table-body-fill: #FFFFFF;
+  --table-body-hover-fill: #FAFAFB;
+  --table-subrow-fill: #F6F6F6;
+  --table-subrow-hover-fill: #EFEFEF;
+  --table-divider-border: #E5E5E5;
+  --table-divider-last-border: #D4D4D4;
+  --table-divider-lighter-border: #F6F6F6;
+
+  /* Inset table variant — used inside cards / containers */
+  --table-inset-header-text: #647176;
+  --table-inset-header-icon: #90999D;
+  --table-inset-header-fill: #FAFAFB;
+  --table-inset-body-text: #0C2028;
+  --table-inset-body-hover-text: #5ACC5A;
+  --table-inset-body-fill: #FFFFFF;
+  --table-inset-body-hover-fill: #FAFAFB;
+  --table-inset-subrow-fill: #F6F6F6;
+  --table-inset-subrow-hover-fill: #EFEFEF;
+
+  /* Table typography */
+  --table-header-size: 12px;
+  --table-header-lineheight: 17px;
+  --table-body-size: 14px;
+  --table-body-lineheight: 21px;
+
+  /* ========================================
      SPACING (Core Primitives)
      ======================================== */
   --spacing-0: 0px;
