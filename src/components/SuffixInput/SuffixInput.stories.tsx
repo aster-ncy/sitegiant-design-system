@@ -96,3 +96,54 @@ export const Interactive: Story = {
     );
   },
 };
+
+/* ── Suffix dropdown variant ─────────────────────────── */
+
+export const WithSuffixDropdown: Story = {
+  render: (args) => {
+    const [val, setVal] = useState('12.5');
+    const [unit, setUnit] = useState('kg');
+    return (
+      <div className="flex flex-col gap-[var(--spacing-8)]">
+        <SuffixInput
+          {...args}
+          value={val}
+          onChange={setVal}
+          suffix={unit}
+          suffixOptions={[
+            { value: 'kg', label: 'kg' },
+            { value: 'g', label: 'g' },
+            { value: 'lb', label: 'lb' },
+            { value: 'oz', label: 'oz' },
+          ]}
+          onSuffixChange={setUnit}
+        />
+        <p className="text-[length:var(--text-12)] text-[color:var(--form-label-info-text)]">
+          {val || <em>—</em>} {unit}
+        </p>
+      </div>
+    );
+  },
+};
+
+export const CurrencyDropdown: Story = {
+  render: (args) => {
+    const [val, setVal] = useState('100.00');
+    const [currency, setCurrency] = useState('USD');
+    return (
+      <SuffixInput
+        {...args}
+        value={val}
+        onChange={setVal}
+        suffix={currency}
+        suffixOptions={[
+          { value: 'USD', label: 'USD' },
+          { value: 'MYR', label: 'MYR' },
+          { value: 'SGD', label: 'SGD' },
+          { value: 'TWD', label: 'TWD' },
+        ]}
+        onSuffixChange={setCurrency}
+      />
+    );
+  },
+};

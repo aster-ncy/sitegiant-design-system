@@ -270,6 +270,7 @@ export type {
   SuffixInputState,
   SuffixInputValidation,
   SuffixInputSize,
+  SuffixOption,
 } from './SuffixInput';
 
 // TimeRange
