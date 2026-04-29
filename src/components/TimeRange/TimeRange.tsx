@@ -255,7 +255,15 @@ export const TimeRange = ({
         <div className="flex items-center gap-[var(--spacing-8)]">
           <div
             className={shellBaseClass}
-            onClick={isReadonly ? undefined : focusStart}
+            onClick={(e) => {
+              // Click-anywhere-to-focus is for the dead space inside the
+              // shell (between cells, around the dash). Bail if the click
+              // already landed on an input — otherwise we'd steal focus
+              // from whichever cell the user just clicked.
+              if (isReadonly) return;
+              if (e.target instanceof HTMLInputElement) return;
+              focusStart();
+            }}
           >
             {isReadonly ? (
               <span
