@@ -7,6 +7,11 @@ export type TableRowPosition = 'first' | 'middle' | 'last';
 export interface TableCellProps {
   /** Cell content. */
   children?: ReactNode;
+  /**
+   * Inset variant — compact padding, lighter dividers, used when the
+   * table sits inside a card / container. Pair with `<TableHeaderCell inset>`.
+   */
+  inset?: boolean;
   /** Column position — controls left/right padding. */
   column?: TableColumnPosition;
   /** Text alignment within the cell. */
@@ -65,6 +70,7 @@ const textAlignmentClass: Record<TableTextAlignment, string> = {
  */
 export const TableCell = ({
   children,
+  inset = false,
   column = 'center',
   align = 'left',
   weight = 'normal',
@@ -76,17 +82,30 @@ export const TableCell = ({
   className = '',
 }: TableCellProps) => {
   // Bottom border — heavier on the very last row to anchor the table.
-  const bottomBorder = row === 'last'
-    ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]'
-    : 'shadow-[inset_0_-1px_0_0_var(--table-divider-border)]';
+  // Inset variant uses a lighter divider for nested-table contexts.
+  const bottomBorder = inset
+    ? row === 'last'
+      ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-lighter-border)]'
+      : 'shadow-[inset_0_-1px_0_0_var(--table-divider-lighter-border)]'
+    : row === 'last'
+      ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]'
+      : 'shadow-[inset_0_-1px_0_0_var(--table-divider-border)]';
 
-  const fillClass = hovered
-    ? 'bg-[var(--table-body-hover-fill)]'
-    : 'bg-[var(--table-body-fill)]';
+  const fillClass = inset
+    ? hovered
+      ? 'bg-[var(--table-inset-body-hover-fill)]'
+      : 'bg-[var(--table-inset-body-fill)]'
+    : hovered
+      ? 'bg-[var(--table-body-hover-fill)]'
+      : 'bg-[var(--table-body-fill)]';
 
-  const textColorClass = hovered
-    ? 'text-[color:var(--table-body-hover-text)]'
-    : 'text-[color:var(--table-body-text)]';
+  const textColorClass = inset
+    ? hovered
+      ? 'text-[color:var(--table-inset-body-hover-text)]'
+      : 'text-[color:var(--table-inset-body-text)]'
+    : hovered
+      ? 'text-[color:var(--table-body-hover-text)]'
+      : 'text-[color:var(--table-body-text)]';
 
   const weightClass = weight === 'bold'
     ? 'font-[var(--font-weight-bold)]'
@@ -99,8 +118,10 @@ export const TableCell = ({
         // of its <td>; otherwise the bottom inset-shadow border under-
         // paints and reads as an underline rather than a row divider.
         'relative flex items-center gap-[var(--spacing-12)] w-full',
-        columnPaddingX[column],
-        'py-[var(--spacing-16)]',
+        // Inset variant uses tighter horizontal + vertical padding.
+        inset
+          ? 'px-[var(--spacing-12)] py-[var(--spacing-8)]'
+          : `${columnPaddingX[column]} py-[var(--spacing-16)]`,
         fillClass,
         bottomBorder,
         'transition-colors duration-150',

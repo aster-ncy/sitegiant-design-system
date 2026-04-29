@@ -8,6 +8,11 @@ export type TableTextAlignment = 'left' | 'center' | 'right';
 export interface TableHeaderCellProps {
   /** Cell type — 'default' (text + optional sort) or 'icon' (icon-only). */
   type?: TableHeaderCellType;
+  /**
+   * Inset variant — compact padding, light-grey fill, rounded leading
+   * corner, no bottom divider. Use inside cards / containers.
+   */
+  inset?: boolean;
   /** Column position — controls left/right padding. */
   column?: TableColumnPosition;
   /** Text alignment within the cell. */
@@ -33,24 +38,6 @@ export interface TableHeaderCellProps {
   /** Aria label for icon-only cells. */
   iconAriaLabel?: string;
 }
-
-/**
- * Map a sortDirection prop value to the ARIA-spec aria-sort value.
- * Apply the result on the surrounding <th>:
- *
- *   <th aria-sort={sortDirectionToAria(sortDirection, sortable)}>
- *     <TableHeaderCell sortable sortDirection={sortDirection} ... />
- *   </th>
- */
-export const sortDirectionToAria = (
-  direction: 'asc' | 'desc' | null | undefined,
-  sortable: boolean,
-): 'ascending' | 'descending' | 'none' | undefined => {
-  if (!sortable) return undefined;
-  if (direction === 'asc') return 'ascending';
-  if (direction === 'desc') return 'descending';
-  return 'none';
-};
 
 const columnPaddingX: Record<TableColumnPosition, string> = {
   first: 'pl-[var(--spacing-24)] pr-[var(--spacing-12)]',
@@ -78,6 +65,7 @@ const textAlignmentClass: Record<TableTextAlignment, string> = {
  */
 export const TableHeaderCell = ({
   type = 'default',
+  inset = false,
   column = 'center',
   align = 'left',
   label,
@@ -91,17 +79,30 @@ export const TableHeaderCell = ({
   icon = 'menu-swap',
   iconAriaLabel,
 }: TableHeaderCellProps) => {
+  // Inset variant: compact, grey fill, rounded leading corner on the
+  // first column, no bottom divider. Default variant: white fill, full
+  // padding, bottom inset-shadow border.
+  const insetCornerClass = inset && column === 'first' ? 'rounded-l-[var(--radius-4)]' : '';
+  const insetCornerLastClass = inset && column === 'last' ? 'rounded-r-[var(--radius-4)]' : '';
+
   const cellClasses = [
     // `flex` (not `inline-flex`) so the cell occupies the full width of
     // its <th> parent — otherwise the inset-shadow bottom border would
     // only paint under the inner content and look like an underline.
     'relative flex items-center gap-[var(--spacing-12)]',
     'min-w-[44px]',
-    columnPaddingX[column],
-    'py-[var(--spacing-20)]',
-    'bg-[var(--table-header-fill)]',
-    // Bottom divider via inset shadow (matches Figma effect on the cell).
-    'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]',
+    inset
+      ? // Inset: pl-12 pr-6 py-8, no bottom divider, grey fill.
+        `${column === 'first' ? 'pl-[var(--spacing-12)]' : 'pl-[var(--spacing-12)]'} pr-[var(--spacing-6)] py-[var(--spacing-8)]`
+      : `${columnPaddingX[column]} py-[var(--spacing-20)]`,
+    inset
+      ? 'bg-[var(--table-inset-header-fill)]'
+      : 'bg-[var(--table-header-fill)]',
+    inset
+      ? ''
+      : 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]',
+    insetCornerClass,
+    insetCornerLastClass,
     className,
   ]
     .filter(Boolean)
@@ -109,7 +110,18 @@ export const TableHeaderCell = ({
 
   const titleColor = disabled
     ? 'text-[color:var(--table-header-disabled-text)]'
-    : 'text-[color:var(--table-header-text)]';
+    : inset
+      ? 'text-[color:var(--table-inset-header-text)]'
+      : 'text-[color:var(--table-header-text)]';
+
+  // Icon color follows the variant — inset headers use the inset icon
+  // token so sort + icon-only triggers match the rest of the inset
+  // header styling.
+  const iconColorClass = disabled
+    ? 'text-[color:var(--table-header-disabled-text)]'
+    : inset
+      ? 'text-[color:var(--table-inset-header-icon)]'
+      : 'text-[color:var(--table-header-icon)]';
 
   const titleClasses = [
     'inline-flex items-center gap-[var(--spacing-2)]',
@@ -137,9 +149,7 @@ export const TableHeaderCell = ({
           <Icon
             name={icon as Parameters<typeof Icon>[0]['name']}
             size={17}
-            className={disabled
-              ? 'text-[color:var(--table-header-disabled-text)]'
-              : 'text-[color:var(--table-header-icon)]'}
+            className={iconColorClass}
           />
         </button>
       </div>
@@ -188,12 +198,7 @@ export const TableHeaderCell = ({
             <Icon
               name={sortIcon as Parameters<typeof Icon>[0]['name']}
               size={17}
-              className={[
-                'shrink-0',
-                disabled
-                  ? 'text-[color:var(--table-header-disabled-text)]'
-                  : 'text-[color:var(--table-header-icon)]',
-              ].join(' ')}
+              className={['shrink-0', iconColorClass].join(' ')}
             />
           )}
         </button>

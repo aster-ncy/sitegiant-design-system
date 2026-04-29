@@ -1,8 +1,12 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableCell } from './TableCell';
+import { useState } from 'react';
 import { TableHeaderCell, sortDirectionToAria } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
+import { Tag } from '../Tag';
+import { Pip } from '../Pip';
+import { TableExpandToggle } from '../TableExpandToggle';
 
 const meta = {
   title: 'Tables/TableCell',
@@ -72,6 +76,67 @@ const Cell = ({ children, ...rest }: React.ComponentProps<typeof TableCell>) => 
     <TableCell {...rest}>{children}</TableCell>
   </td>
 );
+
+/* ── Inset variant ──────────────────────────────────── */
+
+export const Inset: Story = {
+  args: { inset: true, children: 'Inset cell value' },
+};
+
+export const InsetBold: Story = {
+  args: { inset: true, weight: 'bold', children: 'Inset bold' },
+};
+
+export const InsetHovered: Story = {
+  args: { inset: true, hovered: true, children: 'Inset hover' },
+};
+
+/* ── Content composition variants (Inset Table Row family) ── */
+
+export const WithTagContent: Story = {
+  args: {
+    children: (
+      <span className="inline-flex items-center gap-[var(--spacing-4)]">
+        <Tag label="Tag Label" />
+        <Pip type="warning" pipStyle="solid" label="Pip Text" />
+      </span>
+    ),
+  },
+};
+
+export const WithInfoContent: Story = {
+  args: {
+    children: (
+      <span className="inline-flex flex-col">
+        <span className="text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--table-body-text)]">
+          Primary value
+        </span>
+        <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
+          Secondary info
+        </span>
+      </span>
+    ),
+  },
+};
+
+export const WithExpandToggle: Story = {
+  args: { column: 'first' },
+  render: (args) => {
+    const [expanded, setExpanded] = useState(false);
+    return (
+      <TableCell
+        {...args}
+        leadingIcon={
+          <TableExpandToggle expanded={expanded} onToggle={setExpanded} />
+        }
+      >
+        Expandable row
+      </TableCell>
+    );
+  },
+};
+
+/* ── Full table example ─────────────────────────────── */
 
 export const FullTable: Story = {
   render: () => (
