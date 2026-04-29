@@ -115,9 +115,9 @@ export const Quantity = ({
     onChange?.(next);
   };
 
-  const onCellChange = (key: 'current' | 'total') => (raw: string) => {
+  const onCurrentChange = (raw: string) => {
     const parsed = raw === '' ? '' : String(clamp(Number(raw), min, max));
-    update({ ...current, [key]: parsed });
+    update({ ...current, current: parsed });
   };
 
   // Wrapper acts as the bordered shell. Click-anywhere focuses the
@@ -256,7 +256,7 @@ export const Quantity = ({
                   max={max}
                   disabled={isDisabled}
                   aria-invalid={isError || undefined}
-                  onChange={(e) => onCellChange('current')(e.target.value)}
+                  onChange={(e) => onCurrentChange(e.target.value)}
                   className={cellClass(isCurrentEmpty)}
                 />
                 {type === 'default' && (
@@ -264,20 +264,28 @@ export const Quantity = ({
                     <span aria-hidden="true" className={separatorClass}>
                       /
                     </span>
-                    <input
+                    {/* The total/capacity cell is non-editable — it's a
+                        caller-set ceiling, not a user input. Render as a
+                        plain span so it visually matches the cell shape
+                        (same width / typography) but doesn't take focus. */}
+                    <span
                       id={id ? `${id}-total` : undefined}
-                      name={name ? `${name}-total` : undefined}
-                      type="number"
-                      inputMode="numeric"
-                      value={current.total}
-                      placeholder={totalPlaceholder}
-                      min={min}
-                      max={max}
-                      disabled={isDisabled}
-                      aria-invalid={isError || undefined}
-                      onChange={(e) => onCellChange('total')(e.target.value)}
-                      className={cellClass(isTotalEmpty)}
-                    />
+                      aria-label="Total"
+                      className={[
+                        'shrink-0 w-[32px]',
+                        'text-center select-none',
+                        'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+                        'font-[family-name:var(--font-sans)]',
+                        isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+                        isDisabled
+                          ? 'text-[color:var(--form-input-disabled-text)]'
+                          : isTotalEmpty
+                            ? 'text-[color:var(--form-input-placeholder-text)]'
+                            : 'text-[color:var(--form-input-value-text)]',
+                      ].join(' ')}
+                    >
+                      {isTotalEmpty ? totalPlaceholder : current.total}
+                    </span>
                   </>
                 )}
               </>
