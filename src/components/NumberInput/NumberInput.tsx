@@ -51,7 +51,9 @@ const wrapperBorderByValidation: Record<NumberInputValidation, string> = {
   default: 'border-[var(--form-input-default-border)]',
   error: 'border-[var(--form-input-danger-border)]',
   success: 'border-[var(--form-input-default-border)]',
-  warning: 'border-[var(--color-sys-yellow-DEFAULT)]',
+  // Warning uses the same danger red as error per Figma — the
+  // semantic difference is icon shape (triangle vs X), not color.
+  warning: 'border-[var(--form-input-danger-border)]',
 };
 
 const clamp = (n: number, min?: number, max?: number) => {
