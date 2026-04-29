@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { PrefixInput } from './PrefixInput';
 
 const meta: Meta<typeof PrefixInput> = {
-  title: 'Form/PrefixInput',
+  title: 'Forms/PrefixInput',
   component: PrefixInput,
   parameters: { layout: 'centered' },
   decorators: [
