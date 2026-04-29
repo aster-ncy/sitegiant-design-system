@@ -102,6 +102,29 @@ export const Interactive: Story = {
   },
 };
 
+/* ── Clear button ────────────────────────────────────── */
+
+export const WithClearButton: Story = {
+  render: () => {
+    const [selected, setSelected] = useState('electronics');
+    return (
+      <div className="flex flex-col gap-[var(--spacing-8)] max-w-xs">
+        <Dropdown
+          label="Product category"
+          placeholder="Select a category..."
+          options={sampleOptions}
+          value={selected}
+          onChange={setSelected}
+        />
+        <p className="text-[length:var(--text-12)] text-[color:var(--form-label-info-text)]">
+          Click the X next to the chevron to clear the selection.
+          Currently: {selected || <em>none</em>}
+        </p>
+      </div>
+    );
+  },
+};
+
 /* ── Composite: all states ───────────────────────────── */
 
 export const AllStates: Story = {

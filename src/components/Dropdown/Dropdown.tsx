@@ -77,6 +77,7 @@ export const Dropdown = ({
   const isReadonly = readonly;
   const isDanger = state === 'danger' && !isDisabled && !isReadonly;
   const [isOpen, setIsOpen] = useState(false);
+  const showClear = !isDisabled && !isReadonly && (value?.length ?? 0) > 0;
 
   /* ── Wrapper classes ─────────────────────────────────── */
   const wrapperClasses = [
@@ -114,8 +115,11 @@ export const Dropdown = ({
   ].join(' ');
 
   /* ── Select text color ───────────────────────────────── */
+  const isPlaceholderShown = !isDisabled && (value === undefined || value === '');
   const selectTextClass = isDisabled
     ? 'text-[color:var(--dropdown-disabled-text)]'
+    : isPlaceholderShown
+    ? 'text-[color:var(--form-input-placeholder-text)]'
     : 'text-[color:var(--dropdown-value-text)]';
 
   /* ── Chevron icon color ──────────────────────────────── */
@@ -170,8 +174,15 @@ export const Dropdown = ({
             if (!isDisabled && !isReadonly) setIsOpen((prev) => !prev);
           }}
           onKeyDown={(e) => {
-            if (!isDisabled && !isReadonly && (e.key === 'Enter' || e.key === ' ')) {
+            if (isDisabled || isReadonly) return;
+            if (e.key === 'Enter' || e.key === ' ') {
               setIsOpen((prev) => !prev);
+              return;
+            }
+            // Keyboard path to clear the selection — mirrors the X button.
+            if (e.key === 'Escape' && (value?.length ?? 0) > 0) {
+              e.preventDefault();
+              onChange?.('');
             }
           }}
           onBlur={() => setIsOpen(false)}
@@ -183,7 +194,7 @@ export const Dropdown = ({
             'w-full appearance-none bg-transparent outline-none border-none',
             isReadonly
               ? `px-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
-              : `pl-[var(--spacing-12)] pr-[var(--spacing-36)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
+              : `pl-[var(--spacing-12)] ${showClear ? 'pr-[var(--spacing-64)]' : 'pr-[var(--spacing-36)]'} ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
             'text-[length:var(--text-14)] leading-[var(--leading-21)]',
             'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
             selectTextClass,
@@ -208,19 +219,59 @@ export const Dropdown = ({
           ))}
         </select>
 
-        {/* Chevron icon overlay (non-interactive) */}
-        {!isReadonly && (
-          <span
+        {/* Right-edge controls: optional clear button + chevron.
+            Wrapper is pointer-events-none so clicks on the chevron / gap fall
+            through to the native <select>; the clear button re-enables pointer
+            events for itself so it can still be clicked. */}
+        {(showClear || !isReadonly) && (
+          <div
             className={[
               'absolute right-[var(--spacing-12)] top-1/2 -translate-y-1/2',
-              'pointer-events-none flex items-center',
-              'transition-transform duration-150',
-              isOpen ? 'rotate-180' : '',
-            ].filter(Boolean).join(' ')}
-            style={{ color: chevronColor }}
+              'flex items-center gap-[var(--spacing-6)]',
+              'pointer-events-none',
+            ].join(' ')}
           >
-            <Icon name="chevron-down" size={21} />
-          </span>
+            {showClear && (
+              <button
+                type="button"
+                tabIndex={-1}
+                aria-label="Clear selection"
+                onMouseDown={(e) => {
+                  // Stop the native <select> from toggling open on press.
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onChange?.('');
+                }}
+                className={[
+                  'pointer-events-auto',
+                  'inline-flex items-center justify-center shrink-0',
+                  'size-[17px] rounded-[var(--radius-120)]',
+                  'bg-[var(--color-set-lightest)]',
+                  'text-[color:var(--color-white)]',
+                  'border-none outline-none cursor-pointer',
+                  'hover:bg-[var(--color-set-DEFAULT)]',
+                  'transition-colors duration-150',
+                ].join(' ')}
+              >
+                <Icon name="close" size={11} />
+              </button>
+            )}
+            {!isReadonly && (
+              <span
+                className={[
+                  'flex items-center',
+                  'transition-transform duration-150',
+                  isOpen ? 'rotate-180' : '',
+                ].filter(Boolean).join(' ')}
+                style={{ color: chevronColor }}
+              >
+                <Icon name="chevron-down" size={21} />
+              </span>
+            )}
+          </div>
         )}
       </div>
 
