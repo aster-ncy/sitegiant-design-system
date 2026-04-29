@@ -86,33 +86,33 @@ export const AllIcons: Story = {
 export const ColorVariants: Story = {
   args: {},
   render: () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4">
-        <span className="w-24 text-xs text-[var(--color-text-info)]">Default</span>
+    <div className="flex flex-col gap-[var(--spacing-16)]">
+      <div className="flex items-center gap-[var(--spacing-16)]">
+        <span className="w-[96px] shrink-0 text-[length:var(--text-12)] text-[color:var(--color-text-info)]">Default</span>
         <Icon name="home" size="lg" />
         <Icon name="search" size="lg" />
         <Icon name="settings" size="lg" />
       </div>
-      <div className="flex items-center gap-4 text-[var(--color-icon-primary)]">
-        <span className="w-24 text-xs text-[var(--color-text-info)]">Primary</span>
+      <div className="flex items-center gap-[var(--spacing-16)] text-[color:var(--color-icon-primary)]">
+        <span className="w-[96px] shrink-0 text-[length:var(--text-12)] text-[color:var(--color-text-info)]">Primary</span>
         <Icon name="home" size="lg" />
         <Icon name="search" size="lg" />
         <Icon name="settings" size="lg" />
       </div>
-      <div className="flex items-center gap-4 text-[var(--color-icon-success)]">
-        <span className="w-24 text-xs text-[var(--color-text-info)]">Success</span>
+      <div className="flex items-center gap-[var(--spacing-16)] text-[color:var(--color-icon-success)]">
+        <span className="w-[96px] shrink-0 text-[length:var(--text-12)] text-[color:var(--color-text-info)]">Success</span>
         <Icon name="home" size="lg" />
         <Icon name="search" size="lg" />
         <Icon name="settings" size="lg" />
       </div>
-      <div className="flex items-center gap-4 text-[var(--color-icon-danger)]">
-        <span className="w-24 text-xs text-[var(--color-text-info)]">Danger</span>
+      <div className="flex items-center gap-[var(--spacing-16)] text-[color:var(--color-icon-danger)]">
+        <span className="w-[96px] shrink-0 text-[length:var(--text-12)] text-[color:var(--color-text-info)]">Danger</span>
         <Icon name="home" size="lg" />
         <Icon name="search" size="lg" />
         <Icon name="settings" size="lg" />
       </div>
-      <div className="flex items-center gap-4 text-[var(--color-icon-secondary)]">
-        <span className="w-24 text-xs text-[var(--color-text-info)]">Secondary</span>
+      <div className="flex items-center gap-[var(--spacing-16)] text-[color:var(--color-icon-secondary)]">
+        <span className="w-[96px] shrink-0 text-[length:var(--text-12)] text-[color:var(--color-text-info)]">Secondary</span>
         <Icon name="home" size="lg" />
         <Icon name="search" size="lg" />
         <Icon name="settings" size="lg" />
