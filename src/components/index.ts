@@ -246,6 +246,10 @@ export type {
   TableRowPosition,
 } from './TableCell';
 
+// TableExpandToggle
+export { TableExpandToggle } from './TableExpandToggle';
+export type { TableExpandToggleProps } from './TableExpandToggle';
+
 // TableHeaderCell
 export { TableHeaderCell, sortDirectionToAria } from './TableHeaderCell';
 export type {

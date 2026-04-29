@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { TableHeaderCell, sortDirectionToAria } from './TableHeaderCell';
+import { TableHeaderCell } from './TableHeaderCell';
+import { sortDirectionToAria } from './sortDirectionToAria';
 import { Checkbox } from '../Checkbox';
 
 const meta = {
@@ -91,6 +92,44 @@ export const Disabled: Story = {
 
 export const NotSortable: Story = {
   args: { sortable: false },
+};
+
+/* ── Inset variant ──────────────────────────────────── */
+
+export const Inset: Story = {
+  args: { inset: true },
+};
+
+export const InsetFirstColumn: Story = {
+  args: { inset: true, column: 'first', label: 'Column' },
+};
+
+export const InsetWithCheckbox: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    checkbox: <Checkbox />,
+  },
+};
+
+export const InsetTableExample: Story = {
+  render: () => (
+    <table className="border-collapse w-full">
+      <thead>
+        <tr>
+          <th aria-sort={sortDirectionToAria(null, true)}>
+            <TableHeaderCell inset column="first" align="left" label="Item" sortable checkbox={<Checkbox />} />
+          </th>
+          <th aria-sort={sortDirectionToAria(null, true)}>
+            <TableHeaderCell inset column="center" align="left" label="Variant" sortable />
+          </th>
+          <th aria-sort={sortDirectionToAria('asc', true)}>
+            <TableHeaderCell inset column="last" align="right" label="Quantity" sortable sortDirection="asc" />
+          </th>
+        </tr>
+      </thead>
+    </table>
+  ),
 };
 
 export const IconType: Story = {

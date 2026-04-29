@@ -1,4 +1,5 @@
-export { TableHeaderCell, sortDirectionToAria } from './TableHeaderCell';
+export { TableHeaderCell } from './TableHeaderCell';
+export { sortDirectionToAria } from './sortDirectionToAria';
 export type {
   TableHeaderCellProps,
   TableHeaderCellType,
