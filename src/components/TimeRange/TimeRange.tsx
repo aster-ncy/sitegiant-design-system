@@ -137,7 +137,6 @@ export const TimeRange = ({
   const pickerEnabled = showPicker && !isDisabled && !isReadonly;
   const [activeCell, setActiveCell] = useState<'start' | 'end' | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const shellRef = useRef<HTMLDivElement | null>(null);
 
   // Close popover when focus leaves the whole component, or click-outside.
   // The popover itself lives in a portal under <body>, so we mark its root
@@ -255,7 +254,6 @@ export const TimeRange = ({
       <div className="flex flex-col gap-[var(--spacing-4)] items-start relative">
         <div className="flex items-center gap-[var(--spacing-8)]">
           <div
-            ref={shellRef}
             className={shellBaseClass}
             onClick={isReadonly ? undefined : focusStart}
           >
@@ -358,7 +356,9 @@ export const TimeRange = ({
         {/* ── Time-picker popover (portaled to <body>) ─────── */}
         {pickerEnabled && activeCell && (
           <TimePickerPopover
-            anchorRef={shellRef}
+            // Anchor under the active cell input, not the shared shell,
+            // so the picker visually points at whichever field is focused.
+            anchorRef={activeCell === 'start' ? startCellRef : endCellRef}
             selectedH={selH}
             selectedM={selM}
             onPick={(hh, mm) => writeCell(activeCell, hh, mm)}
@@ -373,7 +373,7 @@ export const TimeRange = ({
 /* ── Time-picker popover ───────────────────────────────── */
 
 interface TimePickerPopoverProps {
-  anchorRef: React.RefObject<HTMLDivElement | null>;
+  anchorRef: React.RefObject<HTMLElement | null>;
   selectedH: string | null;
   selectedM: string | null;
   onPick: (hh: string, mm: string) => void;
