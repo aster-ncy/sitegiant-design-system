@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { SmallSegmentedButton } from './SmallSegmentedButton';
 
 const meta = {
-  title: 'Inputs/SmallSegmentedButton',
+  title: 'Navigation/SmallSegmentedButton',
   component: SmallSegmentedButton,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
@@ -13,21 +13,22 @@ const meta = {
   },
   args: {
     value: 'color',
-    children: (
-      <>
-        <SmallSegmentedButton.Segment
-          value="color"
-          glyph={{ kind: 'inline', name: 'color' }}
-          aria-label="Color"
-        />
-        <SmallSegmentedButton.Segment
-          value="text"
-          glyph={{ kind: 'inline', name: 'text' }}
-          aria-label="Text"
-        />
-      </>
-    ),
+    'aria-label': 'Color picker',
   },
+  render: (args) => (
+    <SmallSegmentedButton {...args}>
+      <SmallSegmentedButton.Segment
+        value="color"
+        glyph={{ kind: 'inline', name: 'color' }}
+        aria-label="Color"
+      />
+      <SmallSegmentedButton.Segment
+        value="text"
+        glyph={{ kind: 'inline', name: 'text' }}
+        aria-label="Text"
+      />
+    </SmallSegmentedButton>
+  ),
 } satisfies Meta<typeof SmallSegmentedButton>;
 
 export default meta;
@@ -47,6 +48,8 @@ const Stack = ({ children }: { children: React.ReactNode }) => (
 );
 
 /* ──────────────────────────────────────────────────────────────────────── */
+
+export const Default: Story = {};
 
 export const ColorPicker2: Story = {
   args: { value: 'color' },
