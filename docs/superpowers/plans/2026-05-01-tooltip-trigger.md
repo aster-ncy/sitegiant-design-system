@@ -187,9 +187,11 @@ trigger-to-bubble offset without duplicating the constant."
 
 ---
 
-### Task 2: Refactor `<Tooltip>` to compose `<TooltipBox>`
+### Task 2: Refactor `<Tooltip>` to be a pass-through over `<TooltipBox>`
 
-**Why:** Spec promises the legacy `<Tooltip>` keeps its byte-identical render. This task collapses the bubble+arrow markup into a `<TooltipBox>` call while preserving the outer `inline-flex flex-col items-center` wrapper that callers depend on.
+**Why:** Spec promises the legacy `<Tooltip>` keeps its byte-identical render. `TooltipBox` already owns the `inline-flex flex-col items-center` (or `inline-flex items-center` for left/right) wrapper that lays out the arrow + message pair — adding another wrapper at the `Tooltip` level would double-nest and break that promise (visible regression for `width` / direct-child CSS). Tooltip becomes a thin pass-through that forwards every prop to TooltipBox.
+
+**Note (2026-05-01 plan revision):** This task originally had `<Tooltip>` keep its own outer wrapper around `<TooltipBox>`, producing a doubled `inline-flex flex-col items-center` shell. Code review caught the regression risk and the plan was amended in commit (this commit). The two-commit history (`refactor` + `fix`) is preserved in the actual git log.
 
 **Files:**
 - Modify: `src/components/Tooltip/Tooltip.tsx`
@@ -199,7 +201,6 @@ trigger-to-bubble offset without duplicating the constant."
 Replace the entire file with:
 
 ```tsx
-import type { CSSProperties } from 'react';
 import { TooltipBox } from './TooltipBox';
 import type { TooltipArrow } from './TooltipBox';
 
@@ -227,9 +228,10 @@ export interface TooltipProps {
  * listeners. For hover-/focus-driven tooltips that wrap a trigger, use
  * <TooltipTrigger>.
  *
- * The outer `inline-flex flex-col items-center` wrapper is preserved from the
- * pre-refactor implementation so existing callsites and stories render
- * byte-identical.
+ * Thin pass-through to <TooltipBox>. TooltipBox owns the flex wrapper that
+ * lays out the arrow + message, so legacy callsites and stories render
+ * byte-identical to the pre-refactor implementation (a single
+ * `inline-flex flex-col items-center` outer div containing the bubble).
  */
 export const Tooltip = ({
   message,
@@ -237,32 +239,18 @@ export const Tooltip = ({
   width,
   id,
   className = '',
-}: TooltipProps) => {
-  const wrapperStyle: CSSProperties | undefined = width ? { width } : undefined;
-
-  if (arrow === 'left' || arrow === 'right') {
-    return (
-      <div
-        className={['inline-flex items-center', className].filter(Boolean).join(' ')}
-        style={wrapperStyle}
-      >
-        <TooltipBox message={message} arrow={arrow} id={id} />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={['inline-flex flex-col items-center', className].filter(Boolean).join(' ')}
-      style={wrapperStyle}
-    >
-      <TooltipBox message={message} arrow={arrow} id={id} />
-    </div>
-  );
-};
+}: TooltipProps) => (
+  <TooltipBox
+    message={message}
+    arrow={arrow}
+    width={width}
+    id={id}
+    className={className}
+  />
+);
 ```
 
-Note that `<TooltipBox>` already produces its own outer `inline-flex` wrapper. Wrapping it in `<Tooltip>`'s legacy outer `<div>` produces a slightly nested structure (`<div class="inline-flex flex-col items-center"><div class="inline-flex flex-col items-center">…</div></div>`) but that's intentional — the outer wrapper is what existing `Tooltip.stories.tsx` expects, and the inner `TooltipBox` wrapper is what `<TooltipTrigger>` will use directly. Both wrappers are visually identical, so the legacy render is preserved.
+The DOM after this refactor: exactly one outer `inline-flex flex-col items-center` (or `inline-flex items-center` for left/right) div, contributed by `TooltipBox` — the same div the pre-refactor `Tooltip` rendered. Byte-identical.
 
 - [ ] **Step 2: Verify legacy stories still render byte-identically**
 
@@ -287,12 +275,12 @@ Expected: Exits 0.
 
 ```bash
 git add src/components/Tooltip/Tooltip.tsx
-git commit -m "refactor(tooltip): compose <TooltipBox> instead of inlining markup
+git commit -m "refactor(tooltip): pass-through to TooltipBox
 
-Public API and visual output are unchanged. The bubble + arrow markup
-now lives in TooltipBox; <Tooltip> keeps its outer
-\`inline-flex flex-col items-center\` wrapper so existing stories and
-any future callsites render byte-identical.
+Public API and visual output are unchanged. TooltipBox owns the outer
+flex wrapper; Tooltip forwards message/arrow/width/id/className to it.
+The rendered DOM is byte-identical to the pre-refactor implementation
+(a single \`inline-flex flex-col items-center\` div containing the bubble).
 
 Re-exports TooltipArrow from TooltipBox to preserve the legacy
 re-export chain through Tooltip/index.ts."

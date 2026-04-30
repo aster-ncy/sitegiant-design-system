@@ -67,11 +67,11 @@ export interface TooltipBoxProps {
 }
 ```
 
-Self-contained box with `role="tooltip"`. No outer flex wrapper, no listeners, no state. Pure presentational.
+Self-contained bubble with `role="tooltip"` on the message div. Owns the `inline-flex flex-col items-center` (or `inline-flex items-center` for left/right) wrapper that lays out the arrow + message pair. No listeners, no portal, no state. Pure presentational.
 
 ### `<Tooltip>` (existing, public — signature unchanged)
 
-Wraps `<TooltipBox>` in the current `inline-flex flex-col items-center` outer container. Re-exports `TooltipArrow`. Existing `Tooltip.stories.tsx` does not need edits.
+Thin pass-through to `<TooltipBox>` — forwards `message`, `arrow`, `width`, `id`, `className`. The pre-refactor outer wrapper was duplicating the one TooltipBox already owns; consolidating into TooltipBox keeps the rendered DOM byte-identical (a single `inline-flex flex-col items-center` div containing the bubble) without doubling. Re-exports `TooltipArrow`. Existing `Tooltip.stories.tsx` does not need edits.
 
 ### `<TooltipTrigger>` (new, public)
 
