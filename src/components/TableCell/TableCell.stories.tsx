@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableCell } from './TableCell';
 import { TableCellInfo } from './TableCellInfo';
+import { TableCellMainSub } from './TableCellMainSub';
 import { useState } from 'react';
 import { TableHeaderCell, sortDirectionToAria } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
@@ -342,6 +343,66 @@ export const InfoMultiParagraph: Story = {
             ],
           },
         ]}
+      />
+    ),
+  },
+};
+
+/* ── TableCellMainSub content variant (Figma Inset Table Row - MainSub, 2121:9632) ── */
+
+/**
+ * Default MainSub: caption label + 14/17 main value above caption label +
+ * 12/17 secondary sub value. Figma: Type=Default.
+ */
+export const MainSub: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellMainSub
+        mainLabel="Total"
+        mainValue="RM 10,250.00"
+        subLabel="Tax"
+        subValue="RM 615.00"
+      />
+    ),
+  },
+};
+
+/**
+ * Main Bold variant — Figma Type=Main Bold. Bolds the main value to draw
+ * attention; sub line stays regular. Mirrors the s8 Select Package row's
+ * tracking-number-with-meta pattern.
+ */
+export const MainSubBold: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellMainSub
+        mainBold
+        mainLabel="Tracking"
+        mainValue="MY984746382"
+        subLabel="Order"
+        subValue="878973829"
+      />
+    ),
+  },
+};
+
+/**
+ * No labels — just main value above sub value. Useful when the column
+ * header already names the field.
+ */
+export const MainSubLabelless: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellMainSub
+        mainBold
+        mainValue="MY984746382"
+        subValue="878973829"
       />
     ),
   },
