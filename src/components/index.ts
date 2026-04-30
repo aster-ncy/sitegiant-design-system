@@ -204,6 +204,19 @@ export type { RadioProps, RadioGroupProps, RadioOption } from './Radio';
 export { SearchBox } from './SearchBox';
 export type { SearchBoxProps, SearchBoxState } from './SearchBox';
 
+// SmallSegmentedButton
+export {
+  SmallSegmentedButton,
+  SmallSegmentedButtonSegment,
+} from './SmallSegmentedButton';
+export type {
+  SmallSegmentedButtonProps,
+  SmallSegmentedButtonSegmentProps,
+  SmallSegmentedSegmentPosition,
+  SmallSegmentedGlyph,
+  SmallSegmentedGlyphName,
+} from './SmallSegmentedButton';
+
 // Stepper
 export { Stepper } from './Stepper';
 export type { StepperProps, StepperStep } from './Stepper';
