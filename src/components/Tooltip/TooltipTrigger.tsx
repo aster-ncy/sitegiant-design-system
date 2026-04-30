@@ -59,6 +59,8 @@ void ANCHOR_GAP;
 // ARROW_HEIGHT is imported for Task 4's positioning offset.
 void ARROW_HEIGHT;
 
+// Arrow points back at the trigger from the bubble's facing edge:
+// bubble above (top placement) → arrow on bubble's bottom edge points down.
 const PLACEMENT_TO_ARROW: Record<TooltipPlacement, TooltipArrow> = {
   top: 'down',
   bottom: 'up',
@@ -101,8 +103,11 @@ export const TooltipTrigger = ({
   wrapperClassName,
   children,
 }: TooltipTriggerProps) => {
+  // Dev-time validation. console.error (not throw) so hook counts stay
+  // stable across renders — a transient bad child won't trigger React's
+  // "Rendered fewer hooks than expected" error on the next clean render.
   if (!import.meta.env.PROD && !isValidElement(children)) {
-    throw new Error(
+    console.error(
       '<TooltipTrigger>: `children` must be a single React element. Got: ' + typeof children,
     );
   }
@@ -138,12 +143,13 @@ export const TooltipTrigger = ({
   }, [enabled, openDelay]);
 
   const handleMouseLeave = useCallback(() => {
+    if (!enabled) return;
     if (openTimer.current !== null) {
       window.clearTimeout(openTimer.current);
       openTimer.current = null;
     }
     setIsOpen(false);
-  }, []);
+  }, [enabled]);
 
   // focus / blur on the cloned child
   const handleFocus = useCallback(
@@ -152,7 +158,10 @@ export const TooltipTrigger = ({
       try {
         if (e.target.matches(':focus-visible')) setIsOpen(true);
       } catch {
-        // matches(':focus-visible') threw — older browser. Treat as no-match.
+        // matches(':focus-visible') threw — pre-2020 browsers without
+        // the pseudo-class. Treat as no-match (tooltip won't open on
+        // keyboard focus on those browsers; aria-describedby still
+        // serves screen reader users). See spec risk note.
       }
     },
     [enabled],
