@@ -20,8 +20,8 @@ export interface TableCellListingProps {
    */
   tag?: ReactNode;
   /**
-   * Product display name. Renders body 14/21 bold; wraps to two lines
-   * (clamped at max-h-[42px] per Figma 1248:8402).
+   * Product display name. Renders body-slim 14/17 bold; wraps to two
+   * lines (clamped at max-h-[34px] for 2 × 17 per Figma 1248:8402).
    */
   productName: ReactNode;
   /**
@@ -39,9 +39,9 @@ export interface TableCellListingProps {
 }
 
 const productNameClasses = [
-  'block w-full max-h-[42px] overflow-hidden',
+  'block w-full max-h-[34px] overflow-hidden',
   'font-[family-name:var(--font-sans)]',
-  'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
+  'text-[length:var(--table-body-size)] leading-[var(--leading-17)]',
   'font-[var(--font-weight-bold)]',
   'text-[color:var(--color-text-primary)]',
 ].join(' ');
@@ -71,7 +71,7 @@ const captionSlimPrimaryClasses = `${captionSlimClasses} text-[color:var(--color
  * Tokens authoritative from Figma:
  * - outer flex: gap-12 items-start
  * - product info column: flex-col gap-4 items-start, flex-1 min-w-0
- * - product name: body 14/21 bold (max-h 42px to clamp at two lines)
+ * - product name: body-slim 14/17 bold (max-h 34px to clamp at two lines)
  * - info row label/value: caption-slim 12/15 (info / primary)
  * - extras row: flex gap-20 items-start (caller composes children)
  */
