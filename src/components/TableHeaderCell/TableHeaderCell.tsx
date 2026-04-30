@@ -214,7 +214,7 @@ export const TableHeaderCell = ({
             {hint.count !== undefined && (
               <span
                 className={[
-                  'text-[length:var(--text-12)] leading-[15px]',
+                  'text-[length:var(--text-12)] leading-[var(--leading-15)]',
                   'font-[family-name:var(--font-sans)] font-[var(--font-weight-medium)]',
                   'text-[color:var(--color-sys-red-DEFAULT)]',
                 ].join(' ')}
@@ -224,7 +224,7 @@ export const TableHeaderCell = ({
             )}
             <span
               className={[
-                'text-[length:var(--text-12)] leading-[15px]',
+                'text-[length:var(--text-12)] leading-[var(--leading-15)]',
                 'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
                 'text-[color:var(--color-sys-red-DEFAULT)] whitespace-nowrap',
               ].join(' ')}
