@@ -46,15 +46,27 @@ const productNameClasses = [
   'text-[color:var(--color-text-primary)]',
 ].join(' ');
 
-const captionSlimClasses = [
-  'shrink-0',
+// Label stays shrink-0 + nowrap (short fixed strings like "iSKU", "SKU",
+// "Variation"). Value flexes to fill remaining row width and truncates
+// with an ellipsis when it doesn't fit; the native `title` attribute
+// (added at render time when value is a plain string) gives a hover
+// tooltip with the full text.
+const captionSlimBase = [
   'font-[family-name:var(--font-sans)]',
   'text-[length:var(--general-caption-size)] leading-[var(--leading-15)]',
-  'whitespace-nowrap',
 ].join(' ');
 
-const captionSlimInfoClasses = `${captionSlimClasses} text-[color:var(--color-text-info)]`;
-const captionSlimPrimaryClasses = `${captionSlimClasses} text-[color:var(--color-text-primary)]`;
+const captionSlimLabelClasses = [
+  captionSlimBase,
+  'shrink-0 whitespace-nowrap',
+  'text-[color:var(--color-text-info)]',
+].join(' ');
+
+const captionSlimValueClasses = [
+  captionSlimBase,
+  'min-w-0 flex-1 truncate',
+  'text-[color:var(--color-text-primary)]',
+].join(' ');
 
 /**
  * TableCellListing — Figma: Inset Table Row - Listing (1262:9692, First
@@ -72,7 +84,11 @@ const captionSlimPrimaryClasses = `${captionSlimClasses} text-[color:var(--color
  * - outer flex: gap-12 items-start
  * - product info column: flex-col gap-4 items-start, flex-1 min-w-0
  * - product name: body-slim 14/17 bold (max-h 34px to clamp at two lines)
- * - info row label/value: caption-slim 12/15 (info / primary)
+ * - info row label/value: caption-slim 12/15 (info / primary). Labels
+ *   are shrink-0 + nowrap; values flex to fill row width and truncate
+ *   with ellipsis when they exceed available width — long values get
+ *   a native `title` tooltip so hovering reveals the full string
+ *   (instead of cropping mid-glyph as Figma's static frames do).
  * - extras row: flex gap-20 items-start (caller composes children)
  */
 export const TableCellListing = ({
@@ -91,10 +107,15 @@ export const TableCellListing = ({
         {infoRows?.map((row, index) => (
           <div
             key={index}
-            className="flex gap-[var(--spacing-4)] items-start shrink-0"
+            className="flex w-full min-w-0 gap-[var(--spacing-4)] items-start"
           >
-            <span className={captionSlimInfoClasses}>{row.label}</span>
-            <span className={captionSlimPrimaryClasses}>{row.value}</span>
+            <span className={captionSlimLabelClasses}>{row.label}</span>
+            <span
+              className={captionSlimValueClasses}
+              title={typeof row.value === 'string' ? row.value : undefined}
+            >
+              {row.value}
+            </span>
           </div>
         ))}
         {extras && (
