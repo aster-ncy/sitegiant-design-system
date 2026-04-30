@@ -105,11 +105,25 @@ export const SubrowHovered: Story = {
   args: { subrow: true, hovered: true, column: 'first', children: 'Awesome Store 1899' },
 };
 
-export const SubrowCenter: Story = {
+/**
+ * `column` controls left/right padding asymmetry; `align` controls
+ * where content sits within that padded zone. Three variants below
+ * exercise the alignment axis on the center column to make the
+ * distinction visible.
+ */
+export const SubrowCenterColumnLeftAlign: Story = {
   args: { subrow: true, column: 'center', align: 'left', children: '25' },
 };
 
-export const SubrowLast: Story = {
+export const SubrowCenterColumnCenterAlign: Story = {
+  args: { subrow: true, column: 'center', align: 'center', children: '25' },
+};
+
+export const SubrowCenterColumnRightAlign: Story = {
+  args: { subrow: true, column: 'center', align: 'right', children: '25' },
+};
+
+export const SubrowLastColumn: Story = {
   args: { subrow: true, column: 'last', align: 'right', children: '10,000.00' },
 };
 
