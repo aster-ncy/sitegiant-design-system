@@ -15,9 +15,11 @@ export interface TableExpandToggleProps {
  *
  * Borderless 21px chevron-up / chevron-down toggle for expanding a
  * sub-row inside a `TableCell` (typically in the last column). Figma
- * defines no boxed/bordered variant — the toggle is just an icon
- * sitting in its own cell with `p-12` padding handled by the
- * surrounding `<TableCell>` wrapper.
+ * makes the wrapping cell carry the p-12 padding (`Inset Table Row -
+ * Expandable` outer is `flex items-center p-12`); the toggle itself
+ * is just the 21px icon with no inner padding. Adding p-12 here
+ * doubles up with the cell wrapper and inflates row height to 69px
+ * instead of the Figma 45px.
  *
  * Always blue (`--color-sys-blue-DEFAULT`). Per product convention,
  * there is no disabled state — if a row is not expandable, omit the
@@ -38,11 +40,10 @@ export const TableExpandToggle = ({
       aria-label={expanded ? 'Collapse row' : 'Expand row'}
       className={[
         'inline-flex items-center justify-center shrink-0',
-        // p-12 matches Figma's wrapping cell padding so this button can
-        // be dropped directly into a layout without a TableCell wrapper
-        // when needed (the wrapping TableCell would render p-12 too;
-        // padding here is harmless because the icon stays centered).
-        'border-none bg-transparent p-[var(--spacing-12)] cursor-pointer',
+        // No inner padding — the wrapping TableCell provides p-12 per
+        // Figma 756:377. The icon clicks directly via the 21x21 hit
+        // area; the cell's full padded box still receives the click.
+        'border-none bg-transparent cursor-pointer',
         // Keyboard focus ring — outline:none drops the default browser
         // ring, so we paint our own visible focus indicator.
         'outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--color-sys-blue-DEFAULT)] rounded-[var(--radius-2)]',
