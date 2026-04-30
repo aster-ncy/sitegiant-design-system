@@ -155,10 +155,14 @@ export const TableHeaderCell = ({
             : 'pt-[var(--spacing-8)]'
         }`
       : isInset
-        ? // Inset header padding from Figma node 747:83: pl-12, pr-6, py-8.
-          // The 6px right padding is deliberate — it pairs with the body
-          // cell's 6px left padding for a 12px combined inter-column gutter.
-          'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
+        ? // Inset header — column-aware padding so header label x-positions
+          // line up with their inset body cells (which use the same map).
+          // Mirrors `subheaderColumnPaddingX`:
+          //   first:  pl-12 pr-6   (Figma node 747:83 leading edge)
+          //   center: px-6
+          //   last:   pl-6 pr-24
+          // Vertical: py-8 across all columns.
+          `${subheaderColumnPaddingX[column]} py-[var(--spacing-8)]`
         : `${columnPaddingX[column]} py-[var(--spacing-20)]`,
     fillClass,
     isInset

@@ -172,7 +172,13 @@ export const TableCell = ({
         subrow
           ? `${subrowColumnPaddingX[column]} py-[var(--spacing-6)]`
           : isInset
-            ? 'px-[var(--spacing-6)] py-[var(--spacing-12)]'
+            ? // Inset body — column-aware padding so body content x-positions
+              // line up with the inset header labels above. Mirrors the
+              // sub-row column map (and TableHeaderCell's inset path):
+              //   first:  pl-12 pr-6
+              //   center: px-6
+              //   last:   pl-6 pr-24
+              `${subrowColumnPaddingX[column]} py-[var(--spacing-12)]`
             : `${columnPaddingX[column]} py-[var(--spacing-16)]`,
         fillClass,
         bottomBorder,
