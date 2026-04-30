@@ -544,9 +544,18 @@ export const S6SendToLalamove: Story = {
 /* ── s7 Add Trip — Package List ────────────────────────── */
 
 /**
- * Drag-handle in leading column, tracking number bold, customer (name +
- * phone), shipping address (multi-line), close icon trailing. Uses the
- * `leadingIcon` slot for the drag handle and trailing for the X.
+ * TODO(SortBlock): each row of this list is the Figma "Sort Block -
+ * MainSub" variant — a draggable list item with leading drag-handle,
+ * multi-line content, and trailing close button. SortBlock is the
+ * authoritative atom for this pattern (Figma component_set
+ * `b59d4f9522e1d0ef16c22b7eee9ed78c831fe36b`) but is currently blocked
+ * behind the TooltipTrigger → IconLink → DashedButton dependency
+ * chain in code.
+ *
+ * The current implementation composes TableCell with a `drag` Icon in
+ * leadingIcon and an IconButton in trailing as a stand-in. Once
+ * SortBlock ships, replace the per-row composition here with
+ * `<SortBlock variant="mainSub" ...>`.
  */
 export const S7AddTrip: Story = {
   render: () => (
