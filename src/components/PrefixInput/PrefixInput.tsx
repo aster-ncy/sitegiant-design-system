@@ -78,6 +78,8 @@ export const PrefixInput = ({
   const hasDropdown = prefixOptions && prefixOptions.length > 0;
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const canOpenDropdown = Boolean(hasDropdown && !isDisabled && !isReadonly);
+  const isDropdownVisible = dropdownOpen && canOpenDropdown;
   const prefixRef = useRef<HTMLButtonElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,13 +88,8 @@ export const PrefixInput = ({
     prefixRef.current?.focus();
   }, []);
 
-  // P1: Close dropdown when component becomes disabled or readonly
   useEffect(() => {
-    if (isDisabled || isReadonly) setDropdownOpen(false);
-  }, [isDisabled, isReadonly]);
-
-  useEffect(() => {
-    if (!dropdownOpen) return;
+    if (!isDropdownVisible) return;
     const onMouseDown = (e: MouseEvent) => {
       const target = e.target as Node | null;
       if (!target) return;
@@ -102,16 +99,16 @@ export const PrefixInput = ({
     };
     document.addEventListener('mousedown', onMouseDown);
     return () => document.removeEventListener('mousedown', onMouseDown);
-  }, [dropdownOpen, closeDropdown]);
+  }, [isDropdownVisible, closeDropdown]);
 
   useEffect(() => {
-    if (!dropdownOpen) return;
+    if (!isDropdownVisible) return;
     requestAnimationFrame(() => {
       const selected = popoverRef.current?.querySelector<HTMLElement>('[role="option"][aria-selected="true"]');
       const fallback = popoverRef.current?.querySelector<HTMLElement>('[role="option"]:not([aria-disabled="true"])');
       (selected ?? fallback)?.focus();
     });
-  }, [dropdownOpen]);
+  }, [isDropdownVisible]);
 
   const setValue = (next: string) => {
     if (!isControlled) setInternalValue(next);
@@ -201,7 +198,7 @@ export const PrefixInput = ({
             ].filter(Boolean).join(' ')}
           >
             {/* Prefix section — border-r acts as the divider (no standalone div). */}
-            {hasDropdown && !isDisabled ? (
+            {canOpenDropdown ? (
               <button
                 ref={prefixRef}
                 type="button"
@@ -265,7 +262,7 @@ export const PrefixInput = ({
           </div>
 
           {/* Prefix dropdown popover */}
-          {hasDropdown && dropdownOpen && (
+          {isDropdownVisible && (
             <div
               ref={popoverRef}
               className={[
