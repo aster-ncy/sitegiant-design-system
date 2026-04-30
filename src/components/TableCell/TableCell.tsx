@@ -165,12 +165,16 @@ export const TableCell = ({
         // `flex` (not `inline-flex`) so the cell occupies the full width
         // of its <td>; otherwise the bottom inset-shadow border under-
         // paints and reads as an underline rather than a row divider.
-        // Inset variant aligns content to top per Figma 1298:1934 (so
-        // multi-line content in tall rows lines up with single-line
-        // siblings at the top edge); non-inset stays vertically centred.
-        isInset
-          ? 'relative flex items-start gap-[var(--spacing-12)] w-full'
-          : 'relative flex items-center gap-[var(--spacing-12)] w-full',
+        // `items-center` for both inset and non-inset: keeps single-line
+        // text + action-icon pairs visually centered within the row, and
+        // when a row mixes a tall multi-line cell (e.g. s8 tracking stack)
+        // with short single-line cells, the short cells center against the
+        // visual middle of the tall cell — which reads as deliberate
+        // alignment rather than a top-anchored stagger. Multi-line content
+        // inside a single cell (TableCellInfo, TableCellMainSub, etc.)
+        // handles its own internal items-start so the inner label/body
+        // pairs still anchor correctly.
+        'relative flex items-center gap-[var(--spacing-12)] w-full',
         // Padding sources from Figma:
         //   - sub-row (767:299, 776:613, 776:677): column-aware
         //     pl-12 pr-6 / px-6 / pl-6 pr-12, py-6 (slimmer rhythm)
