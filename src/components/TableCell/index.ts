@@ -4,3 +4,9 @@ export type {
   TableCellWeight,
   TableRowPosition,
 } from './TableCell';
+export { TableCellInfo } from './TableCellInfo';
+export type {
+  TableCellInfoProps,
+  TableCellInfoAlignment,
+  TableCellInfoStatus,
+} from './TableCellInfo';

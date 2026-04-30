@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableCell } from './TableCell';
+import { TableCellInfo } from './TableCellInfo';
 import { useState } from 'react';
 import { TableHeaderCell, sortDirectionToAria } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
@@ -194,19 +195,108 @@ export const SubheaderWithSubrows: Story = {
   ),
 };
 
-/* ── Multi-line content (Wallet Record / Imported List style) ── */
+/* ── TableCellInfo content variant (Figma Inset Table Row - Info, 1298:1893) ── */
 
-export const PrimarySecondary: Story = {
+/**
+ * s1 single-line label + body. Figma: alignment=Horizontal, statusCount=1,
+ * paragraphCount=1.
+ */
+export const InfoSingleLine: Story = {
   args: {
     inset: true,
     column: 'first',
     children: (
-      <span className="flex flex-col gap-[var(--spacing-2)]">
-        <span className="font-[var(--font-weight-bold)]">Send SMS Usage</span>
-        <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
-          SMS Ref. CP13010263179835
-        </span>
-      </span>
+      <TableCellInfo
+        statuses={[{ label: 'Order ID', body: 'INV-878973829' }]}
+      />
+    ),
+  },
+};
+
+/**
+ * s8 multi-status pattern (Order ID + COID style). Figma: alignment=Horizontal,
+ * statusCount=2, paragraphCount=1. Labels stretch to match each body row.
+ */
+export const InfoMultiStatus: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellInfo
+        statuses={[
+          { label: 'Order ID', body: 'INV-878973829' },
+          { label: 'COID', body: '36386598983784' },
+        ]}
+      />
+    ),
+  },
+};
+
+/**
+ * s6 vertical alignment — label sits above its body. Figma: alignment=Vertical,
+ * statusCount=1, paragraphCount=1.
+ */
+export const InfoVertical: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellInfo
+        alignment="vertical"
+        statuses={[{ label: 'Reference No.', body: 'CP13010263179835' }]}
+      />
+    ),
+  },
+};
+
+/**
+ * Worst-case multi-status × multi-paragraph: each row's label should
+ * vertically align with its body row. Confirms the two-column geometry
+ * holds when label height (1 line) is shorter than body height (N lines).
+ */
+export const InfoMultiStatusMultiParagraph: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellInfo
+        statuses={[
+          {
+            label: 'Pickup',
+            body: ['Block A, Level 12, Tower 3', 'Jalan Equine Park'],
+          },
+          {
+            label: 'Dropoff',
+            body: ['Lot 7, Bandar Sunway', '47500 Petaling Jaya'],
+          },
+        ]}
+      />
+    ),
+  },
+};
+
+/**
+ * Multi-paragraph body — Figma: paragraphCount=3. Each paragraph is a wrapped
+ * line; the label stays vertically centred against the first row in horizontal
+ * alignment.
+ */
+export const InfoMultiParagraph: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellInfo
+        statuses={[
+          {
+            label: 'Address',
+            body: [
+              'Block A, Level 12, Tower 3',
+              'Jalan Equine Park, Sri Kembangan',
+              '43300 Selangor, Malaysia',
+            ],
+          },
+        ]}
+      />
     ),
   },
 };
@@ -219,21 +309,6 @@ export const WithTagContent: Story = {
       <span className="inline-flex items-center gap-[var(--spacing-4)]">
         <Tag label="Tag Label" />
         <Pip type="warning" pipStyle="solid" label="Pip Text" />
-      </span>
-    ),
-  },
-};
-
-export const WithInfoContent: Story = {
-  args: {
-    children: (
-      <span className="inline-flex flex-col">
-        <span className="text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--table-body-text)]">
-          Primary value
-        </span>
-        <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
-          Secondary info
-        </span>
       </span>
     ),
   },
