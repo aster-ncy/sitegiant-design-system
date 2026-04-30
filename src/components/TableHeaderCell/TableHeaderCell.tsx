@@ -215,11 +215,16 @@ export const TableHeaderCell = ({
   }
 
   // Default text variant.
-  // Sub-headers are label bands above sub-rows, never sortable in
-  // product (verified against s2 Sales Channel reference). Force-suppress
-  // any sort affordance the caller might pass so misuse can't put a
-  // chevron in a band that has no meaningful sort target.
-  const sortIcon = sortable && !subheader
+  // Sort affordance suppression rules:
+  //   1. Sub-headers are label bands above sub-rows, never sortable in
+  //      product (verified against s2 Sales Channel reference) — force-
+  //      suppress so misuse can't put a chevron in a band that has no
+  //      meaningful sort target.
+  //   2. No icon when there's no label — the chevron has nothing to
+  //      anchor to and visually floats. If a column genuinely has no
+  //      header text, use `type='icon'` instead.
+  const hasLabel = label !== undefined && label !== null && label !== '';
+  const sortIcon = sortable && !subheader && hasLabel
     ? sortDirection === 'asc'
       ? 'arrow-up'
       : sortDirection === 'desc'
@@ -259,12 +264,13 @@ export const TableHeaderCell = ({
             titleClasses,
             'border-none outline-none bg-transparent p-0',
             sortable && !subheader && !disabled ? 'cursor-pointer' : 'cursor-default',
-            // Stretch the button so click targets fill the cell horizontally.
-            align === 'right' ? 'flex-row-reverse' : '',
+            // Sort icon always sits to the right of the label, regardless
+            // of text alignment — the chevron is a fixed-position
+            // affordance, not part of the text flow.
             'min-w-0',
           ].filter(Boolean).join(' ')}
         >
-          <span className="truncate">{label}</span>
+          {hasLabel && <span className="truncate">{label}</span>}
           {sortIcon && (
             <Icon
               name={sortIcon as Parameters<typeof Icon>[0]['name']}
