@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-30
 **Figma:** [Icon Button frame](https://www.figma.com/design/oJHxwesmlNeeVHrITxDdZ3/-Library--SiteGiant-ERP?node-id=394-168&m=dev) (node `394:168`)
-**Status:** Approved (pending implementation plan)
+**Status:** ⚠ Blocked on `<TooltipTrigger>` atom (does not exist yet). The auto-tooltip-on-hover feature in this spec assumes a hover-trigger primitive that wraps the existing static `<Tooltip>`. Existing `<Tooltip>` is a static styled bubble — no hover/focus listeners. Decision (2026-04-30): build a separate `<TooltipTrigger>` shared atom first, then revise this spec to compose it. Resume keyword for tomorrow: **tooltip-trigger-detour**.
 
 ## Context
 
