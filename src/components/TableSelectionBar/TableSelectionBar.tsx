@@ -223,8 +223,9 @@ export const TableSelectionBar = ({
         })}
 
         {/* Trash button — always last when present. Subtle-danger:
-            grey icon by default, switches to red icon + light-red wash
-            on hover. Matches the danger-outline button pattern. */}
+            grey icon by default switches to danger red on hover, but
+            the background hover follows the neutral action-button
+            treatment (light grey wash) — only the icon signals danger. */}
         {onDelete && (
           <button
             type="button"
@@ -237,7 +238,7 @@ export const TableSelectionBar = ({
               'bg-transparent group',
               deleteDisabled
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:bg-[var(--button-danger-outline-hover-fill)]',
+                : 'cursor-pointer hover:bg-[var(--color-space-lighter)]',
             ].join(' ')}
           >
             <Icon
