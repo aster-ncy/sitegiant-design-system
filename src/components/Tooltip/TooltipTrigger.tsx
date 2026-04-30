@@ -112,10 +112,16 @@ function computePosition(
           top: triggerRect.top + triggerRect.height / 2 - bubbleRect.height / 2,
           left: triggerRect.right + offset,
         };
+      default: {
+        const _exhaustive: never = p;
+        throw new Error(`Unhandled placement: ${_exhaustive as string}`);
+      }
     }
   };
 
   // Available space along the placement axis (positive = fits without clipping).
+  // Axis-only — cross-axis clipping is intentionally not considered in v1
+  // (per spec non-goal: cross-axis viewport shift is deferred).
   const axisSpace = (p: TooltipPlacement) => {
     switch (p) {
       case 'top':
@@ -126,6 +132,10 @@ function computePosition(
         return triggerRect.left - bubbleRect.width - offset - VIEWPORT_MARGIN;
       case 'right':
         return vw - triggerRect.right - bubbleRect.width - offset - VIEWPORT_MARGIN;
+      default: {
+        const _exhaustive: never = p;
+        throw new Error(`Unhandled placement: ${_exhaustive as string}`);
+      }
     }
   };
 
