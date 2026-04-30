@@ -503,22 +503,31 @@ export const S6SendToLalamove: Story = {
             { id: '#TRIP-0001', code: '220126-001', qty: '0/7', delivery: 'later', date: '' },
             { id: '#TRIP-0002', code: '220126-002', qty: '0/7', delivery: 'now', date: '' },
             { id: '#TRIP-0003', code: '220126-003', qty: '0/7', delivery: 'later', date: '2026-01-20T16:50:00' },
-          ].map((row, index, all) => (
+          ].map((row, index, all) => {
+            // alignTop: Trip column is a 2-line MainSub (#TRIP-0001
+            // bold + 220126-001 sub) with a leading checkbox; checkbox
+            // should anchor to the bold ID line, not vertical-center
+            // against the whole 2-line stack. Other cells (Package Qty,
+            // Dropdown, DatePicker) are single-line atoms — top-anchoring
+            // them in a 62px-tall row reads as deliberate alignment with
+            // the Trip ID.
+            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            return (
             <tr key={row.id}>
-              <Cell inset column="first" checkbox={<Checkbox size="sm" />} row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="first" checkbox={<Checkbox size="sm" />} row={rowProp}>
                 <TableCellMainSub mainBold mainValue={row.id} subValue={row.code} />
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 {row.qty}
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 <Dropdown
                   size="slim"
                   options={deliveryOptions}
                   value={row.delivery}
                 />
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 <DatePicker
                   size="slim"
                   showTime
@@ -526,7 +535,7 @@ export const S6SendToLalamove: Story = {
                   placeholder="Select Date"
                 />
               </Cell>
-              <Cell inset column="last" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="last" row={rowProp}>
                 <Dropdown
                   size="slim"
                   options={vehicleOptions}
@@ -534,7 +543,8 @@ export const S6SendToLalamove: Story = {
                 />
               </Cell>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
