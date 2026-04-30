@@ -691,7 +691,10 @@ export const S8SelectPackage: Story = {
                     }
                   >
                     <div className="flex flex-col gap-[var(--spacing-4)] items-start">
-                      <span className="font-[var(--font-weight-bold)]">{row.tracking}</span>
+                      {/* Body-slim 14/17 (not the inherited 14/21) so the
+                          glyph hugs the top of its line-box and visually
+                          aligns with the 17px checkbox to the left. */}
+                      <span className="font-[var(--font-weight-bold)] leading-[var(--leading-17)]">{row.tracking}</span>
                       <TableCellInfo
                         statuses={[
                           { label: 'Order ID', body: '878973829' },
