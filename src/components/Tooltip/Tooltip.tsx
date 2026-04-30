@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react';
 import { TooltipBox } from './TooltipBox';
 import type { TooltipArrow } from './TooltipBox';
 
@@ -26,9 +25,10 @@ export interface TooltipProps {
  * listeners. For hover-/focus-driven tooltips that wrap a trigger, use
  * <TooltipTrigger>.
  *
- * The outer `inline-flex flex-col items-center` wrapper is preserved from the
- * pre-refactor implementation so existing callsites and stories render
- * byte-identical.
+ * Thin pass-through to <TooltipBox>. TooltipBox owns the flex wrapper that
+ * lays out the arrow + message, so legacy callsites and stories render
+ * byte-identical to the pre-refactor implementation (a single
+ * `inline-flex flex-col items-center` outer div containing the bubble).
  */
 export const Tooltip = ({
   message,
@@ -36,26 +36,12 @@ export const Tooltip = ({
   width,
   id,
   className = '',
-}: TooltipProps) => {
-  const wrapperStyle: CSSProperties | undefined = width ? { width } : undefined;
-
-  if (arrow === 'left' || arrow === 'right') {
-    return (
-      <div
-        className={['inline-flex items-center', className].filter(Boolean).join(' ')}
-        style={wrapperStyle}
-      >
-        <TooltipBox message={message} arrow={arrow} id={id} />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={['inline-flex flex-col items-center', className].filter(Boolean).join(' ')}
-      style={wrapperStyle}
-    >
-      <TooltipBox message={message} arrow={arrow} id={id} />
-    </div>
-  );
-};
+}: TooltipProps) => (
+  <TooltipBox
+    message={message}
+    arrow={arrow}
+    width={width}
+    id={id}
+    className={className}
+  />
+);
