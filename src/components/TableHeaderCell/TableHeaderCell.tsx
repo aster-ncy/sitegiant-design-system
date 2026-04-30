@@ -13,6 +13,15 @@ export interface TableHeaderCellProps {
    * corner, no bottom divider. Use inside cards / containers.
    */
   inset?: boolean;
+  /**
+   * Sub-header variant — used as the header band above sub-rows in an
+   * expanded parent row (e.g. Sales Channel "Today Sales" → expand
+   * "Shopee MY" → reveals "Store / Order / Total (RM)" band over the
+   * store-level sub-rows). Implies `inset`. Same padding as inset
+   * header but uses the subrow grey fill and drops the leading/trailing
+   * corner radii since sub-headers sit between rows, not at table edges.
+   */
+  subheader?: boolean;
   /** Column position — controls left/right padding. */
   column?: TableColumnPosition;
   /** Text alignment within the cell. */
@@ -66,6 +75,7 @@ const textAlignmentClass: Record<TableTextAlignment, string> = {
 export const TableHeaderCell = ({
   type = 'default',
   inset = false,
+  subheader = false,
   column = 'center',
   align = 'left',
   label,
@@ -79,11 +89,19 @@ export const TableHeaderCell = ({
   icon = 'menu-swap',
   iconAriaLabel,
 }: TableHeaderCellProps) => {
-  // Inset variant: compact, grey fill, rounded leading corner on the
-  // first column, no bottom divider. Default variant: white fill, full
-  // padding, bottom inset-shadow border.
-  const insetCornerClass = inset && column === 'first' ? 'rounded-l-[var(--radius-4)]' : '';
-  const insetCornerLastClass = inset && column === 'last' ? 'rounded-r-[var(--radius-4)]' : '';
+  // Sub-header implies inset — sub-header bands only exist within inset
+  // tables (above expanded parent-row sub-rows).
+  const isInset = inset || subheader;
+  // Sub-headers sit between body rows, not at the table's leading edge,
+  // so they don't get the rounded corners that regular inset headers have.
+  const insetCornerClass = isInset && !subheader && column === 'first' ? 'rounded-l-[var(--radius-4)]' : '';
+  const insetCornerLastClass = isInset && !subheader && column === 'last' ? 'rounded-r-[var(--radius-4)]' : '';
+
+  const fillClass = subheader
+    ? 'bg-[var(--table-inset-subrow-fill)]'
+    : isInset
+      ? 'bg-[var(--table-inset-header-fill)]'
+      : 'bg-[var(--table-header-fill)]';
 
   const cellClasses = [
     // `flex` (not `inline-flex`) so the cell occupies the full width of
@@ -91,16 +109,15 @@ export const TableHeaderCell = ({
     // only paint under the inner content and look like an underline.
     'relative flex items-center gap-[var(--spacing-12)]',
     'min-w-[44px]',
-    inset
+    isInset
       ? // Inset header padding from Figma node 747:83: pl-12, pr-6, py-8.
         // The 6px right padding is deliberate — it pairs with the body
         // cell's 6px left padding for a 12px combined inter-column gutter.
+        // Sub-headers reuse the same padding rhythm.
         'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
       : `${columnPaddingX[column]} py-[var(--spacing-20)]`,
-    inset
-      ? 'bg-[var(--table-inset-header-fill)]'
-      : 'bg-[var(--table-header-fill)]',
-    inset
+    fillClass,
+    isInset
       ? ''
       : 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]',
     insetCornerClass,
@@ -112,7 +129,7 @@ export const TableHeaderCell = ({
 
   const titleColor = disabled
     ? 'text-[color:var(--table-header-disabled-text)]'
-    : inset
+    : isInset
       ? 'text-[color:var(--table-inset-header-text)]'
       : 'text-[color:var(--table-header-text)]';
 
@@ -121,7 +138,7 @@ export const TableHeaderCell = ({
   // header styling.
   const iconColorClass = disabled
     ? 'text-[color:var(--table-header-disabled-text)]'
-    : inset
+    : isInset
       ? 'text-[color:var(--table-inset-header-icon)]'
       : 'text-[color:var(--table-header-icon)]';
 

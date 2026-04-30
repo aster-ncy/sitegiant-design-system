@@ -35,6 +35,15 @@ export interface TableCellProps {
    * the row when the row's selection checkbox is checked.
    */
   selected?: boolean;
+  /**
+   * Sub-row variant — used for nested rows inside an expanded parent
+   * row (e.g. the Sales Channel "Today Sales" pattern where a parent
+   * row expands to reveal store-level sub-rows). Switches fill to the
+   * subrow grey, tightens vertical padding to 6px, and uses asymmetric
+   * column-aware horizontal padding. Implies `inset`. Selection still
+   * wins over the subrow fill.
+   */
+  subrow?: boolean;
   /** Optional checkbox slot (e.g. row-select checkbox in column 1). */
   checkbox?: ReactNode;
   /** Optional leading icon shown before the value. */
@@ -49,6 +58,15 @@ const columnPaddingX: Record<TableColumnPosition, string> = {
   first: 'pl-[var(--spacing-24)] pr-[var(--spacing-12)]',
   center: 'px-[var(--spacing-12)]',
   last: 'pl-[var(--spacing-12)] pr-[var(--spacing-24)]',
+};
+
+// Sub-row inset padding from Figma node 767:299 (first), 776:613 (center),
+// 776:677 (last). 12px outer, 6px inner — half-step tighter than regular
+// inset body cells, gives the nested row a visibly slimmer rhythm.
+const subrowColumnPaddingX: Record<TableColumnPosition, string> = {
+  first: 'pl-[var(--spacing-12)] pr-[var(--spacing-6)]',
+  center: 'px-[var(--spacing-6)]',
+  last: 'pl-[var(--spacing-6)] pr-[var(--spacing-12)]',
 };
 
 const textAlignmentClass: Record<TableTextAlignment, string> = {
@@ -83,16 +101,19 @@ export const TableCell = ({
   row = 'middle',
   hovered = false,
   selected = false,
+  subrow = false,
   checkbox,
   leadingIcon,
   trailing,
   className = '',
 }: TableCellProps) => {
+  // Subrow implies inset — sub-rows only exist within inset tables.
+  const isInset = inset || subrow;
   // Bottom border — heavier on the very last row to anchor the table.
   // Inset variant always uses the lighter divider per Figma (node 1298:1934
   // and siblings) — even on the last row, since inset tables typically
   // sit inside a card whose own border anchors the bottom edge.
-  const bottomBorder = inset
+  const bottomBorder = isInset
     ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-lighter-border)]'
     : row === 'last'
       ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]'
@@ -107,15 +128,19 @@ export const TableCell = ({
   // a plain bg-[...] on the cell. Selection state must always win.
   const fillClass = selected
     ? '!bg-[var(--color-sys-blue-lighter)]'
-    : inset
+    : subrow
       ? hovered
-        ? 'bg-[var(--table-inset-body-hover-fill)]'
-        : 'bg-[var(--table-inset-body-fill)]'
-      : hovered
-        ? 'bg-[var(--table-body-hover-fill)]'
-        : 'bg-[var(--table-body-fill)]';
+        ? 'bg-[var(--table-inset-subrow-hover-fill)]'
+        : 'bg-[var(--table-inset-subrow-fill)]'
+      : isInset
+        ? hovered
+          ? 'bg-[var(--table-inset-body-hover-fill)]'
+          : 'bg-[var(--table-inset-body-fill)]'
+        : hovered
+          ? 'bg-[var(--table-body-hover-fill)]'
+          : 'bg-[var(--table-body-fill)]';
 
-  const textColorClass = inset
+  const textColorClass = isInset
     ? hovered
       ? 'text-[color:var(--table-inset-body-hover-text)]'
       : 'text-[color:var(--table-inset-body-text)]'
@@ -134,13 +159,16 @@ export const TableCell = ({
         // of its <td>; otherwise the bottom inset-shadow border under-
         // paints and reads as an underline rather than a row divider.
         'relative flex items-center gap-[var(--spacing-12)] w-full',
-        // Inset variant padding from Figma (node 1298:1934 and siblings):
-        // px-6 py-12. The 6px horizontal pairs with the inset header's
-        // pl-12 pr-6 to form a 12px inter-column gutter. 12px vertical
-        // gives rows breathing room while staying tighter than default.
-        inset
-          ? 'px-[var(--spacing-6)] py-[var(--spacing-12)]'
-          : `${columnPaddingX[column]} py-[var(--spacing-16)]`,
+        // Padding sources from Figma:
+        //   - sub-row (767:299, 776:613, 776:677): column-aware
+        //     pl-12 pr-6 / px-6 / pl-6 pr-12, py-6 (slimmer rhythm)
+        //   - regular inset body (1298:1934 + siblings): px-6 py-12
+        //   - default (non-inset): column-aware pl-24/pr-24 schema, py-16
+        subrow
+          ? `${subrowColumnPaddingX[column]} py-[var(--spacing-6)]`
+          : isInset
+            ? 'px-[var(--spacing-6)] py-[var(--spacing-12)]'
+            : `${columnPaddingX[column]} py-[var(--spacing-16)]`,
         fillClass,
         bottomBorder,
         'transition-colors duration-150',
