@@ -105,6 +105,47 @@ export const SubrowHovered: Story = {
   args: { subrow: true, hovered: true, column: 'first', children: 'Awesome Store 1899' },
 };
 
+export const SubrowCenter: Story = {
+  args: { subrow: true, column: 'center', align: 'right', children: '25' },
+};
+
+export const SubrowLast: Story = {
+  args: { subrow: true, column: 'last', align: 'right', children: '10,000.00' },
+};
+
+export const SubrowSelected: Story = {
+  args: {
+    subrow: true,
+    selected: true,
+    column: 'first',
+    children: 'Selected sub-row (selection still wins over subrow fill)',
+  },
+};
+
+/**
+ * Composite sub-row showing the full sub-row band as it appears in the
+ * Sales Channel "Today Sales" expanded parent (s2 reference). Confirms
+ * left/center/right column padding lines up across the row.
+ */
+export const SubrowComposite: Story = {
+  render: () => (
+    <table className="border-collapse w-full">
+      <tbody>
+        <tr>
+          <Cell subrow column="first">Awesome Store 1899</Cell>
+          <Cell subrow column="center" align="right">25</Cell>
+          <Cell subrow column="last" align="right">10,000.00</Cell>
+        </tr>
+        <tr>
+          <Cell subrow column="first">Super Hype</Cell>
+          <Cell subrow column="center" align="right">5</Cell>
+          <Cell subrow column="last" align="right">10,000.00</Cell>
+        </tr>
+      </tbody>
+    </table>
+  ),
+};
+
 /* ── Multi-line content (Wallet Record / Imported List style) ── */
 
 export const PrimarySecondary: Story = {

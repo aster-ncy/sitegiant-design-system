@@ -176,7 +176,11 @@ export const TableHeaderCell = ({
   }
 
   // Default text variant.
-  const sortIcon = sortable
+  // Sub-headers are label bands above sub-rows, never sortable in
+  // product (verified against s2 Sales Channel reference). Force-suppress
+  // any sort affordance the caller might pass so misuse can't put a
+  // chevron in a band that has no meaningful sort target.
+  const sortIcon = sortable && !subheader
     ? sortDirection === 'asc'
       ? 'arrow-up'
       : sortDirection === 'desc'
@@ -204,8 +208,8 @@ export const TableHeaderCell = ({
       >
         <button
           type="button"
-          onClick={sortable && !disabled ? onSort : undefined}
-          disabled={disabled || !sortable}
+          onClick={sortable && !subheader && !disabled ? onSort : undefined}
+          disabled={disabled || !sortable || subheader}
           // Note: `aria-sort` is intentionally NOT set here. ARIA exposes
           // sort state on the columnheader (the surrounding <th>), not
           // on the click target. Callers should set it on the <th>:
@@ -215,7 +219,7 @@ export const TableHeaderCell = ({
           className={[
             titleClasses,
             'border-none outline-none bg-transparent p-0',
-            sortable && !disabled ? 'cursor-pointer' : 'cursor-default',
+            sortable && !subheader && !disabled ? 'cursor-pointer' : 'cursor-default',
             // Stretch the button so click targets fill the cell horizontally.
             align === 'right' ? 'flex-row-reverse' : '',
             'min-w-0',
