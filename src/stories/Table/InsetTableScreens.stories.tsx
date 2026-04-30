@@ -13,6 +13,10 @@ import { Pip } from '../../components/Pip';
 import { Icon } from '../../components/Icon';
 import { ProductImage } from '../../components/ProductImageList/ProductImage';
 import { ProgressBar } from '../../components/ProgressBar';
+import { TextLink } from '../../components/TextLink';
+import { Dropdown } from '../../components/Dropdown';
+import { DatePicker } from '../../components/DatePicker';
+import { IconButton } from '../../components/TopBar/IconButton';
 
 /**
  * Reproductions of 9 live ERP inset-table screens (s1..s9). Each story
@@ -128,6 +132,49 @@ export const S1WalletRecord: Story = {
 
 /* ── s2 Sales Channel ──────────────────────────────────── */
 
+// Channel-icon placeholder until brand-icon atoms land in the registry.
+// Renders a 17×17 rounded grey square next to the channel name.
+const ChannelLabel = ({ name }: { name: string }) => (
+  <span className="inline-flex items-center gap-[var(--spacing-8)]">
+    <span
+      aria-hidden="true"
+      className="shrink-0 size-[17px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
+    />
+    <span>{name}</span>
+  </span>
+);
+
+// Trend indicator — arrow + value coloured red (down) / green (up).
+// Used in the Total (RM) column on s2 to mirror the live ERP visual.
+const TrendValue = ({
+  value,
+  trend,
+}: {
+  value: string;
+  trend: 'up' | 'down';
+}) => (
+  <span className="inline-flex items-center gap-[var(--spacing-4)]">
+    <span
+      className={
+        trend === 'up'
+          ? 'text-[color:var(--color-sys-green-DEFAULT)]'
+          : 'text-[color:var(--color-sys-red-DEFAULT)]'
+      }
+    >
+      {value}
+    </span>
+    <Icon
+      name={trend === 'up' ? 'arrow-up' : 'arrow-down'}
+      size={15}
+      className={
+        trend === 'up'
+          ? 'text-[color:var(--color-sys-green-DEFAULT)]'
+          : 'text-[color:var(--color-sys-red-DEFAULT)]'
+      }
+    />
+  </span>
+);
+
 /**
  * Today Sales / Sales Channel — parent rows show channel + total, expand
  * to reveal a sub-row band ("Store / Order / Total") plus per-store
@@ -149,9 +196,13 @@ export const S2SalesChannel: Story = {
           </thead>
           <tbody>
             <tr>
-              <Cell inset column="first">Shopee MY</Cell>
+              <Cell inset column="first">
+                <ChannelLabel name="Shopee MY" />
+              </Cell>
               <Cell inset column="center" align="right">30</Cell>
-              <Cell inset column="center" align="right">20,000.36</Cell>
+              <Cell inset column="center" align="right">
+                <TrendValue value="20,000.36" trend="up" />
+              </Cell>
               <Cell inset column="last" align="right">
                 <TableExpandToggle
                   expanded={expanded === 'shopee-my'}
@@ -178,21 +229,29 @@ export const S2SalesChannel: Story = {
                 <tr>
                   <Cell subrow column="first">Awesome Store 1899</Cell>
                   <Cell subrow column="center" align="right">25</Cell>
-                  <Cell subrow column="center" align="right">10,000.36</Cell>
+                  <Cell subrow column="center" align="right">
+                    <TrendValue value="10,000.36" trend="up" />
+                  </Cell>
                   <Cell subrow column="last" align="right" />
                 </tr>
                 <tr>
                   <Cell subrow column="first">Super Hype</Cell>
                   <Cell subrow column="center" align="right">5</Cell>
-                  <Cell subrow column="center" align="right">10,000.00</Cell>
+                  <Cell subrow column="center" align="right">
+                    <TrendValue value="10,000.00" trend="down" />
+                  </Cell>
                   <Cell subrow column="last" align="right" />
                 </tr>
               </>
             )}
             <tr>
-              <Cell inset column="first">Shopee SG</Cell>
+              <Cell inset column="first">
+                <ChannelLabel name="Shopee SG" />
+              </Cell>
               <Cell inset column="center" align="right">2</Cell>
-              <Cell inset column="center" align="right">5,991.00</Cell>
+              <Cell inset column="center" align="right">
+                <TrendValue value="5,991.00" trend="up" />
+              </Cell>
               <Cell inset column="last" align="right">
                 <TableExpandToggle
                   expanded={expanded === 'shopee-sg'}
@@ -201,9 +260,28 @@ export const S2SalesChannel: Story = {
               </Cell>
             </tr>
             <tr>
-              <Cell inset column="first" row="last">TikTok MY</Cell>
-              <Cell inset column="center" align="right" row="last">1233</Cell>
-              <Cell inset column="center" align="right" row="last">20,000.36</Cell>
+              <Cell inset column="first">
+                <ChannelLabel name="TikTok MY" />
+              </Cell>
+              <Cell inset column="center" align="right">1233</Cell>
+              <Cell inset column="center" align="right">
+                <TrendValue value="20,000.36" trend="up" />
+              </Cell>
+              <Cell inset column="last" align="right">
+                <TableExpandToggle
+                  expanded={false}
+                  onToggle={() => undefined}
+                />
+              </Cell>
+            </tr>
+            <tr>
+              <Cell inset column="first" row="last">
+                <ChannelLabel name="Lazada MY" />
+              </Cell>
+              <Cell inset column="center" align="right" row="last">234</Cell>
+              <Cell inset column="center" align="right" row="last">
+                <TrendValue value="13,232.50" trend="down" />
+              </Cell>
               <Cell inset column="last" align="right" row="last">
                 <TableExpandToggle
                   expanded={false}
@@ -250,9 +328,7 @@ export const S3InventoryHold: Story = {
                 2
               </Cell>
               <Cell inset column="last" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
-                <button type="button" className="cursor-pointer text-[color:var(--text-link-basic-default)]">
-                  <Icon name="external-link" size={17} />
-                </button>
+                <IconButton name="external-link" variant="basic" label="Open detail" />
               </Cell>
             </tr>
           ))}
@@ -325,10 +401,11 @@ export const S4ImportedList: Story = {
                 </span>
               </Cell>
               <Cell inset column="last" row={index === all.length - 1 ? 'last' : 'middle'}>
-                <button type="button" className="inline-flex items-center gap-[var(--spacing-4)] cursor-pointer text-[color:var(--text-link-basic-default)] text-[length:var(--text-14)] leading-[var(--leading-17)]">
-                  <Icon name="download" size={17} />
-                  Download
-                </button>
+                <TextLink
+                  label="Download"
+                  iconPosition="left"
+                  icon={<Icon name="download" size={17} />}
+                />
               </Cell>
             </tr>
           ))}
@@ -358,17 +435,13 @@ export const S5CourierService: Story = {
           <tr>
             <Cell inset column="first" weight="bold">Shopee Express (West Malaysia)</Cell>
             <Cell inset column="last">
-              <button type="button" className="cursor-pointer text-[color:var(--text-link-basic-default)]">
-                <Icon name="edit" size={17} />
-              </button>
+              <IconButton name="edit" variant="basic" label="Edit courier service" />
             </Cell>
           </tr>
           <tr>
             <Cell inset column="first" weight="bold" row="last">Black Cat</Cell>
             <Cell inset column="last" row="last">
-              <button type="button" className="cursor-pointer text-[color:var(--text-link-basic-default)]">
-                <Icon name="edit" size={17} />
-              </button>
+              <IconButton name="edit" variant="basic" label="Edit courier service" />
             </Cell>
           </tr>
         </tbody>
@@ -380,14 +453,20 @@ export const S5CourierService: Story = {
 /* ── s6 Send to Lalamove ───────────────────────────────── */
 
 /**
- * Inset table with form inputs slotted into cells — Delivery Time
- * dropdown, date input, vehicle dropdown. Demonstrates that form atoms
- * compose into TableCell `children` without special wrappers.
- *
- * The actual ERP screen uses Antd-styled inputs; here we use plain
- * `<select>` and `<input>` placeholders to keep the story focused on
- * the table layout — Phase 6 is about table primitives, not form atoms.
+ * Inset table with real Dropdown + DatePicker atoms slotted into cells.
+ * Demonstrates that the existing form components compose inside
+ * TableCell `children` at the slim form-size without bespoke wrappers.
  */
+const deliveryOptions = [
+  { value: 'now', label: 'Schedule For Now' },
+  { value: 'later', label: 'Schedule For Later' },
+];
+const vehicleOptions = [
+  { value: 'truck550', label: 'Truck550' },
+  { value: 'van', label: 'Van' },
+  { value: 'motorbike', label: 'Motorbike' },
+];
+
 export const S6SendToLalamove: Story = {
   render: () => (
     <div className={cardClasses}>
@@ -403,9 +482,9 @@ export const S6SendToLalamove: Story = {
         </thead>
         <tbody>
           {[
-            { id: '#TRIP-0001', code: '220126-001', qty: '0/7', delivery: 'Schedule For Later', date: '' },
-            { id: '#TRIP-0002', code: '220126-002', qty: '0/7', delivery: 'Schedule For Now', date: '' },
-            { id: '#TRIP-0003', code: '220126-003', qty: '0/7', delivery: 'Schedule For Later', date: '20-01-2026 04:50PM' },
+            { id: '#TRIP-0001', code: '220126-001', qty: '0/7', delivery: 'later', date: '' },
+            { id: '#TRIP-0002', code: '220126-002', qty: '0/7', delivery: 'now', date: '' },
+            { id: '#TRIP-0003', code: '220126-003', qty: '0/7', delivery: 'later', date: '2026-01-20T16:50:00' },
           ].map((row, index, all) => (
             <tr key={row.id}>
               <Cell inset column="first" checkbox={<Checkbox size="sm" />} row={index === all.length - 1 ? 'last' : 'middle'}>
@@ -415,19 +494,26 @@ export const S6SendToLalamove: Story = {
                 {row.qty}
               </Cell>
               <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
-                <span className="block w-full px-[var(--spacing-8)] py-[var(--spacing-4)] border border-solid border-[color:var(--color-set-light)] rounded-[var(--radius-4)] text-[length:var(--text-14)] leading-[var(--leading-17)]">
-                  {row.delivery}
-                </span>
+                <Dropdown
+                  size="slim"
+                  options={deliveryOptions}
+                  value={row.delivery}
+                />
               </Cell>
               <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
-                <span className="block w-full px-[var(--spacing-8)] py-[var(--spacing-4)] border border-solid border-[color:var(--color-set-light)] rounded-[var(--radius-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">
-                  {row.date || 'Select Date'}
-                </span>
+                <DatePicker
+                  size="slim"
+                  showTime
+                  value={row.date}
+                  placeholder="Select Date"
+                />
               </Cell>
               <Cell inset column="last" row={index === all.length - 1 ? 'last' : 'middle'}>
-                <span className="block w-full px-[var(--spacing-8)] py-[var(--spacing-4)] border border-solid border-[color:var(--color-set-light)] rounded-[var(--radius-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">
-                  Select a Vehicle
-                </span>
+                <Dropdown
+                  size="slim"
+                  options={vehicleOptions}
+                  placeholder="Select a Vehicle"
+                />
               </Cell>
             </tr>
           ))}
@@ -480,20 +566,23 @@ export const S7AddTrip: Story = {
                 />
               </Cell>
               <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
-                <span className="block whitespace-pre-line">
-                  {`123, Jalan Mayang Pasir,\n11200 Bayan Baru,\nPulau Pinang, Malaysia.`}
-                </span>
+                <TableCellInfo
+                  statuses={[{
+                    label: '',
+                    body: [
+                      '123, Jalan Mayang Pasir,',
+                      '11200 Bayan Baru,',
+                      'Pulau Pinang, Malaysia.',
+                    ],
+                  }]}
+                />
               </Cell>
               <Cell
                 inset
                 column="last"
                 align="right"
                 row={index === all.length - 1 ? 'last' : 'middle'}
-                trailing={
-                  <button type="button" className="cursor-pointer text-[color:var(--color-icon-secondary)]">
-                    <Icon name="close" size={17} />
-                  </button>
-                }
+                trailing={<IconButton name="close" label="Remove package" />}
               />
             </tr>
           ))}
@@ -568,9 +657,16 @@ export const S8SelectPackage: Story = {
                     />
                   </Cell>
                   <Cell inset column="center" selected={isSelected} row={isLast ? 'last' : 'middle'}>
-                    <span className="block whitespace-pre-line">
-                      {`123, Jalan Mayang Pasir,\n11200 Bayan Baru,\nPulau Pinang, Malaysia.`}
-                    </span>
+                    <TableCellInfo
+                      statuses={[{
+                        label: '',
+                        body: [
+                          '123, Jalan Mayang Pasir,',
+                          '11200 Bayan Baru,',
+                          'Pulau Pinang, Malaysia.',
+                        ],
+                      }]}
+                    />
                   </Cell>
                   <Cell inset column="center" selected={isSelected} row={isLast ? 'last' : 'middle'}>
                     02 May 2025 11:00AM
@@ -579,7 +675,17 @@ export const S8SelectPackage: Story = {
                     02 May 2025 11:00AM
                   </Cell>
                   <Cell inset column="last" selected={isSelected} row={isLast ? 'last' : 'middle'}>
-                    <Pip type="alert" pipStyle="default" label="ShopeeMY - Awesome Store" />
+                    <span className="inline-flex items-start gap-[var(--spacing-4)]">
+                      {/* Channel brand-icon placeholder — Shopee logo would
+                          be 17×17 with brand orange. Substitute with the
+                          shared ProductImage placeholder until a brand-icon
+                          atom lands in the registry. */}
+                      <span
+                        aria-hidden="true"
+                        className="shrink-0 size-[17px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
+                      />
+                      <span className="break-words">ShopeeMY - Awesome Store</span>
+                    </span>
                   </Cell>
                 </tr>
               );
@@ -644,13 +750,9 @@ export const S9OrderReturn: Story = {
                   productName={row.name}
                   infoRows={[
                     { label: 'Variation', value: row.variation },
-                    ...(row.reason ? [{ label: 'Reason', value: row.reason }] : []),
+                    ...(row.reason ? [{ label: 'Note', value: row.reason }] : []),
+                    { label: 'SKU', value: row.meta },
                   ]}
-                  extras={
-                    <span className="inline-flex items-center text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
-                      {row.meta}
-                    </span>
-                  }
                 />
               </Cell>
               <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
