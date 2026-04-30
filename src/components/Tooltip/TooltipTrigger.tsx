@@ -118,11 +118,8 @@ export const TooltipTrigger = ({
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const openTimer = useRef<number | null>(null);
 
-  // Suppress unused-variable warnings for Task 4 state setters.
-  void setCoords;
+  // Suppress unused-variable warning for Task 4 state setter.
   void setResolvedPlacement;
-  void triggerRef;
-  void bubbleRef;
 
   const close = useCallback(() => {
     if (openTimer.current !== null) {
