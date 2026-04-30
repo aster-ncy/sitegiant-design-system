@@ -112,6 +112,23 @@ export const InsetWithCheckbox: Story = {
   },
 };
 
+/* ── Sub-header variant ─────────────────────────────── */
+
+/**
+ * Sub-header band — used above sub-rows inside an expanded parent row
+ * (e.g. Sales Channel "Today Sales" pattern). Same typography and
+ * padding as a regular inset header but with the subrow grey fill, no
+ * leading/trailing corner radii, and no sort indicator by default.
+ */
+export const Subheader: Story = {
+  args: {
+    subheader: true,
+    column: 'first',
+    label: 'Store',
+    sortable: false,
+  },
+};
+
 export const InsetTableExample: Story = {
   render: () => (
     <table className="border-collapse w-full">

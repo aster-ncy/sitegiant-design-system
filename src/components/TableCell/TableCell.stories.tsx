@@ -95,6 +95,16 @@ export const Selected: Story = {
   args: { selected: true, children: 'Selected row cell' },
 };
 
+/* ── Sub-row variant (Sales Channel "Today Sales" pattern) ── */
+
+export const Subrow: Story = {
+  args: { subrow: true, column: 'first', children: 'Awesome Store 1899' },
+};
+
+export const SubrowHovered: Story = {
+  args: { subrow: true, hovered: true, column: 'first', children: 'Awesome Store 1899' },
+};
+
 /* ── Multi-line content (Wallet Record / Imported List style) ── */
 
 export const PrimarySecondary: Story = {
