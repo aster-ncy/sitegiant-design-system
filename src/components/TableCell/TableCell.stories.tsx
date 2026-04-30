@@ -269,8 +269,8 @@ export const FullTable: Story = {
           <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
             <TableHeaderCell column="center" align="left" label="SKU" sortable />
           </th>
-          <th className="p-0" aria-sort={sortDirectionToAria('desc', true)}>
-            <TableHeaderCell column="center" align="right" label="Stock" sortable sortDirection="desc" />
+          <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
+            <TableHeaderCell column="center" align="right" label="Stock" sortable />
           </th>
           <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
             <TableHeaderCell column="center" align="right" label="Price" sortable />
