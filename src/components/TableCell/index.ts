@@ -10,3 +10,5 @@ export type {
   TableCellInfoAlignment,
   TableCellInfoStatus,
 } from './TableCellInfo';
+export { TableCellMainSub } from './TableCellMainSub';
+export type { TableCellMainSubProps } from './TableCellMainSub';
