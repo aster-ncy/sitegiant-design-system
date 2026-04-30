@@ -55,7 +55,12 @@ export interface TableSelectionBarProps {
 
 const segmentBaseClass = [
   'inline-flex items-center justify-center gap-[var(--spacing-4)]',
-  'border border-solid border-[var(--table-divider-border)]',
+  // Top + bottom + left borders always; right border only on the last
+  // segment. Earlier attempts to overlap full borders with negative
+  // margins produced visible 2px seams in some configurations because
+  // the wrapper-vs-inner-button advance math drifted; just owning the
+  // shared edge once at the source removes the whole class of bug.
+  'border-y border-l border-solid border-[var(--table-divider-border)]',
   'px-[var(--spacing-12)] py-[var(--spacing-4)]',
   'text-[length:var(--text-14)] leading-[var(--leading-17)]',
   'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
@@ -63,11 +68,9 @@ const segmentBaseClass = [
   'transition-colors duration-150',
 ].join(' ');
 
-// Negative right margin lives on the SEGMENT WRAPPER (not the inner
-// button) so it works whether the segment is a bare <button>/<span> or a
-// <div> wrapping a popover-trigger <button>. Applied to all segments
-// except the last, which keeps its own right border.
-const segmentOverlapClass = '-mr-px';
+// Last segment paints its own right border so the row's right edge
+// is closed off.
+const segmentLastBorderClass = 'border-r border-solid border-[var(--table-divider-border)]';
 
 const cornerClass = (isFirst: boolean, isLast: boolean) => {
   if (isFirst && isLast) return 'rounded-[var(--radius-4)]';
@@ -137,13 +140,13 @@ export const TableSelectionBar = ({
         .join(' ')}
     >
       {checkbox && <span className="shrink-0 inline-flex items-center">{checkbox}</span>}
-      <div className="inline-flex items-center pr-px shrink-0">
+      <div className="inline-flex items-center shrink-0">
         {/* "N Selected" count chip — always first. */}
         <span
           className={[
             segmentBaseClass,
             cornerClass(true, totalSegments === 1),
-            totalSegments > 1 ? segmentOverlapClass : '',
+            totalSegments === 1 ? segmentLastBorderClass : '',
             'bg-[var(--color-space-light)]',
             'text-[length:var(--table-header-size)] leading-[var(--table-header-lineheight)]',
             'text-[color:var(--table-header-disabled-text)]',
@@ -164,12 +167,15 @@ export const TableSelectionBar = ({
           const buttonClasses = [
             segmentBaseClass,
             cornerClass(false, isLastInSegments),
+            isLastInSegments ? segmentLastBorderClass : '',
             'bg-transparent',
             'text-[color:var(--text-link-subtle-default)]',
             action.disabled
               ? 'cursor-not-allowed opacity-60'
               : 'cursor-pointer hover:bg-[var(--color-space-lighter)]',
-          ].join(' ');
+          ]
+            .filter(Boolean)
+            .join(' ');
 
           const handleClick = () => {
             if (action.disabled) return;
@@ -183,12 +189,7 @@ export const TableSelectionBar = ({
           return (
             <div
               key={action.key}
-              className={[
-                'relative inline-flex',
-                isLastInSegments ? '' : segmentOverlapClass,
-              ]
-                .filter(Boolean)
-                .join(' ')}
+              className="relative inline-flex"
             >
               <button
                 type="button"
@@ -250,6 +251,7 @@ export const TableSelectionBar = ({
             className={[
               segmentBaseClass,
               cornerClass(false, true),
+              segmentLastBorderClass,
               'bg-transparent group',
               deleteDisabled
                 ? 'cursor-not-allowed opacity-60'
