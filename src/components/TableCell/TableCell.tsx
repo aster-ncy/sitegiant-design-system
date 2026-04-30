@@ -29,6 +29,12 @@ export interface TableCellProps {
    * controlled / Storybook use.
    */
   hovered?: boolean;
+  /**
+   * Selected row state — pale-blue fill highlight (matches the live
+   * "Select Package" modal's selected row). Apply to every cell in
+   * the row when the row's selection checkbox is checked.
+   */
+  selected?: boolean;
   /** Optional checkbox slot (e.g. row-select checkbox in column 1). */
   checkbox?: ReactNode;
   /** Optional leading icon shown before the value. */
@@ -76,28 +82,38 @@ export const TableCell = ({
   weight = 'normal',
   row = 'middle',
   hovered = false,
+  selected = false,
   checkbox,
   leadingIcon,
   trailing,
   className = '',
 }: TableCellProps) => {
   // Bottom border — heavier on the very last row to anchor the table.
-  // Inset variant uses a lighter divider for nested-table contexts.
+  // Inset variant always uses the lighter divider per Figma (node 1298:1934
+  // and siblings) — even on the last row, since inset tables typically
+  // sit inside a card whose own border anchors the bottom edge.
   const bottomBorder = inset
-    ? row === 'last'
-      ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-lighter-border)]'
-      : 'shadow-[inset_0_-1px_0_0_var(--table-divider-lighter-border)]'
+    ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-lighter-border)]'
     : row === 'last'
       ? 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]'
       : 'shadow-[inset_0_-1px_0_0_var(--table-divider-border)]';
 
-  const fillClass = inset
-    ? hovered
-      ? 'bg-[var(--table-inset-body-hover-fill)]'
-      : 'bg-[var(--table-inset-body-fill)]'
-    : hovered
-      ? 'bg-[var(--table-body-hover-fill)]'
-      : 'bg-[var(--table-body-fill)]';
+  // Selection fill (pale blue) wins over hover; matches live ERP
+  // "Select Package" modal's selected row treatment.
+  //
+  // The `!` important modifier is needed because callers commonly wire
+  // row hover with a higher-specificity descendant selector on the <tr>
+  // (e.g. `hover:[&_td>div]:bg-[...]`), which would otherwise override
+  // a plain bg-[...] on the cell. Selection state must always win.
+  const fillClass = selected
+    ? '!bg-[var(--color-sys-blue-lighter)]'
+    : inset
+      ? hovered
+        ? 'bg-[var(--table-inset-body-hover-fill)]'
+        : 'bg-[var(--table-inset-body-fill)]'
+      : hovered
+        ? 'bg-[var(--table-body-hover-fill)]'
+        : 'bg-[var(--table-body-fill)]';
 
   const textColorClass = inset
     ? hovered
@@ -118,9 +134,12 @@ export const TableCell = ({
         // of its <td>; otherwise the bottom inset-shadow border under-
         // paints and reads as an underline rather than a row divider.
         'relative flex items-center gap-[var(--spacing-12)] w-full',
-        // Inset variant uses tighter horizontal + vertical padding.
+        // Inset variant padding from Figma (node 1298:1934 and siblings):
+        // px-6 py-12. The 6px horizontal pairs with the inset header's
+        // pl-12 pr-6 to form a 12px inter-column gutter. 12px vertical
+        // gives rows breathing room while staying tighter than default.
         inset
-          ? 'px-[var(--spacing-12)] py-[var(--spacing-8)]'
+          ? 'px-[var(--spacing-6)] py-[var(--spacing-12)]'
           : `${columnPaddingX[column]} py-[var(--spacing-16)]`,
         fillClass,
         bottomBorder,
@@ -134,7 +153,11 @@ export const TableCell = ({
       {leadingIcon && <span className="shrink-0 inline-flex items-center">{leadingIcon}</span>}
       <span
         className={[
-          'inline-flex items-center gap-[var(--spacing-4)] min-w-0 flex-1',
+          // `flex` (not `inline-flex`) so multi-line content (primary +
+          // secondary text) stacks naturally without forcing single-row
+          // truncation. Real ERP tables show e.g. "Send SMS Usage" + a
+          // muted "SMS Ref. CP1301..." reference under it.
+          'flex items-center gap-[var(--spacing-4)] min-w-0 flex-1',
           'font-[family-name:var(--font-sans)]',
           'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
           weightClass,
@@ -142,7 +165,7 @@ export const TableCell = ({
           textAlignmentClass[align],
         ].join(' ')}
       >
-        <span className="truncate">{children}</span>
+        {children}
       </span>
       {trailing && <span className="shrink-0 inline-flex items-center">{trailing}</span>}
     </div>

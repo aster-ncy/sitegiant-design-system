@@ -91,6 +91,27 @@ export const InsetHovered: Story = {
   args: { inset: true, hovered: true, children: 'Inset hover' },
 };
 
+export const Selected: Story = {
+  args: { selected: true, children: 'Selected row cell' },
+};
+
+/* ── Multi-line content (Wallet Record / Imported List style) ── */
+
+export const PrimarySecondary: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <span className="flex flex-col gap-[var(--spacing-2)]">
+        <span className="font-[var(--font-weight-bold)]">Send SMS Usage</span>
+        <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
+          SMS Ref. CP13010263179835
+        </span>
+      </span>
+    ),
+  },
+};
+
 /* ── Content composition variants (Inset Table Row family) ── */
 
 export const WithTagContent: Story = {
