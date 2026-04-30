@@ -19,7 +19,7 @@ export interface SmallSegmentedButtonProps {
   /** Selected segment's value (controlled). */
   value: string;
   onChange?: (value: string) => void;
-  children: ReactNode;
+  children?: ReactNode;
   /**
    * Replaces the root tablist's built-in classes. Tailwind v4 resolves utility
    * conflicts by stylesheet insertion order, not class-string order, so an
@@ -32,34 +32,16 @@ export interface SmallSegmentedButtonProps {
 /**
  * SmallSegmentedButton — Figma: Small Segmented Button (3504:3253).
  *
- * A compact 17px-tall segmented control distinct from <Tab> (33px). Used for
- * dense toolbar contexts: color/text emphasis pickers, device-preview
- * toggles. If a future Figma frame introduces yet another size, prefer a
- * sibling component over reintroducing a `size` axis here — different size
- * classes have meaningfully different padding, glyph framing, and decorative-
- * vs-library-icon rules.
- *
- * Compound API:
- *   <SmallSegmentedButton value={v} onChange={setV}>
- *     <SmallSegmentedButton.Segment
- *       value="color"
- *       glyph={{ kind: 'inline', name: 'color' }}
- *       aria-label="Color"
- *     />
- *     <SmallSegmentedButton.Segment
- *       value="monitor"
- *       glyph={{ kind: 'inline', name: 'monitor' }}
- *       aria-label="Desktop"
- *     />
- *   </SmallSegmentedButton>
- *
- * Keyboard nav (WAI-ARIA tabs pattern, "selection follows focus"):
- *   ArrowLeft / ArrowRight — previous / next segment, wraps at ends, skips disabled.
- *   Home / End — first / last enabled segment.
- *   Tab key enters/leaves the group via roving tabindex (selected = 0, others = -1).
- *
- * Inner segment borders collapse via `mr-[-1px]`; outer-end radii only.
+ * A compact 17px-tall segmented control for dense toolbar contexts:
+ * color/text emphasis pickers, device-preview toggles.
  */
+// Compound API: <SmallSegmentedButton value onChange><SmallSegmentedButton.Segment ... />…</>.
+// Keyboard nav (WAI-ARIA tabs, selection-follows-focus): ArrowLeft/Right wrap,
+// Home/End, skips disabled. Roving tabindex (selected=0, others=-1).
+// Inner segment borders collapse via mr-[-1px]; outer-end radii only.
+// Distinct from <Tab> (33px) by size class — different padding, glyph framing,
+// and decorative-vs-library-icon rules. If another size appears, prefer a
+// sibling component over reintroducing a `size` axis.
 const SmallSegmentedButtonComponent = ({
   value,
   onChange,
@@ -85,9 +67,14 @@ const SmallSegmentedButtonComponent = ({
     const target = event.target as HTMLElement | null;
     if (!target || target.getAttribute('role') !== 'tab') return;
 
+    // Bail if the keydown originated inside a nested [role=tablist] (e.g. a
+    // consumer-provided custom glyph). The closest tablist ancestor of the
+    // target must be this tablist; otherwise we'd hijack a child group's keys.
+    if (target.closest('[role="tablist"]') !== event.currentTarget) return;
+
     const tabs = Array.from(
       event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
-    );
+    ).filter((tab) => tab.closest('[role="tablist"]') === event.currentTarget);
     const currentIndex = tabs.indexOf(target as HTMLButtonElement);
     if (currentIndex === -1) return;
 
