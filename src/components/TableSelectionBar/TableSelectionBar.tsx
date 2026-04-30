@@ -1,15 +1,37 @@
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { Icon } from '../Icon';
+import { DropdownMenu } from '../DropdownMenu/DropdownMenu';
+import { DropdownMenuItem } from '../DropdownMenu/DropdownMenuItem';
+
+export interface TableSelectionBarMenuItem {
+  /** Stable key. */
+  key: string;
+  /** Menu item label. */
+  label: string;
+  /** Click handler — closes the menu after firing. */
+  onClick?: () => void;
+  /** Disable this item. */
+  disabled?: boolean;
+}
 
 export interface TableSelectionBarAction {
   /** Stable key. */
   key: string;
   /** Visible label. */
   label: ReactNode;
-  /** Click handler. */
+  /** Click handler — ignored if `menuItems` is provided. */
   onClick?: () => void;
-  /** Show a chevron-down icon after the label (i.e. opens a menu). */
+  /**
+   * Show a chevron-down icon after the label.
+   * Implied true when `menuItems` is provided.
+   */
   hasMenu?: boolean;
+  /**
+   * If provided, the action becomes a dropdown trigger; clicking it opens
+   * a DropdownMenu populated with these items. `onClick` is ignored.
+   */
+  menuItems?: TableSelectionBarMenuItem[];
   /** Disable this action. */
   disabled?: boolean;
 }
@@ -76,6 +98,28 @@ export const TableSelectionBar = ({
   // out which segment owns the rounded right corners.
   const totalSegments = 1 + totalActions;
 
+  // Track which dropdown-menu action is currently open. Only one menu
+  // open at a time; clicking another menu trigger swaps the open key.
+  const [openMenuKey, setOpenMenuKey] = useState<string | null>(null);
+  const menuTriggerRefs = useRef<Map<string, HTMLButtonElement | null>>(new Map());
+
+  // Click-outside-to-close behavior for any open dropdown.
+  useEffect(() => {
+    if (!openMenuKey) return;
+    const handle = (e: MouseEvent) => {
+      const trigger = menuTriggerRefs.current.get(openMenuKey);
+      if (!trigger) return;
+      const target = e.target as Node;
+      // Don't close if click was on the trigger itself or inside the menu.
+      if (trigger.contains(target)) return;
+      // The menu lives in a sibling div with data-tsbar-menu attribute.
+      if ((target as Element)?.closest?.('[data-tsbar-menu]')) return;
+      setOpenMenuKey(null);
+    };
+    document.addEventListener('mousedown', handle);
+    return () => document.removeEventListener('mousedown', handle);
+  }, [openMenuKey]);
+
   return (
     <div
       className={[
@@ -88,7 +132,7 @@ export const TableSelectionBar = ({
         .filter(Boolean)
         .join(' ')}
     >
-      {checkbox && <span className="shrink-0">{checkbox}</span>}
+      {checkbox && <span className="shrink-0 inline-flex items-center">{checkbox}</span>}
       <div className="inline-flex items-center pr-px shrink-0">
         {/* "N Selected" count chip — always first. */}
         <span
@@ -106,35 +150,81 @@ export const TableSelectionBar = ({
         {/* Action buttons (label / label-with-menu). */}
         {actions?.map((action, idx) => {
           const isLastInSegments = idx === actions.length - 1 && !onDelete;
+          const hasDropdown = (action.menuItems?.length ?? 0) > 0;
+          const showChevron = hasDropdown || action.hasMenu;
+          const isOpen = openMenuKey === action.key;
+
+          const buttonClasses = [
+            segmentBaseClass,
+            cornerClass(false, isLastInSegments),
+            'bg-transparent',
+            'text-[color:var(--text-link-subtle-default)]',
+            action.disabled
+              ? 'cursor-not-allowed opacity-60'
+              : 'cursor-pointer hover:bg-[var(--color-space-lighter)]',
+          ].join(' ');
+
+          const handleClick = () => {
+            if (action.disabled) return;
+            if (hasDropdown) {
+              setOpenMenuKey(isOpen ? null : action.key);
+            } else {
+              action.onClick?.();
+            }
+          };
+
           return (
-            <button
-              key={action.key}
-              type="button"
-              onClick={action.disabled ? undefined : action.onClick}
-              disabled={action.disabled}
-              className={[
-                segmentBaseClass,
-                cornerClass(false, isLastInSegments),
-                'bg-transparent',
-                'text-[color:var(--text-link-subtle-default)]',
-                action.disabled
-                  ? 'cursor-not-allowed opacity-60'
-                  : 'cursor-pointer hover:bg-[var(--color-space-lighter)]',
-              ].join(' ')}
-            >
-              <span>{action.label}</span>
-              {action.hasMenu && (
-                <Icon
-                  name="chevron-down"
-                  size={17}
-                  className="text-[color:var(--color-icon-secondary)] shrink-0"
-                />
+            <div key={action.key} className="relative inline-flex">
+              <button
+                type="button"
+                ref={(el) => {
+                  menuTriggerRefs.current.set(action.key, el);
+                }}
+                onClick={handleClick}
+                disabled={action.disabled}
+                aria-haspopup={hasDropdown ? 'menu' : undefined}
+                aria-expanded={hasDropdown ? isOpen : undefined}
+                className={buttonClasses}
+              >
+                <span>{action.label}</span>
+                {showChevron && (
+                  <Icon
+                    name="chevron-down"
+                    size={17}
+                    className="text-[color:var(--color-icon-secondary)] shrink-0"
+                  />
+                )}
+              </button>
+              {hasDropdown && isOpen && (
+                <div
+                  data-tsbar-menu
+                  className="absolute top-full left-0 mt-[var(--spacing-4)] z-10"
+                >
+                  <DropdownMenu
+                    aria-label={typeof action.label === 'string' ? action.label : 'More actions'}
+                    onEscape={() => setOpenMenuKey(null)}
+                  >
+                    {action.menuItems!.map((item) => (
+                      <DropdownMenuItem
+                        key={item.key}
+                        label={item.label}
+                        disabled={item.disabled}
+                        onClick={() => {
+                          item.onClick?.();
+                          setOpenMenuKey(null);
+                        }}
+                      />
+                    ))}
+                  </DropdownMenu>
+                </div>
               )}
-            </button>
+            </div>
           );
         })}
 
-        {/* Trash button — always last when present. */}
+        {/* Trash button — always last when present. Subtle-danger:
+            grey icon by default, switches to red icon + light-red wash
+            on hover. Matches the danger-outline button pattern. */}
         {onDelete && (
           <button
             type="button"
@@ -144,16 +234,20 @@ export const TableSelectionBar = ({
             className={[
               segmentBaseClass,
               cornerClass(false, true),
-              'bg-transparent',
+              'bg-transparent group',
               deleteDisabled
                 ? 'cursor-not-allowed opacity-60'
-                : 'cursor-pointer hover:bg-[var(--color-space-lighter)]',
+                : 'cursor-pointer hover:bg-[var(--button-danger-outline-hover-fill)]',
             ].join(' ')}
           >
             <Icon
               name="trash"
               size={17}
-              className="text-[color:var(--color-icon-secondary)]"
+              className={[
+                'text-[color:var(--color-icon-secondary)]',
+                deleteDisabled ? '' : 'group-hover:text-[color:var(--color-icon-danger)]',
+                'transition-colors duration-150',
+              ].join(' ')}
             />
           </button>
         )}

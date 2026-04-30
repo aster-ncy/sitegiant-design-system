@@ -9,7 +9,7 @@ const meta = {
   tags: ['autodocs'],
   args: {
     selectedCount: 1,
-    checkbox: <Checkbox checked indeterminate />,
+    checkbox: <Checkbox size="sm" checked indeterminate />,
   },
   decorators: [
     (Story) => (
@@ -33,7 +33,17 @@ export const SingleAction: Story = {
 
 export const MoreAction: Story = {
   args: {
-    actions: [{ key: 'more', label: 'More Action', hasMenu: true }],
+    actions: [
+      {
+        key: 'more',
+        label: 'More Action',
+        menuItems: [
+          { key: 'archive', label: 'Archive' },
+          { key: 'duplicate', label: 'Duplicate' },
+          { key: 'export', label: 'Export to CSV' },
+        ],
+      },
+    ],
   },
 };
 
@@ -43,21 +53,25 @@ export const DeleteOnly: Story = {
   },
 };
 
+const moreActionMenu = {
+  key: 'more',
+  label: 'More Action',
+  menuItems: [
+    { key: 'archive', label: 'Archive' },
+    { key: 'duplicate', label: 'Duplicate' },
+    { key: 'export', label: 'Export to CSV' },
+  ],
+};
+
 export const ActionPlusMore: Story = {
   args: {
-    actions: [
-      { key: 'a1', label: 'Action 1' },
-      { key: 'more', label: 'More Action', hasMenu: true },
-    ],
+    actions: [{ key: 'a1', label: 'Action 1' }, moreActionMenu],
   },
 };
 
 export const ActionMoreDelete: Story = {
   args: {
-    actions: [
-      { key: 'a1', label: 'Action 1' },
-      { key: 'more', label: 'More Action', hasMenu: true },
-    ],
+    actions: [{ key: 'a1', label: 'Action 1' }, moreActionMenu],
     onDelete: () => {},
   },
 };
@@ -67,7 +81,7 @@ export const FullToolbar: Story = {
     actions: [
       { key: 'a1', label: 'Action 1' },
       { key: 'a2', label: 'Action 2' },
-      { key: 'more', label: 'More Action', hasMenu: true },
+      moreActionMenu,
     ],
     onDelete: () => {},
   },
@@ -79,7 +93,7 @@ export const MultipleSelected: Story = {
     actions: [
       { key: 'a1', label: 'Edit' },
       { key: 'a2', label: 'Export' },
-      { key: 'more', label: 'More Action', hasMenu: true },
+      moreActionMenu,
     ],
     onDelete: () => {},
   },
