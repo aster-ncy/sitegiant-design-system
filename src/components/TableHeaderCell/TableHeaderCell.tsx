@@ -68,6 +68,18 @@ const columnPaddingX: Record<TableColumnPosition, string> = {
   last: 'pl-[var(--spacing-12)] pr-[var(--spacing-24)]',
 };
 
+// Sub-row header column padding mirrors the sub-row body padding so
+// header text and body content land on the same x-positions when the
+// two are stacked. Verified per Figma:
+//   first  (756:437):  pl-12 pr-6
+//   center (756:463):  px-6
+//   last   (756:447):  pl-6 pr-24
+const subheaderColumnPaddingX: Record<TableColumnPosition, string> = {
+  first: 'pl-[var(--spacing-12)] pr-[var(--spacing-6)]',
+  center: 'px-[var(--spacing-6)]',
+  last: 'pl-[var(--spacing-6)] pr-[var(--spacing-24)]',
+};
+
 const textAlignmentClass: Record<TableTextAlignment, string> = {
   left: 'justify-start text-left',
   center: 'justify-center text-center',
@@ -125,13 +137,18 @@ export const TableHeaderCell = ({
     'relative flex items-center gap-[var(--spacing-12)]',
     'min-w-[44px]',
     subheader
-      ? // Sub-row header: pt-8 with no bottom padding by default
-        //   (Margin=Top, Figma 756:437) — the sub-row's py-6 below
-        //   provides the gap. Switch to py-8 (Margin=Top&Bottom,
-        //   Figma 2908:13399) for standalone bands.
-        subheaderMargin === 'topBottom'
-          ? 'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
-          : 'pl-[var(--spacing-12)] pr-[var(--spacing-6)] pt-[var(--spacing-8)]'
+      ? // Sub-row header: column-aware horizontal padding (mirrors the
+        // sub-row body so header text aligns with body content), plus
+        // vertical from the Margin axis:
+        //   - 'top' (default, Figma 756:437): pt-8 only — sub-row's
+        //     py-6 below provides the gap; adding pb here double-spaces.
+        //   - 'topBottom' (Figma 2908:13399): py-8 — for standalone
+        //     bands with no sub-row directly below.
+        `${subheaderColumnPaddingX[column]} ${
+          subheaderMargin === 'topBottom'
+            ? 'py-[var(--spacing-8)]'
+            : 'pt-[var(--spacing-8)]'
+        }`
       : isInset
         ? // Inset header padding from Figma node 747:83: pl-12, pr-6, py-8.
           // The 6px right padding is deliberate — it pairs with the body
