@@ -152,13 +152,16 @@ export const S1WalletRecord: Story = {
 
 // Channel-icon placeholder until brand-icon atoms land in the registry.
 // Renders a 17×17 rounded grey square next to the channel name.
+// leading-17 on the name span so its glyph hugs the top of its
+// line-box and aligns with the 17px placeholder (without it the
+// inherited 21px leading drops the text ~2px below the icon).
 const ChannelLabel = ({ name }: { name: string }) => (
   <span className="inline-flex items-center gap-[var(--spacing-8)]">
     <span
       aria-hidden="true"
       className="shrink-0 size-[17px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
     />
-    <span>{name}</span>
+    <span className="leading-[var(--leading-17)]">{name}</span>
   </span>
 );
 
@@ -737,7 +740,10 @@ export const S8SelectPackage: Story = {
                         aria-hidden="true"
                         className="shrink-0 size-[17px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
                       />
-                      <span className="break-words">ShopeeMY - Awesome Store</span>
+                      {/* leading-17 so the first text line aligns with the
+                          17px brand-icon placeholder; without it the inherited
+                          21px leading drops the glyph ~3px below the icon. */}
+                      <span className="break-words leading-[var(--leading-17)]">ShopeeMY - Awesome Store</span>
                     </span>
                   </Cell>
                 </tr>
