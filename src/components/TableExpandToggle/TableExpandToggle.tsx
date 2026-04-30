@@ -41,9 +41,10 @@ export const TableExpandToggle = ({
       className={[
         'inline-flex items-center justify-center shrink-0',
         // No inner padding — the wrapping TableCell provides p-12 per
-        // Figma 756:377. The icon clicks directly via the 21x21 hit
-        // area; the cell's full padded box still receives the click.
-        'border-none bg-transparent cursor-pointer',
+        // Figma 756:377. min-w/h-24 keeps the click target WCAG 2.5.5
+        // compliant (24×24) without reintroducing the spacing-12
+        // double-padding that inflated rows to 69px.
+        'min-w-[24px] min-h-[24px] border-none bg-transparent cursor-pointer',
         // Keyboard focus ring — outline:none drops the default browser
         // ring, so we paint our own visible focus indicator.
         'outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--color-sys-blue-DEFAULT)] rounded-[var(--radius-2)]',
