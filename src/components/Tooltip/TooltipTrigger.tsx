@@ -4,6 +4,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
 } from 'react';
@@ -53,12 +54,6 @@ export interface TooltipTriggerProps {
 const VIEWPORT_MARGIN = 8;
 const ANCHOR_GAP = 0;
 
-// Suppress unused-variable warnings for Task 4 placeholders.
-void VIEWPORT_MARGIN;
-void ANCHOR_GAP;
-// ARROW_HEIGHT is imported for Task 4's positioning offset.
-void ARROW_HEIGHT;
-
 // Arrow points back at the trigger from the bubble's facing edge:
 // bubble above (top placement) → arrow on bubble's bottom edge points down.
 const PLACEMENT_TO_ARROW: Record<TooltipPlacement, TooltipArrow> = {
@@ -79,6 +74,79 @@ const composeHandler = <E,>(
     consumer?.(e);
     ours(e);
   };
+
+interface PositionResult {
+  top: number;
+  left: number;
+  placement: TooltipPlacement;
+}
+
+function computePosition(
+  triggerRect: DOMRect,
+  bubbleRect: DOMRect,
+  preferred: TooltipPlacement,
+): PositionResult {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const offset = ARROW_HEIGHT + ANCHOR_GAP;
+
+  const candidate = (p: TooltipPlacement) => {
+    switch (p) {
+      case 'top':
+        return {
+          top: triggerRect.top - bubbleRect.height - offset,
+          left: triggerRect.left + triggerRect.width / 2 - bubbleRect.width / 2,
+        };
+      case 'bottom':
+        return {
+          top: triggerRect.bottom + offset,
+          left: triggerRect.left + triggerRect.width / 2 - bubbleRect.width / 2,
+        };
+      case 'left':
+        return {
+          top: triggerRect.top + triggerRect.height / 2 - bubbleRect.height / 2,
+          left: triggerRect.left - bubbleRect.width - offset,
+        };
+      case 'right':
+        return {
+          top: triggerRect.top + triggerRect.height / 2 - bubbleRect.height / 2,
+          left: triggerRect.right + offset,
+        };
+    }
+  };
+
+  // Available space along the placement axis (positive = fits without clipping).
+  const axisSpace = (p: TooltipPlacement) => {
+    switch (p) {
+      case 'top':
+        return triggerRect.top - bubbleRect.height - offset - VIEWPORT_MARGIN;
+      case 'bottom':
+        return vh - triggerRect.bottom - bubbleRect.height - offset - VIEWPORT_MARGIN;
+      case 'left':
+        return triggerRect.left - bubbleRect.width - offset - VIEWPORT_MARGIN;
+      case 'right':
+        return vw - triggerRect.right - bubbleRect.width - offset - VIEWPORT_MARGIN;
+    }
+  };
+
+  const opposite: Record<TooltipPlacement, TooltipPlacement> = {
+    top: 'bottom',
+    bottom: 'top',
+    left: 'right',
+    right: 'left',
+  };
+
+  const preferredSpace = axisSpace(preferred);
+  if (preferredSpace >= 0) {
+    return { ...candidate(preferred), placement: preferred };
+  }
+
+  // Preferred clips. Pick the larger of preferred vs opposite — even if both clip.
+  const opp = opposite[preferred];
+  const oppSpace = axisSpace(opp);
+  const winner = oppSpace > preferredSpace ? opp : preferred;
+  return { ...candidate(winner), placement: winner };
+}
 
 function useMergedRef<T>(...refs: Array<Ref<T> | undefined>): Ref<T> {
   return useCallback(
@@ -122,9 +190,6 @@ export const TooltipTrigger = ({
   const triggerRef = useRef<HTMLElement | null>(null);
   const bubbleRef = useRef<HTMLDivElement | null>(null);
   const openTimer = useRef<number | null>(null);
-
-  // Suppress unused-variable warning for Task 4 state setter.
-  void setResolvedPlacement;
 
   const close = useCallback(() => {
     if (openTimer.current !== null) {
@@ -203,6 +268,32 @@ export const TooltipTrigger = ({
     },
     [],
   );
+
+  useLayoutEffect(() => {
+    if (!isOpen) return undefined;
+    if (!triggerRef.current || !bubbleRef.current) return undefined;
+
+    const recompute = () => {
+      if (!triggerRef.current || !bubbleRef.current) return;
+      const triggerRect = triggerRef.current.getBoundingClientRect();
+      const bubbleRect = bubbleRef.current.getBoundingClientRect();
+      const next = computePosition(triggerRect, bubbleRect, placement);
+      setCoords({ top: next.top, left: next.left });
+      setResolvedPlacement(next.placement);
+    };
+
+    recompute();
+
+    const onScroll = () => recompute();
+    const onResize = () => recompute();
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      window.removeEventListener('scroll', onScroll, { capture: true });
+      window.removeEventListener('resize', onResize);
+    };
+  }, [isOpen, placement, content, width]);
 
   // Build the cloned child with ref + aria-describedby + composed focus/blur.
   const childProps = children.props as TriggerChildProps;
