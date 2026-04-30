@@ -106,9 +106,18 @@ export const Checkbox = ({
     boxState = 'bg-[var(--checkbox-fill)] border-[var(--checkbox-default)] hover:border-[var(--checkbox-checked)]';
   }
 
+  // Strip inherited line-height when the checkbox has no inner content.
+  // Otherwise the label's bounding box picks up the parent's leading
+  // (e.g. 17px in table headers) and the visible box is centered inside
+  // that taller bounding box — which makes the box render visibly higher
+  // than adjacent text inside an `items-center` parent. Live ERP renders
+  // box-vs-text optically centered; this fix matches that.
+  const hasInnerContent = Boolean(label || helperText);
+  const labelLeading = hasInnerContent ? '' : 'leading-none';
+
   return (
     <label
-      className={`inline-flex items-start gap-[var(--spacing-8)] select-none ${
+      className={`inline-flex items-start gap-[var(--spacing-8)] select-none ${labelLeading} ${
         disabled ? 'cursor-not-allowed opacity-100' : 'cursor-pointer'
       } ${className}`}
       htmlFor={id}
