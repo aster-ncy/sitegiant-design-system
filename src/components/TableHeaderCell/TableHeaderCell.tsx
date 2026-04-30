@@ -194,14 +194,16 @@ export const TableHeaderCell = ({
     // the icon renders visibly lower than the text baseline because
     // the line-box adds extra space below the glyph.
     //
-    // `min-h-[17px]` keeps the title-block height stable regardless of
-    // whether a sort icon is present. Without this, label-only headers
-    // (e.g. 'Action') collapsed to glyph height (~12px) while sortable
-    // headers stayed at 17px (icon height), and the cell wrapper's
-    // bottom-border landed at a different y per column — visible as a
-    // broken/stair-stepped underline across the header row.
+    // `min-h-[var(--leading-17)]` (= 17px) keeps the title-block height
+    // stable regardless of whether a sort icon is present. Without this,
+    // label-only headers (e.g. 'Action') collapsed to glyph height
+    // (~12px) while sortable headers stayed at 17px (icon height), and
+    // the cell wrapper's bottom-border landed at a different y per
+    // column — visible as a broken/stair-stepped underline across the
+    // header row. Reuses --leading-17 since it carries the canonical
+    // header line-height value, not raw px.
     'inline-flex items-center gap-[var(--spacing-2)]',
-    'min-h-[17px]',
+    'min-h-[var(--leading-17)]',
     'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
     'text-[length:var(--table-header-size)] leading-none',
     titleColor,
@@ -289,6 +291,14 @@ export const TableHeaderCell = ({
             'min-w-0',
           ].filter(Boolean).join(' ')}
         >
+          {/* `truncate` matches Figma's whitespace-nowrap on the title
+              text node (e.g. node 954:739 sets w-[97px] with nowrap).
+              Headers don't wrap — long labels clip with an ellipsis.
+              Combined with the title-block's `leading-none`, this
+              keeps the label's vertical centering tight against the
+              17px sort icon. If a caller ever needs a wrapping
+              header, adopt a different pattern; don't drop truncate
+              here without also restoring leading on the title-block. */}
           {hasLabel && <span className="truncate">{label}</span>}
           {sortIcon && (
             <Icon
