@@ -276,6 +276,52 @@ export const InfoMultiStatusMultiParagraph: Story = {
 };
 
 /**
+ * Vertical alignment, multi-status. Figma: alignment=Vertical, statusCount=2,
+ * paragraphCount=1. Each (label above body) block stacks with gap-4 between.
+ */
+export const InfoVerticalMultiStatus: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellInfo
+        alignment="vertical"
+        statuses={[
+          { label: 'Pickup', body: 'Block A, Level 12, Tower 3' },
+          { label: 'Dropoff', body: 'Lot 7, Bandar Sunway' },
+        ]}
+      />
+    ),
+  },
+};
+
+/**
+ * Vertical alignment, multi-paragraph body. Figma: alignment=Vertical,
+ * statusCount=1, paragraphCount=3.
+ */
+export const InfoVerticalMultiParagraph: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    children: (
+      <TableCellInfo
+        alignment="vertical"
+        statuses={[
+          {
+            label: 'Address',
+            body: [
+              'Block A, Level 12, Tower 3',
+              'Jalan Equine Park, Sri Kembangan',
+              '43300 Selangor, Malaysia',
+            ],
+          },
+        ]}
+      />
+    ),
+  },
+};
+
+/**
  * Multi-paragraph body — Figma: paragraphCount=3. Each paragraph is a wrapped
  * line; the label stays vertically centred against the first row in horizontal
  * alignment.

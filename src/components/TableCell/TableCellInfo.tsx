@@ -27,15 +27,20 @@ export interface TableCellInfoProps {
   statuses: TableCellInfoStatus[];
 }
 
+// Body paragraphs render as <span class="block"> rather than <p> because
+// TableCell's content slot is a <span> (TableCell.tsx ~line 190); a block-
+// level <p> nested inside a <span> is invalid HTML and some assistive tech
+// flags it. Block <span>s give the same visual line-stacking without the
+// nesting problem.
 const renderBody = (body: ReactNode | ReactNode[]) => {
   if (Array.isArray(body)) {
     return body.map((paragraph, index) => (
-      <p key={index} className="m-0">
+      <span key={index} className="block">
         {paragraph}
-      </p>
+      </span>
     ));
   }
-  return <p className="m-0">{body}</p>;
+  return <span className="block">{body}</span>;
 };
 
 const labelHorizontalClasses = [
@@ -54,8 +59,7 @@ const labelVerticalClasses = [
 ].join(' ');
 
 const bodyClasses = [
-  'flex-1 min-w-0',
-  'flex flex-col gap-0',
+  'min-w-0',
   'font-[family-name:var(--font-sans)]',
   'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
   'text-[color:var(--table-body-text)]',
