@@ -60,13 +60,18 @@ const columnPaddingX: Record<TableColumnPosition, string> = {
   last: 'pl-[var(--spacing-12)] pr-[var(--spacing-24)]',
 };
 
-// Sub-row inset padding from Figma node 767:299 (first), 776:613 (center),
-// 776:677 (last). 12px outer, 6px inner — half-step tighter than regular
-// inset body cells, gives the nested row a visibly slimmer rhythm.
+// Sub-row inset padding from Figma:
+//   first  (767:299): pl-12 pr-6
+//   center (776:613): px-6
+//   last   (776:677): pl-6 pr-24    ← outer padding is 24px (not 12),
+//                                     mirrors the default body's wide
+//                                     trailing edge so the row's right
+//                                     gutter stays consistent across
+//                                     inset / non-inset / subrow.
 const subrowColumnPaddingX: Record<TableColumnPosition, string> = {
   first: 'pl-[var(--spacing-12)] pr-[var(--spacing-6)]',
   center: 'px-[var(--spacing-6)]',
-  last: 'pl-[var(--spacing-6)] pr-[var(--spacing-12)]',
+  last: 'pl-[var(--spacing-6)] pr-[var(--spacing-24)]',
 };
 
 const textAlignmentClass: Record<TableTextAlignment, string> = {

@@ -129,6 +129,34 @@ export const Subheader: Story = {
   },
 };
 
+/**
+ * Composite sub-header band reproducing the s2 Sales Channel pattern.
+ * Confirms (a) all three column positions render with the grey subrow
+ * fill, (b) no rounded corners on either edge (sub-headers sit between
+ * rows, not at the table edge), and (c) sort affordances are suppressed
+ * even if `sortable` is passed — the chevron should NOT appear on the
+ * "Store" column even though sortable=true.
+ */
+export const SubheaderRow: Story = {
+  render: () => (
+    <table className="border-collapse w-full">
+      <thead>
+        <tr>
+          <th>
+            <TableHeaderCell subheader column="first" align="left" label="Store" sortable />
+          </th>
+          <th>
+            <TableHeaderCell subheader column="center" align="right" label="Order" />
+          </th>
+          <th>
+            <TableHeaderCell subheader column="last" align="right" label="Total (RM)" />
+          </th>
+        </tr>
+      </thead>
+    </table>
+  ),
+};
+
 export const InsetTableExample: Story = {
   render: () => (
     <table className="border-collapse w-full">
