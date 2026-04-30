@@ -153,10 +153,9 @@ export const TableCell = ({
       {leadingIcon && <span className="shrink-0 inline-flex items-center">{leadingIcon}</span>}
       <span
         className={[
-          // `flex` (not `inline-flex`) so multi-line content (primary +
-          // secondary text) stacks naturally without forcing single-row
-          // truncation. Real ERP tables show e.g. "Send SMS Usage" + a
-          // muted "SMS Ref. CP1301..." reference under it.
+          // `flex` (not `inline-flex`) so non-string ReactNode children
+          // (e.g. the multi-line primary+secondary stack used by the
+          // Wallet Record / TableCellInfo patterns) lay out as expected.
           'flex items-center gap-[var(--spacing-4)] min-w-0 flex-1',
           'font-[family-name:var(--font-sans)]',
           'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
@@ -165,7 +164,16 @@ export const TableCell = ({
           textAlignmentClass[align],
         ].join(' ')}
       >
-        {children}
+        {/*
+          Truncate plain-string children so long single-line values clip
+          with an ellipsis instead of overflowing the cell. Non-string
+          children (e.g. structured multi-line content) render as-is and
+          handle their own overflow — `truncate` on a flex-row parent
+          would have no effect on stacked flex-col descendants anyway.
+        */}
+        {typeof children === 'string'
+          ? <span className="truncate">{children}</span>
+          : children}
       </span>
       {trailing && <span className="shrink-0 inline-flex items-center">{trailing}</span>}
     </div>
