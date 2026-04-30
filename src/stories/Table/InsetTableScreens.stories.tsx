@@ -41,9 +41,21 @@ type Story = StoryObj;
 // `h-[1px]` on the <td> is the canonical CSS trick to make a percentage-
 // height child stretch to the row's natural height — without it the <td>
 // sizes to its own intrinsic content and `h-full` on TableCell collapses.
-const Cell = ({ children, className = '', ...rest }: React.ComponentProps<typeof TableCell>) => (
+//
+// `alignTop` swaps the cell's inner flex from items-center to items-start
+// (with !-prefix so it wins against TableCell's default). Used on rows
+// that mix multi-line content (TableCellInfo, MainSub, Listing) with
+// single-line cells — without it, the single-line cells vertical-center
+// against the tall cell, which reads as a stagger rather than alignment.
+type CellProps = React.ComponentProps<typeof TableCell> & { alignTop?: boolean };
+const Cell = ({ children, className = '', alignTop = false, ...rest }: CellProps) => (
   <td className="p-0 h-[1px]">
-    <TableCell {...rest} className={['h-full', className].filter(Boolean).join(' ')}>
+    <TableCell
+      {...rest}
+      className={['h-full', alignTop ? '!items-start' : '', className]
+        .filter(Boolean)
+        .join(' ')}
+    >
       {children}
     </TableCell>
   </td>
@@ -92,12 +104,17 @@ export const S1WalletRecord: Story = {
             { tone: 'red', desc: 'Send SMS Usage', token: '-50', prev: '530' },
             { tone: 'green', desc: 'Token Top Up', token: '+100', prev: '430' },
             { tone: 'green', desc: 'Token Top Up', token: '+100', prev: '330' },
-          ].map((row, index, all) => (
+          ].map((row, index, all) => {
+            // alignTop: this row mixes a 2-line MainSub (Description) with
+            // single-line cells; the single-line cells should anchor to the
+            // top of the row, not vertical-center against the MainSub stack.
+            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            return (
             <tr key={index}>
-              <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="first" row={rowProp}>
                 22-10-2020 9:54
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 <TableCellMainSub
                   mainBold
                   mainValue={row.desc}
@@ -105,10 +122,10 @@ export const S1WalletRecord: Story = {
                   subValue="CP13010263179835"
                 />
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 {row.tone === 'green' ? 'Admin A' : '-'}
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 <span className={row.tone === 'red'
                   ? 'text-[color:var(--color-sys-red-DEFAULT)]'
                   : 'text-[color:var(--color-sys-green-DEFAULT)]'
@@ -116,14 +133,15 @@ export const S1WalletRecord: Story = {
                   {row.token}
                 </span>
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 {row.prev}
               </Cell>
-              <Cell inset column="last" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="last" row={rowProp}>
                 <Pip type="success" pipStyle="default" label="Success" />
               </Cell>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -545,27 +563,33 @@ export const S7AddTrip: Story = {
           </tr>
         </thead>
         <tbody>
-          {[1, 2].map((id, index, all) => (
+          {[1, 2].map((id, index, all) => {
+            // alignTop: rows mix a single-line Tracking No. with
+            // multi-line Customer (vertical Info) and Address (multi-
+            // paragraph Info) cells.
+            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            return (
             <tr key={id}>
               <Cell
+                alignTop
                 inset
                 column="first"
-                row={index === all.length - 1 ? 'last' : 'middle'}
+                row={rowProp}
                 leadingIcon={<Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)] cursor-grab" />}
               />
-              <Cell inset column="center" weight="bold" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" weight="bold" row={rowProp}>
                 MY123554G85899
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 08 May 2025 4:00PM
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 <TableCellInfo
                   alignment="vertical"
                   statuses={[{ label: 'Wei Kheng', body: '60 12-456 6556' }]}
                 />
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" row={rowProp}>
                 <TableCellInfo
                   statuses={[{
                     label: '',
@@ -578,14 +602,16 @@ export const S7AddTrip: Story = {
                 />
               </Cell>
               <Cell
+                alignTop
                 inset
                 column="last"
                 align="right"
-                row={index === all.length - 1 ? 'last' : 'middle'}
+                row={rowProp}
                 trailing={<IconButton name="close" label="Remove package" />}
               />
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
@@ -625,13 +651,18 @@ export const S8SelectPackage: Story = {
             {rows.map((row, index) => {
               const isSelected = selected === row.id;
               const isLast = index === rows.length - 1;
+              const rowProp = isLast ? 'last' : 'middle';
               return (
+                // alignTop: rows mix the 3-line tracking stack
+                // (bold tracking + Order ID + COID) with single-line
+                // Order Date / Shipment Due Date / Store cells.
                 <tr key={row.id}>
                   <Cell
+                    alignTop
                     inset
                     column="first"
                     selected={isSelected}
-                    row={isLast ? 'last' : 'middle'}
+                    row={rowProp}
                     checkbox={
                       <Checkbox
                         size="sm"
@@ -650,13 +681,13 @@ export const S8SelectPackage: Story = {
                       />
                     </div>
                   </Cell>
-                  <Cell inset column="center" selected={isSelected} row={isLast ? 'last' : 'middle'}>
+                  <Cell alignTop inset column="center" selected={isSelected} row={rowProp}>
                     <TableCellInfo
                       alignment="vertical"
                       statuses={[{ label: 'Wei Kheng', body: '60 12-456 6556' }]}
                     />
                   </Cell>
-                  <Cell inset column="center" selected={isSelected} row={isLast ? 'last' : 'middle'}>
+                  <Cell alignTop inset column="center" selected={isSelected} row={rowProp}>
                     <TableCellInfo
                       statuses={[{
                         label: '',
@@ -668,13 +699,13 @@ export const S8SelectPackage: Story = {
                       }]}
                     />
                   </Cell>
-                  <Cell inset column="center" selected={isSelected} row={isLast ? 'last' : 'middle'}>
+                  <Cell alignTop inset column="center" selected={isSelected} row={rowProp}>
                     02 May 2025 11:00AM
                   </Cell>
-                  <Cell inset column="center" selected={isSelected} row={isLast ? 'last' : 'middle'}>
+                  <Cell alignTop inset column="center" selected={isSelected} row={rowProp}>
                     02 May 2025 11:00AM
                   </Cell>
-                  <Cell inset column="last" selected={isSelected} row={isLast ? 'last' : 'middle'}>
+                  <Cell alignTop inset column="last" selected={isSelected} row={rowProp}>
                     <span className="inline-flex items-start gap-[var(--spacing-4)]">
                       {/* Channel brand-icon placeholder — Shopee logo would
                           be 17×17 with brand orange. Substitute with the
@@ -736,12 +767,18 @@ export const S9OrderReturn: Story = {
               reason: 'Ordered the wrong size by mistake',
               meta: 'DYN-4IN1-FRESH-10ML52',
             },
-          ].map((row, index, all) => (
+          ].map((row, index, all) => {
+            // alignTop: each row's first cell renders a multi-line
+            // TableCellListing (image + name + meta rows); the right-
+            // aligned numeric cells should anchor at the top.
+            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            return (
             <tr key={index}>
               <Cell
+                alignTop
                 inset
                 column="first"
-                row={index === all.length - 1 ? 'last' : 'middle'}
+                row={rowProp}
                 className="!pl-[var(--spacing-12)]"
               >
                 <TableCellListing
@@ -755,17 +792,18 @@ export const S9OrderReturn: Story = {
                   ]}
                 />
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" align="right" row={rowProp}>
                 RM 20.00
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="center" align="right" row={rowProp}>
                 1
               </Cell>
-              <Cell inset column="last" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell alignTop inset column="last" align="right" row={rowProp}>
                 RM 20.00
               </Cell>
             </tr>
-          ))}
+            );
+          })}
         </tbody>
       </table>
     </div>
