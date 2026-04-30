@@ -751,21 +751,23 @@ export const S9OrderReturn: Story = {
           {[
             {
               name: 'Minime Slimming Weight Loss Green Tea',
+              sku: 'OS-005-FRESH-10ML52',
               variation: 'Kurus Badan Dengan Cepat Bakar Lemak P0019',
-              meta: 'OS-005-FRESH-10ML52',
-            },
+            } as { name: string; sku: string; variation: string; reason?: string; note?: string; tag?: string },
             {
               name: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
-              variation: 'Wrong Size/Fit',
-              reason: 'Ordered the wrong size by mistake',
-              meta: 'DYN-4IN1-FRESH-10ML52',
+              sku: 'DYN-4IN1-FRESH-10ML52',
+              variation: 'Black, 5 pcs',
+              reason: 'Wrong Size/Fit',
+              note: 'Ordered the wrong size by mistake',
               tag: 'Bundle',
             },
             {
               name: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
-              variation: 'Wrong Size/Fit',
-              reason: 'Ordered the wrong size by mistake',
-              meta: 'DYN-4IN1-FRESH-10ML52',
+              sku: 'DYN-4IN1-FRESH-10ML52',
+              variation: 'Black, 5 pcs',
+              reason: 'Wrong Size/Fit',
+              note: 'Ordered the wrong size by mistake',
             },
           ].map((row, index, all) => {
             // alignTop: each row's first cell renders a multi-line
@@ -786,9 +788,10 @@ export const S9OrderReturn: Story = {
                   tag={row.tag ? <Pip type="muted" pipStyle="default" label={row.tag} /> : undefined}
                   productName={row.name}
                   infoRows={[
+                    { label: 'SKU', value: row.sku },
                     { label: 'Variation', value: row.variation },
-                    ...(row.reason ? [{ label: 'Note', value: row.reason }] : []),
-                    { label: 'SKU', value: row.meta },
+                    ...(row.reason ? [{ label: 'Reason', value: row.reason }] : []),
+                    ...(row.note ? [{ label: 'Note', value: row.note }] : []),
                   ]}
                 />
               </Cell>
