@@ -92,8 +92,10 @@ export const TableHeaderCell = ({
     'relative flex items-center gap-[var(--spacing-12)]',
     'min-w-[44px]',
     inset
-      ? // Inset: pl-12 pr-6 py-8, no bottom divider, grey fill.
-        `${column === 'first' ? 'pl-[var(--spacing-12)]' : 'pl-[var(--spacing-12)]'} pr-[var(--spacing-6)] py-[var(--spacing-8)]`
+      ? // Inset header padding from Figma node 747:83: pl-12, pr-6, py-8.
+        // The 6px right padding is deliberate — it pairs with the body
+        // cell's 6px left padding for a 12px combined inter-column gutter.
+        'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
       : `${columnPaddingX[column]} py-[var(--spacing-20)]`,
     inset
       ? 'bg-[var(--table-inset-header-fill)]'
