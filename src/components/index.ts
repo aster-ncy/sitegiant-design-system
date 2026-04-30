@@ -330,8 +330,13 @@ export { Toggle } from './Toggle';
 export type { ToggleProps, ToggleVariant } from './Toggle';
 
 // Tooltip
-export { Tooltip } from './Tooltip';
-export type { TooltipProps, TooltipArrow } from './Tooltip';
+export { Tooltip, TooltipTrigger } from './Tooltip';
+export type {
+  TooltipProps,
+  TooltipArrow,
+  TooltipTriggerProps,
+  TooltipPlacement,
+} from './Tooltip';
 
 // SidebarItem
 export { SidebarItem, SidebarTag } from './SidebarItem';
