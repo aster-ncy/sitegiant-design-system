@@ -106,7 +106,7 @@ export const SubrowHovered: Story = {
 };
 
 export const SubrowCenter: Story = {
-  args: { subrow: true, column: 'center', align: 'right', children: '25' },
+  args: { subrow: true, column: 'center', align: 'left', children: '25' },
 };
 
 export const SubrowLast: Story = {
@@ -126,6 +126,10 @@ export const SubrowSelected: Story = {
  * Composite sub-row showing the full sub-row band as it appears in the
  * Sales Channel "Today Sales" expanded parent (s2 reference). Confirms
  * left/center/right column padding lines up across the row.
+ *
+ * Note: in real product use the sub-rows are preceded by an Inset Table
+ * Sub-row Header band — see TableHeaderCell's SubheaderRow story for
+ * that piece, and SubheaderWithSubrows below for the full s2 stack.
  */
 export const SubrowComposite: Story = {
   render: () => (
@@ -133,12 +137,51 @@ export const SubrowComposite: Story = {
       <tbody>
         <tr>
           <Cell subrow column="first">Awesome Store 1899</Cell>
-          <Cell subrow column="center" align="right">25</Cell>
+          <Cell subrow column="center" align="left">25</Cell>
           <Cell subrow column="last" align="right">10,000.00</Cell>
         </tr>
         <tr>
           <Cell subrow column="first">Super Hype</Cell>
-          <Cell subrow column="center" align="right">5</Cell>
+          <Cell subrow column="center" align="left">5</Cell>
+          <Cell subrow column="last" align="right">10,000.00</Cell>
+        </tr>
+      </tbody>
+    </table>
+  ),
+};
+
+/**
+ * Full s2 reproduction: Inset Table Sub-row Header (Margin=Top) on top
+ * of two sub-rows. Verifies that the sub-header's pt-8/pb-0 + the
+ * sub-row's py-6 produce the right vertical rhythm — sub-row content
+ * should align to the same x-position as the header label, with no
+ * extra gap between the header band and the first sub-row.
+ */
+export const SubheaderWithSubrows: Story = {
+  render: () => (
+    <table className="border-collapse w-full">
+      <thead>
+        <tr>
+          <th>
+            <TableHeaderCell subheader column="first" align="left" label="Store" />
+          </th>
+          <th>
+            <TableHeaderCell subheader column="center" align="left" label="Order" />
+          </th>
+          <th>
+            <TableHeaderCell subheader column="last" align="right" label="Total (RM)" />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <Cell subrow column="first">Awesome Store 1899</Cell>
+          <Cell subrow column="center" align="left">25</Cell>
+          <Cell subrow column="last" align="right">10,000.00</Cell>
+        </tr>
+        <tr>
+          <Cell subrow column="first">Super Hype</Cell>
+          <Cell subrow column="center" align="left">5</Cell>
           <Cell subrow column="last" align="right">10,000.00</Cell>
         </tr>
       </tbody>

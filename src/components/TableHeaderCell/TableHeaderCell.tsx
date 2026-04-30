@@ -17,11 +17,25 @@ export interface TableHeaderCellProps {
    * Sub-header variant — used as the header band above sub-rows in an
    * expanded parent row (e.g. Sales Channel "Today Sales" → expand
    * "Shopee MY" → reveals "Store / Order / Total (RM)" band over the
-   * store-level sub-rows). Implies `inset`. Same padding as inset
-   * header but uses the subrow grey fill and drops the leading/trailing
-   * corner radii since sub-headers sit between rows, not at table edges.
+   * store-level sub-rows). Implies `inset`. Same horizontal padding as
+   * inset header (pl-12 pr-6) but uses the subrow grey fill, drops the
+   * leading/trailing corner radii (sub-headers sit between rows, not
+   * at table edges), and suppresses the sort affordance. Vertical
+   * padding follows `subheaderMargin`.
    */
   subheader?: boolean;
+  /**
+   * Sub-header margin mode. Maps to Figma's "Margin" axis on Inset Table
+   * Sub-row Header (node 969:1621):
+   * - `'top'` (default): pt-8 with NO bottom padding. Use when the
+   *   sub-header sits immediately above sub-row body cells — the
+   *   sub-row's own py-6 provides the bottom breathing room and adding
+   *   bottom padding here would double-space the gap.
+   * - `'topBottom'`: py-8. Use when the band stands alone (e.g. last
+   *   element of an expansion panel with no sub-rows directly below).
+   * Has no effect unless `subheader` is true.
+   */
+  subheaderMargin?: 'top' | 'topBottom';
   /** Column position — controls left/right padding. */
   column?: TableColumnPosition;
   /** Text alignment within the cell. */
@@ -36,7 +50,7 @@ export interface TableHeaderCellProps {
   onSort?: () => void;
   /** Optional checkbox slot (e.g. the row-select-all checkbox in column 1). */
   checkbox?: ReactNode;
-  /** Show a small warning hint with count + label below the title. */
+  /** Show a small warning hint with count + label next to the title. */
   hint?: { count?: number | string; label: string };
   /** Disabled state — mutes text + disables sort click. */
   disabled?: boolean;
@@ -76,6 +90,7 @@ export const TableHeaderCell = ({
   type = 'default',
   inset = false,
   subheader = false,
+  subheaderMargin = 'top',
   column = 'center',
   align = 'left',
   label,
@@ -109,13 +124,20 @@ export const TableHeaderCell = ({
     // only paint under the inner content and look like an underline.
     'relative flex items-center gap-[var(--spacing-12)]',
     'min-w-[44px]',
-    isInset
-      ? // Inset header padding from Figma node 747:83: pl-12, pr-6, py-8.
-        // The 6px right padding is deliberate — it pairs with the body
-        // cell's 6px left padding for a 12px combined inter-column gutter.
-        // Sub-headers reuse the same padding rhythm.
-        'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
-      : `${columnPaddingX[column]} py-[var(--spacing-20)]`,
+    subheader
+      ? // Sub-row header: pt-8 with no bottom padding by default
+        //   (Margin=Top, Figma 756:437) — the sub-row's py-6 below
+        //   provides the gap. Switch to py-8 (Margin=Top&Bottom,
+        //   Figma 2908:13399) for standalone bands.
+        subheaderMargin === 'topBottom'
+          ? 'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
+          : 'pl-[var(--spacing-12)] pr-[var(--spacing-6)] pt-[var(--spacing-8)]'
+      : isInset
+        ? // Inset header padding from Figma node 747:83: pl-12, pr-6, py-8.
+          // The 6px right padding is deliberate — it pairs with the body
+          // cell's 6px left padding for a 12px combined inter-column gutter.
+          'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-8)]'
+        : `${columnPaddingX[column]} py-[var(--spacing-20)]`,
     fillClass,
     isInset
       ? ''
