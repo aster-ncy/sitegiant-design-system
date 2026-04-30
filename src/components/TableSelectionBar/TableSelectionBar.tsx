@@ -109,6 +109,24 @@ export const TableSelectionBar = ({
   // open at a time; clicking another menu trigger swaps the open key.
   const [openMenuKey, setOpenMenuKey] = useState<string | null>(null);
   const menuTriggerRefs = useRef<Map<string, HTMLButtonElement | null>>(new Map());
+  // Stash the trigger that opened the current menu so we can hand focus
+  // back to it on Escape / outside-click close. Without this, focus
+  // ends up orphaned on the unmounted DropdownMenuItem.
+  const lastFocusedTriggerKey = useRef<string | null>(null);
+
+  // Helper: close the open menu and return focus to its trigger button.
+  const closeMenu = () => {
+    const triggerKey = lastFocusedTriggerKey.current;
+    setOpenMenuKey(null);
+    if (triggerKey) {
+      const trigger = menuTriggerRefs.current.get(triggerKey);
+      // Defer focus restore until after React unmounts the menu —
+      // otherwise the focus call lands on a node React is about to
+      // remove and is silently lost.
+      requestAnimationFrame(() => trigger?.focus());
+      lastFocusedTriggerKey.current = null;
+    }
+  };
 
   // Click-outside-to-close behavior for any open dropdown.
   useEffect(() => {
@@ -121,7 +139,7 @@ export const TableSelectionBar = ({
       if (trigger.contains(target)) return;
       // The menu lives in a sibling div with data-tsbar-menu attribute.
       if ((target as Element)?.closest?.('[data-tsbar-menu]')) return;
-      setOpenMenuKey(null);
+      closeMenu();
     };
     document.addEventListener('mousedown', handle);
     return () => document.removeEventListener('mousedown', handle);
@@ -180,7 +198,15 @@ export const TableSelectionBar = ({
           const handleClick = () => {
             if (action.disabled) return;
             if (hasDropdown) {
-              setOpenMenuKey(isOpen ? null : action.key);
+              if (isOpen) {
+                // Closing via the trigger itself — focus stays where the
+                // user just clicked, so no requestAnimationFrame needed.
+                setOpenMenuKey(null);
+                lastFocusedTriggerKey.current = null;
+              } else {
+                lastFocusedTriggerKey.current = action.key;
+                setOpenMenuKey(action.key);
+              }
             } else {
               action.onClick?.();
             }
@@ -198,7 +224,7 @@ export const TableSelectionBar = ({
                 }}
                 onClick={handleClick}
                 disabled={action.disabled}
-                aria-haspopup={hasDropdown ? 'menu' : undefined}
+                aria-haspopup={hasDropdown ? 'listbox' : undefined}
                 aria-expanded={hasDropdown ? isOpen : undefined}
                 className={buttonClasses}
               >
@@ -218,7 +244,7 @@ export const TableSelectionBar = ({
                 >
                   <DropdownMenu
                     aria-label={typeof action.label === 'string' ? action.label : 'More actions'}
-                    onEscape={() => setOpenMenuKey(null)}
+                    onEscape={closeMenu}
                   >
                     {action.menuItems!.map((item) => (
                       <DropdownMenuItem
@@ -227,7 +253,7 @@ export const TableSelectionBar = ({
                         disabled={item.disabled}
                         onClick={() => {
                           item.onClick?.();
-                          setOpenMenuKey(null);
+                          closeMenu();
                         }}
                       />
                     ))}
