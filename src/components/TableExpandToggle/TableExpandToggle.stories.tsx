@@ -17,8 +17,6 @@ export const Collapsed: Story = {};
 
 export const Expanded: Story = { args: { expanded: true } };
 
-export const Disabled: Story = { args: { disabled: true } };
-
 export const Interactive: Story = {
   render: (args) => {
     const [open, setOpen] = useState(false);
