@@ -276,7 +276,7 @@ export const FullTable: Story = {
             <TableHeaderCell column="center" align="right" label="Price" sortable />
           </th>
           <th className="p-0">
-            <TableHeaderCell column="last" align="right" type="icon" icon="more-horizontal" iconAriaLabel="Row actions" />
+            <TableHeaderCell column="last" align="right" label="Action" />
           </th>
         </tr>
       </thead>
