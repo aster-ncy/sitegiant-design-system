@@ -182,9 +182,15 @@ export const TableHeaderCell = ({
       : 'text-[color:var(--table-header-icon)]';
 
   const titleClasses = [
+    // `leading-none` clamps the label span's bounding box to glyph
+    // height (instead of inheriting the 17px line-box) so when the
+    // sort icon (also 17px) sits beside it, items-center aligns the
+    // GLYPH vertically with the icon's center — without leading-none
+    // the icon renders visibly lower than the text baseline because
+    // the line-box adds extra space below the glyph.
     'inline-flex items-center gap-[var(--spacing-2)]',
     'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-    'text-[length:var(--table-header-size)] leading-[var(--table-header-lineheight)]',
+    'text-[length:var(--table-header-size)] leading-none',
     titleColor,
     textAlignmentClass[align],
   ].join(' ');
@@ -192,7 +198,7 @@ export const TableHeaderCell = ({
   // Icon-only variant — used for last-column action triggers.
   if (type === 'icon') {
     return (
-      <div className={cellClasses}>
+      <div className={[cellClasses, textAlignmentClass[align]].join(' ')}>
         <button
           type="button"
           onClick={disabled ? undefined : onSort}
