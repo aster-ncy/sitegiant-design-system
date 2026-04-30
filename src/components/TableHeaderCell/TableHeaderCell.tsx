@@ -169,7 +169,16 @@ export const TableHeaderCell = ({
 
   return (
     <div className={cellClasses}>
-      {checkbox && <span className="shrink-0">{checkbox}</span>}
+      {/*
+        inline-flex (not bare inline) so this slot's bounding box clamps
+        to its child's geometry. A plain inline span inherits the
+        parent's line-height, which in Storybook's padded layout is
+        taller than the 17px checkbox — items-center on the parent then
+        centers the taller span, leaving the visible checkbox rendered
+        ~1px above the title text. inline-flex makes the wrapper height
+        equal the checkbox height exactly.
+      */}
+      {checkbox && <span className="shrink-0 inline-flex items-center">{checkbox}</span>}
       <div
         className={[
           'inline-flex items-center gap-[var(--spacing-4)] min-w-0 flex-1',

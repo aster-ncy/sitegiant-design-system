@@ -149,7 +149,10 @@ export const TableCell = ({
         .filter(Boolean)
         .join(' ')}
     >
-      {checkbox && <span className="shrink-0">{checkbox}</span>}
+      {/* inline-flex so the slot's height clamps to the checkbox; see
+          matching note in TableHeaderCell for the line-height-inheritance
+          rationale. */}
+      {checkbox && <span className="shrink-0 inline-flex items-center">{checkbox}</span>}
       {leadingIcon && <span className="shrink-0 inline-flex items-center">{leadingIcon}</span>}
       <span
         className={[
