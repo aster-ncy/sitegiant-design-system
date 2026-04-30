@@ -116,16 +116,30 @@ export const InsetWithCheckbox: Story = {
 
 /**
  * Sub-header band — used above sub-rows inside an expanded parent row
- * (e.g. Sales Channel "Today Sales" pattern). Same typography and
- * padding as a regular inset header but with the subrow grey fill, no
- * leading/trailing corner radii, and no sort indicator by default.
+ * (e.g. Sales Channel "Today Sales" pattern). Subrow grey fill, no
+ * corner radii, sort affordance suppressed. Default `subheaderMargin`
+ * is `'top'` (pt-8 only) — the sub-row beneath provides the bottom
+ * gap via its own py-6.
  */
 export const Subheader: Story = {
   args: {
     subheader: true,
     column: 'first',
     label: 'Store',
-    sortable: false,
+  },
+};
+
+/**
+ * Standalone sub-header (Margin=Top&Bottom mode, Figma 2908:13399).
+ * Use when the band stands on its own with no sub-rows immediately
+ * beneath it, so the bottom padding has to come from the band itself.
+ */
+export const SubheaderStandalone: Story = {
+  args: {
+    subheader: true,
+    subheaderMargin: 'topBottom',
+    column: 'first',
+    label: 'Store',
   },
 };
 
@@ -133,9 +147,10 @@ export const Subheader: Story = {
  * Composite sub-header band reproducing the s2 Sales Channel pattern.
  * Confirms (a) all three column positions render with the grey subrow
  * fill, (b) no rounded corners on either edge (sub-headers sit between
- * rows, not at the table edge), and (c) sort affordances are suppressed
+ * rows, not at the table edge), (c) sort affordances are suppressed
  * even if `sortable` is passed — the chevron should NOT appear on the
- * "Store" column even though sortable=true.
+ * "Store" column even though sortable=true, (d) Order is left-aligned
+ * and Total (RM) is right-aligned, matching s2.
  */
 export const SubheaderRow: Story = {
   render: () => (
@@ -146,7 +161,7 @@ export const SubheaderRow: Story = {
             <TableHeaderCell subheader column="first" align="left" label="Store" sortable />
           </th>
           <th>
-            <TableHeaderCell subheader column="center" align="right" label="Order" />
+            <TableHeaderCell subheader column="center" align="left" label="Order" />
           </th>
           <th>
             <TableHeaderCell subheader column="last" align="right" label="Total (RM)" />
