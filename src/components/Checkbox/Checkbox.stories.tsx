@@ -12,6 +12,7 @@ const meta = {
     checked: { control: 'boolean' },
     indeterminate: { control: 'boolean' },
     disabled: { control: 'boolean' },
+    size: { control: 'inline-radio', options: ['sm', 'md'] },
     label: { control: 'text' },
     helperText: { control: 'text' },
   },
@@ -86,6 +87,24 @@ export const NoLabel: Story = {
   args: {
     checked: true,
   },
+};
+
+/* ── Sizes ─────────────────────────────────────────────── */
+
+/**
+ * Two box sizes: `md` (20×20, default — used in forms) and `sm` (17×17 —
+ * used in table headers / rows to match the smaller checkbox Figma uses
+ * inside table contexts, e.g. node 747:3744).
+ */
+export const Sizes: Story = {
+  render: () => (
+    <div className="flex flex-col gap-[var(--spacing-12)]">
+      <Checkbox size="md" label="Medium (20×20) — forms" />
+      <Checkbox size="sm" label="Small (17×17) — tables" />
+      <Checkbox size="md" checked label="Medium checked" />
+      <Checkbox size="sm" checked label="Small checked" />
+    </div>
+  ),
 };
 
 /* ── Interactive (controlled) ──────────────────────────── */

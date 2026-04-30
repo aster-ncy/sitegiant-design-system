@@ -1,6 +1,8 @@
 import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
+export type CheckboxSize = 'sm' | 'md';
+
 export interface CheckboxProps {
   /** Whether the checkbox is checked */
   checked?: boolean;
@@ -10,6 +12,13 @@ export interface CheckboxProps {
   disabled?: boolean;
   /** Visual state — 'danger' paints the box border red. */
   state?: 'default' | 'danger';
+  /**
+   * Box size:
+   * - `md` (default): 20×20 box, 12×12 inner check. Used in forms.
+   * - `sm`: 17×17 box, 10×10 inner check. Used in table headers / rows
+   *   to match Figma's smaller table-context checkbox (e.g. node 747:3744).
+   */
+  size?: CheckboxSize;
   /** Label text next to the checkbox */
   label?: string;
   /** Helper/info text below the label */
@@ -44,6 +53,7 @@ export const Checkbox = ({
   indeterminate = false,
   disabled = false,
   state = 'default',
+  size = 'md',
   label,
   helperText,
   onChange,
@@ -54,10 +64,19 @@ export const Checkbox = ({
   const isActive = checked || indeterminate;
   const isDanger = state === 'danger' && !disabled;
 
-  /* ── Box styles (token-driven) ─────────────────────── */
+  /* ── Box styles (token-driven for md, raw 17px for sm per Figma) ──── */
+  // Figma deviates from the spacing scale for table-context checkboxes:
+  // node 747:3744 (Inset Table Header) uses a literal 17px box. There is
+  // no --spacing-17 token, so this is an explicit, documented arbitrary
+  // value — the only place in the DS where a non-token pixel value is
+  // intentional.
+  const boxSizeClass = size === 'sm'
+    ? 'w-[17px] h-[17px]'
+    : 'w-[var(--spacing-20)] h-[var(--spacing-20)]';
+
   const boxBase = [
     'relative shrink-0',
-    'w-[var(--spacing-20)] h-[var(--spacing-20)]',
+    boxSizeClass,
     'rounded-[var(--radius-4)]',
     'border-2 border-solid',
     'transition-all duration-150',
@@ -67,6 +86,9 @@ export const Checkbox = ({
     'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1',
     'peer-focus-visible:ring-[var(--button-primary-default-fill)]',
   ].join(' ');
+
+  // Inner check icon scales proportionally with box size.
+  const innerIconSize = size === 'sm' ? 10 : 12;
 
   let boxState: string;
   if (disabled) {
@@ -109,9 +131,9 @@ export const Checkbox = ({
       <span className={`${boxBase} ${boxState}`} aria-hidden="true">
         {isActive && (
           indeterminate ? (
-            <Icon name="minus" size={12} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
+            <Icon name="minus" size={innerIconSize} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
           ) : (
-            <Icon name="check" size={12} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
+            <Icon name="check" size={innerIconSize} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
           )
         )}
       </span>

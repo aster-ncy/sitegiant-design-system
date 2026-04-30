@@ -64,7 +64,7 @@ export const LastColumnRight: Story = {
 export const WithCheckbox: Story = {
   args: {
     column: 'first',
-    checkbox: <Checkbox />,
+    checkbox: <Checkbox size="sm" />,
   },
 };
 
@@ -108,7 +108,7 @@ export const InsetWithCheckbox: Story = {
   args: {
     inset: true,
     column: 'first',
-    checkbox: <Checkbox />,
+    checkbox: <Checkbox size="sm" />,
   },
 };
 
@@ -118,7 +118,7 @@ export const InsetTableExample: Story = {
       <thead>
         <tr>
           <th aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell inset column="first" align="left" label="Item" sortable checkbox={<Checkbox />} />
+            <TableHeaderCell inset column="first" align="left" label="Item" sortable checkbox={<Checkbox size="sm" />} />
           </th>
           <th aria-sort={sortDirectionToAria(null, true)}>
             <TableHeaderCell inset column="center" align="left" label="Variant" sortable />
@@ -148,7 +148,7 @@ export const FullHeaderRow: Story = {
       <thead>
         <tr>
           <th aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell column="first" align="left" label="Product" sortable checkbox={<Checkbox />} />
+            <TableHeaderCell column="first" align="left" label="Product" sortable checkbox={<Checkbox size="sm" />} />
           </th>
           <th aria-sort={sortDirectionToAria(null, true)}>
             <TableHeaderCell column="center" align="left" label="SKU" sortable />

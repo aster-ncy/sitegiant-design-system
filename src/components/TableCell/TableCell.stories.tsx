@@ -46,7 +46,7 @@ export const FirstColumnWithCheckbox: Story = {
   args: {
     column: 'first',
     children: 'Product name',
-    checkbox: <Checkbox />,
+    checkbox: <Checkbox size="sm" />,
   },
 };
 
@@ -165,7 +165,7 @@ export const FullTable: Story = {
       <thead>
         <tr>
           <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell column="first" align="left" label="Product" sortable checkbox={<Checkbox />} />
+            <TableHeaderCell column="first" align="left" label="Product" sortable checkbox={<Checkbox size="sm" />} />
           </th>
           <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
             <TableHeaderCell column="center" align="left" label="SKU" sortable />
@@ -183,7 +183,7 @@ export const FullTable: Story = {
       </thead>
       <tbody>
         <tr>
-          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox />}>
+          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
             Wireless mouse
           </Cell>
           <Cell column="center" align="left">SKU-1042</Cell>
@@ -192,7 +192,7 @@ export const FullTable: Story = {
           <Cell column="last" align="right">⋯</Cell>
         </tr>
         <tr>
-          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox />}>
+          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
             USB-C Hub
           </Cell>
           <Cell column="center" align="left">SKU-2103</Cell>
@@ -201,7 +201,7 @@ export const FullTable: Story = {
           <Cell column="last" align="right">⋯</Cell>
         </tr>
         <tr>
-          <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox />}>
+          <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox size="sm" />}>
             Mechanical keyboard
           </Cell>
           <Cell column="center" align="left" row="last">SKU-3088</Cell>
