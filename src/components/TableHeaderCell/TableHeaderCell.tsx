@@ -134,7 +134,12 @@ export const TableHeaderCell = ({
     // `flex` (not `inline-flex`) so the cell occupies the full width of
     // its <th> parent — otherwise the inset-shadow bottom border would
     // only paint under the inner content and look like an underline.
-    'relative flex items-center gap-[var(--spacing-12)]',
+    // `w-full` so the wrapper actually stretches to its <th>'s box —
+    // table-cell parents don't auto-stretch their children, so without
+    // this the wrapper sized to intrinsic content and header text/icons
+    // landed at a different x than the body cell whose wrapper does
+    // have w-full.
+    'relative flex items-center gap-[var(--spacing-12)] w-full',
     'min-w-[44px]',
     subheader
       ? // Sub-row header: column-aware horizontal padding (mirrors the
