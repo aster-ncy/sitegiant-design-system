@@ -260,7 +260,7 @@ export const WithExpandToggle: Story = {
 
 export const FullTable: Story = {
   render: () => (
-    <table className="border-collapse w-full">
+    <table className="border-collapse w-full table-fixed">
       <thead>
         <tr>
           <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
