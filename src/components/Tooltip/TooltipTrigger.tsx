@@ -17,7 +17,7 @@ import type {
   Ref,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { TooltipBox, ARROW_HEIGHT } from './TooltipBox';
+import { TooltipBox } from './TooltipBox';
 import type { TooltipArrow } from './TooltipBox';
 
 export type TooltipPlacement = 'top' | 'bottom' | 'left' | 'right';
@@ -88,7 +88,10 @@ function computePosition(
 ): PositionResult {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  const offset = ARROW_HEIGHT + ANCHOR_GAP;
+  // Note: bubbleRect.height/width already includes the arrow span — the arrow
+  // is a child of TooltipBox's wrapper, not separate. So the trigger-to-bubble
+  // gap is just ANCHOR_GAP; we don't add ARROW_HEIGHT here (would double-count).
+  const offset = ANCHOR_GAP;
 
   const candidate = (p: TooltipPlacement) => {
     switch (p) {
@@ -184,10 +187,29 @@ export const TooltipTrigger = ({
   // Dev-time validation. console.error (not throw) so hook counts stay
   // stable across renders — a transient bad child won't trigger React's
   // "Rendered fewer hooks than expected" error on the next clean render.
-  if (!import.meta.env.PROD && !isValidElement(children)) {
-    console.error(
-      '<TooltipTrigger>: `children` must be a single React element. Got: ' + typeof children,
-    );
+  if (!import.meta.env.PROD) {
+    if (!isValidElement(children)) {
+      console.error(
+        '<TooltipTrigger>: `children` must be a single React element. Got: ' + typeof children,
+      );
+    } else if (enabled) {
+      // Best-effort accessible-name check. Only inspects aria-label /
+      // aria-labelledby props on the cloned child — visible text
+      // content is not introspected (would require sync DOM access).
+      const childPropsForCheck = children.props as {
+        'aria-label'?: string;
+        'aria-labelledby'?: string;
+      };
+      if (!childPropsForCheck['aria-label'] && !childPropsForCheck['aria-labelledby']) {
+        console.warn(
+          '<TooltipTrigger>: trigger child should have an accessible name ' +
+            '(aria-label or aria-labelledby). Without one, screen-reader users ' +
+            'cannot identify the control before TooltipTrigger appends its ' +
+            'aria-describedby. Visible text content satisfies WCAG too, but ' +
+            'is not auto-detected here.',
+        );
+      }
+    }
   }
 
   const reactId = useId();
