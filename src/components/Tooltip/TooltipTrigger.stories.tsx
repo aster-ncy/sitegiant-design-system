@@ -3,6 +3,17 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TooltipTrigger } from './TooltipTrigger';
 import { Icon } from '../Icon';
 
+// Shared trigger-button styling. Tailwind v4's bare numeric classes
+// (`px-3`, `py-2`, etc.) are silently broken in this project's setup —
+// always use arbitrary values bound to design tokens.
+const triggerButtonClass = [
+  'px-[var(--spacing-12)]',
+  'py-[var(--spacing-8)]',
+  'rounded-[var(--radius-120)]',
+  'border border-solid border-[var(--button-outline-default-border)]',
+  'cursor-pointer',
+].join(' ');
+
 const meta = {
   title: 'Feedback/TooltipTrigger',
   component: TooltipTrigger,
@@ -26,10 +37,7 @@ const meta = {
   render: (args) => (
     <div style={{ padding: 64 }}>
       <TooltipTrigger {...args}>
-        <button
-          aria-label="Trigger"
-          className="px-[var(--spacing-12)] py-[var(--spacing-8)] rounded-[var(--radius-120)] border border-solid border-[var(--button-outline-default-border)] cursor-pointer"
-        >
+        <button aria-label="Trigger" className={triggerButtonClass}>
           Hover me
         </button>
       </TooltipTrigger>
@@ -47,10 +55,7 @@ export const Placements: Story = {
     <div style={{ display: 'flex', gap: 48, padding: 80 }}>
       {(['top', 'bottom', 'left', 'right'] as const).map((p) => (
         <TooltipTrigger key={p} content={`Placement: ${p}`} placement={p}>
-          <button
-            aria-label={`Placement ${p}`}
-            className="px-[var(--spacing-12)] py-[var(--spacing-8)] rounded-[var(--radius-120)] border border-solid border-[var(--button-outline-default-border)] cursor-pointer"
-          >
+          <button aria-label={`Placement ${p}`} className={triggerButtonClass}>
             {p}
           </button>
         </TooltipTrigger>
@@ -65,28 +70,28 @@ export const AutoFlipNearViewportEdge: Story = {
     <div style={{ position: 'relative', width: '100vw', height: '100vh' }}>
       <div style={{ position: 'absolute', top: 4, left: '50%', transform: 'translateX(-50%)' }}>
         <TooltipTrigger content="Should flip to bottom" placement="top">
-          <button aria-label="Top edge" className="px-3 py-2 border border-solid">
+          <button aria-label="Top edge" className={triggerButtonClass}>
             top edge (preferred top → flips)
           </button>
         </TooltipTrigger>
       </div>
       <div style={{ position: 'absolute', bottom: 4, left: '50%', transform: 'translateX(-50%)' }}>
         <TooltipTrigger content="Should flip to top" placement="bottom">
-          <button aria-label="Bottom edge" className="px-3 py-2 border border-solid">
+          <button aria-label="Bottom edge" className={triggerButtonClass}>
             bottom edge (preferred bottom → flips)
           </button>
         </TooltipTrigger>
       </div>
       <div style={{ position: 'absolute', left: 4, top: '50%', transform: 'translateY(-50%)' }}>
         <TooltipTrigger content="Should flip to right" placement="left">
-          <button aria-label="Left edge" className="px-3 py-2 border border-solid">
+          <button aria-label="Left edge" className={triggerButtonClass}>
             left edge
           </button>
         </TooltipTrigger>
       </div>
       <div style={{ position: 'absolute', right: 4, top: '50%', transform: 'translateY(-50%)' }}>
         <TooltipTrigger content="Should flip to left" placement="right">
-          <button aria-label="Right edge" className="px-3 py-2 border border-solid">
+          <button aria-label="Right edge" className={triggerButtonClass}>
             right edge
           </button>
         </TooltipTrigger>
@@ -102,7 +107,7 @@ export const OnDisabledButton: Story = {
         <button
           disabled
           aria-label="Disabled action"
-          className="px-3 py-2 border border-solid opacity-50 cursor-not-allowed"
+          className={`${triggerButtonClass} opacity-50 cursor-not-allowed`}
         >
           Disabled button
         </button>
@@ -123,10 +128,7 @@ export const EscapeDismisses: Story = {
         Tab to focus, then press <kbd>Esc</kbd>.
       </p>
       <TooltipTrigger content="Press Esc to dismiss without losing focus">
-        <button
-          aria-label="Focus me with tab"
-          className="px-3 py-2 border border-solid"
-        >
+        <button aria-label="Focus me with tab" className={triggerButtonClass}>
           Focus target
         </button>
       </TooltipTrigger>
@@ -139,7 +141,7 @@ export const WithCustomDelay: Story = {
     <div style={{ display: 'flex', gap: 48, padding: 64 }}>
       {[0, 150, 500].map((d) => (
         <TooltipTrigger key={d} content={`openDelay: ${d}ms`} openDelay={d}>
-          <button aria-label={`Delay ${d}`} className="px-3 py-2 border border-solid">
+          <button aria-label={`Delay ${d}`} className={triggerButtonClass}>
             {d}ms
           </button>
         </TooltipTrigger>
@@ -152,7 +154,7 @@ export const DisabledViaEnabledProp: Story = {
   render: () => (
     <div style={{ padding: 64 }}>
       <TooltipTrigger content="You should never see this" enabled={false}>
-        <button aria-label="Suppressed tooltip" className="px-3 py-2 border border-solid">
+        <button aria-label="Suppressed tooltip" className={triggerButtonClass}>
           Hover (no tooltip)
         </button>
       </TooltipTrigger>
@@ -183,8 +185,12 @@ export const WithIconButton: Story = {
 };
 
 const ForwardRefButton = forwardRef<HTMLButtonElement, React.ButtonHTMLAttributes<HTMLButtonElement>>(
-  (props, ref) => (
-    <button ref={ref} {...props} className="px-3 py-2 border border-solid" />
+  ({ className, ...rest }, ref) => (
+    <button
+      ref={ref}
+      {...rest}
+      className={[triggerButtonClass, className].filter(Boolean).join(' ')}
+    />
   ),
 );
 ForwardRefButton.displayName = 'ForwardRefButton';
@@ -216,7 +222,7 @@ export const WithComposedHandlers: Story = {
           <TooltipTrigger content="Consumer handlers run alongside ours">
             <button
               aria-label="Composed handlers"
-              className="px-3 py-2 border border-solid"
+              className={triggerButtonClass}
               onFocus={() => setLog((l) => [...l, 'consumer onFocus'])}
               onBlur={() => setLog((l) => [...l, 'consumer onBlur'])}
             >
@@ -235,7 +241,7 @@ export const WithWrapperClassName: Story = {
   render: () => (
     <div style={{ display: 'flex', width: 400, padding: 64, border: '1px dashed #ccc' }}>
       <TooltipTrigger content="Wrapper got flex-1" wrapperClassName="flex-1">
-        <button aria-label="Stretched" className="w-full px-3 py-2 border border-solid">
+        <button aria-label="Stretched" className={`${triggerButtonClass} w-full`}>
           Stretches to flex-1
         </button>
       </TooltipTrigger>
