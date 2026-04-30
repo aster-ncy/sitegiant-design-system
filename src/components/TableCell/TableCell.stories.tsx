@@ -141,13 +141,13 @@ export const WithInfoContent: Story = {
 };
 
 export const WithExpandToggle: Story = {
-  args: { column: 'first' },
+  args: { column: 'last', align: 'right' },
   render: (args) => {
     const [expanded, setExpanded] = useState(false);
     return (
       <TableCell
         {...args}
-        leadingIcon={
+        trailing={
           <TableExpandToggle expanded={expanded} onToggle={setExpanded} />
         }
       >
