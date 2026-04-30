@@ -61,9 +61,13 @@ const segmentBaseClass = [
   'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
   'whitespace-nowrap outline-none',
   'transition-colors duration-150',
-  // Pull subsequent segments under the right border so they share it.
-  '-mr-px',
 ].join(' ');
+
+// Negative right margin lives on the SEGMENT WRAPPER (not the inner
+// button) so it works whether the segment is a bare <button>/<span> or a
+// <div> wrapping a popover-trigger <button>. Applied to all segments
+// except the last, which keeps its own right border.
+const segmentOverlapClass = '-mr-px';
 
 const cornerClass = (isFirst: boolean, isLast: boolean) => {
   if (isFirst && isLast) return 'rounded-[var(--radius-4)]';
@@ -139,10 +143,13 @@ export const TableSelectionBar = ({
           className={[
             segmentBaseClass,
             cornerClass(true, totalSegments === 1),
+            totalSegments > 1 ? segmentOverlapClass : '',
             'bg-[var(--color-space-light)]',
             'text-[length:var(--table-header-size)] leading-[var(--table-header-lineheight)]',
             'text-[color:var(--table-header-disabled-text)]',
-          ].join(' ')}
+          ]
+            .filter(Boolean)
+            .join(' ')}
         >
           {selectedCount} {selectedLabel}
         </span>
@@ -174,7 +181,15 @@ export const TableSelectionBar = ({
           };
 
           return (
-            <div key={action.key} className="relative inline-flex">
+            <div
+              key={action.key}
+              className={[
+                'relative inline-flex',
+                isLastInSegments ? '' : segmentOverlapClass,
+              ]
+                .filter(Boolean)
+                .join(' ')}
+            >
               <button
                 type="button"
                 ref={(el) => {
