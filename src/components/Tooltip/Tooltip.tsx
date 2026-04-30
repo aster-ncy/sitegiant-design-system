@@ -1,6 +1,8 @@
 import type { CSSProperties } from 'react';
+import { TooltipBox } from './TooltipBox';
+import type { TooltipArrow } from './TooltipBox';
 
-export type TooltipArrow = 'none' | 'up' | 'down' | 'left' | 'right';
+export type { TooltipArrow };
 
 export interface TooltipProps {
   /** Tooltip message (string or custom node) */
@@ -19,50 +21,15 @@ export interface TooltipProps {
   className?: string;
 }
 
-const ARROW_BASE = 4;
-const ARROW_HEIGHT = 6;
-
-const messageBoxClasses = [
-  'p-[var(--spacing-4)]',
-  'bg-[var(--color-overlay-80)]',
-  'text-[color:var(--color-text-ondark)]',
-  'text-[length:var(--text-12)]',
-  'leading-[var(--leading-16)]',
-  'font-[var(--font-weight-regular)]',
-  'font-[family-name:var(--font-sans)]',
-  'flex flex-col items-start',
-].join(' ');
-
-const arrowBase: CSSProperties = {
-  display: 'block',
-  width: 0,
-  height: 0,
-  borderStyle: 'solid',
-};
-
-const arrowStyles: Record<Exclude<TooltipArrow, 'none'>, CSSProperties> = {
-  down: {
-    ...arrowBase,
-    borderWidth: `${ARROW_HEIGHT}px ${ARROW_BASE}px 0 ${ARROW_BASE}px`,
-    borderColor: 'var(--color-overlay-80) transparent transparent transparent',
-  },
-  up: {
-    ...arrowBase,
-    borderWidth: `0 ${ARROW_BASE}px ${ARROW_HEIGHT}px ${ARROW_BASE}px`,
-    borderColor: 'transparent transparent var(--color-overlay-80) transparent',
-  },
-  left: {
-    ...arrowBase,
-    borderWidth: `${ARROW_BASE}px ${ARROW_HEIGHT}px ${ARROW_BASE}px 0`,
-    borderColor: 'transparent var(--color-overlay-80) transparent transparent',
-  },
-  right: {
-    ...arrowBase,
-    borderWidth: `${ARROW_BASE}px 0 ${ARROW_BASE}px ${ARROW_HEIGHT}px`,
-    borderColor: 'transparent transparent transparent var(--color-overlay-80)',
-  },
-};
-
+/**
+ * Static styled tooltip bubble. Renders inline; does not own hover or focus
+ * listeners. For hover-/focus-driven tooltips that wrap a trigger, use
+ * <TooltipTrigger>.
+ *
+ * The outer `inline-flex flex-col items-center` wrapper is preserved from the
+ * pre-refactor implementation so existing callsites and stories render
+ * byte-identical.
+ */
 export const Tooltip = ({
   message,
   arrow = 'none',
@@ -72,47 +39,23 @@ export const Tooltip = ({
 }: TooltipProps) => {
   const wrapperStyle: CSSProperties | undefined = width ? { width } : undefined;
 
-  const renderBox = () => (
-    <div role="tooltip" id={id} className={messageBoxClasses}>
-      <span className="flex-1 self-stretch">{message}</span>
-    </div>
-  );
-
-  const renderArrow = (dir: Exclude<TooltipArrow, 'none'>) => (
-    <span aria-hidden="true" style={arrowStyles[dir]} />
-  );
-
   if (arrow === 'left' || arrow === 'right') {
     return (
       <div
-        className={[
-          'inline-flex items-center',
-          className,
-        ]
-          .filter(Boolean)
-          .join(' ')}
+        className={['inline-flex items-center', className].filter(Boolean).join(' ')}
         style={wrapperStyle}
       >
-        {arrow === 'left' && renderArrow('left')}
-        {renderBox()}
-        {arrow === 'right' && renderArrow('right')}
+        <TooltipBox message={message} arrow={arrow} id={id} />
       </div>
     );
   }
 
   return (
     <div
-      className={[
-        'inline-flex flex-col items-center',
-        className,
-      ]
-        .filter(Boolean)
-        .join(' ')}
+      className={['inline-flex flex-col items-center', className].filter(Boolean).join(' ')}
       style={wrapperStyle}
     >
-      {arrow === 'up' && <span className="self-center">{renderArrow('up')}</span>}
-      {renderBox()}
-      {arrow === 'down' && <span className="self-center">{renderArrow('down')}</span>}
+      <TooltipBox message={message} arrow={arrow} id={id} />
     </div>
   );
 };
