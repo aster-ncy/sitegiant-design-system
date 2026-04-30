@@ -276,7 +276,7 @@ export const FullTable: Story = {
             <TableHeaderCell column="center" align="right" label="Price" sortable />
           </th>
           <th className="p-0">
-            <TableHeaderCell column="last" align="right" label="Action" />
+            <TableHeaderCell column="last" align="left" label="Action" />
           </th>
         </tr>
       </thead>
@@ -288,7 +288,7 @@ export const FullTable: Story = {
           <Cell column="center" align="left">SKU-1042</Cell>
           <Cell column="center" align="right">128</Cell>
           <Cell column="center" align="right">RM 89.00</Cell>
-          <Cell column="last" align="right">⋯</Cell>
+          <Cell column="last" align="left">⋯</Cell>
         </tr>
         <tr>
           <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
@@ -297,7 +297,7 @@ export const FullTable: Story = {
           <Cell column="center" align="left">SKU-2103</Cell>
           <Cell column="center" align="right">42</Cell>
           <Cell column="center" align="right">RM 159.00</Cell>
-          <Cell column="last" align="right">⋯</Cell>
+          <Cell column="last" align="left">⋯</Cell>
         </tr>
         <tr>
           <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox size="sm" />}>
@@ -306,7 +306,7 @@ export const FullTable: Story = {
           <Cell column="center" align="left" row="last">SKU-3088</Cell>
           <Cell column="center" align="right" row="last">7</Cell>
           <Cell column="center" align="right" row="last">RM 459.00</Cell>
-          <Cell column="last" align="right" row="last">⋯</Cell>
+          <Cell column="last" align="left" row="last">⋯</Cell>
         </tr>
       </tbody>
     </table>
