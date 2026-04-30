@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableCell } from './TableCell';
 import { TableCellInfo } from './TableCellInfo';
 import { TableCellMainSub } from './TableCellMainSub';
+import { TableCellListing } from './TableCellListing';
 import { useState } from 'react';
 import { TableHeaderCell, sortDirectionToAria } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
@@ -9,6 +10,7 @@ import { Icon } from '../Icon';
 import { Tag } from '../Tag';
 import { Pip } from '../Pip';
 import { TableExpandToggle } from '../TableExpandToggle';
+import { ProductImage } from '../ProductImageList/ProductImage';
 
 const meta = {
   title: 'Tables/TableCell',
@@ -403,6 +405,70 @@ export const MainSubLabelless: Story = {
         mainBold
         mainValue="MY984746382"
         subValue="878973829"
+      />
+    ),
+  },
+};
+
+/* ── TableCellListing content variant (Figma Inset Table Row - Listing, 1262:9692) ── */
+
+/**
+ * Single-line product listing — image, status pip, bold name, two info
+ * rows (iSKU/SKU), and an extras row (channel + more-skus link). Uses
+ * `column='first'` with the s9 padding override (`!pl-12`) per Figma
+ * 1248:8395; center-column listings drop the override.
+ */
+export const Listing: Story = {
+  args: {
+    inset: true,
+    column: 'first',
+    className: '!pl-[var(--spacing-12)]',
+    checkbox: <Checkbox size="sm" />,
+    children: (
+      <TableCellListing
+        image={<ProductImage size="lg" />}
+        tag={<Pip type="success" pipStyle="default" label="Published" />}
+        productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
+        infoRows={[
+          { label: 'iSKU', value: 'ISKU-LDC-240321-MY-0001' },
+          { label: 'SKU', value: 'DYN-4IN1-FRESH-10ML52' },
+        ]}
+        extras={
+          <>
+            <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
+              Webstore
+            </span>
+            <button
+              type="button"
+              className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)] cursor-pointer"
+            >
+              <Icon name="plus-square" size={15} />
+              5 more SKUs
+            </button>
+          </>
+        }
+      />
+    ),
+  },
+};
+
+/**
+ * Center column variant of the same listing — drops the `!pl-12` override
+ * since the cell already has center-column padding.
+ */
+export const ListingCenter: Story = {
+  args: {
+    inset: true,
+    column: 'center',
+    children: (
+      <TableCellListing
+        image={<ProductImage size="lg" />}
+        tag={<Pip type="success" pipStyle="default" label="Published" />}
+        productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
+        infoRows={[
+          { label: 'iSKU', value: 'ISKU-LDC-240321-MY-0001' },
+          { label: 'SKU', value: 'DYN-4IN1-FRESH-10ML52' },
+        ]}
       />
     ),
   },

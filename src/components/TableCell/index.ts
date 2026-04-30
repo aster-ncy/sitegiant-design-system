@@ -12,3 +12,8 @@ export type {
 } from './TableCellInfo';
 export { TableCellMainSub } from './TableCellMainSub';
 export type { TableCellMainSubProps } from './TableCellMainSub';
+export { TableCellListing } from './TableCellListing';
+export type {
+  TableCellListingProps,
+  TableCellListingInfoRow,
+} from './TableCellListing';
