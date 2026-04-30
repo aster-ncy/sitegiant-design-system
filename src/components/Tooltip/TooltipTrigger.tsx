@@ -346,9 +346,13 @@ export const TooltipTrigger = ({
   const portal =
     effectivelyOpen && typeof document !== 'undefined'
       ? createPortal(
+          // `flex` (not block) so the inline-flex TooltipBox child sits at the
+          // top-left without a line-height strut. Without this, the inherited
+          // line-height (24px) creates a baseline gap above the bubble that
+          // pushes it down ~12px from where the position math placed it.
           <div
             ref={bubbleRef}
-            className="z-50"
+            className="z-50 flex"
             style={{
               position: 'fixed',
               top: coords?.top ?? 0,
