@@ -193,7 +193,15 @@ export const TableHeaderCell = ({
     // GLYPH vertically with the icon's center — without leading-none
     // the icon renders visibly lower than the text baseline because
     // the line-box adds extra space below the glyph.
+    //
+    // `min-h-[17px]` keeps the title-block height stable regardless of
+    // whether a sort icon is present. Without this, label-only headers
+    // (e.g. 'Action') collapsed to glyph height (~12px) while sortable
+    // headers stayed at 17px (icon height), and the cell wrapper's
+    // bottom-border landed at a different y per column — visible as a
+    // broken/stair-stepped underline across the header row.
     'inline-flex items-center gap-[var(--spacing-2)]',
+    'min-h-[17px]',
     'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
     'text-[length:var(--table-header-size)] leading-none',
     titleColor,
