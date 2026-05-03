@@ -502,8 +502,8 @@
 
   /* ========================================
      ICON LINK (Color-Token/Light)
-     Figma: Text/link/*/icon-link-*
-     Drives <IconLink> default/hover/clicked states across 7 variants.
+     Figma: Text/link/*-icon-link-*
+     Drives IconLink default/hover/clicked states across 7 variants.
      ======================================== */
   --icon-link-basic-default: var(--color-sys-blue-DEFAULT);
   --icon-link-basic-hover: var(--color-sys-blue-dark);
