@@ -901,11 +901,16 @@ export const S10ShockingSale: Story = {
               {/* Top Tier — product header */}
               <tr className="group/row">
                 <td className="p-0" colSpan={7}>
-                  <TableCardCell tier="top" column="first" checkbox={<Checkbox size="sm" />}>
+                  <TableCardCell
+                    tier="top"
+                    column="first"
+                    checkbox={<Checkbox size="sm" />}
+                    className="!border-r rounded-tr-[var(--radius-4)]"
+                  >
                     <span className="inline-flex items-center gap-[var(--spacing-8)]">
                       <span
                         aria-hidden="true"
-                        className="shrink-0 size-[40px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
+                        className="shrink-0 size-[var(--spacing-40)] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
                       />
                       <span className="font-[var(--font-weight-bold)]">
                         Women's Fashion Cat Print Plus Velvet Hooded Sweate Velvet Hooded Sweater
