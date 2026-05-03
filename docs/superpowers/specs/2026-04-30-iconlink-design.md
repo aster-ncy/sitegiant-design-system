@@ -2,7 +2,7 @@
 
 **Date:** 2026-04-30
 **Figma:** [Icon Button frame](https://www.figma.com/design/oJHxwesmlNeeVHrITxDdZ3/-Library--SiteGiant-ERP?node-id=394-168&m=dev) (node `394:168`)
-**Status:** ⚠ Blocked on `<TooltipTrigger>` atom (does not exist yet). The auto-tooltip-on-hover feature in this spec assumes a hover-trigger primitive that wraps the existing static `<Tooltip>`. Existing `<Tooltip>` is a static styled bubble — no hover/focus listeners. Decision (2026-04-30): build a separate `<TooltipTrigger>` shared atom first, then revise this spec to compose it. Resume keyword for tomorrow: **tooltip-trigger-detour**.
+**Status:** Ready to build. `<TooltipTrigger>` shipped 2026-05-01 at commit `9c1227e` and is exported from `src/components/Tooltip/index.ts`. This spec was revised 2026-05-03 to compose `<TooltipTrigger>` as the hover-trigger primitive (was previously written against the static `<Tooltip>` bubble).
 
 ## Context
 
@@ -26,7 +26,7 @@ The existing `src/components/TopBar/IconButton.tsx` is a different visual atom: 
 
 ## Architecture
 
-Single component. `variant` prop drives icon color via a `Record<Variant, ColorClassChain>` map. Renders `<button>` wrapping `<Icon>` wrapped in `<Tooltip>`.
+Single component. `variant` prop drives icon color via a `Record<Variant, ColorClassChain>` map. Renders `<button>` (containing `<Icon>`) wrapped in `<TooltipTrigger>`.
 
 ### Files
 
@@ -44,7 +44,7 @@ src/components/index.ts      # Append IconLink export
 
 ```tsx
 import type { IconName } from '../Icon';
-import type { TooltipArrow } from '../Tooltip';
+import type { TooltipPlacement } from '../Tooltip';
 
 export type IconLinkVariant =
   | 'basic'           // sys-blue, default
@@ -65,8 +65,8 @@ export interface IconLinkProps {
   tooltip?: string;
   /** Default true. Set false to suppress tooltip (e.g., when parent already has one). */
   showTooltip?: boolean;
-  /** Default 'down'. */
-  tooltipArrow?: TooltipArrow;
+  /** Default 'top' — bubble appears above the icon. Auto-flips on viewport collision. */
+  tooltipPlacement?: TooltipPlacement;
   disabled?: boolean;
   /** Forwarded to <button type=...>. Default 'button'. */
   type?: 'button' | 'submit' | 'reset';
@@ -79,7 +79,11 @@ export interface IconLinkProps {
 ### Render structure
 
 ```
-<Tooltip content={tooltip ?? ariaLabel} arrow={tooltipArrow ?? 'down'} disabled={!showTooltip}>
+<TooltipTrigger
+  content={tooltip ?? ariaLabel}
+  placement={tooltipPlacement ?? 'top'}
+  enabled={showTooltip ?? true}
+>
   <button
     type={type ?? 'button'}
     aria-label={ariaLabel}
@@ -89,8 +93,10 @@ export interface IconLinkProps {
   >
     <Icon name={icon} size={resolvedSize} className={variantColorClasses[variant]} />
   </button>
-</Tooltip>
+</TooltipTrigger>
 ```
+
+`<TooltipTrigger>` (shipped 2026-05-01 at `9c1227e`) owns the hover/focus state machine, portal positioning, auto-flip on viewport collision, and 150ms open-delay. It accepts a single React element child and clones in `aria-describedby` + focus listeners. Hover listeners live on its wrapper `<span class="inline-flex">`, so a `disabled` `<button>` still triggers the tooltip.
 
 `resolvedSize`: `size ?? (variant === 'close' ? 21 : 17)`.
 
@@ -163,29 +169,30 @@ Meta `args.icon = 'trash'`, `variant = 'basic'`, `'aria-label' = 'Delete'`. Rend
 
 ## Migration plan (Phase 1)
 
-Six high-confidence migrations after the atom ships, each as its own follow-up commit:
+Three confirmed migrations after the atom ships, each as its own follow-up commit (revised 2026-05-03 after exploration):
 
 | File | Pattern | New use |
 |---|---|---|
-| `src/components/Banner/Banner.tsx` | inline `<button><Icon name="close"/></button>` close-X | `<IconLink icon="close" variant="close" aria-label="Dismiss banner" />` |
-| `src/components/Tag/Tag.tsx` | inline close-X (when removable) | `<IconLink icon="close" variant="close" aria-label="Remove tag" size={14} />` (verify size) |
-| `src/components/Input/Input.tsx` | inline clear-X (when value present) | `<IconLink icon="close" variant="close" aria-label="Clear" />` |
-| `src/components/Pagination/Pagination.tsx` | prev / next chevron buttons | `<IconLink icon="chevron-left" variant="default" aria-label="Previous page" />` |
-| `src/components/Dropdown/Dropdown.tsx` | clear-X (when value present + clearable) | `<IconLink icon="close" variant="close" aria-label="Clear selection" />` |
-| `src/components/SuffixInput/SuffixInput.tsx` | clear-X | `<IconLink icon="close" variant="close" aria-label="Clear" />` |
+| `src/components/Banner/Banner.tsx` | inline `<button><Icon name="close"/></button>` close-X (line ~115) | `<IconLink icon="close" variant="close" aria-label="Dismiss" />` |
+| `src/components/Tag/Tag.tsx` | inline close-X when `dismissible` (line ~50). **Confirmed size: 15px** (not 14). | `<IconLink icon="close" variant="close" aria-label="Remove tag" size={15} />` |
+| `src/components/Pagination/Pagination.tsx` | prev (line ~140) + next (line ~196) chevron buttons | `<IconLink icon="chevron-left" variant="default" aria-label="Previous page" />` (and chevron-right for next) |
 
-Other 15 grep hits (TabSegment icon-only, TableExpandToggle, Sidebar collapse, MultiTagSelect chips, NumberInput stepper, etc.) are deferred — they're either compound-internal pieces with different semantics or candidates for case-by-case review when those components are next touched. Migration list documented in this spec but those commits happen organically.
+**Dropped from migration list (revised 2026-05-03):**
+- `Input.tsx` and `SuffixInput.tsx` — verified to have **no clear-X button**. The spec's earlier listing was wrong.
+- `Dropdown.tsx` clear-X — is a **filled circular chip** (`size-[17px]` with `bg-[var(--color-set-lightest)]` and white 11px icon), not a link-styled icon. Different visual atom; closer to TopBar's `IconButton`. Defer to a future "ClearChip" or compound-internal pass.
+
+Other grep hits (TabSegment icon-only, TableExpandToggle, Sidebar collapse, MultiTagSelect chips, NumberInput stepper, etc.) are deferred — compound-internal pieces with different semantics or candidates for case-by-case review when those components are next touched.
 
 ## Accessibility
 
 - **`aria-label` is required at the prop level.** TypeScript enforces it (no optional fallback). An icon-only button without a name fails WCAG 4.1.2.
 - **`role="button"`** is implicit via `<button>`.
-- **Tooltip default-on:** the `aria-label` text auto-renders as a visible tooltip on hover (using existing `<Tooltip>`). Single source of truth — no drift between SR text and visible label.
+- **Tooltip default-on:** the `aria-label` text auto-renders as a visible tooltip on hover (via `<TooltipTrigger>`). Single source of truth — no drift between SR text and visible label.
   - `tooltip` prop overrides only the visible text (rare — for cases where SR description is longer/different).
   - `showTooltip={false}` suppresses (e.g., when wrapper already has a row-level tooltip).
 - **Focus ring** — `focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]`, same pattern as Tab/SmallSegmentedButton.
 - **Disabled** — native `disabled` attribute on `<button>`; browser handles focus suppression and SR announcement.
-- **Tooltip when disabled** — should still show the tooltip (so users know what the button would do); `<Tooltip>` already supports this. Verify in stories.
+- **Tooltip when disabled** — `<TooltipTrigger>` mounts hover listeners on its outer wrapper `<span class="inline-flex">`, so disabled buttons still trip the tooltip on hover. Verified by design (no separate validation needed in stories).
 
 ## Verification
 
@@ -200,17 +207,17 @@ Other 15 grep hits (TabSegment icon-only, TableExpandToggle, Sidebar collapse, M
 
 ## Risks / things to double-check at implement time
 
-- **Tooltip arrow default direction** — picked `down` because most IconLinks live in toolbars at the top of cards/tables, and tooltip pops below. Verify against actual product placement in references.
+- **Tooltip placement default** — picked `top` (bubble above icon) per user confirmation 2026-05-03. `<TooltipTrigger>` auto-flips on viewport collision, so the default holds for IconLinks both in toolbars and in tight bottom-of-screen placements.
 - **Close-variant Hover/Clicked behavior** — Figma doesn't document; spec assumes mirror-of-subtle. Flag in commit message and PR description for designer review.
-- **Disabled tooltip behavior** — verify `<Tooltip>` still triggers on hover when child `<button>` is disabled (some implementations swallow events; may need a wrapper span).
-- **Migration scope creep** — Phase 1 is exactly 6 files. Don't expand during initial commit.
+- **Migration scope creep** — Phase 1 is exactly 3 files (Banner, Tag, Pagination). Don't expand during initial commit.
 
 ## Critical files for implementation
 
-- `src/components/Tooltip/Tooltip.tsx` (mirror its `TooltipArrow` type and `disabled` prop semantics)
-- `src/components/Icon/Icon.tsx` and `Icon/iconPaths.ts` (pull `IconName` type and the close icon's geometry — confirm `close` is a 21x21 viewBox or scales differently)
-- `src/components/Tab/TabSegment.tsx:131` (mirror replace-semantics override pattern)
-- `src/components/SmallSegmentedButton/SmallSegmentedButton.tsx` (mirror brief JSDoc + meta-render-for-autodocs pattern from session-handoff lesson)
+- `src/components/Tooltip/TooltipTrigger.tsx` and `src/components/Tooltip/index.ts` (consume `<TooltipTrigger>` and the exported `TooltipPlacement` type)
+- `src/components/Icon/Icon.tsx` and `Icon/iconPaths.ts` (pull `IconName` type; `close` is a 24×24 viewBox like every other icon — `Icon` accepts a numeric `size` and renders at that pixel size)
+- `src/components/SmallSegmentedButton/SmallSegmentedButton.tsx:135` (`className || ROOT_BUILTIN_CLASSES` — the exact replace-semantics pattern to mirror)
+- `src/components/SmallSegmentedButton/SmallSegmentedButton.stories.tsx` (meta-level `render` function for autodocs Primary preview)
+- `src/index.css:493-502` (`--text-link-*` block — splice `--icon-link-*` block immediately after, before the FORM — FILTER COLORS section)
 - `src/index.css:280-340` (existing `--text-link-*` tokens — append new `--icon-link-*` block adjacent)
 
 ## Open questions deferred to implementation
