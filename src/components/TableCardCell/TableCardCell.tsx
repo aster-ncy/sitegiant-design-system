@@ -111,6 +111,59 @@ const topTierColumnClasses: Record<TableColumnPosition, string> = {
   last: 'rounded-tr-[var(--radius-4)] border-r',
 };
 
+// Bottom Tier base classes — Figma 3453:7822 (Default state) +
+// 3453:8104 (Hover). Default fill white; hover flips to --table-body-
+// hover-fill via parent <tr className="group/row">.
+const bottomTierBaseClasses = [
+  // Outer flex layout per Figma.
+  'relative flex w-full',
+  // Padding per Figma 3453:7822 (asymmetric: pt-12 pb-6).
+  'pl-[var(--spacing-12)] pr-[var(--spacing-6)] pt-[var(--spacing-12)] pb-[var(--spacing-6)]',
+  // Default fill — flips to hover-fill on parent-row hover.
+  'bg-[var(--table-body-fill)]',
+  'group-hover/row:bg-[var(--table-body-hover-fill)]',
+  // Border colour.
+  'border-[color:var(--table-divider-border)] border-solid',
+  // Left always painted (every cell paints its own left edge).
+  'border-l',
+  'transition-colors duration-150',
+].join(' ');
+
+// Column-specific borders + corner radii.
+const bottomTierColumnClasses: Record<TableColumnPosition, string> = {
+  first: '',
+  center: '',
+  last: 'border-r',
+};
+
+// Row-specific bottom border + corner radii. Only the last row paints
+// border-b (so middle rows form a continuous strip with the row above
+// and below).
+const bottomTierRowClasses: Record<TableCardCellRow, string> = {
+  first: '',
+  middle: '',
+  last: 'border-b',
+};
+
+// Combined column × row corner radii — only the last row gets rounded
+// bottom corners on the edge columns (closes the card's bottom).
+const bottomTierCornerClasses = (column: TableColumnPosition, row: TableCardCellRow): string => {
+  if (row !== 'last') return '';
+  if (column === 'first') return 'rounded-bl-[var(--radius-4)]';
+  if (column === 'last') return 'rounded-br-[var(--radius-4)]';
+  return '';
+};
+
+// Bottom Tier text span — body 14/21 in --table-body-text. No hover
+// text-colour change (Figma 3453:8108: text colour unchanged on hover).
+const bottomTierTextSpanClasses = [
+  'flex w-full min-w-0',
+  'font-[family-name:var(--font-sans)]',
+  'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
+  'font-[var(--font-weight-regular)]',
+  'text-[color:var(--table-body-text)]',
+].join(' ');
+
 // Hover text classes — built in unconditionally on tier='top' (Figma
 // 3453:7593: Hover state bolds + greens text). Wired via group-hover/row
 // so the cell triggers on the parent <tr> being hovered.
@@ -170,6 +223,44 @@ export const TableCardCell = (props: TableCardCellProps) => {
     );
   }
 
-  // Bottom Tier comes in Task 3.
-  return null as unknown as JSX.Element;
+  // tier === 'bottom'
+  const { row, formField } = props;
+  const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
+  const forcedHoverFill = hovered
+    ? '!bg-[var(--table-body-hover-fill)]'
+    : '';
+  // Form-field cells centre their content vertically (NumberInput,
+  // Toggle, Button etc.); plain text cells anchor to top.
+  const innerAlignment = formField ? 'items-center' : 'items-start';
+
+  return (
+    <div
+      className={[
+        bottomTierBaseClasses,
+        bottomTierColumnClasses[column],
+        bottomTierRowClasses[row],
+        bottomTierCornerClasses(column, row),
+        innerAlignment,
+        'gap-[var(--spacing-12)]',
+        fillOverride,
+        forcedHoverFill,
+        className,
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {checkbox && <span className="shrink-0 inline-flex items-center">{checkbox}</span>}
+      {leadingIcon && <span className="shrink-0 inline-flex items-center">{leadingIcon}</span>}
+      <span
+        className={[
+          bottomTierTextSpanClasses,
+          formField ? 'items-center' : 'items-start',
+          textAlignmentClass[column],
+        ].join(' ')}
+      >
+        {children}
+      </span>
+      {trailing && <span className="shrink-0 inline-flex items-center">{trailing}</span>}
+    </div>
+  );
 };
