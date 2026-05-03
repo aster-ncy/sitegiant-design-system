@@ -185,27 +185,43 @@ export const BodyVariants: Story = {
 };
 
 export const SortableRowComposition: Story = {
-  render: () => (
-    <Stack>
-      <Row label="The sb6 composition: drag handle + index + 3 SortBlocks + close-X">
-        <div className="flex items-center gap-[var(--spacing-8)] bg-[color:var(--color-surface-card)] border border-[color:var(--color-space-dark)] rounded-[var(--radius-4)] px-[var(--spacing-8)] py-[var(--spacing-4)]">
-          <SortBlock>
-            <Icon name="drag" size={17} />
-          </SortBlock>
-          <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)] font-[var(--font-weight-medium)] px-[var(--spacing-4)]">
-            1
-          </span>
-          <SortBlock rows={[{ label: '', value: '2023-03-09-1' }]} />
-          <SortBlock>
-            <Icon name="calendar" size={17} />
-            <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
-              2020-08-18
-            </span>
-          </SortBlock>
-          <SortBlock rows={[{ label: 'Notes', value: 'testinggggggggggggg' }]} />
-          <IconLink icon="close" variant="close" aria-label="Remove row" />
-        </div>
-      </Row>
-    </Stack>
-  ),
+  render: () => {
+    // Drop the SortBlock chrome (bg + padding) for cells inside the row —
+    // the parent row already paints the grey strip; cells just contribute
+    // their label/value typography. Separator is the right-edge divider.
+    const cellOverride =
+      'inline-flex items-start gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)] ' +
+      'border-r border-[color:var(--color-space-dark)]';
+    return (
+      <Stack>
+        <Row label="The sb6 composition: one continuous grey row, cells separated by vertical dividers (no inter-cell gap)">
+          <div className="inline-flex items-stretch bg-[color:var(--sorting-block-sorting-fill)]">
+            <div className="flex items-center px-[var(--spacing-8)]">
+              <Icon name="drag" size={17} />
+            </div>
+            <div className="flex items-center px-[var(--spacing-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)] font-[var(--font-weight-medium)] border-r border-[color:var(--color-space-dark)]">
+              1
+            </div>
+            <SortBlock
+              className={cellOverride}
+              rows={[{ label: '', value: '2023-03-09-1' }]}
+            />
+            <SortBlock className={cellOverride}>
+              <Icon name="calendar" size={17} />
+              <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
+                2020-08-18
+              </span>
+            </SortBlock>
+            <SortBlock
+              className={cellOverride}
+              rows={[{ label: 'Notes', value: 'testinggggggggggggg' }]}
+            />
+            <div className="flex items-center px-[var(--spacing-12)]">
+              <IconLink icon="close" variant="close" aria-label="Remove row" />
+            </div>
+          </div>
+        </Row>
+      </Stack>
+    );
+  },
 };
