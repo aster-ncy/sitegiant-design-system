@@ -496,9 +496,11 @@
      ======================================== */
   --text-link-basic-default: var(--color-sys-blue-DEFAULT);
   --text-link-basic-hover: var(--color-sys-blue-dark);
+  --text-link-basic-clicked: var(--color-sys-blue-darker);
   --text-link-basic-icon: var(--color-sys-blue-DEFAULT);
   --text-link-subtle-default: var(--color-text-info);
   --text-link-subtle-hover: var(--color-text-primary);
+  --text-link-disabled: var(--color-space-dark);
 
   /* ========================================
      ICON LINK (Color-Token/Light)
@@ -602,9 +604,11 @@
      ======================================== */
   --text-link-basic-default: var(--color-sys-blue-DEFAULT);
   --text-link-basic-hover: var(--color-sys-blue-dark);
+  --text-link-basic-clicked: var(--color-sys-blue-darker);
   --text-link-basic-icon: var(--color-sys-blue-DEFAULT);
   --text-link-subtle-default: var(--color-text-info);
   --text-link-subtle-hover: var(--color-text-primary);
+  --text-link-disabled: var(--color-space-dark);
 
   /* ========================================
      FORM — FILTER COLORS (Color-Token/Light)
