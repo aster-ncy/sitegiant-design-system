@@ -123,7 +123,7 @@ const MatrixTable = ({ lang }: { lang: TypographyLang }) => (
     <tbody>
       {TYPES.map((t) => (
         <tr key={t}>
-          <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-info)] font-[var(--font-weight-regular)] whitespace-nowrap align-top">
+          <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-info)] font-[weight:var(--font-weight-regular)] whitespace-nowrap align-top">
             {t}
           </th>
           {STATES.map((s) => (
