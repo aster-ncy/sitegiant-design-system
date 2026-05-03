@@ -264,6 +264,7 @@ export { TableCell } from './TableCell';
 export type {
   TableCellProps,
   TableCellWeight,
+  TableCellTone,
   TableRowPosition,
 } from './TableCell';
 

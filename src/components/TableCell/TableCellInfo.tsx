@@ -58,11 +58,15 @@ const labelVerticalClasses = [
   'whitespace-nowrap',
 ].join(' ');
 
+// Body inherits text colour from the wrapping TableCell. TableCell sets
+// the right token per mode (default / inset / hover) AND propagates the
+// `tone` prop (success/danger). Hardcoding `--table-body-text` here would
+// break tone propagation — a TableCell with `tone="danger"` containing
+// a TableCellInfo would otherwise show default text colour.
 const bodyClasses = [
   'min-w-0',
   'font-[family-name:var(--font-sans)]',
   'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
-  'text-[color:var(--table-body-text)]',
   'break-words',
 ].join(' ');
 
