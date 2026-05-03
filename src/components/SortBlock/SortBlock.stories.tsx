@@ -188,18 +188,17 @@ export const SortableRowComposition: Story = {
   render: () => {
     // Drop the SortBlock chrome (bg + padding) for cells inside the row —
     // the parent row already paints the grey strip; cells just contribute
-    // their label/value typography. Separator is the right-edge divider.
+    // their label/value typography.
     const cellOverride =
-      'inline-flex items-start gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)] ' +
-      'border-r border-[color:var(--color-space-dark)]';
+      'inline-flex items-start gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)]';
     return (
       <Stack>
-        <Row label="The sb6 composition: one continuous grey row, cells separated by vertical dividers (no inter-cell gap)">
+        <Row label="The sb6 composition: one continuous grey row, cells flow inline (no dividers, no inter-cell gap)">
           <div className="inline-flex items-stretch bg-[color:var(--sorting-block-sorting-fill)]">
             <div className="flex items-center px-[var(--spacing-8)]">
               <Icon name="drag" size={17} />
             </div>
-            <div className="flex items-center px-[var(--spacing-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)] font-[var(--font-weight-medium)] border-r border-[color:var(--color-space-dark)]">
+            <div className="flex items-center px-[var(--spacing-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)] font-[var(--font-weight-medium)]">
               1
             </div>
             <SortBlock
