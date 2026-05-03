@@ -195,8 +195,8 @@ export const SortableRowComposition: Story = {
       <Stack>
         <Row label="The sb6 composition: one continuous grey row, cells flow inline (no dividers, no inter-cell gap)">
           <div className="inline-flex items-stretch bg-[color:var(--sorting-block-sorting-fill)]">
-            <div className="flex items-center px-[var(--spacing-8)] text-[color:var(--color-set-lightest)]">
-              <Icon name="drag" size={17} />
+            <div className="flex items-center px-[var(--spacing-8)]">
+              <Icon name="drag" size={17} color="var(--color-set-lightest)" />
             </div>
             <div className="flex items-center px-[var(--spacing-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)] font-[var(--font-weight-medium)]">
               1
@@ -206,9 +206,7 @@ export const SortableRowComposition: Story = {
               rows={[{ label: '', value: '2023-03-09-1' }]}
             />
             <SortBlock className={cellOverride}>
-              <span className="text-[color:var(--color-set-lightest)]">
-                <Icon name="calendar" size={17} />
-              </span>
+              <Icon name="calendar" size={17} color="var(--color-set-lightest)" />
               <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
                 2020-08-18
               </span>
