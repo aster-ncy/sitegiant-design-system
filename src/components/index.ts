@@ -225,6 +225,10 @@ export type {
   SmallSegmentedGlyphName,
 } from './SmallSegmentedButton';
 
+// SortBlock
+export { SortBlock } from './SortBlock';
+export type { SortBlockProps, SortBlockRow, SortBlockOrientation } from './SortBlock';
+
 // Stepper
 export { Stepper } from './Stepper';
 export type { StepperProps, StepperStep } from './Stepper';
