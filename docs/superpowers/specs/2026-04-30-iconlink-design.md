@@ -167,21 +167,21 @@ All hex values derived from Figma `get_variable_defs` on node `363:307`. The Clo
 
 Meta `args.icon = 'trash'`, `variant = 'basic'`, `'aria-label' = 'Delete'`. Render at meta level so the autodocs Primary preview renders.
 
-## Migration plan (Phase 1)
+## Migration plan (deferred — all candidates are bespoke-colored)
 
-Three confirmed migrations after the atom ships, each as its own follow-up commit (revised 2026-05-03 after exploration):
+**No migrations land with the atom (revised 2026-05-03 after reading the candidate files).**
 
-| File | Pattern | New use |
-|---|---|---|
-| `src/components/Banner/Banner.tsx` | inline `<button><Icon name="close"/></button>` close-X (line ~115) | `<IconLink icon="close" variant="close" aria-label="Dismiss" />` |
-| `src/components/Tag/Tag.tsx` | inline close-X when `dismissible` (line ~50). **Confirmed size: 15px** (not 14). | `<IconLink icon="close" variant="close" aria-label="Remove tag" size={15} />` |
-| `src/components/Pagination/Pagination.tsx` | prev (line ~140) + next (line ~196) chevron buttons | `<IconLink icon="chevron-left" variant="default" aria-label="Previous page" />` (and chevron-right for next) |
+Every Phase 1 candidate that initially looked like an IconLink consumer turned out to use **variant-aware or component-specific icon coloring** that doesn't match IconLink's 7 fixed variants:
 
-**Dropped from migration list (revised 2026-05-03):**
-- `Input.tsx` and `SuffixInput.tsx` — verified to have **no clear-X button**. The spec's earlier listing was wrong.
-- `Dropdown.tsx` clear-X — is a **filled circular chip** (`size-[17px]` with `bg-[var(--color-set-lightest)]` and white 11px icon), not a link-styled icon. Different visual atom; closer to TopBar's `IconButton`. Defer to a future "ClearChip" or compound-internal pass.
+| File | Why deferred |
+|---|---|
+| `Banner.tsx` close-X | Icon color is `styles.iconColor` (varies by Banner variant: green-dark / blue-dark / yellow-dark / red-dark) and the button has a `--banner-dismiss-hover-fill` background hover — not a link icon. |
+| `Tag.tsx` close-X | Icon color is `var(--tag-icon)` (a tag-specific token), not `--icon-link-close-*`. |
+| `Pagination.tsx` prev/next | Color is `--color-text-primary` with disabled state `--color-surface-card-border` — pagination-specific. |
+| `Input.tsx` / `SuffixInput.tsx` | No clear-X button exists; original spec listing was wrong. |
+| `Dropdown.tsx` clear | Filled circular chip (`size-[17px]` with `bg-[var(--color-set-lightest)]`, white 11px icon), not a link-styled icon. Closer to TopBar's `IconButton`. |
 
-Other grep hits (TabSegment icon-only, TableExpandToggle, Sidebar collapse, MultiTagSelect chips, NumberInput stepper, etc.) are deferred — compound-internal pieces with different semantics or candidates for case-by-case review when those components are next touched.
+The 21 inlined icon-button hits in the codebase are mostly **compound-internal pieces with bespoke colors**, not natural IconLink consumers. IconLink is the right atom for *new* product surfaces (toolbars, table-row actions, dialogs) where one of the 7 variants fits — migrations land organically when those surfaces are built.
 
 ## Accessibility
 
