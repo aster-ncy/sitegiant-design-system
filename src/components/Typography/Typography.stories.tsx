@@ -164,7 +164,65 @@ export const Italic: Story = {
           The quick brown fox jumps over the lazy dog.
         </Typography>
       </Row>
+      <Row label="body italic across colour states">
+        <div className="flex flex-col gap-[var(--spacing-4)]">
+          {STATES.map((s) => (
+            <Typography key={s} type="body" state={s} italic>
+              {s} — The quick brown fox jumps over the lazy dog.
+            </Typography>
+          ))}
+        </div>
+      </Row>
     </Stack>
+  ),
+};
+
+export const OnDarkMatrix: Story = {
+  render: () => (
+    <div className="bg-[color:var(--color-set-DEFAULT)] p-[var(--spacing-24)]">
+      <table className="border-collapse">
+        <thead>
+          <tr>
+            <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-muted)]">
+              Type / state=on-dark
+            </th>
+            <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-muted)]">
+              en
+            </th>
+            <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-muted)]">
+              tc
+            </th>
+            <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-muted)]">
+              sc
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {TYPES.map((t) => (
+            <tr key={t}>
+              <th className="text-left p-[var(--spacing-8)] text-[length:var(--text-12)] text-[color:var(--color-text-muted)] font-[weight:var(--font-weight-regular)] whitespace-nowrap align-top">
+                {t}
+              </th>
+              <td className="p-[var(--spacing-8)] align-top">
+                <Typography type={t} state="on-dark" lang="en">
+                  Text Content
+                </Typography>
+              </td>
+              <td className="p-[var(--spacing-8)] align-top">
+                <Typography type={t} state="on-dark" lang="tc">
+                  測試文字
+                </Typography>
+              </td>
+              <td className="p-[var(--spacing-8)] align-top">
+                <Typography type={t} state="on-dark" lang="sc">
+                  测试文字
+                </Typography>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   ),
 };
 
