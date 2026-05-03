@@ -71,6 +71,23 @@ export const AllVariants: Story = {
           ))}
         </Group>
       </Row>
+      <Row label="Disabled — every variant should paint the same disabled token">
+        <Group>
+          {VARIANTS.map(({ value, label }) => (
+            <div key={value} className="flex flex-col items-center gap-[var(--spacing-4)]">
+              <IconLink
+                icon={value === 'close' ? 'close' : 'trash'}
+                variant={value}
+                aria-label={`${label} (disabled)`}
+                disabled
+              />
+              <span className="text-[length:var(--text-10)] text-[color:var(--color-text-info)]">
+                {label}
+              </span>
+            </div>
+          ))}
+        </Group>
+      </Row>
     </Stack>
   ),
 };
@@ -162,6 +179,9 @@ export const WithTooltip: Story = {
       </Row>
       <Row label="Disabled still shows the tooltip (TooltipTrigger wraps in a span)">
         <IconLink icon="trash" variant="basic" aria-label="Delete (disabled)" disabled />
+      </Row>
+      <Row label="Keyboard focus (Tab to it) opens the tooltip immediately — no hover delay">
+        <IconLink icon="trash" variant="basic" aria-label="Delete via keyboard" />
       </Row>
       <Row label="Placement — bottom">
         <IconLink

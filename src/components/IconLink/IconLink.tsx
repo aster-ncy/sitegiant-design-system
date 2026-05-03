@@ -81,7 +81,12 @@ export const IconLink = ({
   className,
 }: IconLinkProps) => {
   const resolvedSize = size ?? (variant === 'close' ? 21 : 17);
-  const rootClass = className || `${ROOT_BASE_CLASSES} ${VARIANT_COLOR_CLASSES[variant]}`;
+  // Disabled drops the variant hover/active chain entirely so the disabled
+  // text color always wins — `:hover` can still fire on a disabled <button>
+  // in some browsers, and class-string order isn't a reliable override
+  // (see feedback_tailwind_class_order.md).
+  const variantClasses = disabled ? '' : VARIANT_COLOR_CLASSES[variant];
+  const rootClass = className || `${ROOT_BASE_CLASSES} ${variantClasses}`.trim();
 
   return (
     <TooltipTrigger
