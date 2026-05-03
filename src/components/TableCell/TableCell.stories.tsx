@@ -11,6 +11,7 @@ import { Tag } from '../Tag';
 import { Pip } from '../Pip';
 import { TableExpandToggle } from '../TableExpandToggle';
 import { ProductImage } from '../ProductImageList/ProductImage';
+import sitegiantWebstore from '../../assets/channel-icons/sitegiant-webstore.png';
 
 const meta = {
   title: 'Tables/TableCell',
@@ -436,6 +437,14 @@ export const Listing: Story = {
         extras={
           <>
             <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
+              <img
+                src={sitegiantWebstore}
+                alt=""
+                aria-hidden="true"
+                width={15}
+                height={15}
+                className="shrink-0 block rounded-[var(--radius-4)]"
+              />
               Webstore
             </span>
             <button
