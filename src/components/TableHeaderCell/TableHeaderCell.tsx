@@ -215,9 +215,16 @@ export const TableHeaderCell = ({
   ].join(' ');
 
   // Icon-only variant — used for last-column action triggers.
+  // Default mode (Figma 2878:9935): symmetric `px-12` regardless of
+  // column position, so the icon button sits centred in its narrow
+  // gutter (the column-aware pl-24/pr-24 schema is for text headers).
+  // Inset / sub-header keep their existing column-aware padding.
   if (type === 'icon') {
+    const iconPaddingOverride = !isInset
+      ? '!pl-[var(--spacing-12)] !pr-[var(--spacing-12)]'
+      : '';
     return (
-      <div className={[cellClasses, textAlignmentClass[align]].join(' ')}>
+      <div className={[cellClasses, textAlignmentClass[align], iconPaddingOverride].filter(Boolean).join(' ')}>
         <button
           type="button"
           onClick={disabled ? undefined : onSort}
