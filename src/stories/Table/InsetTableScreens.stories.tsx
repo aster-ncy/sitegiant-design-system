@@ -17,6 +17,9 @@ import { TextLink } from '../../components/TextLink';
 import { Dropdown } from '../../components/Dropdown';
 import { DatePicker } from '../../components/DatePicker';
 import { IconButton } from '../../components/TopBar/IconButton';
+import { TableCardCell } from '../../components/TableCardCell';
+import { NumberInput } from '../../components/NumberInput';
+import { Toggle } from '../../components/Toggle';
 import shopeeMy from '../../assets/channel-icons/shopee-my.png';
 import shopeeSg from '../../assets/channel-icons/shopee-sg.png';
 import tiktokMy from '../../assets/channel-icons/tiktok-my.png';
@@ -858,4 +861,112 @@ export const S9OrderReturn: Story = {
       </table>
     </div>
   ),
+};
+
+/* ── s10 Shocking Sale ─────────────────────────────────── */
+
+/**
+ * Create Shocking Sale — products listed as cards with editable variant
+ * rows. Each card = 1 Top Tier row (image + product name + trash) +
+ * N Bottom Tier rows (variant label + RM input + %off input + qty +
+ * stock + purchase limit + status toggle). Composes
+ * `<TableCardCell>` for the new card-style table primitive.
+ */
+export const S10ShockingSale: Story = {
+  render: () => {
+    type Variant = {
+      key: string;
+      label: string;
+      price: string;
+      offPercent: string;
+      campaignStock: string;
+      stock: number;
+      purchaseLimit: string;
+      enabled: boolean;
+    };
+    const variants: Variant[] = [
+      { key: 'blue-s', label: 'Blue, S', price: '16.00', offPercent: '20', campaignStock: '10', stock: 44, purchaseLimit: '2', enabled: true },
+      { key: 'blue-m', label: 'Blue, M', price: '16.00', offPercent: '20', campaignStock: '10', stock: 44, purchaseLimit: '2', enabled: true },
+      { key: 'red-s', label: 'Red, S', price: '16.00', offPercent: '20', campaignStock: '10', stock: 44, purchaseLimit: '4', enabled: true },
+      { key: 'red-m', label: 'Red, M', price: '0.00', offPercent: '20', campaignStock: '10', stock: 44, purchaseLimit: '', enabled: true },
+    ];
+    return (
+      <div className={cardClasses}>
+        <h2 className="font-[var(--font-weight-bold)] text-[length:var(--text-16)] mb-[var(--spacing-16)]">
+          Shocking Sale Products
+        </h2>
+        <div className="rounded-[var(--radius-4)] overflow-hidden">
+          <table className="border-collapse w-full table-fixed">
+            <tbody>
+              {/* Top Tier — product header */}
+              <tr className="group/row">
+                <td className="p-0" colSpan={7}>
+                  <TableCardCell tier="top" column="first" checkbox={<Checkbox size="sm" />}>
+                    <span className="inline-flex items-center gap-[var(--spacing-8)]">
+                      <span
+                        aria-hidden="true"
+                        className="shrink-0 size-[40px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
+                      />
+                      <span className="font-[var(--font-weight-bold)]">
+                        Women's Fashion Cat Print Plus Velvet Hooded Sweate Velvet Hooded Sweater
+                      </span>
+                    </span>
+                  </TableCardCell>
+                </td>
+              </tr>
+              {/* Bottom Tier — variant rows */}
+              {variants.map((v, i) => {
+                const row = i === variants.length - 1 ? 'last' : i === 0 ? 'first' : 'middle';
+                return (
+                  <tr key={v.key} className="group/row">
+                    <td className="p-0">
+                      <TableCardCell tier="bottom" row={row} column="first">
+                        {v.label}
+                      </TableCardCell>
+                    </td>
+                    <td className="p-0">
+                      <TableCardCell tier="bottom" row={row} column="center">
+                        RM{v.price}
+                      </TableCardCell>
+                    </td>
+                    <td className="p-0">
+                      <TableCardCell tier="bottom" row={row} column="center" formField>
+                        <NumberInput value={v.price} onChange={() => undefined} />
+                      </TableCardCell>
+                    </td>
+                    <td className="p-0">
+                      <TableCardCell tier="bottom" row={row} column="center" formField>
+                        <NumberInput value={v.offPercent} onChange={() => undefined} />
+                      </TableCardCell>
+                    </td>
+                    <td className="p-0">
+                      <TableCardCell tier="bottom" row={row} column="center" formField>
+                        <NumberInput value={v.campaignStock} onChange={() => undefined} />
+                      </TableCardCell>
+                    </td>
+                    <td className="p-0">
+                      <TableCardCell tier="bottom" row={row} column="center">
+                        {v.stock}
+                      </TableCardCell>
+                    </td>
+                    <td className="p-0">
+                      <TableCardCell
+                        tier="bottom"
+                        row={row}
+                        column="last"
+                        formField
+                        trailing={<Toggle checked={v.enabled} onChange={() => undefined} />}
+                      >
+                        {v.purchaseLimit || 'No limit'}
+                      </TableCardCell>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  },
 };
