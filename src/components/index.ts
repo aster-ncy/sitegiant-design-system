@@ -351,6 +351,15 @@ export type {
   TooltipPlacement,
 } from './Tooltip';
 
+// Typography
+export { Typography } from './Typography';
+export type {
+  TypographyProps,
+  TypographyType,
+  TypographyState,
+  TypographyLang,
+} from './Typography';
+
 // SidebarItem
 export { SidebarItem, SidebarTag } from './SidebarItem';
 export type {
