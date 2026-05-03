@@ -111,6 +111,10 @@ export type { IconProps, IconSize } from './Icon';
 export type { IconName } from './Icon';
 export { iconNames } from './Icon';
 
+// IconLink
+export { IconLink } from './IconLink';
+export type { IconLinkProps, IconLinkVariant } from './IconLink';
+
 // Logo
 export { Logo } from './Logo';
 export type { LogoProps, LogoBackground, LogoMode } from './Logo';
