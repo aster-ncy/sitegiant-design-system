@@ -242,8 +242,9 @@ export const TableCardCell = (props: TableCardCellProps) => {
         bottomTierCornerClasses(column, row),
         innerAlignment,
         'gap-[var(--spacing-12)]',
-        fillOverride,
         forcedHoverFill,
+        // emitted last so the `!important` from fillOverride wins the source-order tie against forcedHoverFill
+        fillOverride,
         className,
       ]
         .filter(Boolean)
