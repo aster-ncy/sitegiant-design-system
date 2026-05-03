@@ -9,6 +9,23 @@ export interface TableCellListingInfoRow {
 
 export interface TableCellListingProps {
   /**
+   * Row-select checkbox. Renders BEFORE the image, top-anchored at the row's
+   * topmost visual line (image top / pip top). Pass `<Checkbox size="sm">`.
+   *
+   * Why owned here, not on `<TableCell checkbox>`: the wrapping `TableCell`
+   * uses `items-center` in inset mode (so single-line short cells align with
+   * tall multi-line cells in the same row — see `feedback_inset_table_alignment`).
+   * That puts the wrapper's `checkbox` slot at vertical-center, but Listing's
+   * own content is `items-start`-anchored, so a wrapper-level checkbox visibly
+   * floats below the image's top edge. Owning the checkbox inside this
+   * primitive keeps it inside the `items-start` flex and aligned with the
+   * image top per Figma 1248:8395.
+   *
+   * Mutual-exclusion: when this prop is set, do NOT also set `checkbox` on
+   * the wrapping `<TableCell>` — they would both render and visibly stack.
+   */
+  checkbox?: ReactNode;
+  /**
    * Leading product image. Caller passes a `<ProductImage size="lg">` (56×56)
    * or any other ReactNode that fits the slot. The slot itself is `shrink-0`
    * so the product info column flexes to fill remaining width.
@@ -92,6 +109,7 @@ const captionSlimValueClasses = [
  * - extras row: flex gap-20 items-start (caller composes children)
  */
 export const TableCellListing = ({
+  checkbox,
   image,
   tag,
   productName,
@@ -100,6 +118,15 @@ export const TableCellListing = ({
 }: TableCellListingProps) => {
   return (
     <div className="flex w-full gap-[var(--spacing-12)] items-start">
+      {checkbox && (
+        // py-2 matches Figma 1248:8395's checkbox slot — nudges the 17×17
+        // checkbox down ~2px so its visual centre lines up with the
+        // "Published" pip's vertical centre rather than sitting flush with
+        // the image's hard top edge.
+        <span className="shrink-0 inline-flex items-start py-[var(--spacing-2)]">
+          {checkbox}
+        </span>
+      )}
       {image && <span className="shrink-0 inline-flex">{image}</span>}
       <div className="flex flex-1 min-w-0 flex-col gap-[var(--spacing-4)] items-start">
         {tag && <div className="shrink-0">{tag}</div>}
