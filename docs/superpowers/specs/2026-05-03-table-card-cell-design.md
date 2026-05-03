@@ -85,6 +85,11 @@ export type TableCardCellProps =
        *  tier; 'middle' = inner row (no rounded corners); 'last' = bottom
        *  of card (rounded bottom corners). */
       row: TableCardCellRow;
+      /** Set to `true` when the cell hosts a form control (NumberInput,
+       *  Toggle, Button etc.). Switches the inner flex from items-start to
+       *  items-center per Figma 3453:7841 (Type=Form Field). Default
+       *  text-cell behaviour is items-start. */
+      formField?: boolean;
     });
 ```
 
@@ -108,7 +113,7 @@ The discriminated union prevents `<TableCardCell tier="top" row="first">` (TS er
 | Corner radius | `rounded-tl-4` if column='first'; `rounded-tr-4` if column='last' | same | 3453:7574 |
 | Border colour | `--table-divider-border` (#e5e5e5) | same | 3453:7574 |
 
-**Hover takeaway for Top Tier:** the fill does NOT change. Hover applies bold + green text (`--table-body-hover-text` = #5acc5a). Pair this with `boldOnRowHover`-style consumer wiring or a built-in `font-bold + text-color` change on `:hover`. The "active row" affordance from default-mode tables (whole row fills) is NOT how Top Tier works — Top Tier is always grey-fill, only its text changes on hover.
+**Hover takeaway for Top Tier:** the fill does NOT change. Hover applies bold + green text (`--table-body-hover-text` = #5acc5a). This is built-in on `tier='top'` (see Hover behavior section below) — consumers don't need to wire `boldOnRowHover` or any opt-out flag. The "active row" affordance from default-mode tables (whole row fills) is NOT how Top Tier works — Top Tier is always grey-fill, only its text changes on hover.
 
 ### Bottom Tier (Figma 3453:7727)
 
@@ -129,7 +134,7 @@ The discriminated union prevents `<TableCardCell tier="top" row="first">` (TS er
 
 **Form Field row height takeaway:** the cell's own padding (`pt-12 pb-6`) does NOT change between Type=Default and Type=Form Field. The variant heights observed in Figma (~51 / 45 / 87 px first/middle/last as Codex flagged) are driven by the inner form control's intrinsic height (NumberInput is taller than a plain text node, last-row Form Field cells absorb a bit more bottom padding). Callers don't need to adjust `className` for this; passing a `<NumberInput>` / `<Toggle>` / `<Button>` as `children` produces the right cell height automatically.
 
-**Note:** The outer flex's alignment differs by Type — `items-start` for Default text, `items-center` for Form Field. Implementation should detect this via a `formField` prop on the cell, OR (preferred) the cell defaults to `items-start` and consumers wrap form-field children in their own `items-center` flex. We'll choose at implementation time based on which produces cleaner story code.
+**Note:** The outer flex's alignment differs by Type. The cell exposes a `formField` boolean prop (only valid on `tier='bottom'`); when `true`, the inner flex uses `items-center` per Figma 3453:7841 to centre form controls. Default behaviour (`formField` omitted/false) is `items-start` for text cells.
 
 ### Border coordination contract
 
@@ -139,11 +144,14 @@ Codex flagged this border bug during the API review; coordinating via `column` +
 
 ### Hover behavior
 
-Same pattern as default-mode TableCell:
-- Whole-row hover: `<tr className="group/row hover:[&>td>div]:bg-...">`. The hover-fill direction is tier-specific (Top: hover-fill→white; Bottom: white→hover-fill).
-- The cell exposes a controlled `hovered` prop for Storybook / forced-state stories.
+The two tiers behave differently on hover (verified against Figma):
 
-`tone` and `boldOnRowHover` are **NOT** ported to TableCardCell. The card-tier pattern is form-heavy; per-cell semantic colour is rare here. If needed later, add as a prop addendum.
+- **Top Tier** — fill is constant (`--table-body-hover-fill` #fafafb in BOTH default and hover); hover changes the cell text to **bold + green** (`--table-body-hover-text` #5acc5a). Build this in unconditionally on `tier='top'`: every Top Tier symbol in Figma has the same hover effect; there's no opt-out variant. Wire via `<tr className="group/row">` + Tailwind `group-hover/row:font-bold group-hover/row:text-[color:var(--table-body-hover-text)]` on the cell's text span.
+- **Bottom Tier** — fill flips white → grey (`--table-body-fill` → `--table-body-hover-fill`); text colour and weight unchanged. Wire via `<tr className="group/row hover:[&>td>div]:bg-[var(--table-body-hover-fill)]">`.
+
+The cell additionally exposes a controlled `hovered` prop for Storybook / forced-state stories.
+
+`tone` and `boldOnRowHover` props are **NOT** ported to TableCardCell. Top Tier's hover-bold-green is built in unconditionally on `tier='top'` — no opt-out flag, since Figma authors no opt-out variant. If a card-tier consumer ever needs per-value semantic tone, add `tone` as a prop addendum at that point.
 
 ## Slot composition (Figma Type axis → composition)
 
@@ -159,9 +167,9 @@ Each Figma `Type` variant maps to slot usage on `TableCardCell`:
 
 **Bottom Tier:**
 - `Type=Default` → `<TableCardCell tier="bottom" row="...">{value}</TableCardCell>`
-- `Type=Form Field` → `<TableCardCell><NumberInput /></TableCardCell>`
-- `Type=Action Button` → `<TableCardCell trailing={<Button />}>...`
-- `Type=Status Toggle` → `<TableCardCell trailing={<Toggle />}>...`
+- `Type=Form Field` → `<TableCardCell tier="bottom" row="..." formField><NumberInput /></TableCardCell>` (the `formField` flag flips inner alignment to `items-center`)
+- `Type=Action Button` → `<TableCardCell tier="bottom" row="..." formField trailing={<Button />}>` (Button counts as a form control)
+- `Type=Status Toggle` → `<TableCardCell tier="bottom" row="..." formField trailing={<Toggle />}>` (Toggle is centred per the same rule)
 
 The `Info:` leading-label pattern (Figma `showInfo` toggle) is consumer-side composition: caller passes `<><span className="text-[color:var(--color-text-info)]">Info:</span> {value}</>` as children. No prop needed.
 
