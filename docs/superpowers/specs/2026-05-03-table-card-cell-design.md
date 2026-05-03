@@ -94,32 +94,42 @@ The discriminated union prevents `<TableCardCell tier="top" row="first">` (TS er
 
 ### Top Tier (Figma 3453:7497)
 
-| Property | Value | Source |
-|---|---|---|
-| Default fill | `--table-body-hover-fill` (#fafafb) — always-on hover-fill in Figma | 3453:7574 |
-| Hover fill | `--table-body-fill` (#ffffff) — flips to white on hover | symbol naming |
-| Padding | `pl-12 pr-6 py-12` | 3453:7574 |
-| Outer flex | `gap-12 items-start` | 3453:7571 |
-| Inner content gap | `gap-8` between value + icon | 3453:7574 |
-| Border (first column) | `top + bottom + left` | 3453:7574 |
-| Border (center column) | `top + bottom + left` | Codex-recommended border-coordination |
-| Border (last column) | `top + bottom + left + right` | 3453:7574 + closes right edge |
-| Corner radius | `rounded-tl-4` if column='first'; `rounded-tr-4` if column='last' | 3453:7574 |
-| Border colour | `--table-divider-border` (#e5e5e5) | 3453:7574 |
+| Property | Default state | Hover state | Source |
+|---|---|---|---|
+| Fill | `--table-body-hover-fill` (#fafafb) | UNCHANGED — same fafafb | 3453:7574 (Default), 3453:7592 (Hover) |
+| Text colour | `--table-body-text` (#0c2028) | `--table-body-hover-text` (#5acc5a) — green | 3453:7575, 3453:7593 |
+| Text weight | regular | bold | 3453:7575, 3453:7593 |
+| Padding | `pl-12 pr-6 py-12` | same | 3453:7574 |
+| Outer flex | `gap-12 items-start` | same | 3453:7571 |
+| Inner content gap | `gap-8` between value + icon | same | 3453:7574 |
+| Border (first column) | `top + bottom + left` | same | 3453:7574 |
+| Border (center column) | `top + bottom + left` | same | Codex-recommended border-coordination |
+| Border (last column) | `top + bottom + left + right` | same | 3453:7574 + closes right edge |
+| Corner radius | `rounded-tl-4` if column='first'; `rounded-tr-4` if column='last' | same | 3453:7574 |
+| Border colour | `--table-divider-border` (#e5e5e5) | same | 3453:7574 |
+
+**Hover takeaway for Top Tier:** the fill does NOT change. Hover applies bold + green text (`--table-body-hover-text` = #5acc5a). Pair this with `boldOnRowHover`-style consumer wiring or a built-in `font-bold + text-color` change on `:hover`. The "active row" affordance from default-mode tables (whole row fills) is NOT how Top Tier works — Top Tier is always grey-fill, only its text changes on hover.
 
 ### Bottom Tier (Figma 3453:7727)
 
-| Property | Value | Source |
-|---|---|---|
-| Default fill | `--table-body-fill` (#ffffff) | 3453:7822 |
-| Hover fill | `--table-body-hover-fill` (#fafafb) | inferred |
-| Padding | `pl-12 pr-6 py-12` (Default rows ~45px); Form Field rows tighter — caller adjusts via `className` if needed | 3453:7822 |
-| Outer flex | `flex-col items-start justify-center gap-4` | 3453:7822 |
-| Border (first column) | `left` always; `bottom` only on row='last' | 3453:7822 |
-| Border (center column) | `left` always; `bottom` only on row='last` | 3453:7822 |
-| Border (last column) | `left + right`; `bottom` only on row='last' | 3453:7822 |
-| Corner radius | `rounded-bl-4` if column='first' && row='last'; `rounded-br-4` if column='last' && row='last' | inferred from card outer-shape |
-| Border colour | `--table-divider-border` (#e5e5e5) | 3453:7822 |
+| Property | Default state | Hover state | Source |
+|---|---|---|---|
+| Fill | `--table-body-fill` (#ffffff) | `--table-body-hover-fill` (#fafafb) | 3453:7822 (Default), 3453:8104 (Hover) |
+| Text colour | `--table-body-text` (#0c2028) | same | 3453:8108 |
+| Text weight | regular | same | 3453:8106 |
+| Padding (Type=Default) | `pt-12 pr-6 pb-6 pl-12` | same | 3453:7822 |
+| Padding (Type=Form Field) | `pt-12 pr-6 pb-6 pl-12` (cell padding identical; the inner form control sets its own height) | same | 3453:7841 |
+| Outer flex (Type=Default) | `flex-col items-start justify-center gap-4` | same | 3453:7822 |
+| Outer flex (Type=Form Field) | `flex-col items-center justify-center gap-4` | same | 3453:7841 — note `items-center` for centred form controls |
+| Border (first column) | `left` always; `bottom` only on row='last' | same | 3453:7822 |
+| Border (center column) | `left` always; `bottom` only on row='last' | same | 3453:7822 |
+| Border (last column) | `left + right`; `bottom` only on row='last' | same | 3453:7822 |
+| Corner radius | `rounded-bl-4` if column='first' && row='last'; `rounded-br-4` if column='last' && row='last' | same | inferred from card outer-shape |
+| Border colour | `--table-divider-border` (#e5e5e5) | same | 3453:7822 |
+
+**Form Field row height takeaway:** the cell's own padding (`pt-12 pb-6`) does NOT change between Type=Default and Type=Form Field. The variant heights observed in Figma (~51 / 45 / 87 px first/middle/last as Codex flagged) are driven by the inner form control's intrinsic height (NumberInput is taller than a plain text node, last-row Form Field cells absorb a bit more bottom padding). Callers don't need to adjust `className` for this; passing a `<NumberInput>` / `<Toggle>` / `<Button>` as `children` produces the right cell height automatically.
+
+**Note:** The outer flex's alignment differs by Type — `items-start` for Default text, `items-center` for Form Field. Implementation should detect this via a `formField` prop on the cell, OR (preferred) the cell defaults to `items-start` and consumers wrap form-field children in their own `items-center` flex. We'll choose at implementation time based on which produces cleaner story code.
 
 ### Border coordination contract
 
@@ -186,6 +196,23 @@ Added to existing `InsetTableScreens.stories.tsx`:
 - **`tone` / `boldOnRowHover` props.** Defer until a card-tier consumer needs them.
 - **Inline form-validation states.** Bottom Tier form-field cells inherit error states from the contained `<NumberInput>` etc.
 - **Card outer container component.** Wrapping `<div>` is a one-line story-side composition; not enough complexity to warrant a primitive.
+
+  Documented recipe for the outer container (consumers must apply this themselves until/unless we ship a `TableCardContainer` primitive):
+
+  ```tsx
+  <div className="rounded-[var(--radius-4)] overflow-hidden">
+    <table className="border-collapse w-full table-fixed">
+      <tbody>
+        <tr>{/* Top Tier cells */}</tr>
+        <tr>{/* Bottom Tier row='first' cells */}</tr>
+        <tr>{/* Bottom Tier row='middle' cells */}</tr>
+        <tr>{/* Bottom Tier row='last' cells */}</tr>
+      </tbody>
+    </table>
+  </div>
+  ```
+
+  The cells own their own borders (perimeter painted via column + row props). The wrapper just clips the outer corners so the card's rounded shape closes cleanly. No additional outer border on the wrapper — the cells' own borders close the box.
 - **Animation between Top and Bottom tier rows on expand/collapse.** Out of scope — caller handles open/close state.
 
 ## Verification
