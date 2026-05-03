@@ -173,10 +173,10 @@ export const BodyVariants: Story = {
       <Row label="Image — 41x41 thumbnail body">
         <Group>
           <SortBlock>
-            <div className="size-[41px] bg-[var(--color-set-DEFAULT)] rounded-[var(--radius-4)]" />
+            <div className="size-[41px] bg-[color:var(--color-set-DEFAULT)] rounded-[var(--radius-4)]" />
           </SortBlock>
           <SortBlock>
-            <div className="size-[41px] bg-[var(--color-space-light)] rounded-[var(--radius-4)] border border-[color:var(--color-space-dark)]" />
+            <div className="size-[41px] bg-[color:var(--color-space-light)] rounded-[var(--radius-4)] border border-[color:var(--color-space-dark)]" />
           </SortBlock>
         </Group>
       </Row>
@@ -188,7 +188,7 @@ export const SortableRowComposition: Story = {
   render: () => (
     <Stack>
       <Row label="The sb6 composition: drag handle + index + 3 SortBlocks + close-X">
-        <div className="flex items-center gap-[var(--spacing-8)] bg-[var(--color-surface-card-default,_#ffffff)] border border-[color:var(--color-space-dark)] rounded-[var(--radius-4)] px-[var(--spacing-8)] py-[var(--spacing-4)]">
+        <div className="flex items-center gap-[var(--spacing-8)] bg-[color:var(--color-surface-card)] border border-[color:var(--color-space-dark)] rounded-[var(--radius-4)] px-[var(--spacing-8)] py-[var(--spacing-4)]">
           <SortBlock>
             <Icon name="drag" size={17} />
           </SortBlock>
