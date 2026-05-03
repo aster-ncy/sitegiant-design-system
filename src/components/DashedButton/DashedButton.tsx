@@ -18,12 +18,16 @@ const ROOT_BUILTIN_CLASSES =
   'text-[length:var(--general-button-primary-size)] leading-[var(--general-button-primary-lineheight)] ' +
   'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
   'text-[color:var(--text-link-basic-default)] ' +
-  'cursor-pointer transition-colors duration-150 ' +
+  'transition-colors duration-150 ' +
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]';
+
+const INTERACTIVE_STATE_CLASSES =
+  'cursor-pointer ' +
   'hover:bg-[var(--button-outline-hover-fill)] hover:text-[color:var(--text-link-basic-hover)] ' +
-  'active:bg-[var(--button-outline-clicked-fill)] active:text-[color:var(--text-link-basic-clicked)] ' +
-  'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)] ' +
-  'disabled:cursor-not-allowed disabled:bg-[var(--button-outline-default-fill)] ' +
-  'disabled:text-[color:var(--text-link-disabled)] disabled:hover:bg-[var(--button-outline-default-fill)]';
+  'active:bg-[var(--button-outline-clicked-fill)] active:text-[color:var(--text-link-basic-clicked)]';
+
+const DISABLED_STATE_CLASSES =
+  'cursor-not-allowed text-[color:var(--text-link-disabled)]';
 
 const FULL_WIDTH_CLASSES = 'w-full justify-center';
 const INTRINSIC_CLASSES = 'justify-center';
@@ -49,7 +53,8 @@ export const DashedButton = ({
   ...rest
 }: DashedButtonProps) => {
   const layoutClasses = fullWidth ? FULL_WIDTH_CLASSES : INTRINSIC_CLASSES;
-  const rootClass = className || `${ROOT_BUILTIN_CLASSES} ${layoutClasses}`;
+  const stateClasses = disabled ? DISABLED_STATE_CLASSES : INTERACTIVE_STATE_CLASSES;
+  const rootClass = className || `${ROOT_BUILTIN_CLASSES} ${stateClasses} ${layoutClasses}`;
 
   return (
     <button
