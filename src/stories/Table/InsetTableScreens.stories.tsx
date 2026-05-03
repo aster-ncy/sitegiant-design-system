@@ -17,6 +17,22 @@ import { TextLink } from '../../components/TextLink';
 import { Dropdown } from '../../components/Dropdown';
 import { DatePicker } from '../../components/DatePicker';
 import { IconButton } from '../../components/TopBar/IconButton';
+import shopeeMy from '../../assets/channel-icons/shopee-my.png';
+import shopeeSg from '../../assets/channel-icons/shopee-sg.png';
+import tiktokMy from '../../assets/channel-icons/tiktok-my.png';
+import lazadaMy from '../../assets/channel-icons/lazada-my.png';
+
+// Channel/marketplace brand assets sourced from the SiteGiant Figma "App
+// Icon" library. These are live third-party brand marks (Shopee, TikTok,
+// Lazada, etc.) — used here as story fixtures to mirror the live ERP, not
+// re-distributed as a public design-system component.
+const channelIconSources = {
+  'shopee-my': shopeeMy,
+  'shopee-sg': shopeeSg,
+  'tiktok-my': tiktokMy,
+  'lazada-my': lazadaMy,
+} as const;
+type ChannelKey = keyof typeof channelIconSources;
 
 /**
  * Reproductions of 9 live ERP inset-table screens (s1..s9). Each story
@@ -150,16 +166,19 @@ export const S1WalletRecord: Story = {
 
 /* ── s2 Sales Channel ──────────────────────────────────── */
 
-// Channel-icon placeholder until brand-icon atoms land in the registry.
-// Renders a 17×17 rounded grey square next to the channel name.
-// leading-17 on the name span so its glyph hugs the top of its
-// line-box and aligns with the 17px placeholder (without it the
-// inherited 21px leading drops the text ~2px below the icon).
-const ChannelLabel = ({ name }: { name: string }) => (
+// 17×17 channel-brand icon next to the channel name. PNG asset comes from
+// the SiteGiant Figma "App Icon" library. leading-17 on the name span so
+// its glyph hugs the top of its line-box and aligns with the 17px icon
+// (without it the inherited 21px leading drops the text ~2px below).
+// `alt=""` + aria-hidden because the channel name immediately follows the
+// icon — screen readers shouldn't announce both.
+const ChannelLabel = ({ name, channel }: { name: string; channel: ChannelKey }) => (
   <span className="inline-flex items-center gap-[var(--spacing-8)]">
-    <span
+    <img
+      src={channelIconSources[channel]}
+      alt=""
       aria-hidden="true"
-      className="shrink-0 size-[17px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
+      className="shrink-0 size-[17px] rounded-[var(--radius-4)]"
     />
     <span className="leading-[var(--leading-17)]">{name}</span>
   </span>
@@ -218,7 +237,7 @@ export const S2SalesChannel: Story = {
           <tbody>
             <tr>
               <Cell inset column="first">
-                <ChannelLabel name="Shopee MY" />
+                <ChannelLabel name="Shopee MY" channel="shopee-my" />
               </Cell>
               <Cell inset column="center" align="right">30</Cell>
               <Cell inset column="center" align="right">
@@ -267,7 +286,7 @@ export const S2SalesChannel: Story = {
             )}
             <tr>
               <Cell inset column="first">
-                <ChannelLabel name="Shopee SG" />
+                <ChannelLabel name="Shopee SG" channel="shopee-sg" />
               </Cell>
               <Cell inset column="center" align="right">2</Cell>
               <Cell inset column="center" align="right">
@@ -282,7 +301,7 @@ export const S2SalesChannel: Story = {
             </tr>
             <tr>
               <Cell inset column="first">
-                <ChannelLabel name="TikTok MY" />
+                <ChannelLabel name="TikTok MY" channel="tiktok-my" />
               </Cell>
               <Cell inset column="center" align="right">1233</Cell>
               <Cell inset column="center" align="right">
@@ -297,7 +316,7 @@ export const S2SalesChannel: Story = {
             </tr>
             <tr>
               <Cell inset column="first" row="last">
-                <ChannelLabel name="Lazada MY" />
+                <ChannelLabel name="Lazada MY" channel="lazada-my" />
               </Cell>
               <Cell inset column="center" align="right" row="last">234</Cell>
               <Cell inset column="center" align="right" row="last">
@@ -732,17 +751,17 @@ export const S8SelectPackage: Story = {
                   </Cell>
                   <Cell alignTop inset column="last" selected={isSelected} row={rowProp}>
                     <span className="inline-flex items-start gap-[var(--spacing-4)]">
-                      {/* Channel brand-icon placeholder — Shopee logo would
-                          be 17×17 with brand orange. Substitute with the
-                          shared ProductImage placeholder until a brand-icon
-                          atom lands in the registry. */}
-                      <span
+                      {/* 17×17 Shopee MY brand icon (PNG asset from Figma
+                          App Icon library). leading-17 on the text span so
+                          the first text line aligns with the 17px icon;
+                          without it the inherited 21px leading drops the
+                          glyph ~3px below. */}
+                      <img
+                        src={shopeeMy}
+                        alt=""
                         aria-hidden="true"
-                        className="shrink-0 size-[17px] rounded-[var(--radius-4)] bg-[var(--color-set-light)]"
+                        className="shrink-0 size-[17px] rounded-[var(--radius-4)]"
                       />
-                      {/* leading-17 so the first text line aligns with the
-                          17px brand-icon placeholder; without it the inherited
-                          21px leading drops the glyph ~3px below the icon. */}
                       <span className="break-words leading-[var(--leading-17)]">ShopeeMY - Awesome Store</span>
                     </span>
                   </Cell>
