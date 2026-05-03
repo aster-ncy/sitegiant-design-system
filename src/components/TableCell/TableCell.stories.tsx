@@ -423,9 +423,9 @@ export const Listing: Story = {
     inset: true,
     column: 'first',
     className: '!pl-[var(--spacing-12)]',
-    checkbox: <Checkbox size="sm" />,
     children: (
       <TableCellListing
+        checkbox={<Checkbox size="sm" />}
         image={<ProductImage size="lg" />}
         tag={<Pip type="success" pipStyle="default" label="Published" />}
         productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
