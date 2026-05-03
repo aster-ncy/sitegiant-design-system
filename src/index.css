@@ -540,6 +540,12 @@
   --icon-link-disabled: var(--color-space-dark);
 
   /* ========================================
+     SORTING BLOCK (Color-Token/Light)
+     Figma: sorting-block/sorting-fill — readonly cell background
+     ======================================== */
+  --sorting-block-sorting-fill: var(--color-space-light);
+
+  /* ========================================
      CHECKBOX COLORS (Color-Token/Light)
      ======================================== */
   --checkbox-default: #D4D4D4;
