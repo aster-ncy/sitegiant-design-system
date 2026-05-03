@@ -501,6 +501,43 @@
   --text-link-subtle-hover: var(--color-text-primary);
 
   /* ========================================
+     ICON LINK (Color-Token/Light)
+     Figma: Text/link/*/icon-link-*
+     Drives <IconLink> default/hover/clicked states across 7 variants.
+     ======================================== */
+  --icon-link-basic-default: var(--color-sys-blue-DEFAULT);
+  --icon-link-basic-hover: var(--color-sys-blue-dark);
+  --icon-link-basic-clicked: var(--color-sys-blue-darker);
+
+  --icon-link-danger-default: var(--color-sys-red-DEFAULT);
+  --icon-link-danger-hover: var(--color-sys-red-dark);
+  --icon-link-danger-clicked: var(--color-sys-red-darker);
+
+  --icon-link-danger-subtle-default: var(--color-set-lighter);
+  --icon-link-danger-subtle-hover: var(--color-sys-red-DEFAULT);
+  --icon-link-danger-subtle-clicked: var(--color-sys-red-dark);
+
+  --icon-link-subtle-default: var(--color-set-lighter);
+  --icon-link-subtle-hover: var(--color-set-light);
+  --icon-link-subtle-clicked: var(--color-set-DEFAULT);
+
+  --icon-link-success-default: var(--color-sys-green-DEFAULT);
+  --icon-link-success-hover: var(--color-sys-green-dark);
+  --icon-link-success-clicked: var(--color-sys-green-darker);
+
+  --icon-link-default-default: var(--color-set-DEFAULT);
+  --icon-link-default-hover: var(--color-set-light);
+  --icon-link-default-clicked: var(--color-set-DEFAULT);
+
+  /* Close: Figma documents only Default; Hover/Clicked mirror `subtle` progression.
+     Flag for designer review at first product use. */
+  --icon-link-close-default: var(--color-set-lightest);
+  --icon-link-close-hover: var(--color-set-lighter);
+  --icon-link-close-clicked: var(--color-set-light);
+
+  --icon-link-disabled: var(--color-space-dark);
+
+  /* ========================================
      CHECKBOX COLORS (Color-Token/Light)
      ======================================== */
   --checkbox-default: #D4D4D4;
