@@ -27,7 +27,7 @@ export interface SortBlockProps {
 
 const ROOT_BASE_CLASSES =
   'inline-flex items-start ' +
-  'bg-[var(--sorting-block-sorting-fill)] ' +
+  'bg-[color:var(--sorting-block-sorting-fill)] ' +
   'px-[var(--spacing-6)] py-[var(--spacing-12)]';
 
 // Outer flex layout per orientation × row count.
