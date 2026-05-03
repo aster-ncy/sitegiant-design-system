@@ -325,6 +325,14 @@
   --color-text-info: #647176;
   --color-text-muted: #90999D;
   --color-text-ondark: #FFFFFF;
+  /* Feedback states for inline text (Figma: Text/feedback/*) — use the
+     sys-* DEFAULT primitive, not the muted *-text variant which is for
+     readability on filled-banner backgrounds. */
+  --color-text-basic: var(--color-sys-blue-DEFAULT);
+  --color-text-success: var(--color-sys-green-DEFAULT);
+  --color-text-danger: var(--color-sys-red-DEFAULT);
+  --color-text-alert: var(--color-sys-orange-DEFAULT);
+  --color-text-warning: var(--color-sys-yellow-DEFAULT);
 
   /* ========================================
      ICON COLORS (Color-Token/Light)
@@ -867,6 +875,49 @@
   /* Body typography — Figma: General/Body (body-large used by LoginInput) */
   --general-body-large-size: var(--text-16);
   --general-body-large-lineheight: var(--leading-22);
+
+  /* ========================================
+     TYPOGRAPHY SCALE — Figma: General/{Section,Display,Heading,Body,Caption}/*
+     Drives <Typography> component. Names match Figma exactly.
+     Sizes/line-heights/weights link back to existing primitives.
+     ======================================== */
+  /* Section */
+  --general-section-large-title-size: var(--text-26);
+  --general-section-large-title-lineheight: var(--leading-32);
+  --general-section-large-title-weight: var(--font-weight-regular);
+  --general-section-title-size: var(--text-18);
+  --general-section-title-lineheight: var(--leading-22);
+  --general-section-title-weight: var(--font-weight-medium);
+
+  /* Display */
+  --general-display-size: var(--text-22);
+  --general-display-lineheight: var(--leading-32);
+  --general-display-weight: var(--font-weight-medium);
+  --general-display-small-size: var(--text-20);
+  --general-display-small-lineheight: var(--leading-24);
+  --general-display-small-weight: var(--font-weight-bold);
+
+  /* Heading */
+  --general-heading-size: var(--text-16);
+  --general-heading-lineheight: var(--leading-22);
+  --general-heading-weight: var(--font-weight-medium);
+
+  /* Body — body-large declared above */
+  --general-body-size: var(--text-14);
+  --general-body-lineheight: var(--leading-21);
+  --general-body-weight: var(--font-weight-regular);
+  --general-body-slim-lineheight: var(--leading-17);
+  --general-body-medium-weight: var(--font-weight-medium);
+  --general-body-bold-weight: var(--font-weight-bold);
+
+  /* Caption — caption-size, caption-lineheight, caption-small-* declared above */
+  --general-caption-weight: var(--font-weight-regular);
+  --general-caption-slim-lineheight: var(--leading-15);
+  --general-caption-medium-weight: var(--font-weight-medium);
+  --general-caption-large-size: var(--text-13);
+  --general-caption-large-lineheight: var(--leading-18);
+  --general-caption-larger-size: var(--text-14);
+  --general-caption-larger-lineheight: var(--leading-19);
 
   /* ========================================
      SHADOWS — Figma: Shadow/*
