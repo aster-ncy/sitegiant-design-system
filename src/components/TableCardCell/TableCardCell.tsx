@@ -73,10 +73,103 @@ export type TableCardCellProps =
  * coordinate which sides are painted) so internal verticals don't
  * double-paint.
  */
-export const TableCardCell = (
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _props: TableCardCellProps
-) => {
-  // Implementation in Task 2+.
+
+const textAlignmentClass: Record<TableColumnPosition, string> = {
+  first: 'justify-start text-left',
+  center: 'justify-start text-left',
+  last: 'justify-start text-left',
+};
+
+// Top Tier base classes — Figma 3453:7574 (Default state).
+// Constant fill --table-body-hover-fill (#fafafb) in BOTH default and
+// hover; hover applies bold + green to the text span via the parent
+// <tr className="group/row">. See spec §"Hover behavior".
+const topTierBaseClasses = [
+  // Outer flex layout per Figma.
+  'relative flex gap-[var(--spacing-12)] items-start w-full',
+  // Padding per Figma 3453:7574.
+  'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-12)]',
+  // Constant fill — hover does NOT flip this.
+  'bg-[var(--table-body-hover-fill)]',
+  // Border colour shared by all card cells.
+  'border-[color:var(--table-divider-border)] border-solid',
+  // Top + bottom always painted on Top Tier.
+  'border-t border-b',
+  // Left always painted (every cell paints its own left edge — Codex
+  // border-coordination rule from spec §"Border coordination contract").
+  'border-l',
+  'transition-colors duration-150',
+].join(' ');
+
+const topTierColumnClasses: Record<TableColumnPosition, string> = {
+  // First column rounds top-left.
+  first: 'rounded-tl-[var(--radius-4)]',
+  // Center has no corner radius and no extra borders beyond the base.
+  center: '',
+  // Last column rounds top-right and paints right border to close the
+  // box; without this the rightmost edge of the card would be open.
+  last: 'rounded-tr-[var(--radius-4)] border-r',
+};
+
+// Hover text classes — built in unconditionally on tier='top' (Figma
+// 3453:7593: Hover state bolds + greens text). Wired via group-hover/row
+// so the cell triggers on the parent <tr> being hovered.
+const topTierHoverTextClasses = [
+  'group-hover/row:font-[var(--font-weight-bold)]',
+  'group-hover/row:text-[color:var(--table-body-hover-text)]',
+].join(' ');
+
+// Top Tier text span — body 14/21 in --table-body-text. Hover-state
+// classes layered on top via group-hover/row.
+const topTierTextSpanClasses = [
+  'flex items-center gap-[var(--spacing-4)] min-w-0 flex-1',
+  'font-[family-name:var(--font-sans)]',
+  'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
+  'font-[var(--font-weight-regular)]',
+  'text-[color:var(--table-body-text)]',
+  'transition-colors duration-150',
+  topTierHoverTextClasses,
+].join(' ');
+
+export const TableCardCell = (props: TableCardCellProps) => {
+  const { children, column, checkbox, leadingIcon, trailing, hovered, selected, className = '' } = props;
+
+  if (props.tier === 'top') {
+    // Selection wins over everything (matches TableCell behaviour).
+    const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
+    // Forced-hover for Storybook / controlled state — apply bold + green
+    // directly without waiting for :hover.
+    const forcedHoverText = hovered
+      ? 'font-[var(--font-weight-bold)] text-[color:var(--table-body-hover-text)]'
+      : '';
+
+    return (
+      <div
+        className={[
+          topTierBaseClasses,
+          topTierColumnClasses[column],
+          fillOverride,
+          className,
+        ]
+          .filter(Boolean)
+          .join(' ')}
+      >
+        {checkbox && <span className="shrink-0 inline-flex items-center">{checkbox}</span>}
+        {leadingIcon && <span className="shrink-0 inline-flex items-center">{leadingIcon}</span>}
+        <span
+          className={[
+            topTierTextSpanClasses,
+            forcedHoverText,
+            textAlignmentClass[column],
+          ].join(' ')}
+        >
+          {children}
+        </span>
+        {trailing && <span className="shrink-0 inline-flex items-center">{trailing}</span>}
+      </div>
+    );
+  }
+
+  // Bottom Tier comes in Task 3.
   return null as unknown as JSX.Element;
 };
