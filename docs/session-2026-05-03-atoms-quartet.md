@@ -117,7 +117,6 @@ interface TypographyProps {
 2. **Async Codex tasks need explicit waiting.** Background dispatch + delayed completion notification is unreliable through MCP; foreground is safer for non-trivial reviews.
 3. **Migration claims are expensive promises.** When IconLink shipped, all 6 "obvious migrations" turned out to need bespoke coloring. Read each candidate file before committing to a migration list — grep-match is not enough.
 4. **The user spotted a visual bug Codex missed.** Reinforces existing memory entries: visual-diff before declaring done.
-5. **Two terminals on `main` interleaving cleanly.** TableCardCell work from the other terminal interleaved with my atoms work all session. No conflicts because file scopes were disjoint and we both committed atomically with explicit `git add <path>`.
 
 ## Commit log (this terminal, chronological)
 
