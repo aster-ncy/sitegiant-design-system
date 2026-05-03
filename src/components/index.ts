@@ -272,6 +272,10 @@ export type {
   TableRowPosition,
 } from './TableCell';
 
+// TableCardCell
+export { TableCardCell } from './TableCardCell';
+export type { TableCardCellProps, TableCardCellRow } from './TableCardCell';
+
 // TableExpandToggle
 export { TableExpandToggle } from './TableExpandToggle';
 export type { TableExpandToggleProps } from './TableExpandToggle';
