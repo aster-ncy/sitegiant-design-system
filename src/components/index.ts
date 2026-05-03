@@ -62,6 +62,10 @@ export type { CheckboxProps } from './Checkbox';
 export { Chip } from './Chip';
 export type { ChipProps } from './Chip';
 
+// DashedButton
+export { DashedButton } from './DashedButton';
+export type { DashedButtonProps } from './DashedButton';
+
 // DatePicker
 export { DatePicker } from './DatePicker';
 export type {
