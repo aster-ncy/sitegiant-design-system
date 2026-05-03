@@ -55,45 +55,45 @@ export interface TypographyProps
 // Type → CSS-class chain. Each chain pulls Figma-named --general-* tokens which
 // alias the underlying --text-/--leading-/--font-weight- primitives.
 // Tailwind v4 type hints required: `text-[length:...]` for size, `leading-[...]`
-// for line-height, `font-[var(--font-weight-...)]` for weight.
+// for line-height, `font-[weight:...]` for weight.
 const TYPE_CLASSES: Record<TypographyType, string> = {
   'section-title':
-    'text-[length:var(--general-section-large-title-size)] leading-[var(--general-section-large-title-lineheight)] font-[var(--general-section-large-title-weight)]',
+    'text-[length:var(--general-section-large-title-size)] leading-[var(--general-section-large-title-lineheight)] font-[weight:var(--general-section-large-title-weight)]',
   'section-small-title':
-    'text-[length:var(--general-section-title-size)] leading-[var(--general-section-title-lineheight)] font-[var(--general-section-title-weight)]',
+    'text-[length:var(--general-section-title-size)] leading-[var(--general-section-title-lineheight)] font-[weight:var(--general-section-title-weight)]',
   display:
-    'text-[length:var(--general-display-size)] leading-[var(--general-display-lineheight)] font-[var(--general-display-weight)]',
+    'text-[length:var(--general-display-size)] leading-[var(--general-display-lineheight)] font-[weight:var(--general-display-weight)]',
   'display-small':
-    'text-[length:var(--general-display-small-size)] leading-[var(--general-display-small-lineheight)] font-[var(--general-display-small-weight)]',
+    'text-[length:var(--general-display-small-size)] leading-[var(--general-display-small-lineheight)] font-[weight:var(--general-display-small-weight)]',
   heading:
-    'text-[length:var(--general-heading-size)] leading-[var(--general-heading-lineheight)] font-[var(--general-heading-weight)]',
+    'text-[length:var(--general-heading-size)] leading-[var(--general-heading-lineheight)] font-[weight:var(--general-heading-weight)]',
   'body-large':
-    'text-[length:var(--general-body-large-size)] leading-[var(--general-body-large-lineheight)] font-[var(--general-body-weight)]',
-  body: 'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] font-[var(--general-body-weight)]',
+    'text-[length:var(--general-body-large-size)] leading-[var(--general-body-large-lineheight)] font-[weight:var(--general-body-weight)]',
+  body: 'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] font-[weight:var(--general-body-weight)]',
   'body-medium':
-    'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] font-[var(--general-body-medium-weight)]',
+    'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] font-[weight:var(--general-body-medium-weight)]',
   'body-bold':
-    'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] font-[var(--general-body-bold-weight)]',
+    'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] font-[weight:var(--general-body-bold-weight)]',
   'body-slim':
-    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[var(--general-body-weight)]',
+    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[weight:var(--general-body-weight)]',
   'body-medium-slim':
-    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[var(--general-body-medium-weight)]',
+    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[weight:var(--general-body-medium-weight)]',
   'body-bold-slim':
-    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[var(--general-body-bold-weight)]',
+    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[weight:var(--general-body-bold-weight)]',
   caption:
-    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] font-[var(--general-caption-weight)]',
+    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] font-[weight:var(--general-caption-weight)]',
   'caption-slim':
-    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)] font-[var(--general-caption-weight)]',
+    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)] font-[weight:var(--general-caption-weight)]',
   'caption-small':
-    'text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)] font-[var(--general-caption-weight)]',
+    'text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)] font-[weight:var(--general-caption-weight)]',
   'caption-medium-small':
-    'text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)] font-[var(--general-caption-medium-weight)]',
+    'text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)] font-[weight:var(--general-caption-medium-weight)]',
   'caption-medium-slim':
-    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)] font-[var(--general-caption-medium-weight)]',
+    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)] font-[weight:var(--general-caption-medium-weight)]',
   'caption-large':
-    'text-[length:var(--general-caption-large-size)] leading-[var(--general-caption-large-lineheight)] font-[var(--general-caption-weight)]',
+    'text-[length:var(--general-caption-large-size)] leading-[var(--general-caption-large-lineheight)] font-[weight:var(--general-caption-weight)]',
   'caption-larger':
-    'text-[length:var(--general-caption-larger-size)] leading-[var(--general-caption-larger-lineheight)] font-[var(--general-caption-weight)]',
+    'text-[length:var(--general-caption-larger-size)] leading-[var(--general-caption-larger-lineheight)] font-[weight:var(--general-caption-weight)]',
 };
 
 const STATE_CLASSES: Record<TypographyState, string> = {
