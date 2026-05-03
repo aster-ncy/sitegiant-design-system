@@ -129,13 +129,13 @@ export const BodyVariants: Story = {
       <Row label="Icon-prefixed value (e.g. date with calendar/clock prefix)">
         <Group>
           <SortBlock>
-            <Icon name="clock" size={17} />
+            <Icon name="clock" size={17} color="var(--color-set-lightest)" />
             <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
               Value
             </span>
           </SortBlock>
           <SortBlock>
-            <Icon name="calendar" size={17} />
+            <Icon name="calendar" size={17} color="var(--color-set-lightest)" />
             <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
               2020-08-18
             </span>
@@ -144,7 +144,7 @@ export const BodyVariants: Story = {
       </Row>
       <Row label="Drag handle — body is just an icon">
         <SortBlock>
-          <Icon name="drag" size={17} />
+          <Icon name="drag" size={17} color="var(--color-set-lightest)" />
         </SortBlock>
       </Row>
       <Row label="Tag — Pip body">
