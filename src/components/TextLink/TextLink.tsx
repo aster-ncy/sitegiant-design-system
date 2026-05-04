@@ -19,6 +19,11 @@ const textClasses: Record<TextLinkVariant, string> = {
   subtle: 'text-[color:var(--text-link-subtle-default)] hover:text-[color:var(--text-link-subtle-hover)]',
 };
 
+const disabledTextClasses: Record<TextLinkVariant, string> = {
+  basic: 'text-[color:var(--text-link-basic-default)]',
+  subtle: 'text-[color:var(--text-link-subtle-default)]',
+};
+
 export const TextLink = ({
   label,
   variant = 'basic',
@@ -38,7 +43,7 @@ export const TextLink = ({
         'rounded-[var(--radius-120)]',
         'transition-colors',
         disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
-        textClasses[variant],
+        disabled ? disabledTextClasses[variant] : textClasses[variant],
         className,
       ]
         .filter(Boolean)
