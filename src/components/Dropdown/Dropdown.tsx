@@ -2,6 +2,22 @@ import { useState } from 'react';
 import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+/* Form value text: 14 / 21 / regular — General/Form/form-value-* */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+/* Form label text: 14 / 21 / regular — General/Form/form-label-* */
+const formLabelTextClasses =
+  'text-[length:var(--general-form-label-size)] leading-[var(--general-form-label-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+/* Caption text (label info, hint/helper text): 12 / 17 / regular — General/Caption/caption-* */
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export interface DropdownOption {
   value: string;
   label: string;
@@ -141,8 +157,7 @@ export const Dropdown = ({
             <label
               htmlFor={id}
               className={[
-                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                formLabelTextClasses,
                 'text-[color:var(--form-label-text)]',
                 isDisabled ? 'opacity-60' : '',
               ].filter(Boolean).join(' ')}
@@ -153,8 +168,7 @@ export const Dropdown = ({
           {labelInfo && (
             <span
               className={[
-                'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-                'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                captionTextClasses,
                 'text-[color:var(--form-label-info-text)]',
               ].join(' ')}
             >
@@ -199,8 +213,7 @@ export const Dropdown = ({
             isReadonly
               ? `px-0 ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
               : `pl-[var(--spacing-12)] ${showClear ? 'pr-[var(--spacing-64)]' : 'pr-[var(--spacing-36)]'} ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            formValueTextClasses,
             selectTextClass,
             isDisabled ? 'cursor-not-allowed' : isReadonly ? 'cursor-default pointer-events-none' : 'cursor-pointer',
           ].filter(Boolean).join(' ')}
@@ -286,8 +299,7 @@ export const Dropdown = ({
       {helperText && (
         <span
           className={[
-            'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            captionTextClasses,
             isDanger
               ? 'text-[color:var(--badge-attention-fill)]'
               : 'text-[color:var(--form-label-info-text)]',
