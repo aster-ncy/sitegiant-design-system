@@ -19,18 +19,21 @@ const containerClasses = [
   'py-[var(--spacing-1)]',
   'bg-[var(--tag-fill)]',
   'rounded-[var(--radius-4)]',
-  'font-[family-name:var(--font-sans)]',
+  'font-[family-name:var(--general-font-family)]',
 ].join(' ');
 
+/* Typography per Figma node 1038:2130 — Tag and Pip share General/Pip/* */
+const tagTextClasses =
+  'text-[length:var(--general-pip-size)] leading-[var(--general-pip-lineheight)] ' +
+  'font-[weight:var(--general-pip-weight)]';
+
 const subtleTextClasses = [
-  'text-[length:var(--text-12)] leading-[var(--leading-16)]',
-  'font-[var(--font-weight-regular)]',
+  tagTextClasses,
   'text-[color:var(--tag-subtle-text)]',
 ].join(' ');
 
 const labelClasses = [
-  'text-[length:var(--text-12)] leading-[var(--leading-16)]',
-  'font-[var(--font-weight-regular)]',
+  tagTextClasses,
   'text-[color:var(--tag-text)]',
   'pr-[var(--spacing-4)]',
 ].join(' ');
