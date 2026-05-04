@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Typography } from '../Typography/Typography';
 
 export type TextLinkVariant = 'basic' | 'subtle';
 export type TextLinkIconPosition = 'none' | 'left' | 'right';
@@ -33,11 +34,8 @@ export const TextLink = ({
       onClick={onClick}
       disabled={disabled}
       className={[
-        'inline-flex items-center gap-[var(--spacing-4)]',
+        'inline-flex items-center gap-[var(--spacing-4)] whitespace-nowrap',
         'rounded-[var(--radius-120)]',
-        'font-[family-name:var(--font-sans)]',
-        'font-[var(--font-weight-regular)]',
-        'text-[length:var(--text-14)] leading-[var(--leading-16)]',
         'transition-colors',
         disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
         textClasses[variant],
@@ -47,7 +45,9 @@ export const TextLink = ({
         .join(' ')}
     >
       {iconPosition === 'left' && icon}
-      <span className="whitespace-nowrap">{label}</span>
+      <Typography type="body-slim" state="inherit">
+        {label}
+      </Typography>
       {iconPosition === 'right' && icon}
     </button>
   );
