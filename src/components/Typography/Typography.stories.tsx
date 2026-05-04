@@ -248,6 +248,30 @@ export const Languages: Story = {
   ),
 };
 
+export const Inherit: Story = {
+  render: () => (
+    <Stack>
+      <Row label="state='inherit' — color cascades from parent (red wrapper → red text)">
+        <div style={{ color: 'var(--color-sys-red-DEFAULT)' }}>
+          <Typography type="body" state="inherit">
+            This text inherits color from the parent div.
+          </Typography>
+        </div>
+      </Row>
+      <Row label="state='inherit' inside a hover-aware button — Typography contributes typography only">
+        <button
+          type="button"
+          className="text-[color:var(--text-link-basic-default)] hover:text-[color:var(--text-link-basic-hover)]"
+        >
+          <Typography type="body-slim" state="inherit">
+            Hover me — color flips, Typography stays out of the way.
+          </Typography>
+        </button>
+      </Row>
+    </Stack>
+  ),
+};
+
 export const AsElement: Story = {
   render: () => (
     <Stack>
