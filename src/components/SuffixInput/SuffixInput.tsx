@@ -3,6 +3,19 @@ import type { Ref } from 'react';
 import { Icon } from '../Icon';
 import { DropdownMenu, DropdownMenuItem } from '../DropdownMenu';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+const formValueTextBoldClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export type SuffixInputState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
 export type SuffixInputValidation = 'default' | 'error' | 'success' | 'warning';
 export type SuffixInputSize = 'default' | 'slim';
@@ -187,9 +200,7 @@ export const SuffixInput = ({
           <span
             aria-readonly="true"
             className={[
-              'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-              'font-[family-name:var(--font-sans)]',
-              isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+              isReadonlyBold ? formValueTextBoldClasses : formValueTextClasses,
               'text-[color:var(--form-input-value-text)]',
               'whitespace-nowrap',
             ].join(' ')}
@@ -212,8 +223,7 @@ export const SuffixInput = ({
         {helperText && (
           <span
             className={[
-              'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+              captionTextClasses,
               isError || isWarning
                 ? 'text-[color:var(--color-sys-red-DEFAULT)]'
                 : 'text-[color:var(--form-label-info-text)]',
@@ -274,8 +284,7 @@ export const SuffixInput = ({
                 // should use NumberInput instead.
                 '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                 'text-right',
-                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                formValueTextClasses,
                 isDisabled
                   ? 'text-[color:var(--form-input-disabled-text)] cursor-not-allowed'
                   : 'text-[color:var(--form-input-value-text)]',
@@ -296,8 +305,7 @@ export const SuffixInput = ({
                   `px-[var(--spacing-8)] ${cellPaddingY}`,
                   'border-0 border-l border-solid border-[var(--form-input-default-border)]',
                   'bg-transparent outline-none cursor-pointer',
-                  'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                  'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                  formValueTextClasses,
                   'text-[color:var(--form-input-value-text)]',
                   'whitespace-nowrap',
                 ].join(' ')}
@@ -311,8 +319,7 @@ export const SuffixInput = ({
                   hasDropdown ? 'gap-[var(--spacing-4)]' : '',
                   `px-[var(--spacing-8)] ${cellPaddingY}`,
                   'border-l border-solid border-[var(--form-input-default-border)]',
-                  'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                  'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                  formValueTextClasses,
                   isDisabled
                     ? 'text-[color:var(--form-input-disabled-text)]'
                     : 'text-[color:var(--form-input-value-text)]',
@@ -378,8 +385,7 @@ export const SuffixInput = ({
       {helperText && (
         <span
           className={[
-            'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            captionTextClasses,
             isError || isWarning
               ? 'text-[color:var(--color-sys-red-DEFAULT)]'
               : 'text-[color:var(--form-label-info-text)]',
