@@ -90,6 +90,15 @@ const valueClass = (row: SortBlockRow) => {
  * Per the 2026-05-03 build scope, only Readonly + Readonly Bold variants
  * ship. Interactive states (Default/Hover/Filled/Disabled with editable
  * inputs) are deferred.
+ *
+ * Composition patterns:
+ *  - `SortableRowComposition` story: a single grey strip with multiple
+ *    SortBlock cells flowing inline (sb6 pattern).
+ *  - `InsetHeaderWithSortBlockRows` story: an inset TableHeaderCell strip
+ *    above a list of SortBlock body rows. Use this for "draggable list
+ *    inside a card" patterns (e.g. live ERP "Add Trip → Package List").
+ *    Body cells should use existing DS primitives (TableCellMainSub,
+ *    TableCellInfo) for content rather than inline typography.
  */
 export const SortBlock = ({
   orientation = 'horizontal',
