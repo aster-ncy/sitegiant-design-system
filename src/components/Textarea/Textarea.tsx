@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import type { Ref } from 'react';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+const formValueTextBoldClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export type TextareaState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
 export type TextareaValidation = 'default' | 'error';
 
@@ -90,11 +103,7 @@ export const Textarea = ({
           aria-readonly="true"
           className={[
             'inline-flex items-start py-[var(--spacing-6)]',
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--general-font-family)]',
-            isReadonlyBold
-              ? 'font-[var(--font-weight-bold)]'
-              : 'font-[var(--font-weight-regular)]',
+            isReadonlyBold ? formValueTextBoldClasses : formValueTextClasses,
             'text-[color:var(--form-input-value-text)]',
             'whitespace-pre-wrap',
           ].join(' ')}
@@ -104,8 +113,7 @@ export const Textarea = ({
         {helperText && (
           <span
             className={[
-              'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
-              'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+              captionTextClasses,
               'text-[color:var(--color-text-info)]',
             ].join(' ')}
           >
@@ -138,8 +146,7 @@ export const Textarea = ({
           'outline-none',
           'resize-y',
           'p-[var(--spacing-12)]',
-          'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-          'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+          formValueTextClasses,
           textClass,
           'placeholder:text-[color:var(--form-input-placeholder-text)]',
           'transition-colors duration-150',
@@ -156,8 +163,7 @@ export const Textarea = ({
             <span
               className={[
                 'flex-1 min-w-0',
-                'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
-                'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+                captionTextClasses,
                 helperColor,
               ].join(' ')}
             >
@@ -168,8 +174,7 @@ export const Textarea = ({
             <span
               className={[
                 'shrink-0 text-right',
-                'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
-                'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+                captionTextClasses,
                 'text-[color:var(--color-text-info)]',
               ].join(' ')}
             >
