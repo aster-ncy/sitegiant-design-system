@@ -6,6 +6,19 @@ import { Chip } from '../Chip';
 
 const { RangePicker } = AntDatePicker;
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+const formValueTextBoldClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export type DateRangePickerState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
 export type DateRangePickerValidation = 'default' | 'error' | 'success';
 export type DateRangePickerSize = 'default' | 'slim';
@@ -141,9 +154,7 @@ export const DateRangePicker = ({
           aria-readonly="true"
           className={[
             `inline-flex items-center gap-[var(--spacing-6)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'} w-fit`,
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--general-font-family)]',
-            isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+            isReadonlyBold ? formValueTextBoldClasses : formValueTextClasses,
             'text-[color:var(--form-input-value-text)]',
             'whitespace-nowrap',
           ].join(' ')}
@@ -160,10 +171,7 @@ export const DateRangePicker = ({
         {helperText && (
           <span
             className={[
-              'font-[family-name:var(--general-font-family)]',
-              'text-[length:var(--general-caption-size)]',
-              'leading-[var(--general-caption-lineheight)]',
-              'font-[var(--font-weight-regular)]',
+              captionTextClasses,
               'text-[color:var(--color-text-info)]',
             ].join(' ')}
           >
@@ -226,10 +234,7 @@ export const DateRangePicker = ({
       {helperText && (
         <span
           className={[
-            'font-[family-name:var(--general-font-family)]',
-            'text-[length:var(--general-caption-size)]',
-            'leading-[var(--general-caption-lineheight)]',
-            'font-[var(--font-weight-regular)]',
+            captionTextClasses,
             helperColor,
           ].join(' ')}
         >
