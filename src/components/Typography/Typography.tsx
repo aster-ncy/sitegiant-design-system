@@ -124,10 +124,11 @@ const LANG_CLASSES: Record<TypographyLang, string> = {
 /**
  * Typography — Figma: [EN]/[繁中]/[简中] Text (2338:4549, 2338:4551, 2338:4553).
  *
- * Single canonical text component. 19 type scales × 10 color states × 3
- * languages, all driven by --general-* and --color-text-* tokens. The
- * `italic` flag works with body/body-slim variants per Figma's "Body Italic"
- * and "Body Italic Slim" Type axis.
+ * Single canonical text component. 19 type scales × 10 color states (plus
+ * `inherit` for parent-driven color) × 3 languages, all driven by
+ * --general-* and --color-text-* tokens. The `italic` flag works with
+ * body/body-slim variants per Figma's "Body Italic" and "Body Italic Slim"
+ * Type axis.
  *
  * Renders a `<span>` by default; pass `as` to override the element while
  * keeping the typography (e.g. `<Typography as="h2" type="section-small-title">`).
