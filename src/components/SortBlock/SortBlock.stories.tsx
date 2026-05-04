@@ -324,7 +324,8 @@ export const SortableRowComposition: Story = {
  *   - SortBlockMainSub (customer): vertical 14/17 + 12/17 stack, gap-4
  *   - SortBlockLongContent (address): flex-col of value paragraphs
  *
- * Our shipped SortBlock's `rows` API covers all four:
+ * Our shipped SortBlock's `rows` API covers the three text-cell cases
+ * (Default, MainSub, LongContent):
  *   - no-label cells: omit `label` (or pass empty string) — the label
  *     slot is skipped
  *   - wrap cells: set `wrap: true` on the row — drops nowrap and
@@ -332,7 +333,8 @@ export const SortableRowComposition: Story = {
  *   - mainSub gap: set `mainSub` on the SortBlock (when no className
  *     override is needed); call sites that pass className for layout
  *     control encode `gap-4` directly
- * Children API stays for body variants only (icon, button, image, etc.).
+ * Icon cells (SortBlockIcon — drag, close) use the children API since
+ * the body is an Icon / button, not a label/value pair.
  */
 export const InsetHeaderWithSortBlockRows: Story = {
   render: () => {
