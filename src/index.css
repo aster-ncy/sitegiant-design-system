@@ -876,6 +876,11 @@
   --general-body-large-size: var(--text-16);
   --general-body-large-lineheight: var(--leading-22);
 
+  /* Pip typography — Figma: General/Pip (also used by Tag, see node 1038:2130) */
+  --general-pip-size: var(--text-12);
+  --general-pip-lineheight: var(--leading-15);
+  --general-pip-weight: var(--font-weight-regular);
+
   /* ========================================
      TYPOGRAPHY SCALE — Figma: General/{Section,Display,Heading,Body,Caption}/*
      Drives <Typography> component. Names match Figma exactly.
