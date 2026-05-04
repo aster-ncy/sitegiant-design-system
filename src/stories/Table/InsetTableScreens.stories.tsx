@@ -11,6 +11,7 @@ import { TableExpandToggle } from '../../components/TableExpandToggle';
 import { Checkbox } from '../../components/Checkbox';
 import { Pip } from '../../components/Pip';
 import { Icon } from '../../components/Icon';
+import { IconLink } from '../../components/IconLink';
 import { ProductImage } from '../../components/ProductImageList/ProductImage';
 import { ProgressBar } from '../../components/ProgressBar';
 import { SortBlock } from '../../components/SortBlock';
@@ -590,6 +591,9 @@ export const S6SendToLalamove: Story = {
  * span, even for empty strings).
  * ──────────────────────────────────────────────────────────────────── */
 
+const S7_COL_WIDTH = 180;
+const S7_ICON_COL_WIDTH = 'w-[24px] flex-none';
+
 const S7_ROW_OVERRIDE =
   'flex items-start w-full ' +
   'bg-[color:var(--sorting-block-sorting-fill)] ' +
@@ -664,38 +668,38 @@ export const S7AddTrip: Story = {
             className="flex items-center w-full bg-[color:var(--sorting-block-sorting-fill)]
                        px-[var(--spacing-6)] py-[var(--spacing-12)] gap-[var(--spacing-8)]"
           >
-            <div className="w-[24px] flex-none" aria-hidden />
-            <span className={S7_HEADER_LABEL} style={{ width: 180 }}>
+            <div className={S7_ICON_COL_WIDTH} aria-hidden />
+            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
               Tracking No.
             </span>
-            <span className={S7_HEADER_LABEL} style={{ width: 180 }}>
+            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
               Delivery Date
             </span>
-            <span className={S7_HEADER_LABEL} style={{ width: 180 }}>
+            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
               Customer
             </span>
             <span className={`${S7_HEADER_LABEL} flex-1`}>Shipping Address</span>
-            <div className="w-[24px] flex-none" aria-hidden />
+            <div className={S7_ICON_COL_WIDTH} aria-hidden />
           </div>
 
           {/* Body rows — each is one SortBlock */}
           {rows.map((row) => (
             <SortBlock key={row.id} className={S7_ROW_OVERRIDE}>
-              <div className="flex items-center justify-center w-[24px] flex-none self-stretch">
+              <div className={`flex items-center justify-center ${S7_ICON_COL_WIDTH} self-stretch`}>
                 <Icon
                   name="drag"
                   size={17}
                   className="text-[color:var(--color-icon-secondary)] cursor-grab"
                 />
               </div>
-              <span style={{ width: 180 }} className={S7_VALUE_BOLD}>
+              <span style={{ width: S7_COL_WIDTH }} className={S7_VALUE_BOLD}>
                 {row.tracking}
               </span>
-              <span style={{ width: 180 }} className={S7_VALUE_REG}>
+              <span style={{ width: S7_COL_WIDTH }} className={S7_VALUE_REG}>
                 {row.deliveryDate}
               </span>
               <div
-                style={{ width: 180 }}
+                style={{ width: S7_COL_WIDTH }}
                 className="flex flex-col gap-[var(--spacing-2)]"
               >
                 <span className={S7_VALUE_REG}>{row.customerName}</span>
@@ -704,8 +708,8 @@ export const S7AddTrip: Story = {
               <div className="flex-1 min-w-0">
                 <span className={S7_VALUE_WRAP}>{row.address}</span>
               </div>
-              <div className="flex items-start justify-center w-[24px] flex-none self-stretch">
-                <IconButton name="close" label="Remove package" />
+              <div className={`flex items-start justify-center ${S7_ICON_COL_WIDTH} self-stretch`}>
+                <IconLink icon="close" variant="close" aria-label="Remove package" />
               </div>
             </SortBlock>
           ))}
