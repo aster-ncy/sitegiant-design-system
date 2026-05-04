@@ -31,7 +31,8 @@ export type TypographyState =
   | 'danger'
   | 'alert'
   | 'warning'
-  | 'on-dark';
+  | 'on-dark'
+  | 'inherit';
 
 export type TypographyLang = 'en' | 'tc' | 'sc';
 
@@ -107,6 +108,11 @@ const STATE_CLASSES: Record<TypographyState, string> = {
   alert: 'text-[color:var(--color-text-alert)]',
   warning: 'text-[color:var(--color-text-warning)]',
   'on-dark': 'text-[color:var(--color-text-ondark)]',
+  // 'inherit' contributes no color class — color cascades from parent.
+  // Use this when wrapping Typography inside a component that owns its own
+  // color/hover/state logic (e.g. TextLink, Button) and just needs the
+  // size/leading/weight from the typography scale.
+  inherit: '',
 };
 
 const LANG_CLASSES: Record<TypographyLang, string> = {
