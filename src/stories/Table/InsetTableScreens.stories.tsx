@@ -11,8 +11,10 @@ import { TableExpandToggle } from '../../components/TableExpandToggle';
 import { Checkbox } from '../../components/Checkbox';
 import { Pip } from '../../components/Pip';
 import { Icon } from '../../components/Icon';
+import { IconLink } from '../../components/IconLink';
 import { ProductImage } from '../../components/ProductImageList/ProductImage';
 import { ProgressBar } from '../../components/ProgressBar';
+import { SortBlock } from '../../components/SortBlock';
 import { TextLink } from '../../components/TextLink';
 import { Dropdown } from '../../components/Dropdown';
 import { DatePicker } from '../../components/DatePicker';
@@ -576,90 +578,145 @@ export const S6SendToLalamove: Story = {
   ),
 };
 
+/* ── s7-only constants for the SortBlock-per-row composition ───────────
+ *
+ * PATTERN: One <SortBlock> per body row; cells inside are plain divs.
+ * SortBlock's default root is inline-flex, so we pass ROW_OVERRIDE which
+ * REPLACES the built-in classes (per SortBlock.tsx:24) — we keep the bg,
+ * px, py chrome and swap inline-flex for flex w-full.
+ *
+ * Body cells use plain typography constants (NOT SortBlock's rows API)
+ * because: (a) values must wrap (rows API forces whitespace-nowrap),
+ * (b) cells have no inline labels (rows API always renders the label
+ * span, even for empty strings).
+ * ──────────────────────────────────────────────────────────────────── */
+
+const S7_COL_WIDTH = 180;
+const S7_ICON_COL_WIDTH = 'w-[24px] flex-none';
+
+const S7_ROW_OVERRIDE =
+  'flex items-start w-full ' +
+  'bg-[color:var(--sorting-block-sorting-fill)] ' +
+  'px-[var(--spacing-6)] py-[var(--spacing-12)] ' +
+  'gap-[var(--spacing-8)]';
+
+const S7_HEADER_LABEL =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-info)]';
+
+const S7_VALUE_REG =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
+
+const S7_VALUE_BOLD =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-bold)] ' +
+  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
+
+const S7_VALUE_CAPTION =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
+
+// Intentionally NO whitespace-nowrap — the address cell must wrap.
+const S7_VALUE_WRAP =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)]';
+
 /* ── s7 Add Trip — Package List ────────────────────────── */
 
 /**
- * TODO(SortBlock): each row of this list is the Figma "Sort Block -
- * MainSub" variant — a draggable list item with leading drag-handle,
- * multi-line content, and trailing close button. SortBlock is the
- * authoritative atom for this pattern (Figma component_set
- * `b59d4f9522e1d0ef16c22b7eee9ed78c831fe36b`) but is currently blocked
- * behind the TooltipTrigger → IconLink → DashedButton dependency
- * chain in code.
+ * Each row is one <SortBlock className={S7_ROW_OVERRIDE}> with plain div
+ * cells inside. The header above the rows is a plain <div> strip — not
+ * a SortBlock — that mirrors the same grey chrome and column widths so
+ * the header labels align horizontally with the body values.
  *
- * The current implementation composes TableCell with a `drag` Icon in
- * leadingIcon and an IconButton in trailing as a stand-in. Once
- * SortBlock ships, replace the per-row composition here with
- * `<SortBlock variant="mainSub" ...>`.
+ * Figma: "Sort Block — MainSub" (component_set
+ * `b59d4f9522e1d0ef16c22b7eee9ed78c831fe36b`).
  */
 export const S7AddTrip: Story = {
-  render: () => (
-    <div className={cardClasses}>
-      <table className="border-collapse w-full table-fixed">
-        <thead>
-          <tr>
-            <TH inset column="first" align="left" label="" />
-            <TH inset column="center" align="left" label="Tracking No." />
-            <TH inset column="center" align="left" label="Delivery Date" />
-            <TH inset column="center" align="left" label="Customer" />
-            <TH inset column="center" align="left" label="Shipping Address" />
-            <TH inset column="last" align="left" label="" />
-          </tr>
-        </thead>
-        <tbody>
-          {[1, 2].map((id, index, all) => {
-            // alignTop: rows mix a single-line Tracking No. with
-            // multi-line Customer (vertical Info) and Address (multi-
-            // paragraph Info) cells.
-            const rowProp = index === all.length - 1 ? 'last' : 'middle';
-            return (
-            <tr key={id}>
-              <Cell
-                alignTop
-                inset
-                column="first"
-                row={rowProp}
-                leadingIcon={<Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)] cursor-grab" />}
-              />
-              <Cell alignTop inset column="center" weight="bold" row={rowProp}>
-                MY123554G85899
-              </Cell>
-              <Cell alignTop inset column="center" row={rowProp}>
-                08 May 2025 4:00PM
-              </Cell>
-              <Cell alignTop inset column="center" row={rowProp}>
-                <TableCellInfo
-                  alignment="vertical"
-                  statuses={[{ label: 'Wei Kheng', body: '60 12-456 6556' }]}
+  render: () => {
+    const rows = [
+      {
+        id: 'pkg-1',
+        tracking: 'MY123554G85899',
+        deliveryDate: '08 May 2025 4:00PM',
+        customerName: 'Wei Kheng',
+        customerPhone: '60 12-456 6556',
+        address:
+          '123, Jalan Mayang Pasir, 11200 Bayan Baru, Pulau Pinang, Malaysia.',
+      },
+      {
+        id: 'pkg-2',
+        tracking: 'MY123554G85899',
+        deliveryDate: '08 May 2025 4:00PM',
+        customerName: 'Wei Kheng',
+        customerPhone: '60 12-456 6556',
+        address:
+          '123, Jalan Mayang Pasir, 11200 Bayan Baru, Pulau Pinang, Malaysia.',
+      },
+    ];
+
+    return (
+      <div className={cardClasses}>
+        <div className="flex flex-col gap-[var(--spacing-8)]">
+          {/* Header strip — labels only, NOT a SortBlock */}
+          <div
+            className="flex items-center w-full bg-[color:var(--sorting-block-sorting-fill)]
+                       px-[var(--spacing-6)] py-[var(--spacing-12)] gap-[var(--spacing-8)]"
+          >
+            <div className={S7_ICON_COL_WIDTH} aria-hidden />
+            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
+              Tracking No.
+            </span>
+            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
+              Delivery Date
+            </span>
+            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
+              Customer
+            </span>
+            <span className={`${S7_HEADER_LABEL} flex-1`}>Shipping Address</span>
+            <div className={S7_ICON_COL_WIDTH} aria-hidden />
+          </div>
+
+          {/* Body rows — each is one SortBlock */}
+          {rows.map((row) => (
+            <SortBlock key={row.id} className={S7_ROW_OVERRIDE}>
+              <div className={`flex items-center justify-center ${S7_ICON_COL_WIDTH} self-stretch`}>
+                <Icon
+                  name="drag"
+                  size={17}
+                  className="text-[color:var(--color-icon-secondary)] cursor-grab"
                 />
-              </Cell>
-              <Cell alignTop inset column="center" row={rowProp}>
-                <TableCellInfo
-                  statuses={[{
-                    label: '',
-                    body: [
-                      '123, Jalan Mayang Pasir,',
-                      '11200 Bayan Baru,',
-                      'Pulau Pinang, Malaysia.',
-                    ],
-                  }]}
-                />
-              </Cell>
-              <Cell
-                alignTop
-                inset
-                column="last"
-                align="right"
-                row={rowProp}
-                trailing={<IconButton name="close" label="Remove package" />}
-              />
-            </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  ),
+              </div>
+              <span style={{ width: S7_COL_WIDTH }} className={S7_VALUE_BOLD}>
+                {row.tracking}
+              </span>
+              <span style={{ width: S7_COL_WIDTH }} className={S7_VALUE_REG}>
+                {row.deliveryDate}
+              </span>
+              <div
+                style={{ width: S7_COL_WIDTH }}
+                className="flex flex-col gap-[var(--spacing-2)]"
+              >
+                <span className={S7_VALUE_REG}>{row.customerName}</span>
+                <span className={S7_VALUE_CAPTION}>{row.customerPhone}</span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <span className={S7_VALUE_WRAP}>{row.address}</span>
+              </div>
+              <div className={`flex items-start justify-center ${S7_ICON_COL_WIDTH} self-stretch`}>
+                <IconLink icon="close" variant="close" aria-label="Remove package" />
+              </div>
+            </SortBlock>
+          ))}
+        </div>
+      </div>
+    );
+  },
 };
 
 /* ── s8 Select Package modal ───────────────────────────── */
