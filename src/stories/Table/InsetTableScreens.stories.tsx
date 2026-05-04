@@ -689,8 +689,12 @@ export const S7AddTrip: Story = {
                 />
 
                 {/* Customer — Figma MainSub variant: vertical 2-row,
-                    gap-4 between pairs (mainSub flag), main row body
-                    14/17, sub row caption 12/17. */}
+                    gap-4 between pairs, main 14/17, sub caption 12/17.
+                    `className` REPLACES the SortBlock root, so we
+                    encode the gap-4 here (the `mainSub` prop only
+                    drives the gap when no className is passed; in s7
+                    we need full layout control for self-stretch + the
+                    fixed column width). */}
                 <SortBlock
                   className="flex flex-col items-start
                              bg-[color:var(--sorting-block-sorting-fill)]
@@ -698,17 +702,18 @@ export const S7AddTrip: Story = {
                              px-[var(--spacing-6)] py-[var(--spacing-12)]
                              gap-[var(--spacing-4)]"
                   orientation="vertical"
-                  mainSub
                   rows={[
                     { value: row.customerName },
                     { value: row.customerPhone, caption: true },
                   ]}
                 />
 
-                {/* Address — Figma LongContent variant: single multi-line
-                    value. `wrap` drops whitespace-nowrap so the address
-                    flows onto multiple lines. The Figma fixture pre-breaks
-                    the address into 3 lines via newlines in the string. */}
+                {/* Address — Figma LongContent variant. `wrap: true`
+                    enables whitespace-pre-line so the address (a) flows
+                    onto multiple lines via natural CSS wrap when the
+                    cell is narrow enough AND (b) honours \n in the
+                    source. Figma's fixture pre-breaks with \n; we
+                    mirror that by joining addressLines. */}
                 <SortBlock
                   className="flex items-start
                              bg-[color:var(--sorting-block-sorting-fill)]

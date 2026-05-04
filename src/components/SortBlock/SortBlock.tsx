@@ -32,7 +32,12 @@ export interface SortBlockProps {
   /** Switch the vertical 2-row gap from the default 8px to 4px. Use with
    *  `orientation='vertical'` and 2 rows to render the Figma "MainSub"
    *  variant where the main and sub pairs sit closer together. Has no
-   *  effect on horizontal mode or single-row vertical. Default false. */
+   *  effect on horizontal mode or single-row vertical. Default false.
+   *
+   *  NOTE: `className` REPLACES the root layout class string, so passing
+   *  a custom `className` makes this prop a no-op. When you need to
+   *  override the root chrome (e.g. for `self-stretch` inside a parent
+   *  flex row), encode `gap-4` directly in your `className` instead. */
   mainSub?: boolean;
   /** REPLACES (not appends) the built-in classes. Pass the full layout you want. */
   className?: string;
