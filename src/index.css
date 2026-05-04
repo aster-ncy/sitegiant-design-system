@@ -841,7 +841,7 @@
   /* ========================================
      GENERAL / TYPOGRAPHY
      ======================================== */
-  --general-font-family: 'Roboto', sans-serif;
+  --general-font-family: var(--font-sans);
   
   --general-button-primary-size: 14px;
   --general-button-primary-lineheight: 17px;
