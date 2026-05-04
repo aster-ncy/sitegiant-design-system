@@ -676,78 +676,46 @@ export const S7AddTrip: Story = {
                   />
                 </SortBlock>
 
-                {/* Tracking — SortBlock children with bold value span.
-                    `rows` API would force gap-8 between an empty label
-                    column and the value, so children + manual span is
-                    the right escape hatch when there's no label. */}
-                <SortBlock className={`${sbTextCell} flex-1 min-w-0`}>
-                  <span
-                    className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-bold)]
-                               text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
-                               text-[color:var(--color-text-primary)] whitespace-nowrap"
-                  >
-                    {row.tracking}
-                  </span>
-                </SortBlock>
-
-                {/* Delivery — SortBlock children with regular value span. */}
-                <SortBlock className={`${sbTextCell} w-[166px]`}>
-                  <span
-                    className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
-                               text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
-                               text-[color:var(--color-text-primary)] whitespace-nowrap"
-                  >
-                    {row.deliveryDate}
-                  </span>
-                </SortBlock>
-
-                {/* Customer — SortBlock children with MainSub-style stack
-                    (main 14/17 + sub 12/17 caption, gap-4). Same children
-                    rationale as Tracking: rows API would render empty
-                    label spans that take vertical space. */}
+                {/* Tracking — bold readonly value via rows API. */}
                 <SortBlock
-                  className="flex flex-col items-start gap-[var(--spacing-4)]
-                             bg-[color:var(--sorting-block-sorting-fill)]
-                             self-stretch w-[130px]
-                             px-[var(--spacing-6)] py-[var(--spacing-12)]"
-                >
-                  <span
-                    className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
-                               text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
-                               text-[color:var(--color-text-primary)] whitespace-nowrap"
-                  >
-                    {row.customerName}
-                  </span>
-                  <span
-                    className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
-                               text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]
-                               text-[color:var(--color-text-primary)] whitespace-nowrap"
-                  >
-                    {row.customerPhone}
-                  </span>
-                </SortBlock>
+                  className={`${sbTextCell} flex-1 min-w-0`}
+                  rows={[{ value: row.tracking, bold: true }]}
+                />
 
-                {/* Address — SortBlock children for the multi-line stack.
-                    The lines are pre-broken (one paragraph per line).
-                    SortBlock's `rows` API would force whitespace-nowrap,
-                    so children is the right escape hatch here. */}
+                {/* Delivery — regular readonly value via rows API. */}
+                <SortBlock
+                  className={`${sbTextCell} w-[166px]`}
+                  rows={[{ value: row.deliveryDate }]}
+                />
+
+                {/* Customer — Figma MainSub variant: vertical 2-row,
+                    gap-4 between pairs (mainSub flag), main row body
+                    14/17, sub row caption 12/17. */}
                 <SortBlock
                   className="flex flex-col items-start
                              bg-[color:var(--sorting-block-sorting-fill)]
+                             self-stretch w-[130px]
+                             px-[var(--spacing-6)] py-[var(--spacing-12)]
+                             gap-[var(--spacing-4)]"
+                  orientation="vertical"
+                  mainSub
+                  rows={[
+                    { value: row.customerName },
+                    { value: row.customerPhone, caption: true },
+                  ]}
+                />
+
+                {/* Address — Figma LongContent variant: single multi-line
+                    value. `wrap` drops whitespace-nowrap so the address
+                    flows onto multiple lines. The Figma fixture pre-breaks
+                    the address into 3 lines via newlines in the string. */}
+                <SortBlock
+                  className="flex items-start
+                             bg-[color:var(--sorting-block-sorting-fill)]
                              self-stretch w-[203px]
                              px-[var(--spacing-6)] py-[var(--spacing-12)]"
-                >
-                  {row.addressLines.map((line, i) => (
-                    <span
-                      key={i}
-                      className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
-                                 text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
-                                 text-[color:var(--color-text-primary)]"
-                    >
-                      {line}
-                    </span>
-                  ))}
-                </SortBlock>
+                  rows={[{ value: row.addressLines.join('\n'), wrap: true }]}
+                />
 
                 {/* Close — SortBlock with Icon child (17px close glyph) */}
                 <SortBlock className={`${sbIconCell} w-[45px]`}>
