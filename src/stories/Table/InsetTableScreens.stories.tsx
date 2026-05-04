@@ -681,7 +681,7 @@ export const S7AddTrip: Story = {
           {/* Body rows — each is one SortBlock */}
           {rows.map((row) => (
             <SortBlock key={row.id} className={S7_ROW_OVERRIDE}>
-              <div className="flex items-center self-stretch">
+              <div className="flex items-center justify-center w-[24px] flex-none self-stretch">
                 <Icon
                   name="drag"
                   size={17}
@@ -704,7 +704,7 @@ export const S7AddTrip: Story = {
               <div className="flex-1 min-w-0">
                 <span className={S7_VALUE_WRAP}>{row.address}</span>
               </div>
-              <div className="flex items-start self-stretch">
+              <div className="flex items-start justify-center w-[24px] flex-none self-stretch">
                 <IconButton name="close" label="Remove package" />
               </div>
             </SortBlock>
