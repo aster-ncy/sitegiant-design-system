@@ -188,6 +188,23 @@ export const NoLabel: Story = {
       <Row label="Empty label — label slot is skipped, value sits at cell start">
         <SortBlock rows={[{ value: 'MY123554G85899', bold: true }]} />
       </Row>
+      <Row label="Horizontal mixed labels (2 rows: one labelled, one not) — labelled row keeps its label, unlabelled row's slot collapses to an empty placeholder so column rows still align">
+        <SortBlock
+          rows={[
+            { label: 'Tracking No.', value: 'MY123554G85899' },
+            { value: 'MY999999A11111' },
+          ]}
+        />
+      </Row>
+      <Row label="Vertical mixed labels — same rule per pair: only labelled rows render their label">
+        <SortBlock
+          orientation="vertical"
+          rows={[
+            { label: 'Order ID', value: '878973829' },
+            { value: 'CP13010263179835' },
+          ]}
+        />
+      </Row>
     </Stack>
   ),
 };
@@ -404,7 +421,11 @@ export const InsetHeaderWithSortBlockRows: Story = {
                 rows={[{ value: row.deliveryDate }]}
               />
 
-              {/* Customer — Figma MainSub: vertical 2-row, gap-4 (mainSub) */}
+              {/* Customer — Figma MainSub: vertical 2-row, gap-4.
+                  className REPLACES the root, so we hardcode gap-4 here
+                  (the `mainSub` prop only drives the gap when no
+                  className is passed; here we need self-stretch + width
+                  which require full layout control). */}
               <SortBlock
                 className="flex flex-col items-start
                            bg-[color:var(--sorting-block-sorting-fill)]
@@ -412,7 +433,6 @@ export const InsetHeaderWithSortBlockRows: Story = {
                            px-[var(--spacing-6)] py-[var(--spacing-12)]
                            gap-[var(--spacing-4)]"
                 orientation="vertical"
-                mainSub
                 rows={[
                   { value: row.customerName },
                   { value: row.customerPhone, caption: true },
