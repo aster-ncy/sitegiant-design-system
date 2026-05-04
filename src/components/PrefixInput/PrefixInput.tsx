@@ -3,6 +3,19 @@ import type { Ref } from 'react';
 import { Icon } from '../Icon';
 import { DropdownMenu, DropdownMenuItem } from '../DropdownMenu';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+const formValueTextBoldClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export type PrefixInputState = 'default' | 'disabled' | 'readonly' | 'readonly-bold';
 export type PrefixInputValidation = 'default' | 'error' | 'success';
 export type PrefixInputSize = 'default' | 'slim';
@@ -124,9 +137,7 @@ export const PrefixInput = ({
           aria-readonly="true"
           className={[
             `inline-flex items-center gap-[var(--spacing-4)] ${py} w-fit`,
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--general-font-family)]',
-            isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+            isReadonlyBold ? formValueTextBoldClasses : formValueTextClasses,
             'text-[color:var(--form-input-value-text)]',
             'whitespace-nowrap',
           ].join(' ')}
@@ -137,10 +148,7 @@ export const PrefixInput = ({
         {helperText && (
           <span
             className={[
-              'font-[family-name:var(--general-font-family)]',
-              'text-[length:var(--general-caption-size)]',
-              'leading-[var(--general-caption-lineheight)]',
-              'font-[var(--font-weight-regular)]',
+              captionTextClasses,
               'text-[color:var(--color-text-info)]',
             ].join(' ')}
           >
@@ -209,8 +217,7 @@ export const PrefixInput = ({
                   'border-0 border-r border-solid border-[var(--form-input-default-border)]',
                   'bg-transparent outline-none',
                   'cursor-pointer',
-                  'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+                  formValueTextClasses,
                   textColor,
                   'whitespace-nowrap',
                 ].join(' ')}
@@ -224,8 +231,7 @@ export const PrefixInput = ({
                   hasDropdown ? 'gap-[var(--spacing-4)]' : '',
                   `px-[var(--spacing-8)] ${py}`,
                   'border-r border-solid border-[var(--form-input-default-border)]',
-                  'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+                  formValueTextClasses,
                   textColor,
                   'whitespace-nowrap',
                 ].filter(Boolean).join(' ')}
@@ -252,8 +258,7 @@ export const PrefixInput = ({
                 '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
                 `px-[var(--spacing-8)] ${py}`,
                 'text-right',
-                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+                formValueTextClasses,
                 textColor,
                 'placeholder:text-[color:var(--form-input-placeholder-text)]',
                 isDisabled ? 'cursor-not-allowed' : '',
@@ -314,10 +319,7 @@ export const PrefixInput = ({
       {helperText && (
         <span
           className={[
-            'font-[family-name:var(--general-font-family)]',
-            'text-[length:var(--general-caption-size)]',
-            'leading-[var(--general-caption-lineheight)]',
-            'font-[var(--font-weight-regular)]',
+            captionTextClasses,
             helperColor,
           ].join(' ')}
         >
