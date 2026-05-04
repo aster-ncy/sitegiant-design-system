@@ -6,7 +6,6 @@ import { TextLink } from '../TextLink';
 import { DashedButton } from '../DashedButton';
 import { IconLink } from '../IconLink';
 import { TableHeaderCell } from '../TableHeaderCell';
-import { TableCellMainSub, TableCellInfo } from '../TableCell';
 
 const meta = {
   title: 'Information/SortBlock',
@@ -228,36 +227,25 @@ export const SortableRowComposition: Story = {
 };
 
 /**
- * Inset Header + SortBlock Rows — pairing the inset TableHeaderCell as
- * a labels-only header strip above a list of SortBlock body rows.
+ * Inset Header + SortBlock Cells — pairing inset TableHeaderCells above
+ * rows where every cell is its own SortBlock with a grey fill, abutting
+ * horizontally so the row reads as one strip.
  *
  * This is the canonical composition for "draggable list inside a card"
- * patterns (e.g. the live ERP "Add Trip → Package List" screen). The
- * header carries the column labels with proper inset header chrome; each
- * SortBlock provides the row-level grey strip + drag/close affordances.
- * Body cells use the existing TableCellMainSub / TableCellInfo
- * primitives for stacked or multi-paragraph content.
+ * patterns (e.g. the live ERP "Add Trip → Package List" screen, Figma
+ * 3479:35614). The Figma design exposes per-column SortBlock variants:
+ *   - SortBlockIcon (drag, close): pl-12 pr-16 py-12 with a 17px icon
+ *   - SortBlockDefault (tracking, delivery): px-6 py-12 with rows API
+ *   - SortBlockMainSub (customer): vertical 14/17 + 12/17 stack, gap-4
+ *   - SortBlockLongContent (address): flex-col of value paragraphs
  *
- * Layout requirements:
- *  - SortBlock's default root is `inline-flex`; pass a className that
- *    REPLACES the built-in classes (per `SortBlock.tsx`) with
- *    `flex w-full` so the row spans the card width.
- *  - Match the inset header's `<colgroup>` widths to the body cell
- *    widths; align each cell's `px-6` padding with the header's
- *    per-column `px-6` so labels and values share an x-grid.
- *  - Drag/close cells use `items-start` + `self-stretch` so icons stay
- *    top-anchored when other cells span multiple lines.
+ * Our shipped SortBlock supports horizontal/vertical rows + a children
+ * escape hatch. For cells that can't use rows (no label, must wrap, or
+ * gap-mismatch), use the children API and write the value spans
+ * directly with the right --general-* typography tokens.
  */
 export const InsetHeaderWithSortBlockRows: Story = {
   render: () => {
-    const COL_WIDTH = 180;
-    const ICON_COL_WIDTH = 'w-[24px] flex-none';
-    const CELL_PX = 'px-[var(--spacing-6)]';
-    const ROW_OVERRIDE =
-      'flex items-start w-full ' +
-      'bg-[color:var(--sorting-block-sorting-fill)] ' +
-      'py-[var(--spacing-12)]';
-
     const rows = [
       {
         id: 'pkg-1',
@@ -285,81 +273,136 @@ export const InsetHeaderWithSortBlockRows: Story = {
       },
     ];
 
+    // Per-cell SortBlock chrome:
+    //   - icon cells: pl-12 pr-16 py-12 (Figma SortBlockIcon)
+    //   - text cells: px-6 py-12 with gap-8 between label/value cols
+    //     (Figma SortBlockDefault)
+    const sbIconCell =
+      'flex items-start self-stretch ' +
+      'bg-[color:var(--sorting-block-sorting-fill)] ' +
+      'pl-[var(--spacing-12)] pr-[var(--spacing-16)] py-[var(--spacing-12)]';
+    const sbTextCell =
+      'flex items-start self-stretch ' +
+      'bg-[color:var(--sorting-block-sorting-fill)] ' +
+      'px-[var(--spacing-6)] py-[var(--spacing-12)] ' +
+      'gap-[var(--spacing-8)]';
+
     return (
       <div className="flex flex-col gap-[var(--spacing-8)]">
-        {/* Header — inset TableHeaderCell column labels.
-            <colgroup> pins column widths to match the SortBlock body rows. */}
-        <table className="border-collapse w-full table-fixed">
-          <colgroup>
-            <col style={{ width: 24 }} />
-            <col style={{ width: COL_WIDTH }} />
-            <col style={{ width: COL_WIDTH }} />
-            <col style={{ width: COL_WIDTH }} />
-            <col />
-            <col style={{ width: 32 }} />
-          </colgroup>
-          <thead>
-            <tr>
-              <th className="p-0">
-                <TableHeaderCell inset column="center" align="left" label="" />
-              </th>
-              <th className="p-0">
-                <TableHeaderCell inset column="center" align="left" label="Tracking No." />
-              </th>
-              <th className="p-0">
-                <TableHeaderCell inset column="center" align="left" label="Delivery Date" />
-              </th>
-              <th className="p-0">
-                <TableHeaderCell inset column="center" align="left" label="Customer" />
-              </th>
-              <th className="p-0">
-                <TableHeaderCell inset column="center" align="left" label="Shipping Address" />
-              </th>
-              <th className="p-0">
-                <TableHeaderCell inset column="center" align="left" label="" />
-              </th>
-            </tr>
-          </thead>
-        </table>
+        {/* Header — flex of 6 inset TableHeaderCells */}
+        <div className="flex w-full">
+          <div className="w-[45px] flex">
+            <TableHeaderCell inset column="first" align="left" label="" />
+          </div>
+          <div className="flex-1 min-w-0 flex">
+            <TableHeaderCell inset column="center" align="left" label="Tracking No." />
+          </div>
+          <div className="w-[166px] flex">
+            <TableHeaderCell inset column="center" align="left" label="Delivery Date" />
+          </div>
+          <div className="w-[130px] flex">
+            <TableHeaderCell inset column="center" align="left" label="Customer" />
+          </div>
+          <div className="w-[203px] flex">
+            <TableHeaderCell inset column="center" align="left" label="Shipping Address" />
+          </div>
+          <div className="w-[45px] flex">
+            <TableHeaderCell inset column="last" align="left" label="" />
+          </div>
+        </div>
 
-        {/* Body — one SortBlock per row, plain div cells inside. */}
+        {/* Body rows — flex of 6 SortBlocks per row, gap-4 between rows */}
         <div className="flex flex-col gap-[var(--spacing-4)]">
           {rows.map((row) => (
-            <SortBlock key={row.id} className={ROW_OVERRIDE}>
-              <div
-                className={`flex items-start justify-center ${ICON_COL_WIDTH} ${CELL_PX} self-stretch`}
-              >
+            <div key={row.id} className="flex w-full">
+              {/* Drag */}
+              <SortBlock className={`${sbIconCell} w-[45px]`}>
                 <Icon
                   name="drag"
                   size={17}
                   className="text-[color:var(--color-icon-secondary)] cursor-grab"
                 />
-              </div>
-              <div style={{ width: COL_WIDTH }} className={`flex items-start ${CELL_PX}`}>
-                <SortBlock
-                  className="inline-flex"
-                  rows={[{ label: '', value: row.tracking, bold: true }]}
-                />
-              </div>
-              <div style={{ width: COL_WIDTH }} className={`flex items-start ${CELL_PX}`}>
-                <SortBlock
-                  className="inline-flex"
-                  rows={[{ label: '', value: row.deliveryDate }]}
-                />
-              </div>
-              <div style={{ width: COL_WIDTH }} className={CELL_PX}>
-                <TableCellMainSub
-                  mainValue={row.customerName}
-                  subValue={row.customerPhone}
-                />
-              </div>
-              <div className={`flex-1 min-w-0 ${CELL_PX}`}>
-                <TableCellInfo statuses={[{ label: '', body: row.addressLines }]} />
-              </div>
-              <div className="flex items-start justify-center w-[32px] flex-none px-[var(--spacing-6)] self-stretch">
-                <IconLink icon="close" variant="close" aria-label="Remove package" />
-              </div>
-            </SortBlock>
+              </SortBlock>
+
+              {/* Tracking — bold value via children */}
+              <SortBlock className={`${sbTextCell} flex-1 min-w-0`}>
+                <span
+                  className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-bold)]
+                             text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
+                             text-[color:var(--color-text-primary)] whitespace-nowrap"
+                >
+                  {row.tracking}
+                </span>
+              </SortBlock>
+
+              {/* Delivery — regular value via children */}
+              <SortBlock className={`${sbTextCell} w-[166px]`}>
+                <span
+                  className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
+                             text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
+                             text-[color:var(--color-text-primary)] whitespace-nowrap"
+                >
+                  {row.deliveryDate}
+                </span>
+              </SortBlock>
+
+              {/* Customer — MainSub stack via children, gap-4 */}
+              <SortBlock
+                className="flex flex-col items-start gap-[var(--spacing-4)]
+                           bg-[color:var(--sorting-block-sorting-fill)]
+                           self-stretch w-[130px]
+                           px-[var(--spacing-6)] py-[var(--spacing-12)]"
+              >
+                <span
+                  className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
+                             text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
+                             text-[color:var(--color-text-primary)] whitespace-nowrap"
+                >
+                  {row.customerName}
+                </span>
+                <span
+                  className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
+                             text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]
+                             text-[color:var(--color-text-primary)] whitespace-nowrap"
+                >
+                  {row.customerPhone}
+                </span>
+              </SortBlock>
+
+              {/* Address — LongContent multi-line stack via children */}
+              <SortBlock
+                className="flex flex-col items-start
+                           bg-[color:var(--sorting-block-sorting-fill)]
+                           self-stretch w-[203px]
+                           px-[var(--spacing-6)] py-[var(--spacing-12)]"
+              >
+                {row.addressLines.map((line, i) => (
+                  <span
+                    key={i}
+                    className="font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]
+                               text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]
+                               text-[color:var(--color-text-primary)]"
+                  >
+                    {line}
+                  </span>
+                ))}
+              </SortBlock>
+
+              {/* Close — Icon button via children */}
+              <SortBlock className={`${sbIconCell} w-[45px]`}>
+                <button
+                  type="button"
+                  aria-label="Remove package"
+                  className="inline-flex items-center justify-center bg-transparent border-none p-0 cursor-pointer"
+                >
+                  <Icon
+                    name="close"
+                    size={17}
+                    className="text-[color:var(--color-icon-secondary)]"
+                  />
+                </button>
+              </SortBlock>
+            </div>
           ))}
         </div>
       </div>
