@@ -15,6 +15,15 @@ import type {
   TagSelectSize,
 } from '../TagSelect/TagSelect';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export interface MultiTagSelectProps {
   options: TagSelectOption[];
   /** Controlled value. */
@@ -136,8 +145,7 @@ export const MultiTagSelect = ({
           aria-readonly="true"
           className={[
             `inline-flex items-center ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'} w-fit`,
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+            formValueTextClasses,
             'text-[color:var(--form-input-value-text)]',
           ].join(' ')}
         >
@@ -146,8 +154,7 @@ export const MultiTagSelect = ({
         {helperText && (
           <span
             className={[
-              'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
-              'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+              captionTextClasses,
               'text-[color:var(--color-text-info)]',
             ].join(' ')}
           >
@@ -224,8 +231,8 @@ export const MultiTagSelect = ({
             ) : (
               <span
                 className={[
-                  'flex-1 text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
+                  'flex-1',
+                  formValueTextClasses,
                   'text-[color:var(--form-input-placeholder-text)]',
                   'truncate',
                 ].join(' ')}
@@ -323,8 +330,7 @@ export const MultiTagSelect = ({
       {helperText && (
         <span
           className={[
-            'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)]',
-            'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+            captionTextClasses,
             helperColor,
           ].join(' ')}
         >
