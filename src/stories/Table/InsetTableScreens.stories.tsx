@@ -578,58 +578,43 @@ export const S6SendToLalamove: Story = {
   ),
 };
 
-/* ── s7-only constants for the SortBlock-per-row composition ───────────
+/* ── s7 SortBlock-per-row composition ──────────────────────────────────
  *
- * PATTERN: One <SortBlock> per body row; cells inside are plain divs.
- * SortBlock's default root is inline-flex, so we pass ROW_OVERRIDE which
- * REPLACES the built-in classes (per SortBlock.tsx:24) — we keep the bg,
- * px, py chrome and swap inline-flex for flex w-full.
+ * PATTERN: An inset-header strip (`<TableHeaderCell inset>` inside a thin
+ * `<table>`) sits above a list of `<SortBlock>` body rows. The header
+ * provides the column labels with proper inset header chrome; each
+ * SortBlock provides the row-level grey strip + drag affordance + close
+ * button surround. Body cell *content* uses the existing DS primitives
+ * (TableCellMainSub for stacked main+sub values, TableCellInfo for
+ * multi-line wrapping bodies). Plain text values use --table-body-size /
+ * --leading-17 inline so they typeset like inset table content.
  *
- * Body cells use plain typography constants (NOT SortBlock's rows API)
- * because: (a) values must wrap (rows API forces whitespace-nowrap),
- * (b) cells have no inline labels (rows API always renders the label
- * span, even for empty strings).
+ * SortBlock's default root is `inline-flex`; we pass ROW_OVERRIDE which
+ * REPLACES the built-in classes (SortBlock.tsx:24) so the row spans
+ * full card width while preserving the bg + py chrome.
+ *
+ * See `Information/SortBlock` → "Inset Header + SortBlock Rows" for the
+ * stand-alone reference.
  * ──────────────────────────────────────────────────────────────────── */
 
-const S7_COL_WIDTH = 180;
-const S7_ICON_COL_WIDTH = 'w-[24px] flex-none';
+const COL_WIDTH = 180;
+const ICON_COL_WIDTH = 'w-[24px] flex-none';
 
-const S7_ROW_OVERRIDE =
+// Row-level chrome: full-width flex strip with the SortBlock fill.
+// Outer x-padding removed; per-cell padding (CELL_PX) below provides
+// breathing room so body content x-positions match the inset header's
+// per-column px-6 padding map.
+const ROW_OVERRIDE =
   'flex items-start w-full ' +
   'bg-[color:var(--sorting-block-sorting-fill)] ' +
-  'px-[var(--spacing-6)] py-[var(--spacing-12)] ' +
-  'gap-[var(--spacing-8)]';
+  'py-[var(--spacing-12)]';
 
-const S7_HEADER_LABEL =
-  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
-  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
-  'text-[color:var(--color-text-info)]';
-
-const S7_VALUE_REG =
-  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
-  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
-  'text-[color:var(--color-text-primary)] whitespace-nowrap';
-
-const S7_VALUE_BOLD =
-  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-bold)] ' +
-  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
-  'text-[color:var(--color-text-primary)] whitespace-nowrap';
-
-const S7_VALUE_CAPTION =
-  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
-  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
-  'text-[color:var(--color-text-primary)] whitespace-nowrap';
-
-// Intentionally NO whitespace-nowrap — the address cell must wrap.
-const S7_VALUE_WRAP =
-  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
-  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
-  'text-[color:var(--color-text-primary)]';
+const CELL_PX = 'px-[var(--spacing-6)]';
 
 /* ── s7 Add Trip — Package List ────────────────────────── */
 
 /**
- * Each row is one <SortBlock className={S7_ROW_OVERRIDE}> with plain div
+ * Each row is one <SortBlock className={ROW_OVERRIDE}> with plain div
  * cells inside. The header above the rows is a plain <div> strip — not
  * a SortBlock — that mirrors the same grey chrome and column widths so
  * the header labels align horizontally with the body values.
@@ -646,8 +631,11 @@ export const S7AddTrip: Story = {
         deliveryDate: '08 May 2025 4:00PM',
         customerName: 'Wei Kheng',
         customerPhone: '60 12-456 6556',
-        address:
-          '123, Jalan Mayang Pasir, 11200 Bayan Baru, Pulau Pinang, Malaysia.',
+        addressLines: [
+          '123, Jalan Mayang Pasir,',
+          '11200 Bayan Baru,',
+          'Pulau Pinang, Malaysia.',
+        ],
       },
       {
         id: 'pkg-2',
@@ -655,64 +643,92 @@ export const S7AddTrip: Story = {
         deliveryDate: '08 May 2025 4:00PM',
         customerName: 'Wei Kheng',
         customerPhone: '60 12-456 6556',
-        address:
-          '123, Jalan Mayang Pasir, 11200 Bayan Baru, Pulau Pinang, Malaysia.',
+        addressLines: [
+          '123, Jalan Mayang Pasir,',
+          '11200 Bayan Baru,',
+          'Pulau Pinang, Malaysia.',
+        ],
       },
     ];
 
     return (
       <div className={cardClasses}>
         <div className="flex flex-col gap-[var(--spacing-8)]">
-          {/* Header strip — labels only, NOT a SortBlock */}
-          <div
-            className="flex items-center w-full bg-[color:var(--sorting-block-sorting-fill)]
-                       px-[var(--spacing-6)] py-[var(--spacing-12)] gap-[var(--spacing-8)]"
-          >
-            <div className={S7_ICON_COL_WIDTH} aria-hidden />
-            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
-              Tracking No.
-            </span>
-            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
-              Delivery Date
-            </span>
-            <span className={S7_HEADER_LABEL} style={{ width: S7_COL_WIDTH }}>
-              Customer
-            </span>
-            <span className={`${S7_HEADER_LABEL} flex-1`}>Shipping Address</span>
-            <div className={S7_ICON_COL_WIDTH} aria-hidden />
-          </div>
+          {/* Header — uses inset TableHeaderCell for proper inset chrome.
+              <colgroup> pins column widths to match the SortBlock body
+              row layout (drag/close are 24px icon columns; tracking/
+              delivery/customer are 180px; address absorbs slack). */}
+          <table className="border-collapse w-full table-fixed">
+            <colgroup>
+              <col style={{ width: 24 }} />
+              <col style={{ width: COL_WIDTH }} />
+              <col style={{ width: COL_WIDTH }} />
+              <col style={{ width: COL_WIDTH }} />
+              <col />
+              <col style={{ width: 32 }} />
+            </colgroup>
+            <thead>
+              <tr>
+                {/* All columns use 'center' (px-6) — drag/close slots
+                    are visual icon columns, not table edges, so the
+                    'first'/'last' (pl-12/pr-24) padding from the inset
+                    header map would over-indent vs the SortBlock body
+                    rows whose drag/close cells have no extra padding. */}
+                <TH inset column="center" align="left" label="" />
+                <TH inset column="center" align="left" label="Tracking No." />
+                <TH inset column="center" align="left" label="Delivery Date" />
+                <TH inset column="center" align="left" label="Customer" />
+                <TH inset column="center" align="left" label="Shipping Address" />
+                <TH inset column="center" align="left" label="" />
+              </tr>
+            </thead>
+          </table>
 
-          {/* Body rows — each is one SortBlock */}
+          {/* Body rows — tighter inter-row gap than header→first-row.
+              Drag and close cells use items-start so icons align to the
+              first text line when Customer/Address span multiple lines. */}
+          <div className="flex flex-col gap-[var(--spacing-4)]">
           {rows.map((row) => (
-            <SortBlock key={row.id} className={S7_ROW_OVERRIDE}>
-              <div className={`flex items-center justify-center ${S7_ICON_COL_WIDTH} self-stretch`}>
+            <SortBlock key={row.id} className={ROW_OVERRIDE}>
+              <div className={`flex items-start justify-center ${ICON_COL_WIDTH} ${CELL_PX} self-stretch`}>
                 <Icon
                   name="drag"
                   size={17}
                   className="text-[color:var(--color-icon-secondary)] cursor-grab"
                 />
               </div>
-              <span style={{ width: S7_COL_WIDTH }} className={S7_VALUE_BOLD}>
-                {row.tracking}
-              </span>
-              <span style={{ width: S7_COL_WIDTH }} className={S7_VALUE_REG}>
-                {row.deliveryDate}
-              </span>
-              <div
-                style={{ width: S7_COL_WIDTH }}
-                className="flex flex-col gap-[var(--spacing-2)]"
-              >
-                <span className={S7_VALUE_REG}>{row.customerName}</span>
-                <span className={S7_VALUE_CAPTION}>{row.customerPhone}</span>
+              <div style={{ width: COL_WIDTH }} className={`flex items-start ${CELL_PX}`}>
+                <SortBlock
+                  className="inline-flex"
+                  rows={[{ label: '', value: row.tracking, bold: true }]}
+                />
               </div>
-              <div className="flex-1 min-w-0">
-                <span className={S7_VALUE_WRAP}>{row.address}</span>
+              <div style={{ width: COL_WIDTH }} className={`flex items-start ${CELL_PX}`}>
+                <SortBlock
+                  className="inline-flex"
+                  rows={[{ label: '', value: row.deliveryDate }]}
+                />
               </div>
-              <div className={`flex items-start justify-center ${S7_ICON_COL_WIDTH} self-stretch`}>
+              <div style={{ width: COL_WIDTH }} className={CELL_PX}>
+                <TableCellMainSub
+                  mainValue={row.customerName}
+                  subValue={row.customerPhone}
+                />
+              </div>
+              <div className={`flex-1 min-w-0 ${CELL_PX}`}>
+                <TableCellInfo
+                  statuses={[{ label: '', body: row.addressLines }]}
+                />
+              </div>
+              {/* Close column: wider than drag (32px vs 24px) to give the
+                  21px close glyph extra right breathing room against the
+                  card edge — matches the live ERP rhythm. */}
+              <div className="flex items-start justify-center w-[32px] flex-none px-[var(--spacing-6)] self-stretch">
                 <IconLink icon="close" variant="close" aria-label="Remove package" />
               </div>
             </SortBlock>
           ))}
+          </div>
         </div>
       </div>
     );
