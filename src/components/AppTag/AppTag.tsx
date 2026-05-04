@@ -1,3 +1,5 @@
+import { Typography, type TypographyType } from '../Typography/Typography';
+
 export type AppTagType =
   | 'beta'
   | 'basic'
@@ -28,17 +30,13 @@ const defaultLabels: Record<AppTagType, string> = {
 };
 
 const sizeClasses: Record<AppTagSize, string> = {
-  default: [
-    'px-[var(--spacing-6)] py-[var(--spacing-1)]',
-    'text-[length:var(--text-14)] leading-[var(--leading-16)]',
-    'font-[var(--font-weight-medium)]',
-  ].join(' '),
-  sidebar: [
-    'px-[var(--spacing-4)]',
-    'py-[1.5px]',
-    'text-[length:var(--text-12)] leading-[var(--leading-12)]',
-    'font-[var(--font-weight-regular)]',
-  ].join(' '),
+  default: 'px-[var(--spacing-6)] py-[var(--spacing-1)]',
+  sidebar: 'px-[var(--spacing-4)] py-[1.5px]',
+};
+
+const sizeTypographyType: Record<AppTagSize, TypographyType> = {
+  default: 'body-medium-slim',
+  sidebar: 'caption-small',
 };
 
 type TypeStyle = {
@@ -90,7 +88,6 @@ const typeStyles: Record<AppTagType, TypeStyle> = {
 
 const shapeClasses = [
   'inline-flex items-center justify-start',
-  'font-[family-name:var(--font-sans)]',
   'rounded-tl-[var(--radius-8)]',
   'rounded-tr-[var(--radius-12)]',
   'rounded-br-[var(--radius-12)]',
@@ -114,7 +111,9 @@ export const AppTag = ({
         color: style.color,
       }}
     >
-      {label ?? defaultLabels[type]}
+      <Typography type={sizeTypographyType[size]} state="inherit">
+        {label ?? defaultLabels[type]}
+      </Typography>
     </span>
   );
 };
