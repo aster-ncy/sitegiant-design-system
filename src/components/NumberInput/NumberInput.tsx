@@ -2,6 +2,18 @@ import { useState } from 'react';
 import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+/* form-value: 14/21/regular for the standard input value text. The stepper
+ * variant's center cell uses 14/17 (body-slim) — left as raw primitives for
+ * a future body-slim sweep batch with its own Figma re-verification. */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+const formValueTextBoldClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
 export type NumberInputState =
   | 'default'
   | 'disabled'
@@ -253,11 +265,7 @@ export const NumberInput = ({
           className={[
             'inline-flex items-center',
             size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]',
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--font-sans)]',
-            isReadonlyBold
-              ? 'font-[var(--font-weight-bold)]'
-              : 'font-[var(--font-weight-regular)]',
+            isReadonlyBold ? formValueTextBoldClasses : formValueTextClasses,
             'text-[color:var(--form-input-value-text)]',
             'whitespace-nowrap',
           ].join(' ')}
@@ -285,8 +293,7 @@ export const NumberInput = ({
             // Hide native browser stepper — we render our own.
             '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
             `pl-[var(--spacing-12)] pr-[var(--spacing-8)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            formValueTextClasses,
             isDisabled
               ? 'text-[color:var(--form-input-disabled-text)]'
               : 'text-[color:var(--form-input-value-text)]',
