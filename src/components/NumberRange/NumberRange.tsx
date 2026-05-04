@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { Icon } from '../Icon';
 import { NumberInput, type NumberInputState, type NumberInputValidation, type NumberInputSize } from '../NumberInput';
 
+/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export interface NumberRangeValue {
   min: string;
   max: string;
@@ -130,10 +135,7 @@ export const NumberRange = ({
       {helperText && (
         <span
           className={[
-            'font-[family-name:var(--general-font-family)]',
-            'text-[length:var(--general-caption-size)]',
-            'leading-[var(--general-caption-lineheight)]',
-            'font-[var(--font-weight-regular)]',
+            captionTextClasses,
             helperColor,
           ].join(' ')}
         >
