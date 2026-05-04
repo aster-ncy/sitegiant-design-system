@@ -1,168 +1,255 @@
 # s7 Add Trip — SortBlock Migration
 
-**Status:** Draft
+**Status:** Draft (revised v3 — corrected after live-ERP screenshot reread)
 **Date:** 2026-05-04
 **Scope:** `src/stories/Table/InsetTableScreens.stories.tsx` — `S7AddTrip` story only.
 
 ## Goal
 
-Replace the placeholder `<table>`-based composition in `S7AddTrip` with the real Figma "Sort Block — MainSub" pattern, now that `SortBlock` has shipped. Remove the `TODO(SortBlock)` block once done.
+Replace the placeholder `<table>`-based composition in `S7AddTrip` with the real Figma "Sort Block — MainSub" pattern, now that `SortBlock` has shipped. Remove the `TODO(SortBlock)` JSDoc block once done.
 
 ## Why now
 
-The placeholder was written before SortBlock existed. The SortBlock atom landed in the previous session along with its `SortableRowComposition` story, which is the canonical layout for s7-style draggable list rows. The migration is unblocked and the placeholder TODO is now actionable.
+The placeholder was written before SortBlock existed. The SortBlock atom landed in the previous session along with its `SortableRowComposition` story. The migration is unblocked and the placeholder TODO is now actionable.
+
+## Live-ERP reading (source of truth)
+
+The s7 reference screenshot lives at `references/inset_table_s7.png` relative to the workspace root one level above `sitegiant-storybook/` (the git root). It is gitignored per `feedback_reference_folder_local_only.md` and is not accessible from inside the repo via a relative path. Implementers viewing this spec from the repo will need to open the screenshot from the workspace folder. The screenshot shows:
+
+- **Header row** with small grey 12px labels: "Tracking No. / Delivery Date / Customer / Shipping Address". Sits on a continuous grey strip above the body rows. No drag handle, no close icon — it's a labels-only header, not a sortable row.
+- **Body rows** (2 visible) — each row is one continuous grey strip with a drag handle on the far left, a close icon on the far right, and value cells in the middle.
+- **Body cells carry values only**, no inline labels. The header row carries the labels.
+- **Tracking No.** ("MY123554G85899") is bold; everything else is regular weight.
+- **Customer** is a vertical 2-line stack: "Wei Kheng" (14px regular) over "60 12-456 6556" (12px caption). No labels.
+- **Shipping Address** wraps onto 3 lines naturally inside its cell ("123, Jalan Mayang Pasir," / "11200 Bayan Baru," / "Pulau Pinang, Malaysia.").
+
+This means: each row IS a SortBlock instance (the SortBlock atom provides the grey-strip row chrome — drag handle and close icon are caller-supplied children), and the *cells* inside are plain divs. The header is its own non-SortBlock strip.
 
 ## Out of scope
 
-- Any change to the `SortBlock` component itself.
+- Any change to the `SortBlock` component itself (no new prop, no edits to `SortBlock.tsx`).
 - Any change to other stories (s1–s6, s8–s10) or to TableCell / TableHeaderCell / their sortable internals.
-- Any new variant prop on SortBlock (the shipped API stays as-is — `rows`, `children`, `orientation`, `className`).
 - Drag-and-drop interaction wiring. The drag handle stays decorative, same as today.
+- Implementing the `<SortBlock variant="mainSub" ...>` API the leftover TODO comment references — that prop does not exist on the shipped component, and this migration deletes the TODO rather than implementing it.
 
-## Reference
+## Constraints from the shipped SortBlock
 
-- Figma: "Sort Block — MainSub" (component_set `b59d4f9522e1d0ef16c22b7eee9ed78c831fe36b`).
-- Existing pattern in code: `SortBlock.stories.tsx` → `SortableRowComposition` story.
-- Source data: still the same fictional fixture rows (2 entries) used by the current `S7AddTrip`.
+The shipped SortBlock has two behaviors that constrain what the `rows` prop can do:
+
+1. **Values use `whitespace-nowrap`.** `VALUE_BASE_CLASSES` in `SortBlock.tsx:48` forces every value span to a single line. The `rows` API cannot render a wrapping multi-line value.
+2. **Labels always render, even when empty.** The renderer at `SortBlock.tsx:114-117` always emits `<span className={LABEL_CLASSES}>{row.label}</span>`. An empty-string label still occupies a 12/17 line.
+
+Implication for s7: since body cells have no labels at all (header carries them) and the address must wrap, body cells **cannot use the `rows` API**. Instead, each row is one SortBlock using the `children` API, and the row's content (cells, drag, close) are all plain divs inside that one SortBlock.
 
 ## Design
 
 ### Structure
 
-Drop the `<table>`/`<thead>`/`<tbody>` wrapper entirely. Each row becomes a single horizontal flex strip:
+Drop the `<table>`/`<thead>`/`<tbody>` wrapper entirely. Inside the existing card wrapper:
 
 ```
 [card]
-  [row strip]   ← bg: --sorting-block-sorting-fill, items-stretch flex
-    [drag-handle cell]   auto width, items-center
-    [Tracking No. SortBlock cell]
-    [Delivery Date SortBlock cell]
-    [Customer SortBlock cell — MainSub vertical]
-    [Shipping Address SortBlock cell]
-    [close-button cell]   auto width, items-center
-  [row strip]
+  [header strip]   ← plain <div>, bg --sorting-block-sorting-fill, NOT a SortBlock
+    [empty drag-slot spacer]
+    [Tracking No. label]   w-[180px]
+    [Delivery Date label]  w-[180px]
+    [Customer label]       w-[180px]
+    [Shipping Address label]  flex-1
+    [empty close-slot spacer]
+
+  [SortBlock row 1]   ← <SortBlock className={ROW_OVERRIDE}>{children}</SortBlock> — flex w-full + grey chrome (override required; default is inline-flex)
+    [drag handle div]
+    [Tracking No. value]   w-[180px], bold
+    [Delivery Date value]  w-[180px]
+    [Customer stack div]   w-[180px], 2-line: "Wei Kheng" / "60 12-456 6556" caption
+    [Address value div]    flex-1, wraps
+    [close button div]
+
+  [SortBlock row 2]   ← same pattern
     ...
 [/card]
 ```
 
-The card wrapper (`cardClasses` — white surface + border + radius) is preserved. Rows stack vertically inside it with `--spacing-8` between them (matching the visual gap between sortable rows in the live ERP).
+The card wrapper (`cardClasses`) is preserved. Header and body rows stack vertically inside it with `--spacing-8` between rows (matches the visual gap in the live ERP screenshot).
 
-There is no separate header row. Each labeled cell carries its own label via SortBlock's `rows` prop, which is the Figma-native way the pattern self-describes.
+### Why each row is one SortBlock with children, not many SortBlocks
 
-### Row chrome
+The Figma "Sort Block — MainSub" atom is the row-level grey-strip chrome, not the per-cell chrome. Wrapping each row in `<SortBlock>...</SortBlock>` paints the grey background (`bg-[var(--sorting-block-sorting-fill)]`), applies the `px-[var(--spacing-6)] py-[var(--spacing-12)]` outer padding, and gives us `items-start` alignment (matches the screenshot — the drag handle aligns top-of-row when Customer/Address are multi-line).
 
-The whole row is one continuous grey strip painted by the parent `<div>`, not by individual SortBlocks. Per-cell SortBlocks drop their built-in chrome (`bg` + `px`/`py`) via `className` override and contribute only the label/value typography.
+The drag handle and close icon are caller-supplied — they sit inside the SortBlock as `<div>` cells. SortBlock the atom itself does not render the drag affordance; the row composition does.
 
-This matches `SortableRowComposition` exactly. Two helpers from that story carry over:
+The body cells inside use plain divs: they don't need SortBlock's chrome (already painted by the parent SortBlock) and don't need its label/value typography helpers (no inline labels, and the address must wrap which the value typography forbids).
+
+### `className` override required for full-width row
+
+`SortBlock`'s default root is `inline-flex` (sizes to content), and its `className` prop **replaces** the built-in classes (per `SortBlock.tsx:24`). For the row to span the card width — so `flex-1` on the address cell can absorb container slack — each row must pass an override that swaps `inline-flex` for `flex w-full` while keeping the rest of the chrome:
 
 ```tsx
-// Cells inside the row drop SortBlock's bg + outer padding, keep typography.
-const cellOverride =
-  'inline-flex items-start gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)]';
+const ROW_OVERRIDE =
+  'flex items-start w-full ' +
+  'bg-[color:var(--sorting-block-sorting-fill)] ' +
+  'px-[var(--spacing-6)] py-[var(--spacing-12)] ' +
+  'gap-[var(--spacing-8)]';
 ```
 
-### Column widths
+Adding `gap-[var(--spacing-8)]` here gives consistent inter-cell spacing inside the row (SortBlock's default horizontal layout uses gap-8 too, but only between its built-in label/value columns — children mode doesn't apply it, so we re-add it).
 
-Fixed widths matching the original visual hierarchy:
-
-| Cell             | Width                       | Rationale                            |
-| ---------------- | --------------------------- | ------------------------------------ |
-| Drag handle      | auto (`px-[--spacing-8]`)   | Just an icon, no label.              |
-| Tracking No.     | `w-[180px]`                 | Single-line ID; needs ~12 mono chars.|
-| Delivery Date    | `w-[180px]`                 | "08 May 2025 4:00PM" + label.        |
-| Customer         | `w-[180px]`                 | Name + caption phone fits.           |
-| Shipping Address | `flex-1` (absorbs slack)    | Multi-line value wraps inside.       |
-| Close button     | auto (`px-[--spacing-12]`)  | IconButton, items-center.            |
-
-Widths use raw px values — token scale doesn't reach 180. This is consistent with how `SortableRowComposition` already mixes raw values for fixed cells.
-
-### Per-cell content
-
-**Drag handle cell** — unchanged from today: `<Icon name="drag" size={17} color="var(--color-set-lightest)" />`, wrapped in a flex container that centers vertically against the row.
-
-**Tracking No.** — `<SortBlock className={cellOverride} rows={[{ label: 'Tracking No.', value: 'MY123554G85899', bold: true }]} />`. Bold matches the current `weight="bold"` on the TableCell.
-
-**Delivery Date** — `<SortBlock className={cellOverride} rows={[{ label: 'Delivery Date', value: '08 May 2025 4:00PM' }]} />`.
-
-**Customer** — vertical MainSub: name as bold main row, phone as caption sub row.
-```tsx
-<SortBlock
-  className={cellOverride.replace('items-start', 'items-start flex-col')}
-  orientation="vertical"
-  rows={[
-    { label: 'Customer', value: 'Wei Kheng', bold: true },
-    { label: '', value: '60 12-456 6556', caption: true },
-  ]}
-/>
-```
-The `flex-col` swap is necessary because `cellOverride` is `inline-flex items-start` (horizontal), but a vertical 2-row SortBlock needs `flex-col`. Alternatively pass a fully vertical override class — see Implementation Notes.
-
-**Shipping Address** — single labeled value, the address comes from a form data collection as one string; line breaks here are visual wrapping, not author-controlled.
-```tsx
-<SortBlock
-  className={`${cellOverride} flex-1`}
-  rows={[{
-    label: 'Shipping Address',
-    value: '123, Jalan Mayang Pasir, 11200 Bayan Baru, Pulau Pinang, Malaysia.',
-  }]}
-/>
-```
-The `flex-1` on the override lets this cell absorb extra row width.
-
-**Close button cell** — `<IconButton name="close" label="Remove package" />`, wrapped in a flex container that centers vertically against the row.
-
-### Row container
+### Header strip (NOT a SortBlock)
 
 ```tsx
-<div className="flex items-stretch w-full bg-[color:var(--sorting-block-sorting-fill)]">
-  …cells…
+<div className="flex items-center w-full bg-[color:var(--sorting-block-sorting-fill)]
+                 px-[var(--spacing-6)] py-[var(--spacing-12)] gap-[var(--spacing-8)]">
+  <div className="w-[24px] flex-none" aria-hidden />              {/* drag-slot spacer */}
+  <span className={HEADER_LABEL} style={{ width: 180 }}>Tracking No.</span>
+  <span className={HEADER_LABEL} style={{ width: 180 }}>Delivery Date</span>
+  <span className={HEADER_LABEL} style={{ width: 180 }}>Customer</span>
+  <span className={`${HEADER_LABEL} flex-1`}>Shipping Address</span>
+  <div className="w-[24px] flex-none" aria-hidden />              {/* close-slot spacer */}
 </div>
 ```
 
-`w-full` forces the row to the card width (so `flex-1` on the address can absorb slack). `items-stretch` lets cells share row height — important when the Customer cell stacks 2 rows and the others are single-line, so the grey strip stays visually unified.
+Where `HEADER_LABEL` is a story-local constant carrying the small-grey label typography:
+
+```tsx
+const HEADER_LABEL =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-info)]';
+```
+
+The drag-slot and close-slot are 24px-wide spacers (the approximate width of a 17px icon + its padding) so the header labels align horizontally with the body values below.
+
+### Body row
+
+```tsx
+<SortBlock className={ROW_OVERRIDE}>
+  <div className="flex items-center self-stretch">
+    <Icon name="drag" size={17}
+          className="text-[color:var(--color-icon-secondary)] cursor-grab" />
+  </div>
+  <span style={{ width: 180 }} className={VALUE_BOLD}>MY123554G85899</span>
+  <span style={{ width: 180 }} className={VALUE_REG}>08 May 2025 4:00PM</span>
+  <div style={{ width: 180 }} className="flex flex-col gap-[var(--spacing-2)]">
+    <span className={VALUE_REG}>Wei Kheng</span>
+    <span className={VALUE_CAPTION}>60 12-456 6556</span>
+  </div>
+  <div className="flex-1 min-w-0">
+    <span className={VALUE_WRAP}>
+      123, Jalan Mayang Pasir, 11200 Bayan Baru, Pulau Pinang, Malaysia.
+    </span>
+  </div>
+  <div className="flex items-start self-stretch">
+    <IconButton name="close" label="Remove package" />
+  </div>
+</SortBlock>
+```
+
+The address cell is wrapped in a `flex-1 min-w-0 <div>` rather than putting `flex-1` directly on the span — `flex-1` on a `<span>` is unreliable across browsers; nesting under a flex-child div is safer.
+
+Where the typography constants mirror SortBlock's internal styles:
+
+```tsx
+const VALUE_REG =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
+
+const VALUE_BOLD =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-bold)] ' +
+  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
+
+const VALUE_CAPTION =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
+
+const VALUE_WRAP =
+  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
+  'text-[length:var(--text-14)] leading-[var(--leading-17)] ' +
+  'text-[color:var(--color-text-primary)]';   // intentionally NO whitespace-nowrap
+```
+
+### Notes on specific details
+
+- **Bold Tracking No.** preserves today's `weight="bold"` treatment and matches the screenshot.
+- **Customer is regular-weight, not bold.** This contradicts an earlier draft of this spec — the screenshot shows Wei Kheng in regular 14px, not bold.
+- **Customer stack uses `gap-[var(--spacing-2)]`**, matching the SortBlock atom's vertical pair gap (`VERTICAL_PAIR_CLASSES` in `SortBlock.tsx:54`).
+- **Address `min-w-0`** is required for `flex-1` to actually shrink below intrinsic content width when the address is long.
+- **Drag handle uses today's classes** — `text-[color:var(--color-icon-secondary)] cursor-grab` — preserving the existing visual rather than swapping to the SortableRowComposition reference's `--color-set-lightest`.
+- **`self-stretch`** on the drag/close cells lets them span the row height even when Customer/Address make the row taller than a single line, so the icons can stay top-anchored alongside the multi-line content (matches the screenshot).
+- **Spacers in the header row are 24px** — derived from 17px icon + ~7px combined padding the body cells consume around the icons. May need a 1–2px tweak during visual verification.
+
+### Column widths
+
+Fixed widths on the value spans/divs themselves; address absorbs slack:
+
+| Column           | Width     | Body cell             | Header span         |
+| ---------------- | --------- | --------------------- | ------------------- |
+| Drag             | 24px      | `Icon` in flex div    | spacer `<div>`      |
+| Tracking No.     | 180px     | bold span             | label span          |
+| Delivery Date    | 180px     | regular span          | label span          |
+| Customer         | 180px     | flex-col 2-line div   | label span          |
+| Shipping Address | `flex-1`  | wrapping span         | label span flex-1   |
+| Close            | 24px      | `IconButton` flex div | spacer `<div>`      |
+
+180px is a raw px value (not a token). The codebase already uses raw `w-[NNNpx]` widths in other story-scoped layout (acceptable; tokens don't reach this scale).
+
+## Fixture shape change
+
+Today's `S7AddTrip` passes the address as `body: ['line 1,', 'line 2,', 'line 3.']` to `TableCellInfo`, which renders one paragraph per array entry. The migration flattens that to a single string (joined with a space) since the new design relies on natural CSS wrapping rather than author-controlled line breaks. Called out so the implementer doesn't paste back the array.
 
 ## Files affected
 
-| File                                                     | Change                                                                                |
-| -------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `src/stories/Table/InsetTableScreens.stories.tsx`        | Rewrite the `S7AddTrip` export (~70 lines). Remove the `TODO(SortBlock)` JSDoc block. |
-| `src/components/SortBlock/SortBlock.tsx`                 | None.                                                                                  |
-| `src/components/TableHeaderCell/*`                        | None — TableHeaderCell `sortable` migration is a separate, future spec.                |
+| File                                                | Change                                                                                                                                                                                                                       |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/stories/Table/InsetTableScreens.stories.tsx`   | Rewrite `S7AddTrip` (~80 lines). Add 5 story-local typography constants (`HEADER_LABEL`, `VALUE_REG`, `VALUE_BOLD`, `VALUE_CAPTION`, `VALUE_WRAP`) plus the `ROW_OVERRIDE` className constant. Add `SortBlock` import. Flatten address fixture. Delete `TODO(SortBlock)` JSDoc block. |
+| `src/components/SortBlock/SortBlock.tsx`            | None.                                                                                                                                                                                                                        |
+| `src/components/TableHeaderCell/*`                  | None — TableHeaderCell `sortable` migration is a separate, future spec.                                                                                                                                                      |
 
-Imports added to the stories file: `SortBlock` from `../../components/SortBlock`. Imports possibly removable: none of the current ones — `TableCell`, `TableCellInfo`, `Icon`, `IconButton` are still used by other stories.
+Imports added: `SortBlock` from `../../components/SortBlock`. No imports become unused (`TableCell`, `TableCellInfo`, `Icon`, `IconButton` are still consumed by other stories in the same file).
 
 ## Implementation notes
 
-### `cellOverride` for vertical SortBlock
+### Typography constants live local to S7AddTrip
 
-The `SortableRowComposition` reference defines one `cellOverride` constant for horizontal cells. Because s7's Customer cell uses `orientation="vertical"`, we either:
+The 5 constants are story-local (top of `S7AddTrip`'s render closure or just above the export). They mirror SortBlock's internal `LABEL_CLASSES`, `VALUE_BASE_CLASSES`, and `VERTICAL_PAIR_CLASSES` but with one critical difference: `VALUE_WRAP` omits `whitespace-nowrap` so the address can wrap. Keeping them local avoids growing the SortBlock public API.
 
-a. Define a second constant `cellOverrideVertical` that swaps `items-start` for `flex-col items-start`. Cleanest.
-b. Inline the class string at the call site.
+### Drag and close cells stay non-SortBlock
 
-The plan picks (a) — one extra `const` colocated with `cellOverride`.
+They are plain `<div>` flex containers inside the parent `<SortBlock>`. Putting them in their own SortBlocks would re-apply grey chrome we don't want.
 
-### Drag handle and close button cells
+### Drift risk
 
-These cells are not SortBlocks (no label/value). They are plain `<div>`s sized like the SortableRowComposition story does it: `flex items-center px-[var(--spacing-8)]` for the drag handle (matches the reference) and `flex items-center px-[var(--spacing-12)]` for the close button. They contribute zero SortBlock chrome — the row's grey background flows through.
+The constants repeat class strings that SortBlock's internals already define. Acceptable: SortBlock doesn't expose these as exports, the alternative (extending SortBlock's API) is out of scope, and the repetition is bounded to one story. If the same pattern recurs in a third location, extract.
 
-### Removed code
+### Removed code from S7AddTrip
 
-- The local `Cell` and `TH` helpers stay (used by all other stories).
-- The `S7AddTrip` `<table>` boilerplate is gone, including the empty `TH inset column="first" align="left" label=""` placeholder header cells.
-- The `TODO(SortBlock)` JSDoc block is replaced by a one-line comment pointing at the Figma node.
+- The `<table>`, `<thead>`, `<tbody>`, all `Cell` and `TH` invocations.
+- The 6 `TH inset` calls and 6 `Cell alignTop inset` calls per row × 2 rows.
+- The `TableCellInfo` calls for Customer and Shipping Address.
+- The `TODO(SortBlock)` JSDoc block above `S7AddTrip` is replaced by a one-line comment pointing at the Figma node.
+
+The local `Cell` and `TH` helpers in the file stay (used by all other stories).
 
 ## Risks
 
-- **Visual diff vs current s7.** The migration changes the rendering from a bordered table to a single grey strip per row. By design — the placeholder explicitly said "replace once SortBlock ships." Visual verification is part of the implementation plan, not a regression risk.
-- **`flex-1` interaction with content widths.** If the address value is shorter than expected, the grey strip still spans `w-full` because of the row container. Validated by adjusting fixture data during implementation.
-- **Vertical SortBlock + `cellOverride`.** The two-constant approach is the only place where this story diverges from the reference pattern. If a future cell needs both a vertical SortBlock and the row-cell behavior, the pattern is already in place.
+- **Visual diff vs current s7.** Intentional — the placeholder explicitly said "replace once SortBlock ships." Visual verification is part of implementation.
+- **Header / body alignment.** The 24px spacer width is an estimate; the implementation may need a 1–2px tweak after visual diff against the s7 reference screenshot.
+- **`min-w-0` on the address cell wrapper.** Required for `flex-1` to shrink. Easy to forget.
+- **`ROW_OVERRIDE` reproduces SortBlock's chrome.** Because `className` replaces (not appends), the override must reproduce `bg`, `px`, `py`. If SortBlock's chrome changes upstream, this constant won't follow. Acceptable: the alternative (adding a "fullWidth" prop to SortBlock) is out of scope, and the override is bounded to one story.
+- **SortBlock's outer padding (`px-6 py-12`).** Keeping the SortBlock wrapper means rows get the atom's exact outer padding. The header strip mirrors this padding. If Aster wants tighter rows later, it's a parallel decision (change both header and SortBlock atom).
+- **No existing reference story for "one SortBlock per row with plain div cells".** The current `SortableRowComposition` story uses the inverse model (parent `<div>` + child SortBlocks). The implementer must add a brief Storybook story alongside `S7AddTrip` OR a `/* PATTERN: ... */` comment block at the top of the rewritten story (enforced via Acceptance below; choice of which form is left to the implementer).
 
 ## Acceptance
 
 - `S7AddTrip` story renders without TypeScript / lint errors.
-- The drag handle, two rows, and trailing close button are all visible.
-- Each labeled cell shows its label above/beside its value with the SortBlock's grey label typography.
-- Row heights are equal across cells (no stagger from the multi-line Customer/Address cells).
+- Header strip with column labels is visible above the rows.
+- 2 SortBlock rows render, each with drag handle, value cells, and close button.
+- Customer cell shows "Wei Kheng" (regular 14px) above "60 12-456 6556" (caption 12px), with no inline labels.
+- Address wraps onto multiple lines inside its `flex-1` cell.
+- Tracking No. is bold; other body values are regular weight.
+- Header labels align horizontally with the body values beneath them.
 - The card wrapper is preserved; no `<table>` element remains in the story.
 - The `TODO(SortBlock)` JSDoc block is removed.
+- The new "one SortBlock per row with plain div cells" pattern is documented either as a brief Storybook story added alongside `S7AddTrip` OR as a `/* PATTERN: ... */` comment block at the top of the rewritten story, so future readers understand the composition without needing to reverse-engineer it.
