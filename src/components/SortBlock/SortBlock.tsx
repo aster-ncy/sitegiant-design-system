@@ -38,14 +38,20 @@ const horizontalLayoutClasses = () => 'gap-[var(--spacing-8)]';
 const verticalLayoutClasses = (rowCount: number) =>
   rowCount > 1 ? 'flex-col gap-[var(--spacing-8)]' : 'flex-col gap-[var(--spacing-2)]';
 
+/* Typography per Figma node 2411:39:
+ *   Label                  → General/Caption/caption-{size,lineheight,weight} (12/17/Regular)
+ *   Value (body row)       → General/Body/body-{size,slim-lineheight,weight}   (14/17/Regular)
+ *   Value (caption row)    → General/Caption/caption-* (same as label)
+ *   Value (bold body row)  → General/Body/body-{size,slim-lineheight,bold-weight} (14/17/Bold)
+ */
 const LABEL_CLASSES =
-  'font-[family-name:var(--general-font-family)] font-[var(--font-weight-regular)] ' +
-  'text-[length:var(--text-12)] leading-[var(--leading-17)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)] ' +
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
   'text-[color:var(--color-text-info)] whitespace-nowrap';
 
 const VALUE_BASE_CLASSES =
   'font-[family-name:var(--general-font-family)] ' +
-  'leading-[var(--leading-17)] text-[color:var(--color-text-primary)] whitespace-nowrap';
+  'text-[color:var(--color-text-primary)] whitespace-nowrap';
 
 // Inside Horizontal 2-info: label column and value column each stack with gap-8.
 const HORIZONTAL_LABEL_STACK = 'inline-flex flex-col items-start gap-[var(--spacing-8)]';
@@ -53,12 +59,25 @@ const HORIZONTAL_VALUE_STACK = 'inline-flex flex-col items-start gap-[var(--spac
 // Inside Vertical 2-info: each pair stacks label-over-value with gap-2.
 const VERTICAL_PAIR_CLASSES = 'inline-flex flex-col items-start gap-[var(--spacing-2)]';
 
-const valueClass = (row: SortBlockRow) =>
-  [
+const valueClass = (row: SortBlockRow) => {
+  // Caption rows pull the full caption recipe (12/17/regular).
+  // Body rows use General/Body size + body-slim-lineheight (14/17),
+  // with regular or bold weight depending on row.bold.
+  if (row.caption) {
+    return [
+      VALUE_BASE_CLASSES,
+      'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+      'font-[weight:var(--general-caption-weight)]',
+    ].join(' ');
+  }
+  return [
     VALUE_BASE_CLASSES,
-    row.bold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
-    row.caption ? 'text-[length:var(--text-12)]' : 'text-[length:var(--text-14)]',
+    'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)]',
+    row.bold
+      ? 'font-[weight:var(--general-body-bold-weight)]'
+      : 'font-[weight:var(--general-body-weight)]',
   ].join(' ');
+};
 
 /**
  * SortBlock — Figma: Sort Block (2411:39).
