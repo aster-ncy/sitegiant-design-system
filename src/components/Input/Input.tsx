@@ -94,6 +94,22 @@ const stateFillClasses: Record<InputState, string> = {
   'readonly-bold':'bg-transparent',
 };
 
+/* ── Typography recipes (Figma Form Value section, node 873:965) ──────── */
+/* Form value text: 14 / 21 / regular — General/Form/form-value-* */
+const formValueTextClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+/* Form value text — bold variant (readonly-bold state) */
+const formValueTextBoldClasses =
+  'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+/* Caption text (label info, hint/helper text): 12 / 17 / regular — General/Caption/caption-* */
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 /**
  * SiteGiant Input component.
  *
@@ -182,8 +198,7 @@ export const Input = ({
     'flex items-center gap-[var(--spacing-4)]',
     `px-[var(--spacing-12)] ${addonPy}`,
     'border-l border-solid border-[var(--form-button-border)]',
-    'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-    'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+    formValueTextClasses,
     'shrink-0 self-stretch',
   ].join(' ');
 
@@ -211,8 +226,7 @@ export const Input = ({
             <label
               htmlFor={id}
               className={[
-                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                formValueTextClasses,
                 'text-[color:var(--form-label-text)]',
                 isDisabled ? 'opacity-60' : '',
               ].filter(Boolean).join(' ')}
@@ -223,8 +237,7 @@ export const Input = ({
           {labelInfo && (
             <span
               className={[
-                'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-                'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                captionTextClasses,
                 'text-[color:var(--form-label-info-text)]',
               ].join(' ')}
             >
@@ -292,11 +305,7 @@ export const Input = ({
                   : leadingNode
                     ? `pl-[var(--spacing-8)] pr-[var(--spacing-12)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`
                     : `px-[var(--spacing-12)] ${size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]'}`,
-                'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                'font-[family-name:var(--font-sans)]',
-                isReadonlyBold
-                  ? 'font-[var(--font-weight-bold)]'
-                  : 'font-[var(--font-weight-regular)]',
+                isReadonlyBold ? formValueTextBoldClasses : formValueTextClasses,
                 inputTextClass,
                 'placeholder:text-[color:var(--form-input-placeholder-text)]',
                 isDisabled ? 'cursor-not-allowed' : '',
@@ -311,8 +320,7 @@ export const Input = ({
                 aria-hidden="true"
                 className={[
                   'flex items-center pr-[var(--spacing-12)] shrink-0',
-                  'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-                  'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+                  formValueTextClasses,
                   'text-[color:var(--form-input-placeholder-text)]',
                 ].join(' ')}
               >
@@ -388,8 +396,7 @@ export const Input = ({
       {helperText && (
         <span
           className={[
-            'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            captionTextClasses,
             isDanger || isError
               ? 'text-[color:var(--color-sys-red-DEFAULT)]'
               : 'text-[color:var(--form-label-info-text)]',
