@@ -105,6 +105,13 @@ const formValueTextBoldClasses =
   'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
   'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
 
+/* Form label text: 14 / 21 / regular — General/Form/form-label-* (split from
+ * form-value so label and value typography can diverge independently if
+ * Figma ever splits them; today they're numerically identical). */
+const formLabelTextClasses =
+  'text-[length:var(--general-form-label-size)] leading-[var(--general-form-label-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
 /* Caption text (label info, hint/helper text): 12 / 17 / regular — General/Caption/caption-* */
 const captionTextClasses =
   'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
@@ -226,7 +233,7 @@ export const Input = ({
             <label
               htmlFor={id}
               className={[
-                formValueTextClasses,
+                formLabelTextClasses,
                 'text-[color:var(--form-label-text)]',
                 isDisabled ? 'opacity-60' : '',
               ].filter(Boolean).join(' ')}
