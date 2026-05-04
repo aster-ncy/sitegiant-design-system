@@ -324,10 +324,15 @@ export const SortableRowComposition: Story = {
  *   - SortBlockMainSub (customer): vertical 14/17 + 12/17 stack, gap-4
  *   - SortBlockLongContent (address): flex-col of value paragraphs
  *
- * Our shipped SortBlock supports horizontal/vertical rows + a children
- * escape hatch. For cells that can't use rows (no label, must wrap, or
- * gap-mismatch), use the children API and write the value spans
- * directly with the right --general-* typography tokens.
+ * Our shipped SortBlock's `rows` API covers all four:
+ *   - no-label cells: omit `label` (or pass empty string) — the label
+ *     slot is skipped
+ *   - wrap cells: set `wrap: true` on the row — drops nowrap and
+ *     honours \n via whitespace-pre-line
+ *   - mainSub gap: set `mainSub` on the SortBlock (when no className
+ *     override is needed); call sites that pass className for layout
+ *     control encode `gap-4` directly
+ * Children API stays for body variants only (icon, button, image, etc.).
  */
 export const InsetHeaderWithSortBlockRows: Story = {
   render: () => {
