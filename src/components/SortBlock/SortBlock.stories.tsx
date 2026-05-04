@@ -5,6 +5,8 @@ import { Pip } from '../Pip';
 import { TextLink } from '../TextLink';
 import { DashedButton } from '../DashedButton';
 import { IconLink } from '../IconLink';
+import { TableHeaderCell } from '../TableHeaderCell';
+import { TableCellMainSub, TableCellInfo } from '../TableCell';
 
 const meta = {
   title: 'Information/SortBlock',
@@ -221,6 +223,146 @@ export const SortableRowComposition: Story = {
           </div>
         </Row>
       </Stack>
+    );
+  },
+};
+
+/**
+ * Inset Header + SortBlock Rows — pairing the inset TableHeaderCell as
+ * a labels-only header strip above a list of SortBlock body rows.
+ *
+ * This is the canonical composition for "draggable list inside a card"
+ * patterns (e.g. the live ERP "Add Trip → Package List" screen). The
+ * header carries the column labels with proper inset header chrome; each
+ * SortBlock provides the row-level grey strip + drag/close affordances.
+ * Body cells use the existing TableCellMainSub / TableCellInfo
+ * primitives for stacked or multi-paragraph content.
+ *
+ * Layout requirements:
+ *  - SortBlock's default root is `inline-flex`; pass a className that
+ *    REPLACES the built-in classes (per `SortBlock.tsx`) with
+ *    `flex w-full` so the row spans the card width.
+ *  - Match the inset header's `<colgroup>` widths to the body cell
+ *    widths; align each cell's `px-6` padding with the header's
+ *    per-column `px-6` so labels and values share an x-grid.
+ *  - Drag/close cells use `items-start` + `self-stretch` so icons stay
+ *    top-anchored when other cells span multiple lines.
+ */
+export const InsetHeaderWithSortBlockRows: Story = {
+  render: () => {
+    const COL_WIDTH = 180;
+    const ICON_COL_WIDTH = 'w-[24px] flex-none';
+    const CELL_PX = 'px-[var(--spacing-6)]';
+    const ROW_OVERRIDE =
+      'flex items-start w-full ' +
+      'bg-[color:var(--sorting-block-sorting-fill)] ' +
+      'py-[var(--spacing-12)]';
+
+    const rows = [
+      {
+        id: 'pkg-1',
+        tracking: 'MY123554G85899',
+        deliveryDate: '08 May 2025 4:00PM',
+        customerName: 'Wei Kheng',
+        customerPhone: '60 12-456 6556',
+        addressLines: [
+          '123, Jalan Mayang Pasir,',
+          '11200 Bayan Baru,',
+          'Pulau Pinang, Malaysia.',
+        ],
+      },
+      {
+        id: 'pkg-2',
+        tracking: 'MY123554G85899',
+        deliveryDate: '08 May 2025 4:00PM',
+        customerName: 'Wei Kheng',
+        customerPhone: '60 12-456 6556',
+        addressLines: [
+          '123, Jalan Mayang Pasir,',
+          '11200 Bayan Baru,',
+          'Pulau Pinang, Malaysia.',
+        ],
+      },
+    ];
+
+    return (
+      <div className="flex flex-col gap-[var(--spacing-8)]">
+        {/* Header — inset TableHeaderCell column labels.
+            <colgroup> pins column widths to match the SortBlock body rows. */}
+        <table className="border-collapse w-full table-fixed">
+          <colgroup>
+            <col style={{ width: 24 }} />
+            <col style={{ width: COL_WIDTH }} />
+            <col style={{ width: COL_WIDTH }} />
+            <col style={{ width: COL_WIDTH }} />
+            <col />
+            <col style={{ width: 32 }} />
+          </colgroup>
+          <thead>
+            <tr>
+              <th className="p-0">
+                <TableHeaderCell inset column="center" align="left" label="" />
+              </th>
+              <th className="p-0">
+                <TableHeaderCell inset column="center" align="left" label="Tracking No." />
+              </th>
+              <th className="p-0">
+                <TableHeaderCell inset column="center" align="left" label="Delivery Date" />
+              </th>
+              <th className="p-0">
+                <TableHeaderCell inset column="center" align="left" label="Customer" />
+              </th>
+              <th className="p-0">
+                <TableHeaderCell inset column="center" align="left" label="Shipping Address" />
+              </th>
+              <th className="p-0">
+                <TableHeaderCell inset column="center" align="left" label="" />
+              </th>
+            </tr>
+          </thead>
+        </table>
+
+        {/* Body — one SortBlock per row, plain div cells inside. */}
+        <div className="flex flex-col gap-[var(--spacing-4)]">
+          {rows.map((row) => (
+            <SortBlock key={row.id} className={ROW_OVERRIDE}>
+              <div
+                className={`flex items-start justify-center ${ICON_COL_WIDTH} ${CELL_PX} self-stretch`}
+              >
+                <Icon
+                  name="drag"
+                  size={17}
+                  className="text-[color:var(--color-icon-secondary)] cursor-grab"
+                />
+              </div>
+              <div style={{ width: COL_WIDTH }} className={`flex items-start ${CELL_PX}`}>
+                <SortBlock
+                  className="inline-flex"
+                  rows={[{ label: '', value: row.tracking, bold: true }]}
+                />
+              </div>
+              <div style={{ width: COL_WIDTH }} className={`flex items-start ${CELL_PX}`}>
+                <SortBlock
+                  className="inline-flex"
+                  rows={[{ label: '', value: row.deliveryDate }]}
+                />
+              </div>
+              <div style={{ width: COL_WIDTH }} className={CELL_PX}>
+                <TableCellMainSub
+                  mainValue={row.customerName}
+                  subValue={row.customerPhone}
+                />
+              </div>
+              <div className={`flex-1 min-w-0 ${CELL_PX}`}>
+                <TableCellInfo statuses={[{ label: '', body: row.addressLines }]} />
+              </div>
+              <div className="flex items-start justify-center w-[32px] flex-none px-[var(--spacing-6)] self-stretch">
+                <IconLink icon="close" variant="close" aria-label="Remove package" />
+              </div>
+            </SortBlock>
+          ))}
+        </div>
+      </div>
     );
   },
 };
