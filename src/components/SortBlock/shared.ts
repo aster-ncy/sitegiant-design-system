@@ -64,13 +64,12 @@ export const valueBodyClass = ({ wrap, bold }: { wrap: boolean; bold: boolean })
   ].join(' ');
 
 /** Caption-sized value typography (12/17). Used by MainSub's `rows[1]`. */
-export const valueCaptionClass = () =>
-  [
-    VALUE_BASE_CLASSES,
-    'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
-    'font-[weight:var(--general-caption-weight)]',
-    'whitespace-nowrap',
-  ].join(' ');
+export const VALUE_CAPTION_CLASS = [
+  VALUE_BASE_CLASSES,
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+  'font-[weight:var(--general-caption-weight)]',
+  'whitespace-nowrap',
+].join(' ');
 
 /** Empty-label predicate — empty string and undefined both mean "no label
  *  for this row". */
