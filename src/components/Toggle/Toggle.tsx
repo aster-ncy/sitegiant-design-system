@@ -1,5 +1,3 @@
-import React from 'react';
-
 /* ── Typography recipes (Pattern C — selection-control labels) ────────── */
 /* Label: 14 / 21 / regular — body. Per Figma node 1152:190 + 1165:239,
  * toggle option labels share the body/form-label recipe (both alias to
@@ -71,14 +69,6 @@ export const Toggle = ({
   id,
 }: ToggleProps) => {
   const isOn = checked;
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (disabled) return;
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      onChange?.(!checked);
-    }
-  };
 
   /* ── Sizing by variant per Figma ──────────────────────
    * default: 44×25 track + 25×25 knob (knob travels 19px)
@@ -209,7 +199,10 @@ export const Toggle = ({
         </span>
       )}
 
-      {/* Hidden native input. */}
+      {/* Native input — canonical focus target. The browser handles
+          space/enter natively; the visible track paints a focus ring
+          via peer-focus-visible: when the input has visible focus.
+          Avoids a duplicate keyboard target. */}
       <input
         type="checkbox"
         role="switch"
@@ -220,19 +213,20 @@ export const Toggle = ({
           if (disabled) return;
           onChange?.(!checked);
         }}
-        className="sr-only"
+        className="peer sr-only"
         aria-checked={checked}
       />
 
-      {/* Track slot — 21px-tall flex slot wraps the track so it
-          centers on the heading row's 21px line-height. */}
-      <span className={trackSlotClass}>
+      {/* Track slot — slot height varies by layout (see trackSlotClass).
+          Focus ring lives here so peer-focus-visible: targets a sibling
+          of <input class='peer'>. */}
+      <span
+        className={`${trackSlotClass} rounded-full peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1 peer-focus-visible:ring-[var(--button-primary-default-fill)]`}
+      >
         <span
           className={`${trackBase} ${trackState}`}
           style={{ boxShadow: trackBoxShadow }}
-          onKeyDown={handleKeyDown}
-          tabIndex={disabled ? -1 : 0}
-          role="presentation"
+          aria-hidden="true"
         >
           <span
             className={`${knobBase} ${knobState}`}

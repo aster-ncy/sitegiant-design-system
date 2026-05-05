@@ -207,6 +207,7 @@ export const Checkbox = ({
         }}
         className="peer sr-only"
         aria-checked={indeterminate ? 'mixed' : (lockedChecked ? true : checked)}
+        aria-readonly={lockedChecked || undefined}
         aria-invalid={isDanger || undefined}
       />
 

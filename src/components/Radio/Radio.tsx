@@ -1,5 +1,3 @@
-import type { KeyboardEvent } from 'react';
-
 /* ── Typography recipes (Pattern C — selection-control labels) ────────── */
 /* Label: 14 / 21 / regular — body. Per Figma node 1015:108 + 1476:9438,
  * radio option labels share the same body/form-label recipe (both alias
@@ -76,14 +74,6 @@ export const Radio = ({
   onChange,
   className = '',
 }: RadioProps) => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (disabled) return;
-    if (e.key === ' ' || e.key === 'Enter') {
-      e.preventDefault();
-      onChange?.(value);
-    }
-  };
-
   /* ── Circle styles ──────────────────────────────────
    * Per Figma RadioValue (1476:9438): the circle is 17×17 with a 1.5px
    * border (rendered via --border-2 token). Selected state shows a
@@ -100,11 +90,16 @@ export const Radio = ({
 
   // Slot wrapper centers the 17px circle in a 21px-tall slot so it
   // visually aligns with the heading row's 21px line-height — same
-  // convention as Checkbox.
+  // convention as Checkbox. Focus ring lives on the slot so the
+  // peer-focus-visible: prefix can target it (the input is the
+  // peer; siblings of the input receive the ring).
   const circleSlotClass = [
     'inline-flex items-center shrink-0',
     'min-h-[var(--leading-21)]',
     'rounded-full',
+    'peer-focus-visible:outline-none',
+    'peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1',
+    'peer-focus-visible:ring-[var(--button-primary-default-fill)]',
   ].join(' ');
 
   // Per Figma 2277:6649 (radio-checked): selected state has GREEN border
@@ -125,7 +120,10 @@ export const Radio = ({
         disabled ? 'cursor-not-allowed' : 'cursor-pointer'
       } ${className}`}
     >
-      {/* Hidden native input for a11y */}
+      {/* Native input — canonical focus target. The browser handles
+          space/enter/arrow-key navigation natively; the visible circle
+          paints a focus ring via peer-focus-visible: when the input
+          has visible focus. Avoids a duplicate keyboard target. */}
       <input
         type="radio"
         name={name}
@@ -133,7 +131,7 @@ export const Radio = ({
         checked={selected}
         disabled={disabled}
         onChange={() => onChange?.(value)}
-        className="sr-only"
+        className="peer sr-only"
       />
 
       {/* Circle slot — 21px-tall flex slot wraps the 17px circle so it
@@ -141,9 +139,7 @@ export const Radio = ({
       <span className={circleSlotClass}>
         <span
           className={`${circleBase} ${circleState}`}
-          role="presentation"
-          onKeyDown={handleKeyDown}
-          tabIndex={disabled ? -1 : 0}
+          aria-hidden="true"
         >
           {/* Inner selected dot — 9px (17 − 1.5×2 border − 2.5×2 gap = 9). */}
           {selected && (

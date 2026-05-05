@@ -77,7 +77,7 @@ export const Interactive: Story = {
 export const AllStates: Story = {
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-16)]">
-      <p className="text-[length:var(--text-14)] font-[var(--font-weight-semibold)] text-[color:var(--color-text-primary)]">
+      <p className="text-[length:var(--text-14)] font-[weight:var(--font-weight-semibold)] text-[color:var(--color-text-primary)]">
         All Toggle States
       </p>
       <div className="flex flex-col gap-[var(--spacing-12)]">
@@ -108,7 +108,7 @@ const SettingsPanel = () => {
 
   return (
     <div className="flex flex-col gap-[var(--spacing-16)] w-[320px]">
-      <p className="text-[length:var(--text-14)] font-[var(--font-weight-semibold)] text-[color:var(--color-text-primary)]">
+      <p className="text-[length:var(--text-14)] font-[weight:var(--font-weight-semibold)] text-[color:var(--color-text-primary)]">
         Settings
       </p>
       <div className="flex flex-col gap-[var(--spacing-12)]">

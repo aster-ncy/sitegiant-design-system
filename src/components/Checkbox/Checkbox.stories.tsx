@@ -81,6 +81,16 @@ export const DisabledIndeterminate: Story = {
   },
 };
 
+/* ── Locked Checked (Selected by Default per Figma 1339:8204) ──── */
+
+export const LockedChecked: Story = {
+  args: {
+    lockedChecked: true,
+    label: 'System-required option',
+    helperText: 'This option is locked on by your organization.',
+  },
+};
+
 /* ── No Label (standalone) ─────────────────────────────── */
 
 export const NoLabel: Story = {
@@ -92,17 +102,17 @@ export const NoLabel: Story = {
 /* ── Sizes ─────────────────────────────────────────────── */
 
 /**
- * Two box sizes: `md` (20×20, default — used in forms) and `sm` (17×17 —
- * used in table headers / rows to match the smaller checkbox Figma uses
- * inside table contexts, e.g. node 747:3744).
+ * Two box sizes: `sm` (17×17, default — matches Figma's standard
+ * Checkbox at 1339:8205 / 2262:741, used everywhere in the design
+ * system) and `md` (20×20 — opt-in larger variant).
  */
 export const Sizes: Story = {
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
-      <Checkbox size="md" label="Medium (20×20) — forms" />
-      <Checkbox size="sm" label="Small (17×17) — tables" />
-      <Checkbox size="md" checked label="Medium checked" />
+      <Checkbox size="sm" label="Small (17×17) — default" />
+      <Checkbox size="md" label="Medium (20×20) — opt-in larger" />
       <Checkbox size="sm" checked label="Small checked" />
+      <Checkbox size="md" checked label="Medium checked" />
     </div>
   ),
 };
