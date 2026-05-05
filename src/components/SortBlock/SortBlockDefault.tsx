@@ -5,11 +5,10 @@ import {
   hasLabel,
   resolveBold,
   valueBodyClass,
+  type SortBlockOrientation,
   type SortBlockRow,
   type SortBlockState,
 } from './shared';
-
-export type SortBlockOrientation = 'horizontal' | 'vertical';
 
 export interface SortBlockDefaultProps {
   /** 1 or 2 label/value rows. */
@@ -28,14 +27,17 @@ export interface SortBlockDefaultProps {
 const ROOT_BASE = `inline-flex items-start ${FILL_CLASS} ` +
   'px-[var(--spacing-6)] py-[var(--spacing-12)]';
 
-const horizontalLayout = () => 'gap-[var(--spacing-8)]';
+const HORIZONTAL_LAYOUT = 'gap-[var(--spacing-8)]';
 const verticalLayout = (rowCount: number) =>
   rowCount > 1
     ? 'flex-col gap-[var(--spacing-8)]'
     : 'flex-col gap-[var(--spacing-2)]';
 
-const HORIZONTAL_LABEL_STACK = 'inline-flex flex-col items-start gap-[var(--spacing-8)]';
-const HORIZONTAL_VALUE_STACK = 'inline-flex flex-col items-start gap-[var(--spacing-8)]';
+// Both label and value columns use the same flex recipe in horizontal
+// mode. Collapsed into one const so the two can't drift silently. If
+// future variants (e.g. value column needs `flex-1`) need divergence,
+// re-split with explicit names.
+const HORIZONTAL_COLUMN = 'inline-flex flex-col items-start gap-[var(--spacing-8)]';
 const VERTICAL_PAIR = 'inline-flex flex-col items-start gap-[var(--spacing-2)]';
 
 /**
@@ -55,7 +57,7 @@ export const SortBlockDefault = ({
   className,
 }: SortBlockDefaultProps) => {
   const layout =
-    orientation === 'horizontal' ? horizontalLayout() : verticalLayout(rows.length);
+    orientation === 'horizontal' ? HORIZONTAL_LAYOUT : verticalLayout(rows.length);
   const rootClass = appendClass(`${ROOT_BASE} ${layout}`, className);
 
   if (orientation === 'horizontal') {
@@ -63,19 +65,19 @@ export const SortBlockDefault = ({
     return (
       <div className={rootClass}>
         {anyLabel && (
-          <div className={HORIZONTAL_LABEL_STACK}>
-            {rows.map((row, i) => (
-              <span
-                key={`l-${i}`}
-                className={LABEL_CLASSES}
-                aria-hidden={hasLabel(row) ? undefined : true}
-              >
-                {hasLabel(row) ? row.label : ' '}
-              </span>
-            ))}
+          <div className={HORIZONTAL_COLUMN}>
+            {rows.map((row, i) =>
+              hasLabel(row) ? (
+                <span key={`l-${i}`} className={LABEL_CLASSES}>
+                  {row.label}
+                </span>
+              ) : (
+                <span key={`l-${i}`} className={LABEL_CLASSES} aria-hidden />
+              ),
+            )}
           </div>
         )}
-        <div className={HORIZONTAL_VALUE_STACK}>
+        <div className={HORIZONTAL_COLUMN}>
           {rows.map((row, i) => (
             <span
               key={`v-${i}`}
@@ -105,3 +107,5 @@ export const SortBlockDefault = ({
     </div>
   );
 };
+
+export type { SortBlockOrientation };

@@ -86,9 +86,21 @@ export const MixedLabelHorizontal: Story = {
   },
 };
 
+/** Wraps the component in a `flex` parent so `self-stretch` actually
+ *  takes effect. The visual proof: the grey fill (`--sorting-block-sorting-fill`)
+ *  AND the px-6 py-12 padding remain present alongside the consumer's
+ *  `self-stretch w-[200px]` — proving `className` appends to built-ins
+ *  instead of replacing them (the headline footgun this split fixes). */
 export const ClassNameAppendsSelfStretch: Story = {
   args: {
     rows: [{ value: 'MY123554G85899' }],
     className: 'self-stretch w-[200px]',
   },
+  decorators: [
+    (Story) => (
+      <div className="flex items-stretch h-[80px] gap-[var(--spacing-12)] bg-[color:var(--color-surface-card)] p-[var(--spacing-12)]">
+        <Story />
+      </div>
+    ),
+  ],
 };
