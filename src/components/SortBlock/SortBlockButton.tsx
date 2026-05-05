@@ -14,13 +14,13 @@ export interface SortBlockButtonProps {
   className?: string;
 }
 
+const ROOT_BASE_SHARED =
+  `inline-flex items-start ${FILL_CLASS} ` +
+  'pl-[var(--spacing-12)] pr-[var(--spacing-16)]';
+
 const ROOT_BASE_BY_KIND: Record<SortBlockButtonKind, string> = {
-  textlink:
-    `inline-flex items-start ${FILL_CLASS} ` +
-    'pl-[var(--spacing-12)] pr-[var(--spacing-16)] py-[var(--spacing-12)]',
-  dashed:
-    `inline-flex items-start ${FILL_CLASS} ` +
-    'pl-[var(--spacing-12)] pr-[var(--spacing-16)] py-[var(--spacing-4)]',
+  textlink: `${ROOT_BASE_SHARED} py-[var(--spacing-12)]`,
+  dashed: `${ROOT_BASE_SHARED} py-[var(--spacing-4)]`,
 };
 
 /**
