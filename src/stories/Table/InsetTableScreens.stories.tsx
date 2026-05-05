@@ -13,7 +13,10 @@ import { Pip } from '../../components/Pip';
 import { Icon } from '../../components/Icon';
 import { ProductImage } from '../../components/ProductImageList/ProductImage';
 import { ProgressBar } from '../../components/ProgressBar';
-import { SortBlock } from '../../components/SortBlock';
+import { SortBlockDefault } from '../../components/SortBlock/SortBlockDefault';
+import { SortBlockMainSub } from '../../components/SortBlock/SortBlockMainSub';
+import { SortBlockLongContent } from '../../components/SortBlock/SortBlockLongContent';
+import { SortBlockIcon } from '../../components/SortBlock/SortBlockIcon';
 import { TextLink } from '../../components/TextLink';
 import { Dropdown } from '../../components/Dropdown';
 import { DatePicker } from '../../components/DatePicker';
@@ -621,21 +624,6 @@ export const S7AddTrip: Story = {
       },
     ];
 
-    // Per-cell SortBlock chrome:
-    //   - icon cells (drag, close): pl-12 pr-16 py-12 (Figma SortBlockIcon)
-    //   - text cells (tracking, delivery, customer, address): px-6 py-12
-    //   - all use --sorting-block-sorting-fill, items-start, self-stretch
-    //     so cells share row height when multi-line content stretches one.
-    const sbIconCell =
-      'flex items-start self-stretch ' +
-      'bg-[color:var(--sorting-block-sorting-fill)] ' +
-      'pl-[var(--spacing-12)] pr-[var(--spacing-16)] py-[var(--spacing-12)]';
-    const sbTextCell =
-      'flex items-start self-stretch ' +
-      'bg-[color:var(--sorting-block-sorting-fill)] ' +
-      'px-[var(--spacing-6)] py-[var(--spacing-12)] ' +
-      'gap-[var(--spacing-8)]';
-
     return (
       <div className={cardClasses}>
         <div className="flex flex-col gap-[var(--spacing-8)]">
@@ -663,67 +651,47 @@ export const S7AddTrip: Story = {
             </div>
           </div>
 
-          {/* Body rows — flex of 6 SortBlocks per row, gap-4 between rows. */}
+          {/* Body rows — flex of 6 SortBlock family cells per row, gap-4 between rows. */}
           <div className="flex flex-col gap-[var(--spacing-4)]">
             {rows.map((row) => (
               <div key={row.id} className="flex w-full">
-                {/* Drag — SortBlock with Icon child */}
-                <SortBlock className={`${sbIconCell} w-[45px]`}>
+                {/* Drag */}
+                <SortBlockIcon className="self-stretch w-[45px]">
                   <Icon
                     name="drag"
                     size={17}
-                    className="text-[color:var(--color-icon-secondary)] cursor-grab"
+                    color="var(--color-icon-secondary)"
+                    className="cursor-grab"
                   />
-                </SortBlock>
+                </SortBlockIcon>
 
-                {/* Tracking — bold readonly value via rows API. */}
-                <SortBlock
-                  className={`${sbTextCell} flex-1 min-w-0`}
-                  rows={[{ value: row.tracking, bold: true }]}
+                {/* Tracking — bold via component-level state */}
+                <SortBlockDefault
+                  state="Readonly Bold"
+                  className="self-stretch flex-1 min-w-0"
+                  rows={[{ value: row.tracking }]}
                 />
 
-                {/* Delivery — regular readonly value via rows API. */}
-                <SortBlock
-                  className={`${sbTextCell} w-[166px]`}
+                {/* Delivery */}
+                <SortBlockDefault
+                  className="self-stretch w-[166px]"
                   rows={[{ value: row.deliveryDate }]}
                 />
 
-                {/* Customer — Figma MainSub variant: vertical 2-row,
-                    gap-4 between pairs, main 14/17, sub caption 12/17.
-                    `className` REPLACES the SortBlock root, so we
-                    encode the gap-4 here (the `mainSub` prop only
-                    drives the gap when no className is passed; in s7
-                    we need full layout control for self-stretch + the
-                    fixed column width). */}
-                <SortBlock
-                  className="flex flex-col items-start
-                             bg-[color:var(--sorting-block-sorting-fill)]
-                             self-stretch w-[130px]
-                             px-[var(--spacing-6)] py-[var(--spacing-12)]
-                             gap-[var(--spacing-4)]"
-                  orientation="vertical"
-                  rows={[
-                    { value: row.customerName },
-                    { value: row.customerPhone, caption: true },
-                  ]}
+                {/* Customer — Figma MainSub: row[0] body 14/17, row[1] caption 12/17 */}
+                <SortBlockMainSub
+                  className="self-stretch w-[130px]"
+                  rows={[{ value: row.customerName }, { value: row.customerPhone }]}
                 />
 
-                {/* Address — Figma LongContent variant. `wrap: true`
-                    enables whitespace-pre-line so the address (a) flows
-                    onto multiple lines via natural CSS wrap when the
-                    cell is narrow enough AND (b) honours \n in the
-                    source. Figma's fixture pre-breaks with \n; we
-                    mirror that by joining addressLines. */}
-                <SortBlock
-                  className="flex items-start
-                             bg-[color:var(--sorting-block-sorting-fill)]
-                             self-stretch w-[203px]
-                             px-[var(--spacing-6)] py-[var(--spacing-12)]"
-                  rows={[{ value: row.addressLines.join('\n'), wrap: true }]}
+                {/* Address — LongContent honours \n breaks AND wraps via CSS */}
+                <SortBlockLongContent
+                  className="self-stretch w-[203px]"
+                  rows={[{ value: row.addressLines.join('\n') }]}
                 />
 
-                {/* Close — SortBlock with Icon child (17px close glyph) */}
-                <SortBlock className={`${sbIconCell} w-[45px]`}>
+                {/* Close */}
+                <SortBlockIcon className="self-stretch w-[45px]">
                   <button
                     type="button"
                     aria-label="Remove package"
@@ -732,10 +700,10 @@ export const S7AddTrip: Story = {
                     <Icon
                       name="close"
                       size={17}
-                      className="text-[color:var(--color-icon-secondary)]"
+                      color="var(--color-icon-secondary)"
                     />
                   </button>
-                </SortBlock>
+                </SortBlockIcon>
               </div>
             ))}
           </div>
