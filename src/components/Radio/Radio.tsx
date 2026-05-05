@@ -84,21 +84,35 @@ export const Radio = ({
     }
   };
 
-  /* ── Circle styles (token-driven) ──────────────────── */
+  /* ── Circle styles ──────────────────────────────────
+   * Per Figma RadioValue (1476:9438): the circle is 17×17 with a 1.5px
+   * border (rendered via --border-2 token). Selected state shows a
+   * smaller inner dot per the 2.5px gap convention shared with the
+   * Checkbox-indeterminate dot. */
   const circleBase = [
     'relative shrink-0',
-    'w-[var(--spacing-20)] h-[var(--spacing-20)]',
+    'w-[17px] h-[17px]',
     'rounded-full',
-    'border-2 border-solid',
+    'border-[length:var(--border-2)] border-solid',
     'transition-all duration-150',
     'flex items-center justify-center',
   ].join(' ');
 
+  // Slot wrapper centers the 17px circle in a 21px-tall slot so it
+  // visually aligns with the heading row's 21px line-height — same
+  // convention as Checkbox.
+  const circleSlotClass = [
+    'inline-flex items-center shrink-0',
+    'min-h-[var(--leading-21)]',
+    'rounded-full',
+  ].join(' ');
+
+  // Per Figma 2277:6649 (radio-checked): selected state has GREEN border
+  // (matching the green inner dot). Default/unselected uses the grey
+  // default-border with a hover transition to green.
   let circleState: string;
   if (disabled) {
-    circleState = selected
-      ? 'bg-[var(--form-radio-disabled-fill)] border-[var(--form-radio-disabled-border)]'
-      : 'bg-[var(--form-radio-disabled-fill)] border-[var(--form-radio-disabled-border)]';
+    circleState = 'bg-[var(--form-radio-disabled-fill)] border-[var(--form-radio-disabled-border)]';
   } else if (selected) {
     circleState = 'bg-[var(--form-radio-default-fill)] border-[var(--form-radio-selected-border)]';
   } else {
@@ -107,7 +121,7 @@ export const Radio = ({
 
   return (
     <label
-      className={`inline-flex items-start gap-[var(--spacing-8)] select-none ${
+      className={`inline-flex items-start gap-[var(--spacing-12)] select-none ${
         disabled ? 'cursor-not-allowed' : 'cursor-pointer'
       } ${className}`}
     >
@@ -122,28 +136,34 @@ export const Radio = ({
         className="sr-only"
       />
 
-      {/* Custom radio circle */}
-      <span
-        className={`${circleBase} ${circleState}`}
-        role="presentation"
-        onKeyDown={handleKeyDown}
-        tabIndex={disabled ? -1 : 0}
-      >
-        {/* Inner dot when selected */}
-        {selected && (
-          <span
-            className={`w-[var(--spacing-10)] h-[var(--spacing-10)] rounded-full ${
-              disabled
-                ? 'bg-[var(--form-radio-disabled-border)]'
-                : 'bg-[var(--form-radio-selected-dot)]'
-            } transition-all duration-150`}
-          />
-        )}
+      {/* Circle slot — 21px-tall flex slot wraps the 17px circle so it
+          centers on the heading row's 21px line-height. */}
+      <span className={circleSlotClass}>
+        <span
+          className={`${circleBase} ${circleState}`}
+          role="presentation"
+          onKeyDown={handleKeyDown}
+          tabIndex={disabled ? -1 : 0}
+        >
+          {/* Inner selected dot — 9px (17 − 1.5×2 border − 2.5×2 gap = 9). */}
+          {selected && (
+            <span
+              className={`w-[9px] h-[9px] rounded-full ${
+                disabled
+                  ? 'bg-[var(--form-radio-disabled-border)]'
+                  : 'bg-[var(--form-radio-selected-dot)]'
+              } transition-all duration-150`}
+            />
+          )}
+        </span>
       </span>
 
-      {/* Label + helper text */}
+      {/* Label + helper text — drops the pt-[var(--spacing-1)] hack
+          that was tuned for the old 17px label leading. With the
+          circle now in its own 21px slot above, alignment comes from
+          the slot centering on the heading line-height. */}
       {(label || helperText) && (
-        <span className="flex flex-col gap-[var(--spacing-2)] pt-[var(--spacing-1)]">
+        <span className="flex flex-col gap-[var(--spacing-4)] justify-center">
           {label && (
             <span
               className={`${bodyTextClasses} ${
