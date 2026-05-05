@@ -122,28 +122,49 @@ export const Checkbox = ({
     'relative shrink-0',
     boxSizeClass,
     'rounded-[var(--radius-4)]',
-    'border-2 border-solid',
+    // Figma 2262:772 spec: 1.5px border at the 24-canvas; at our 17/20px
+    // render scale the closest token is 2px (--border-2). Use the token
+    // explicitly because Tailwind v4 in this project mis-scales both
+    // `border-2` (renders ~1.6px) and `border-[1.5px]` (renders ~0.8px).
+    'border-[length:var(--border-2)] border-solid',
     'transition-all duration-150',
     'flex items-center justify-center',
   ].join(' ');
 
-  // Inner check icon scales proportionally with box size.
-  const innerIconSize = size === 'sm' ? 10 : 12;
-  // Inner square (locked-checked) is smaller than the box by the border
-  // width × 2 plus a small inset, matching Figma's checkbox-checked-fixed
-  // visual proportions (~9px for sm, ~10px for md).
-  const innerSquareSize = size === 'sm' ? '9px' : '10px';
+  // Inner check icon — per Figma 2262:775 (checkbox-checked) the tick
+  // visually fills the inner box (the SVG glyph occupies the full
+  // inner area, with the tick stroke itself sitting inside that bounds).
+  // Sized to the inner area: box - border × 2.
+  //   sm: 17 − ~1.6 × 2 ≈ 14px
+  //   md: 20 − ~1.6 × 2 ≈ 17px
+  const innerIconSize = size === 'sm' ? 14 : 17;
+  // Indeterminate inner green-dot — per Figma 2262:778: 1.5px border +
+  // 2.5px gap = 9px dot at 17px box (24-canvas: border 1.5, gap 2.5, dot 10).
+  // Tailwind v4 in this project renders the 2px border token at ~1.6px,
+  // which gives ~2.4px gap to the 9px dot — within 0.1px of spec.
+  //   sm: 17 − ~1.6 border × 2 − 9 dot = 4.8 / 2 = 2.4 gap (spec 2.5) ✓
+  //   md: 20 − ~1.6 border × 2 − 12 dot = 4.8 / 2 = 2.4 gap (spec 2.5) ✓
+  const innerSquareSize = size === 'sm' ? '9px' : '12px';
 
   let boxState: string;
-  if (disabled) {
+  if (lockedChecked) {
+    // Selected by Default per Figma 2262:782 (checkbox-checked-fixed):
+    // grey-disabled background with a white tick. Visually identical to
+    // disabled+checked, but interactivity differs (readOnly, not disabled).
+    boxState = 'bg-[var(--checkbox-disabled)] border-[var(--checkbox-disabled)]';
+  } else if (disabled) {
     boxState = isActive
       ? 'bg-[var(--checkbox-disabled)] border-[var(--checkbox-disabled)]'
       : 'bg-[var(--checkbox-disabled-inset)] border-[var(--checkbox-disabled)]';
   } else if (isDanger) {
     // Danger overrides hover/checked border — error state takes priority.
-    boxState = isActive
+    boxState = isActive && !indeterminate
       ? 'bg-[var(--checkbox-checked)] border-[var(--form-input-danger-border)]'
       : 'bg-[var(--checkbox-fill)] border-[var(--form-input-danger-border)] hover:border-[var(--form-input-danger-border)]';
+  } else if (indeterminate) {
+    // Per Figma 2262:778: white fill + grey border (same as unchecked),
+    // with a green rounded-square dot inside. Border is NOT green.
+    boxState = 'bg-[var(--checkbox-fill)] border-[var(--checkbox-default)] hover:border-[var(--checkbox-checked)]';
   } else if (isActive) {
     boxState = 'bg-[var(--checkbox-checked)] border-[var(--checkbox-checked)]';
   } else {
@@ -194,16 +215,29 @@ export const Checkbox = ({
       <span className={boxSlotClass}>
         <span className={`${boxBase} ${boxState}`} aria-hidden="true">
           {isActive && (
-            lockedChecked ? (
-              // Inner green-on-green square per Figma checkbox-checked-fixed.
+            indeterminate ? (
+              // Per Figma 2262:778 (checkbox-indeterminate): white fill +
+              // grey border (same as unchecked) with a small green
+              // rounded-square dot in the middle. NOT a minus icon and
+              // NOT inverted (white-on-green) — the partial-selection
+              // indicator is the green dot itself.
               <span
-                className="block bg-[var(--color-white)]"
+                className={`block rounded-[1px] ${
+                  disabled
+                    ? 'bg-[var(--checkbox-disabled)]'
+                    : 'bg-[var(--checkbox-checked)]'
+                }`}
                 style={{ width: innerSquareSize, height: innerSquareSize }}
               />
-            ) : indeterminate ? (
-              <Icon name="minus" size={innerIconSize} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
             ) : (
-              <Icon name="check" size={innerIconSize} color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'} />
+              // Both regular checked and lockedChecked render a white
+              // tick. The background-color alone (green vs grey)
+              // distinguishes them per Figma 2262:775 / 2262:782.
+              <Icon
+                name="check"
+                size={innerIconSize}
+                color={disabled ? 'var(--checkbox-disabled-inset)' : 'var(--color-white)'}
+              />
             )
           )}
         </span>
