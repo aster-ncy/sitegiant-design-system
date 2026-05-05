@@ -42,11 +42,12 @@ export const Close: Story = {
  *  `self-stretch w-[45px]` with an icon child. Proves the grey fill +
  *  pl-12 pr-16 py-12 padding survive alongside the consumer's classes. */
 export const ClassNameAppendsSelfStretch: Story = {
-  render: () => (
-    <div className="flex items-stretch h-[80px] gap-[var(--spacing-12)] bg-[color:var(--color-surface-card)] p-[var(--spacing-12)]">
-      <SortBlockIcon className="self-stretch w-[45px]">
-        <Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)]" />
-      </SortBlockIcon>
-    </div>
-  ),
+  args: { className: 'self-stretch w-[45px]' },
+  decorators: [
+    (Story) => (
+      <div className="flex items-stretch h-[80px] gap-[var(--spacing-12)] bg-[color:var(--color-surface-card)] p-[var(--spacing-12)]">
+        <Story />
+      </div>
+    ),
+  ],
 };
