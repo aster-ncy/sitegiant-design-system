@@ -157,17 +157,18 @@ export const CheckboxTab = ({
           matches the SortBlock / TableCell convention: leading elements
           follow the top content row.
 
-          The 22px heading-row centerline is reproduced for the 17px
-          checkbox via py-[2.5px] on its slot ((22-17)/2 = 2.5px),
-          mirroring Figma's per-item padding pattern. */}
+          Each leading element is wrapped in a 21px-tall slot
+          (min-h-[var(--leading-21)]) so it visually centers on the
+          heading's 21px line-height. Checkbox handles its own slot
+          internally; CheckboxTab matches that height for the icon and
+          chevron columns. */}
       <div className="flex flex-1 min-w-0 items-start gap-[var(--spacing-12)] py-[1.5px]">
-        {/* Checkbox slot — 17px box wrapped in a 22px-tall slot
-            (py-[2.5px]) so it visually sits on the heading's centerline.
-            Stops propagation so the row's expand-toggle doesn't fire
-            when the user clicks the checkbox itself. */}
+        {/* Checkbox column — Checkbox internally wraps its box in a
+            21px slot, so no extra py here. Stops propagation so the
+            row's expand-toggle doesn't fire when the box is clicked. */}
         <div
           data-checkbox-tab-checkbox=""
-          className="flex items-center shrink-0 py-[2.5px]"
+          className="flex items-center shrink-0"
           onClick={(e) => e.stopPropagation()}
         >
           <Checkbox
@@ -185,11 +186,10 @@ export const CheckboxTab = ({
             the visual midpoint when a hint is present. */}
         <div className="flex items-start gap-[var(--spacing-8)] min-w-0">
           {icon && (
-            // 20px icon in a 22px slot (py-[1px]) so it visually
-            // centers on the heading's 22px line-height instead of
-            // top-aligning 1px high. Mirrors the checkbox slot's
-            // py-[2.5px] pattern for the same reason at 17px.
-            <span className="shrink-0 inline-flex w-[20px] h-[20px] items-center justify-center py-[1px] box-content">
+            // 20px image in a 21px slot (min-h-[var(--leading-21)]) so
+            // it centers on the heading's 21px line-height. Same slot
+            // pattern as Checkbox's internal box-slot for symmetry.
+            <span className="shrink-0 inline-flex items-center justify-center w-[20px] min-h-[var(--leading-21)]">
               {icon}
             </span>
           )}
@@ -230,11 +230,13 @@ export const CheckboxTab = ({
       {showChevron && !dropdown && (
         <div
           aria-hidden="true"
-          className="flex items-center justify-center shrink-0 rounded-[var(--radius-120)] py-[2.5px]"
+          className="flex items-center justify-center shrink-0 rounded-[var(--radius-120)] min-h-[var(--leading-21)]"
         >
           {/* 17px chevron per Figma 1842:7598. The Icon component takes
               a numeric pixel size; the value matches the inner checkbox
-              size for visual symmetry across the row. */}
+              size for visual symmetry across the row. The 21px-tall
+              slot (min-h-[var(--leading-21)]) lines the chevron up with
+              the heading-row centerline. */}
           <Icon
             name={expanded ? 'chevron-up' : 'chevron-down'}
             size={17}
