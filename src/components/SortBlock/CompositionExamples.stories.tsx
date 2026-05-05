@@ -33,9 +33,16 @@ export const SortableRowComposition: Story = {
         className="bg-transparent px-[var(--spacing-12)]"
         rows={[{ value: '2023-03-09-1' }]}
       />
-      <SortBlockIcon className="bg-transparent">
+      {/* Calendar + date pair — no single family member matches this
+          shape (icon adjacent to body text in one cell). Rendered as a
+          raw inline cell that matches the surrounding `cellOverride`
+          padding, consistent with the drag and "1" cells above. */}
+      <div className="inline-flex items-center gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)]">
         <Icon name="calendar" size={17} className="text-[color:var(--color-set-lightest)]" />
-      </SortBlockIcon>
+        <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
+          2020-08-18
+        </span>
+      </div>
       <SortBlockDefault
         className="bg-transparent px-[var(--spacing-12)]"
         rows={[{ label: 'Notes', value: 'testinggggggggggggg' }]}
