@@ -5,7 +5,7 @@ import {
   hasLabel,
   resolveBold,
   valueBodyClass,
-  valueCaptionClass,
+  VALUE_CAPTION_CLASS,
   type SortBlockRow,
   type SortBlockState,
 } from './shared';
@@ -36,6 +36,9 @@ const PAIR_CLASSES = 'inline-flex items-start gap-[var(--spacing-8)]';
  * Default's gap-8 / gap-2). `rows[0]` is the body-sized "main" line
  * (14/17); `rows[1]` is the caption-sized "sub" line (12/17). Row position
  * determines size; there is no per-row size flag.
+ *
+ * Sub-row `bold` is silently ignored — the caption recipe is always
+ * fixed-weight. See `state` prop docs for the full precedence rule.
  */
 export const SortBlockMainSub = ({
   rows,
@@ -55,7 +58,7 @@ export const SortBlockMainSub = ({
       </div>
       <div className={PAIR_CLASSES}>
         {hasLabel(sub) && <span className={LABEL_CLASSES}>{sub.label}</span>}
-        <span className={valueCaptionClass()}>{sub.value}</span>
+        <span className={VALUE_CAPTION_CLASS}>{sub.value}</span>
       </div>
     </div>
   );
