@@ -117,7 +117,7 @@ export const Disabled: Story = {
 export const AllStates: Story = {
   args: { label: 'Checkbox Value' },
   render: () => (
-    <div className="flex flex-col gap-3 w-[600px]">
+    <div className="flex flex-col gap-[var(--spacing-12)] w-[600px]">
       <CheckboxTab label="Checkbox Value" hintText="Hint text" state="default" expanded={true} />
       <CheckboxTab label="Checkbox Value" hintText="Hint text" state="default" expanded={false} />
       <CheckboxTab label="Checkbox Value" hintText="Hint text" state="selected" expanded={true} />
@@ -145,67 +145,81 @@ export const ChannelGroupExample: Story = {
       const toggle = (key: ChannelKey) =>
         setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
+      // Spacing convention in the live UI:
+      //   12px between a CheckboxTab heading and its child grid (within group)
+      //   20px between groups (after the last child of one group, before the next heading)
+      // NB: Tailwind v4 in this project has a known bug where `gap-5` / `gap-3`
+      // render as 5px / 3px (not 20px / 12px) — use arbitrary values via tokens.
+      // See feedback_tailwind_spacing_shadow.md.
       return (
-        <div className="flex flex-col gap-3 w-[800px]">
-          <CheckboxTab
-            label="ShopeeMY"
-            state="indeterminate"
-            icon={<img src={shopeeMy} alt="" className="w-full h-full object-cover" />}
-            expanded={expanded.shopeeMy}
-            onExpandChange={() => toggle('shopeeMy')}
-          />
-          {expanded.shopeeMy && (
-            <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
-              <Checkbox label="Shopee Main" checked={true} />
-              <Checkbox label="KX Shopee" />
-              <Checkbox label="test :3" checked={true} />
-              <Checkbox label="Shopee catchme2" />
-            </div>
-          )}
-          <CheckboxTab
-            label="LazadaMY"
-            state="indeterminate"
-            icon={<img src={lazadaMy} alt="" className="w-full h-full object-cover" />}
-            expanded={expanded.lazadaMy}
-            onExpandChange={() => toggle('lazadaMy')}
-          />
-          {expanded.lazadaMy && (
-            <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
-              <Checkbox label="zxstore" />
-              <Checkbox label="RND-Lazada" />
-              <Checkbox label="loan my" checked={true} />
-            </div>
-          )}
-          <CheckboxTab
-            label="LazadaSG"
-            state="default"
-            icon={<img src={lazadaSg} alt="" className="w-full h-full object-cover" />}
-            expanded={expanded.lazadaSg}
-            onExpandChange={() => toggle('lazadaSg')}
-          />
-          {expanded.lazadaSg && (
-            <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
-              <Checkbox label="RND-Lazada2" />
-              <Checkbox label="LazadaSG - Testing" />
-            </div>
-          )}
-          <CheckboxTab
-            label="TikTokMY"
-            state="default"
-            icon={<img src={tiktokMy} alt="" className="w-full h-full object-cover" />}
-            expanded={expanded.tiktokMy}
-            onExpandChange={() => toggle('tiktokMy')}
-          />
-          {expanded.tiktokMy && (
-            <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
-              <Checkbox label="TikTok RND" />
-              <Checkbox label="RND tiktok" />
-              <Checkbox label="TikTok Anne" />
-              <Checkbox label="SGSL" />
-              <Checkbox label="TikTok Sandbox" />
-              <Checkbox label="TikTok MY" />
-            </div>
-          )}
+        <div className="flex flex-col gap-[var(--spacing-20)] w-[800px]">
+          <div className="flex flex-col gap-[var(--spacing-12)]">
+            <CheckboxTab
+              label="ShopeeMY"
+              state="indeterminate"
+              icon={<img src={shopeeMy} alt="" className="w-full h-full object-cover" />}
+              expanded={expanded.shopeeMy}
+              onExpandChange={() => toggle('shopeeMy')}
+            />
+            {expanded.shopeeMy && (
+              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+                <Checkbox label="Shopee Main" checked={true} />
+                <Checkbox label="KX Shopee" />
+                <Checkbox label="test :3" checked={true} />
+                <Checkbox label="Shopee catchme2" />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-[var(--spacing-12)]">
+            <CheckboxTab
+              label="LazadaMY"
+              state="indeterminate"
+              icon={<img src={lazadaMy} alt="" className="w-full h-full object-cover" />}
+              expanded={expanded.lazadaMy}
+              onExpandChange={() => toggle('lazadaMy')}
+            />
+            {expanded.lazadaMy && (
+              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+                <Checkbox label="zxstore" />
+                <Checkbox label="RND-Lazada" />
+                <Checkbox label="loan my" checked={true} />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-[var(--spacing-12)]">
+            <CheckboxTab
+              label="LazadaSG"
+              state="default"
+              icon={<img src={lazadaSg} alt="" className="w-full h-full object-cover" />}
+              expanded={expanded.lazadaSg}
+              onExpandChange={() => toggle('lazadaSg')}
+            />
+            {expanded.lazadaSg && (
+              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+                <Checkbox label="RND-Lazada2" />
+                <Checkbox label="LazadaSG - Testing" />
+              </div>
+            )}
+          </div>
+          <div className="flex flex-col gap-[var(--spacing-12)]">
+            <CheckboxTab
+              label="TikTokMY"
+              state="default"
+              icon={<img src={tiktokMy} alt="" className="w-full h-full object-cover" />}
+              expanded={expanded.tiktokMy}
+              onExpandChange={() => toggle('tiktokMy')}
+            />
+            {expanded.tiktokMy && (
+              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+                <Checkbox label="TikTok RND" />
+                <Checkbox label="RND tiktok" />
+                <Checkbox label="TikTok Anne" />
+                <Checkbox label="SGSL" />
+                <Checkbox label="TikTok Sandbox" />
+                <Checkbox label="TikTok MY" />
+              </div>
+            )}
+          </div>
         </div>
       );
     };
