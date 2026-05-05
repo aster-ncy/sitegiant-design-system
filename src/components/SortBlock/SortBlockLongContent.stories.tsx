@@ -73,3 +73,23 @@ export const ReadonlyBoldState: Story = {
     className: 'w-[203px]',
   },
 };
+
+/** Wraps the component in a `flex` parent so `self-stretch` actually
+ *  takes effect. Mirrors the s7 Add Trip address-cell usage exactly:
+ *  `self-stretch w-[203px]` with a multi-line value. The visual proof:
+ *  the grey fill, px-6 py-12 padding, and flex-1 value column all
+ *  remain alongside the consumer's classes — the family-split footgun
+ *  fix exercised against its real call-site shape. */
+export const ClassNameAppendsSelfStretch: Story = {
+  args: {
+    rows: [{ value: '123, Jalan Mayang Pasir,\n11200 Bayan Baru.' }],
+    className: 'self-stretch w-[203px]',
+  },
+  decorators: [
+    (Story) => (
+      <div className="flex items-stretch h-[80px] gap-[var(--spacing-12)] bg-[color:var(--color-surface-card)] p-[var(--spacing-12)]">
+        <Story />
+      </div>
+    ),
+  ],
+};
