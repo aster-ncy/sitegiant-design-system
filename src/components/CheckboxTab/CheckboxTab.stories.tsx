@@ -5,7 +5,7 @@ import { Checkbox } from '../Checkbox';
 import { Dropdown } from '../Dropdown';
 import shopeeMy from '../../assets/channel-icons/shopee-my.png';
 import lazadaMy from '../../assets/channel-icons/lazada-my.png';
-import lazadaSg from '../../assets/channel-icons/shopee-sg.png';
+import shopeeSg from '../../assets/channel-icons/shopee-sg.png';
 import tiktokMy from '../../assets/channel-icons/tiktok-my.png';
 
 const meta = {
@@ -103,13 +103,40 @@ export const WithDropdown: Story = {
 };
 
 /* ── Disabled ─────────────────────────────────────────────────────── */
-export const Disabled: Story = {
+export const DisabledExpanded: Story = {
   args: {
     label: 'Checkbox Value',
     hintText: 'Hint text',
     state: 'default',
     disabled: true,
     expanded: true,
+  },
+};
+
+export const DisabledCollapsed: Story = {
+  args: {
+    label: 'Checkbox Value',
+    hintText: 'Hint text',
+    state: 'default',
+    disabled: true,
+    expanded: false,
+  },
+};
+
+/* ── Dropdown variants — confirm checkbox state is independent ──── */
+export const DropdownIndeterminate: Story = {
+  args: {
+    label: 'Checkbox Value',
+    state: 'indeterminate',
+    dropdown: (
+      <Dropdown
+        options={[
+          { value: 'a', label: 'Option A' },
+          { value: 'b', label: 'Option B' },
+        ]}
+        placeholder="Value"
+      />
+    ),
   },
 };
 
@@ -124,6 +151,8 @@ export const AllStates: Story = {
       <CheckboxTab label="Checkbox Value" hintText="Hint text" state="selected" expanded={false} />
       <CheckboxTab label="Checkbox Value" hintText="Hint text" state="indeterminate" expanded={true} />
       <CheckboxTab label="Checkbox Value" hintText="Hint text" state="indeterminate" expanded={false} />
+      <CheckboxTab label="Checkbox Value" hintText="Hint text" state="default" disabled={true} expanded={true} />
+      <CheckboxTab label="Checkbox Value" hintText="Hint text" state="default" disabled={true} expanded={false} />
     </div>
   ),
 };
@@ -132,13 +161,13 @@ export const AllStates: Story = {
 export const ChannelGroupExample: Story = {
   args: { label: 'Channel groups' },
   render: () => {
-    type ChannelKey = 'shopeeMy' | 'lazadaMy' | 'lazadaSg' | 'tiktokMy';
+    type ChannelKey = 'shopeeMy' | 'lazadaMy' | 'shopeeSg' | 'tiktokMy';
 
     const ChannelGroups = () => {
       const [expanded, setExpanded] = useState<Record<ChannelKey, boolean>>({
         shopeeMy: true,
         lazadaMy: true,
-        lazadaSg: false,
+        shopeeSg: false,
         tiktokMy: true,
       });
 
@@ -162,7 +191,7 @@ export const ChannelGroupExample: Story = {
               onExpandChange={() => toggle('shopeeMy')}
             />
             {expanded.shopeeMy && (
-              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+              <div className="grid grid-cols-3 gap-x-[var(--spacing-16)] gap-y-[var(--spacing-8)] px-[53px]">
                 <Checkbox label="Shopee Main" checked={true} />
                 <Checkbox label="KX Shopee" />
                 <Checkbox label="test :3" checked={true} />
@@ -179,7 +208,7 @@ export const ChannelGroupExample: Story = {
               onExpandChange={() => toggle('lazadaMy')}
             />
             {expanded.lazadaMy && (
-              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+              <div className="grid grid-cols-3 gap-x-[var(--spacing-16)] gap-y-[var(--spacing-8)] px-[53px]">
                 <Checkbox label="zxstore" />
                 <Checkbox label="RND-Lazada" />
                 <Checkbox label="loan my" checked={true} />
@@ -188,16 +217,16 @@ export const ChannelGroupExample: Story = {
           </div>
           <div className="flex flex-col gap-[var(--spacing-12)]">
             <CheckboxTab
-              label="LazadaSG"
+              label="ShopeeSG"
               state="default"
-              icon={<img src={lazadaSg} alt="" className="w-full h-full object-cover" />}
-              expanded={expanded.lazadaSg}
-              onExpandChange={() => toggle('lazadaSg')}
+              icon={<img src={shopeeSg} alt="" className="w-full h-full object-cover" />}
+              expanded={expanded.shopeeSg}
+              onExpandChange={() => toggle('shopeeSg')}
             />
-            {expanded.lazadaSg && (
-              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
-                <Checkbox label="RND-Lazada2" />
-                <Checkbox label="LazadaSG - Testing" />
+            {expanded.shopeeSg && (
+              <div className="grid grid-cols-3 gap-x-[var(--spacing-16)] gap-y-[var(--spacing-8)] px-[53px]">
+                <Checkbox label="ShopeeSG Main" />
+                <Checkbox label="ShopeeSG - Testing" />
               </div>
             )}
           </div>
@@ -210,7 +239,7 @@ export const ChannelGroupExample: Story = {
               onExpandChange={() => toggle('tiktokMy')}
             />
             {expanded.tiktokMy && (
-              <div className="grid grid-cols-3 gap-x-4 gap-y-2 px-[53px]">
+              <div className="grid grid-cols-3 gap-x-[var(--spacing-16)] gap-y-[var(--spacing-8)] px-[53px]">
                 <Checkbox label="TikTok RND" />
                 <Checkbox label="RND tiktok" />
                 <Checkbox label="TikTok Anne" />

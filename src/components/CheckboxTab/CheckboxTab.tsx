@@ -232,6 +232,9 @@ export const CheckboxTab = ({
           aria-hidden="true"
           className="flex items-center justify-center shrink-0 rounded-[var(--radius-120)] py-[2.5px]"
         >
+          {/* 17px chevron per Figma 1842:7598. The Icon component takes
+              a numeric pixel size; the value matches the inner checkbox
+              size for visual symmetry across the row. */}
           <Icon
             name={expanded ? 'chevron-up' : 'chevron-down'}
             size={17}
