@@ -22,8 +22,8 @@ export interface SortBlockLongContentProps {
 const ROOT_BASE = `inline-flex items-start gap-[var(--spacing-8)] ${FILL_CLASS} ` +
   'px-[var(--spacing-6)] py-[var(--spacing-12)]';
 
-const HORIZONTAL_LABEL_STACK = 'inline-flex flex-col items-start gap-[var(--spacing-8)]';
-const HORIZONTAL_VALUE_STACK = 'flex flex-col items-start gap-[var(--spacing-8)] flex-1 min-w-0';
+const HORIZONTAL_LABEL_COLUMN = 'inline-flex flex-col items-start gap-[var(--spacing-8)]';
+const HORIZONTAL_VALUE_COLUMN = 'flex flex-col items-start gap-[var(--spacing-8)] flex-1 min-w-0';
 
 /**
  * SortBlockLongContent — Figma: Sort Block - Long Content (2411:40).
@@ -50,7 +50,7 @@ export const SortBlockLongContent = ({
   return (
     <div className={rootClass}>
       {anyLabel && (
-        <div className={HORIZONTAL_LABEL_STACK}>
+        <div className={HORIZONTAL_LABEL_COLUMN}>
           {rows.map((row, i) =>
             hasLabel(row) ? (
               <span key={`l-${i}`} className={LABEL_CLASSES}>
@@ -62,7 +62,7 @@ export const SortBlockLongContent = ({
           )}
         </div>
       )}
-      <div className={HORIZONTAL_VALUE_STACK}>
+      <div className={HORIZONTAL_VALUE_COLUMN}>
         {rows.map((row, i) => (
           <span
             key={`v-${i}`}
