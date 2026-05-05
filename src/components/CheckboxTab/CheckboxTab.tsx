@@ -1,4 +1,4 @@
-import type { MouseEvent, ReactNode } from 'react';
+import type { KeyboardEvent, MouseEvent, ReactNode } from 'react';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 
@@ -94,6 +94,11 @@ export const CheckboxTab = ({
 }: CheckboxTabProps) => {
   const showChevron = expanded !== undefined;
 
+  const toggleExpand = () => {
+    if (disabled || !showChevron) return;
+    onExpandChange?.(!expanded);
+  };
+
   const handleRowClick = (e: MouseEvent<HTMLDivElement>) => {
     if (disabled || !showChevron) return;
     // Don't toggle expand when the click originated inside the checkbox
@@ -101,7 +106,18 @@ export const CheckboxTab = ({
     const target = e.target as HTMLElement;
     if (target.closest('[data-checkbox-tab-checkbox]')) return;
     if (target.closest('[data-checkbox-tab-dropdown]')) return;
-    onExpandChange?.(!expanded);
+    toggleExpand();
+  };
+
+  const handleRowKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (disabled || !showChevron) return;
+    // Only handle keys when the focus is on the row itself (not the
+    // inner checkbox, which the browser drives natively for Space).
+    if (e.target !== e.currentTarget) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      toggleExpand();
+    }
   };
 
   const checkboxChecked = state === 'selected';
@@ -110,25 +126,48 @@ export const CheckboxTab = ({
   return (
     <div
       className={[
+        // Outer row — items-center vertically + py-[4.5px] (Figma 1842:7598).
+        // The 4.5px (rather than spacing-4 = 4px) is intentional: combined
+        // with the inner container's py-[1.5px] it produces an exact 6px
+        // top/bottom shell padding.
         'flex items-center gap-[var(--spacing-12)]',
-        'pl-[var(--spacing-24)] pr-[var(--spacing-12)] py-[var(--spacing-4)]',
+        'pl-[var(--spacing-24)] pr-[var(--spacing-12)] py-[4.5px]',
         'rounded-[var(--radius-4)]',
         'bg-[var(--color-surface-card-inset)]',
         showChevron && !disabled ? 'cursor-pointer' : '',
         disabled ? 'opacity-60' : '',
+        // Subtle focus ring so keyboard users see the row is focusable.
+        showChevron && !disabled
+          ? 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]'
+          : '',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
       onClick={handleRowClick}
+      onKeyDown={showChevron ? handleRowKeyDown : undefined}
+      role={showChevron ? 'button' : undefined}
+      tabIndex={showChevron && !disabled ? 0 : undefined}
+      aria-expanded={showChevron ? expanded : undefined}
+      aria-disabled={showChevron && disabled ? true : undefined}
     >
-      {/* Left container — checkbox + icon + label + hint */}
-      <div className="flex flex-1 min-w-0 items-start gap-[var(--spacing-12)]">
-        {/* Checkbox — 17px (sm). Stop the row's expand-toggle when the
-            checkbox itself is clicked. */}
+      {/* Inner container — items-start + py-[1.5px] (Figma).
+          With items-start, the leading checkbox + icon align with the
+          heading-row top, NOT the visual midpoint of label+hint. This
+          matches the SortBlock / TableCell convention: leading elements
+          follow the top content row.
+
+          The 22px heading-row centerline is reproduced for the 17px
+          checkbox via py-[2.5px] on its slot ((22-17)/2 = 2.5px),
+          mirroring Figma's per-item padding pattern. */}
+      <div className="flex flex-1 min-w-0 items-start gap-[var(--spacing-12)] py-[1.5px]">
+        {/* Checkbox slot — 17px box wrapped in a 22px-tall slot
+            (py-[2.5px]) so it visually sits on the heading's centerline.
+            Stops propagation so the row's expand-toggle doesn't fire
+            when the user clicks the checkbox itself. */}
         <div
           data-checkbox-tab-checkbox=""
-          className="flex items-center shrink-0"
+          className="flex items-center shrink-0 py-[2.5px]"
           onClick={(e) => e.stopPropagation()}
         >
           <Checkbox
@@ -141,14 +180,20 @@ export const CheckboxTab = ({
           />
         </div>
 
-        {/* Text area — optional icon, then label + hint stack */}
+        {/* Text area — optional 20px icon, then label + hint stack.
+            items-start so the icon aligns with the heading row, not
+            the visual midpoint when a hint is present. */}
         <div className="flex items-start gap-[var(--spacing-8)] min-w-0">
           {icon && (
-            <span className="shrink-0 inline-flex w-[20px] h-[20px] items-center justify-center">
+            // 20px icon in a 22px slot (py-[1px]) so it visually
+            // centers on the heading's 22px line-height instead of
+            // top-aligning 1px high. Mirrors the checkbox slot's
+            // py-[2.5px] pattern for the same reason at 17px.
+            <span className="shrink-0 inline-flex w-[20px] h-[20px] items-center justify-center py-[1px] box-content">
               {icon}
             </span>
           )}
-          <div className="flex flex-col gap-[var(--spacing-4)] min-w-0">
+          <div className="flex flex-col gap-[var(--spacing-4)] justify-center min-w-0">
             <span
               className={[
                 headingTextClasses,
@@ -185,7 +230,7 @@ export const CheckboxTab = ({
       {showChevron && !dropdown && (
         <div
           aria-hidden="true"
-          className="flex items-center justify-center shrink-0 rounded-[var(--radius-120)]"
+          className="flex items-center justify-center shrink-0 rounded-[var(--radius-120)] py-[2.5px]"
         >
           <Icon
             name={expanded ? 'chevron-up' : 'chevron-down'}
