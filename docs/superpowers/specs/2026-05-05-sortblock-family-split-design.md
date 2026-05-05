@@ -37,14 +37,14 @@ This was chosen over the lighter alternative ("keep one component, fix className
 
 ## Component family
 
-All components live under `src/components/SortBlock/`. All share `--sorting-block-sorting-fill` background, the `--general-font-family` family, and append-style `className`. All accept a `state?: 'Readonly' | 'Readonly Bold'` prop where Figma exposes that axis (Default, LongContent, MainSub, Icon, Tag).
+All components live under `src/components/SortBlock/`. All share `--sorting-block-sorting-fill` background, the `--general-font-family` family, and append-style `className`. All accept a `state?: 'Readonly' | 'Readonly Bold'` prop where Figma exposes that axis (Default, LongContent, MainSub, Icon, Tag) — `state` controls the default weight for every value in the component.
 
 **Note on `state`:** Figma's library exposes Default/Hover/Filled/Disabled/Readonly/Readonly Bold across most components, but per the 2026-05-03 build scope only the readonly subset ships. `state` is typed as the readonly subset to leave the door open for adding interactive states later without breaking callers, but the implementation only handles `Readonly` and `Readonly Bold`.
 
 | Component | Padding | Body |
 |---|---|---|
 | `SortBlockDefault` | `px-6 py-12` (gap-8 horizontal) | `rows: SortBlockRow[]` (1 or 2 rows) |
-| `SortBlockMainSub` | `px-6 py-12` (flex-col gap-4) | Same `rows[]` shape, length 2 enforced |
+| `SortBlockMainSub` | `px-6 py-12` (flex-col gap-4) | `rows: [SortBlockRow, SortBlockRow]` — row[0] body, row[1] caption |
 | `SortBlockLongContent` | `px-6 py-12` (gap-8 horizontal) | `rows[]` with `wrap` baked in |
 | `SortBlockIcon` | `pl-12 pr-16 py-12` | `children` (an Icon, IconLink, or button) |
 | `SortBlockTag` | `pl-12 pr-16 py-12` | `children` (a Pip or Tag) |
@@ -55,10 +55,18 @@ All components live under `src/components/SortBlock/`. All share `--sorting-bloc
 
 ```ts
 export interface SortBlockRow {
-  /** Caption above the value. Empty string or omitted = no label slot. */
+  /** Caption above the value. Empty string or omitted = no label for this
+   *  row. **Mixed-label alignment:** for horizontal multi-row text layouts,
+   *  if at least one row has a non-empty label, empty-label rows render an
+   *  invisible placeholder so value rows stay column-aligned; if all labels
+   *  are empty, omit the label column entirely. */
   label?: string;
   value: string;
-  /** Bold weight (Readonly Bold variant). Default false. */
+  /** Per-row weight override. When set, wins over the component's `state`
+   *  prop for this row only (including explicit `false` to force regular
+   *  inside a `state="Readonly Bold"` component). Omit to inherit from
+   *  `state` — regular when state is 'Readonly', bold when state is
+   *  'Readonly Bold'. */
   bold?: boolean;
 }
 ```
@@ -68,14 +76,16 @@ Three deliberate changes vs. today's `SortBlockRow`:
 - `caption` removed — only used internally by the old `mainSub` path; no external consumer.
 - `mainSub` flag removed from props — `SortBlockMainSub` is now its own component with the gap-4 layout baked in.
 
-`SortBlockDefault` accepts `rows.length === 1 | 2` and an `orientation: 'horizontal' | 'vertical'` prop. `SortBlockMainSub` accepts exactly 2 rows and is always vertical with gap-4. `SortBlockLongContent` accepts 1 or 2 rows; values render with `whitespace-pre-line` so explicit `\n` breaks and natural CSS wrap both work.
+`SortBlockDefault` accepts `rows.length === 1 | 2` and an `orientation: 'horizontal' | 'vertical'` prop. `SortBlockLongContent` accepts 1 or 2 rows; values render with `whitespace-pre-line` so explicit `\n` breaks and natural CSS wrap both work.
+
+**`SortBlockMainSub` row mapping:** accepts exactly 2 rows (typed as a TypeScript tuple `[SortBlockRow, SortBlockRow]`, not a runtime guard — the compile error is the contract). Renders `rows[0]` at body size (14/17) — the "main" line — and `rows[1]` at caption size (12/17) — the "sub" line. Row position determines size; there is no per-row size flag. Always vertical, gap-4.
 
 ### Shared module
 
 `src/components/SortBlock/shared.ts` exports:
 - `FILL_CLASS` — the `bg-[var(--sorting-block-sorting-fill)]` base.
 - `LABEL_CLASSES` — caption typography for label spans.
-- `valueClass(row, { wrap })` — body typography variant logic.
+- `valueClass(row, { wrap, defaultBold })` — body typography variant logic. Resolves the row's effective weight from `row.bold` (per-row override) falling back to `defaultBold` (derived from the component's `state` prop).
 - `hasLabel(row)` — empty-label predicate.
 
 These are shared across the four text-content components (Default, MainSub, LongContent — and any future variant). The atom-cell components (Icon, Tag, Button, Image) only need `FILL_CLASS` plus their padding.
@@ -153,3 +163,4 @@ src/components/SortBlock/
 - `SortBlockLongContent`'s wrap behaviour: Figma's `Sort Block - Long Content` component uses `text-ellipsis overflow-hidden` on a fixed-height `<p>`, but real call sites (s7 address cell) pass pre-broken text with `\n` and rely on `whitespace-pre-line`. Implement `whitespace-pre-line` (matches the working s7 behaviour) and document the divergence from the Figma library node in JSDoc — Figma's truncation behaviour is a library-fixture artefact, not the production pattern.
 - `SortBlockButton.kind: 'textlink' | 'dashed'` is the chosen API shape — matches Figma's `buttonType?: 'Textlink' | 'Dashed Button'` axis 1:1 and avoids fragile child-type inference.
 - s7 Add Trip story location to be confirmed during implementation (likely `src/screens/InsetTableScreens.stories.tsx` based on prior memory; verify with grep).
+- **Figma library follow-up:** the `Sort Block - Long Content` library node (file `oJHxwesmlNeeVHrITxDdZ3`) renders with `text-ellipsis overflow-hidden` on a fixed-height `<p>` — a fixture artefact that doesn't match the production wrap-and-honour-`\n` behaviour. File a ticket with the Figma library owner to either correct the node or add a `Long Text - Wrap` variant. Until then, our implementation diverges intentionally; document in `SortBlockLongContent`'s JSDoc.
