@@ -14,6 +14,10 @@
  *  this union is widened. */
 export type SortBlockState = 'Readonly' | 'Readonly Bold';
 
+/** Layout direction for text-content family members. Default mode is
+ *  horizontal (label and value side-by-side); vertical stacks them. */
+export type SortBlockOrientation = 'horizontal' | 'vertical';
+
 /** A single label/value row used by the text-content family members
  *  (Default, MainSub, LongContent). */
 export interface SortBlockRow {
