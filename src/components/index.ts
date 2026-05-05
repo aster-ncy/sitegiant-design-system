@@ -229,9 +229,29 @@ export type {
   SmallSegmentedGlyphName,
 } from './SmallSegmentedButton';
 
-// SortBlock
-export { SortBlock } from './SortBlock';
-export type { SortBlockProps, SortBlockRow, SortBlockOrientation } from './SortBlock';
+// SortBlock family
+export {
+  SortBlockDefault,
+  SortBlockMainSub,
+  SortBlockLongContent,
+  SortBlockIcon,
+  SortBlockTag,
+  SortBlockButton,
+  SortBlockImage,
+} from './SortBlock';
+export type {
+  SortBlockDefaultProps,
+  SortBlockMainSubProps,
+  SortBlockLongContentProps,
+  SortBlockIconProps,
+  SortBlockTagProps,
+  SortBlockButtonProps,
+  SortBlockButtonKind,
+  SortBlockImageProps,
+  SortBlockOrientation,
+  SortBlockRow,
+  SortBlockState,
+} from './SortBlock';
 
 // Stepper
 export { Stepper } from './Stepper';

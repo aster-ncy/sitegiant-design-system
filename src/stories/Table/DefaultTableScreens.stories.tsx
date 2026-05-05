@@ -73,7 +73,7 @@ export const S4Vehicle: Story = {
     // cell bolds via group-hover/row.
     const rows = [
       { reg: 'PLS 9999', type: 'Triton/L200', expiry: '24 May 2026', expiryWarn: false, driver: '-', weight: '3,000kg', capacity: '3.02m³', status: 'Available', statusType: 'success' as const, active: true },
-      { reg: 'PKT 8677', type: 'Mitsubishi Fuso', expiry: '24 May 2026', expiryWarn: false, driver: 'Mohd. Ahmad', weight: '3,000kg', capacity: '3.02m³', status: 'Assigned', statusType: 'attention' as const, active: false },
+      { reg: 'PKT 8677', type: 'Mitsubishi Fuso', expiry: '24 May 2026', expiryWarn: false, driver: 'Mohd. Ahmad', weight: '3,000kg', capacity: '3.02m³', status: 'Assigned', statusType: 'info' as const, active: false },
       { reg: 'WWE 6767', type: 'Triton/L200', expiry: '24 May 2026', expiryWarn: false, driver: 'Lim Wen Chong', weight: '3,000kg', capacity: '3.02m³', status: 'Maintenance', statusType: 'alert' as const, active: false },
       { reg: 'PHK 8689', type: 'Mitsubishi Fuso', expiry: '24 May 2025', expiryWarn: true, driver: '-', weight: '3,000kg', capacity: '3.02m³', status: 'Maintenance', statusType: 'alert' as const, active: false },
     ];
@@ -159,8 +159,8 @@ export const S4Vehicle: Story = {
 export const S7WebstoreOrderReturn: Story = {
   render: () => {
     const rows = [
-      { id: '#R-00095', orderId: '#R-00095', requestOn: '18 Oct 2025, 6:45pm', orderOn: '15 Oct 2025, 3:33pm', total: 'RM230.00', status: 'Pending', statusType: 'attention' as const },
-      { id: '#R-00092', orderId: '#R-00092', requestOn: '18 Oct 2025, 6:45pm', orderOn: '16 Oct 2025, 4:15pm', total: 'RM250.00', status: 'Approved', statusType: 'primary' as const },
+      { id: '#R-00095', orderId: '#R-00095', requestOn: '18 Oct 2025, 6:45pm', orderOn: '15 Oct 2025, 3:33pm', total: 'RM230.00', status: 'Pending', statusType: 'info' as const },
+      { id: '#R-00092', orderId: '#R-00092', requestOn: '18 Oct 2025, 6:45pm', orderOn: '16 Oct 2025, 4:15pm', total: 'RM250.00', status: 'Approved', statusType: 'info' as const },
       { id: '#R-00091', orderId: '#R-00091', requestOn: '18 Oct 2025, 6:45pm', orderOn: '17 Oct 2025, 5:00pm', total: 'RM270.00', status: 'Rejected', statusType: 'alert' as const },
       { id: '#R-00090', orderId: '#R-00090', requestOn: '18 Oct 2025, 6:45pm', orderOn: '17 Oct 2025, 5:00pm', total: 'RM290.00', status: 'Closed', statusType: 'muted' as const },
     ];
@@ -248,10 +248,10 @@ export const S7WebstoreOrderReturn: Story = {
 export const S8StockCheck: Story = {
   render: () => {
     const rows = [
-      { id: '#SC-0583', taskName: 'Test Check', warehouse: 'KL Warehouse', type: 'Checking', created: '2025-12-08 02:55 PM', items: 5, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'attention' as const },
-      { id: '#SC-0582', taskName: 'Test Check', warehouse: 'Penang Warehouse', type: 'Checking', created: '2025-12-08 02:55 PM', items: 3, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'attention' as const },
-      { id: '#SC-0581', taskName: 'Test 2', warehouse: 'Penang Warehouse', type: 'Counting', created: '2025-12-08 02:55 PM', items: 1, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'attention' as const },
-      { id: '#SC-0580', taskName: 'Test 1', warehouse: 'KL Warehouse', type: 'Checking', created: '2025-12-08 02:55 PM', items: 1, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'attention' as const },
+      { id: '#SC-0583', taskName: 'Test Check', warehouse: 'KL Warehouse', type: 'Checking', created: '2025-12-08 02:55 PM', items: 5, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'info' as const },
+      { id: '#SC-0582', taskName: 'Test Check', warehouse: 'Penang Warehouse', type: 'Checking', created: '2025-12-08 02:55 PM', items: 3, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'info' as const },
+      { id: '#SC-0581', taskName: 'Test 2', warehouse: 'Penang Warehouse', type: 'Counting', created: '2025-12-08 02:55 PM', items: 1, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'info' as const },
+      { id: '#SC-0580', taskName: 'Test 1', warehouse: 'KL Warehouse', type: 'Checking', created: '2025-12-08 02:55 PM', items: 1, remark: '', status: 'Assigned', user: 'Incomplete', statusType: 'success' as const, userType: 'info' as const },
     ];
     return (
       <div className={tableShellClasses}>
