@@ -1,6 +1,19 @@
 import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
+/* ── Typography recipes (Pattern C — selection-control labels) ────────── */
+/* Label: 14 / 21 / regular — body. Per Figma node 1339:8205 + 2636:435,
+ * checkbox/radio/toggle option labels share the same body recipe used by
+ * form labels elsewhere. */
+const bodyTextClasses =
+  'text-[length:var(--general-body-size)] leading-[var(--general-body-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+/* Helper / hint text: 12 / 17 / regular — caption. */
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 export type CheckboxSize = 'sm' | 'md';
 
 export interface CheckboxProps {
@@ -152,7 +165,7 @@ export const Checkbox = ({
         <span className="flex flex-col gap-[var(--spacing-2)] pt-[var(--spacing-1)]">
           {label && (
             <span
-              className={`text-[length:var(--text-14)] leading-[var(--leading-17)] font-[var(--font-weight-regular)] font-[family-name:var(--font-sans)] ${
+              className={`${bodyTextClasses} ${
                 disabled
                   ? 'text-[color:var(--form-input-disabled-text)]'
                   : 'text-[color:var(--form-label-text)]'
@@ -162,7 +175,7 @@ export const Checkbox = ({
             </span>
           )}
           {helperText && (
-            <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--form-label-info-text)]">
+            <span className={`${captionTextClasses} text-[color:var(--form-label-info-text)]`}>
               {helperText}
             </span>
           )}
