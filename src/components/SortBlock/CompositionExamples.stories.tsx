@@ -24,7 +24,7 @@ export const SortableRowComposition: Story = {
   render: () => (
     <div className="inline-flex items-stretch bg-[color:var(--sorting-block-sorting-fill)]">
       <div className="flex items-center px-[var(--spacing-8)]">
-        <Icon name="drag" size={17} className="text-[color:var(--color-set-lightest)]" />
+        <Icon name="drag" size={17} color="var(--color-set-lightest)" />
       </div>
       <div className="flex items-center px-[var(--spacing-4)] text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)] font-[var(--font-weight-medium)]">
         1
@@ -34,11 +34,14 @@ export const SortableRowComposition: Story = {
         rows={[{ value: '2023-03-09-1' }]}
       />
       {/* Calendar + date pair — no single family member matches this
-          shape (icon adjacent to body text in one cell). Rendered as a
+          shape. SortBlockIcon enforces pl-12 pr-16 icon-only padding;
+          SortBlockDefault's rows API has no icon slot. Rendered as a
           raw inline cell that matches the surrounding `cellOverride`
-          padding, consistent with the drag and "1" cells above. */}
-      <div className="inline-flex items-center gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)]">
-        <Icon name="calendar" size={17} className="text-[color:var(--color-set-lightest)]" />
+          padding. items-start matches the family cells' default
+          alignment so the pair pins to top if the row stretches. A
+          future "IconText" family member would absorb this pattern. */}
+      <div className="inline-flex items-start gap-[var(--spacing-8)] px-[var(--spacing-12)] py-[var(--spacing-12)]">
+        <Icon name="calendar" size={17} color="var(--color-set-lightest)" />
         <span className="text-[length:var(--text-14)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
           2020-08-18
         </span>
@@ -110,7 +113,7 @@ export const InsetHeaderWithSortBlockRows: Story = {
           {rows.map((row) => (
             <div key={row.id} className="flex w-full">
               <SortBlockIcon className="self-stretch w-[45px]">
-                <Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)] cursor-grab" />
+                <Icon name="drag" size={17} color="var(--color-icon-secondary)" className="cursor-grab" />
               </SortBlockIcon>
               <SortBlockDefault
                 state="Readonly Bold"
@@ -135,7 +138,7 @@ export const InsetHeaderWithSortBlockRows: Story = {
                   aria-label="Remove package"
                   className="inline-flex items-center justify-center bg-transparent border-none p-0 cursor-pointer"
                 >
-                  <Icon name="close" size={17} className="text-[color:var(--color-icon-secondary)]" />
+                  <Icon name="close" size={17} color="var(--color-icon-secondary)" />
                 </button>
               </SortBlockIcon>
             </div>

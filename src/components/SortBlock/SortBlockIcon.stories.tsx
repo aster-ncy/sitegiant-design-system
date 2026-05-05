@@ -8,7 +8,7 @@ const meta = {
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
   args: {
-    children: <Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)]" />,
+    children: <Icon name="drag" size={17} color="var(--color-icon-secondary)" />,
   },
 } satisfies Meta<typeof SortBlockIcon>;
 
@@ -18,7 +18,7 @@ type Story = StoryObj<typeof meta>;
 export const Drag: Story = {
   render: () => (
     <SortBlockIcon>
-      <Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)]" />
+      <Icon name="drag" size={17} color="var(--color-icon-secondary)" />
     </SortBlockIcon>
   ),
 };
@@ -31,7 +31,7 @@ export const Close: Story = {
         aria-label="Remove"
         className="inline-flex items-center justify-center bg-transparent border-none p-0 cursor-pointer"
       >
-        <Icon name="close" size={17} className="text-[color:var(--color-icon-secondary)]" />
+        <Icon name="close" size={17} color="var(--color-icon-secondary)" />
       </button>
     </SortBlockIcon>
   ),
