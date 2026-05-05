@@ -62,6 +62,29 @@ const wrapperBorderByValidation: Record<TimeRangeValidation, string> = {
   warning: 'border-[var(--form-input-danger-border)]',
 };
 
+/* ── Typography recipes (Pattern B — compact numeric fields) ───────────── */
+/* Label: 14 / 21 / regular — table-body-* (these fields commonly sit in
+ * table rows; routing label through table-body keeps row-resident
+ * typography aligned with the body cells around them). */
+const labelTextClasses =
+  'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--table-body-weight)]';
+
+/* Value (cell + separator + readonly span): 14 / 17 / regular — body-slim. */
+const bodySlimTextClasses =
+  'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+/* Value bold (readonly-bold state): 14 / 17 / bold — body-slim-bold. */
+const bodySlimBoldTextClasses =
+  'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+/* Hint / helper text: 12 / 17 / regular — caption. */
+const captionTextClasses =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
+
 const HOURS = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
 const MINUTES = Array.from({ length: 60 }, (_, i) => String(i).padStart(2, '0'));
 
@@ -196,9 +219,7 @@ export const TimeRange = ({
       'w-[84px]',
       'bg-transparent outline-none border-none',
       'text-center',
-      'text-[length:var(--text-14)] leading-[var(--leading-17)]',
-      'font-[family-name:var(--font-sans)]',
-      isReadonlyBold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+      isReadonlyBold ? bodySlimBoldTextClasses : bodySlimTextClasses,
       isDisabled
         ? 'text-[color:var(--form-input-disabled-text)] cursor-not-allowed'
         : isPlaceholder
@@ -211,8 +232,7 @@ export const TimeRange = ({
 
   const separatorClass = [
     'shrink-0',
-    'text-[length:var(--text-14)] leading-[var(--leading-17)]',
-    'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+    bodySlimTextClasses,
     isDisabled
       ? 'text-[color:var(--form-input-disabled-text)]'
       : 'text-[color:var(--form-input-value-text)]',
@@ -240,8 +260,7 @@ export const TimeRange = ({
           className={[
             'shrink-0',
             size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]',
-            'text-[length:var(--text-14)] leading-[var(--leading-21)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            labelTextClasses,
             'text-[color:var(--form-label-text)]',
             isDisabled ? 'opacity-60' : '',
           ]
@@ -270,11 +289,7 @@ export const TimeRange = ({
                 aria-readonly="true"
                 className={[
                   'whitespace-nowrap',
-                  'text-[length:var(--text-14)] leading-[var(--leading-17)]',
-                  'font-[family-name:var(--font-sans)]',
-                  isReadonlyBold
-                    ? 'font-[var(--font-weight-bold)]'
-                    : 'font-[var(--font-weight-regular)]',
+                  isReadonlyBold ? bodySlimBoldTextClasses : bodySlimTextClasses,
                   'text-[color:var(--form-input-value-text)]',
                 ].join(' ')}
               >
@@ -350,8 +365,7 @@ export const TimeRange = ({
         {helperText && (
           <span
             className={[
-              'text-[length:var(--text-12)] leading-[var(--leading-15)]',
-              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+              captionTextClasses,
               isError || isWarning
                 ? 'text-[color:var(--color-sys-red-DEFAULT)]'
                 : 'text-[color:var(--form-label-info-text)]',
