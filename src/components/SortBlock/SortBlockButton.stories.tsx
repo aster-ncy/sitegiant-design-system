@@ -9,6 +9,10 @@ const meta = {
   component: SortBlockButton,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
+  args: {
+    kind: 'textlink',
+    children: <TextLink label="Button" />,
+  },
 } satisfies Meta<typeof SortBlockButton>;
 
 export default meta;
@@ -20,7 +24,7 @@ export const TextLinkKind: Story = {
       <TextLink label="Button" />
     </SortBlockButton>
   ),
-} as unknown as Story;
+};
 
 export const DashedKind: Story = {
   render: () => (
@@ -31,4 +35,4 @@ export const DashedKind: Story = {
       </DashedButton>
     </SortBlockButton>
   ),
-} as unknown as Story;
+};

@@ -7,6 +7,9 @@ const meta = {
   component: SortBlockIcon,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
+  args: {
+    children: <Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)]" />,
+  },
 } satisfies Meta<typeof SortBlockIcon>;
 
 export default meta;
@@ -18,7 +21,7 @@ export const Drag: Story = {
       <Icon name="drag" size={17} className="text-[color:var(--color-icon-secondary)]" />
     </SortBlockIcon>
   ),
-} as unknown as Story;
+};
 
 export const Close: Story = {
   render: () => (
@@ -32,7 +35,7 @@ export const Close: Story = {
       </button>
     </SortBlockIcon>
   ),
-} as unknown as Story;
+};
 
 /** Wraps the component in a `flex` parent so `self-stretch` actually
  *  takes effect. Mirrors the s7 Add Trip drag/close cell shape exactly:
@@ -46,4 +49,4 @@ export const ClassNameAppendsSelfStretch: Story = {
       </SortBlockIcon>
     </div>
   ),
-} as unknown as Story;
+};
