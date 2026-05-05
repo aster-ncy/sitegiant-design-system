@@ -724,8 +724,9 @@
   /* Table typography */
   --table-header-size: 12px;
   --table-header-lineheight: 17px;
-  --table-body-size: 14px;
-  --table-body-lineheight: 21px;
+  --table-body-size: var(--text-14);
+  --table-body-lineheight: var(--leading-21);
+  --table-body-weight: var(--font-weight-regular);
 
   /* ========================================
      SPACING (Core Primitives)
