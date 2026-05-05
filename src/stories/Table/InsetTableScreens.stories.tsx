@@ -583,17 +583,17 @@ export const S6SendToLalamove: Story = {
 /* ── s7 Add Trip — Package List ────────────────────────── */
 
 /**
- * Each cell is a self-contained SortBlock variant — drag is a SortBlock
- * with a drag Icon child, Tracking/Delivery are SortBlock with `rows`,
- * Customer is SortBlock children rendering the Figma MainSub typography,
- * Address is SortBlock children rendering the LongContent multi-line
- * value, and the close cell is a SortBlock with a close Icon child. The
- * row is just a flex container of these SortBlocks; the row's grey
- * appearance is the cells' fills abutting each other.
+ * Each row is a flex container of 6 SortBlock family cells, one per
+ * Figma column variant: SortBlockIcon (drag), SortBlockDefault with
+ * state="Readonly Bold" (tracking), SortBlockDefault (delivery date),
+ * SortBlockMainSub (customer name + phone — body 14/17 over caption
+ * 12/17), SortBlockLongContent (shipping address with \n-aware wrap),
+ * and SortBlockIcon (close button). The row's grey appearance is the
+ * cells' fills abutting each other — no per-row background needed.
  *
  * Figma: 3479:35614 (Add Trip page) → 3490:21149 Package List Table.
- * Column widths & paddings come from the Figma design, not the
- * SortableRowComposition reference.
+ * Column widths come from the Figma design; padding is baked into
+ * each family member.
  */
 export const S7AddTrip: Story = {
   render: () => {
