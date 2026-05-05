@@ -6,6 +6,14 @@ const meta = {
   component: SortBlockImage,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
+  args: {
+    children: (
+      <div
+        className="size-[41px] bg-[color:var(--color-set-lightest)]"
+        aria-label="Light image placeholder"
+      />
+    ),
+  },
 } satisfies Meta<typeof SortBlockImage>;
 
 export default meta;
@@ -20,7 +28,7 @@ export const LightTile: Story = {
       />
     </SortBlockImage>
   ),
-} as unknown as Story;
+};
 
 export const DarkTile: Story = {
   render: () => (
@@ -31,4 +39,4 @@ export const DarkTile: Story = {
       />
     </SortBlockImage>
   ),
-} as unknown as Story;
+};

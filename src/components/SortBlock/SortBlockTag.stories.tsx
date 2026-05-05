@@ -7,6 +7,9 @@ const meta = {
   component: SortBlockTag,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
+  args: {
+    children: <Pip type="success" label="Pip Text" />,
+  },
 } satisfies Meta<typeof SortBlockTag>;
 
 export default meta;
@@ -18,7 +21,7 @@ export const WithSuccessPip: Story = {
       <Pip type="success" label="Pip Text" />
     </SortBlockTag>
   ),
-} as unknown as Story;
+};
 
 export const WithAlertPip: Story = {
   render: () => (
@@ -26,4 +29,4 @@ export const WithAlertPip: Story = {
       <Pip type="alert" label="Pip Text" />
     </SortBlockTag>
   ),
-} as unknown as Story;
+};
