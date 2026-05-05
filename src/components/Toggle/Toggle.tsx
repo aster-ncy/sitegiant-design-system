@@ -14,13 +14,24 @@ const captionTextClasses =
   'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)]';
 
 export type ToggleVariant = 'default' | 'special';
+export type ToggleLayout = 'horizontal' | 'vertical';
 
 export interface ToggleProps {
   /** Whether the toggle is on */
   checked?: boolean;
-  /** Visual variant: default (green) or special (blue) */
+  /** Visual variant: default (green, 44×25) or special (blue, 24×12) per Figma 1165:218 / 2351:732. */
   variant?: ToggleVariant;
-  /** Whether the toggle is disabled */
+  /**
+   * Layout direction.
+   * - `horizontal` (default): label beside the toggle (Figma 1222:1051 type='Horizontal').
+   * - `vertical`: label above the toggle (Figma 1165:239 type='Default').
+   */
+  layout?: ToggleLayout;
+  /**
+   * Whether the toggle is disabled. Combined with `checked={true}`,
+   * this renders the "Checked by Default" / system-required look
+   * (Figma 2905:4928): faded green track + crisp knob, non-interactive.
+   */
   disabled?: boolean;
   /** Label text */
   label?: string;
@@ -51,6 +62,7 @@ export interface ToggleProps {
 export const Toggle = ({
   checked = false,
   variant = 'default',
+  layout = 'horizontal',
   disabled = false,
   label,
   helperText,
@@ -58,6 +70,8 @@ export const Toggle = ({
   className = '',
   id,
 }: ToggleProps) => {
+  const isOn = checked;
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (disabled) return;
     if (e.key === ' ' || e.key === 'Enter') {
@@ -66,82 +80,176 @@ export const Toggle = ({
     }
   };
 
+  /* ── Sizing by variant per Figma ──────────────────────
+   * default: 44×25 track + 25×25 knob (knob travels 19px)
+   * special:  24×12 track + 12×12 knob (knob travels 12px)
+   * Knob is the full height of the track (full-pill style). */
+  const isSpecial = variant === 'special';
+  const trackSize = isSpecial ? 'w-[24px] h-[12px]' : 'w-[44px] h-[25px]';
+  const knobSize = isSpecial ? 'size-[12px]' : 'size-[25px]';
+  // Translate distance — applied via inline style (Tailwind v4's JIT
+  // can't extract arbitrary translate-x-[<px>] values built from
+  // template strings at build time, so the class would be ignored).
+  const knobTranslateX = isSpecial ? 12 : 19;
+
   /* ── Track styles ──────────────────────────────────── */
   const trackBase = [
     'relative shrink-0',
-    'w-[var(--spacing-36)] h-[var(--spacing-20)]',
+    trackSize,
     'rounded-full',
-    'border border-solid',
     'transition-colors duration-200',
-    'flex items-center p-[var(--spacing-1)]',
+    'flex items-center',
   ].join(' ');
 
+  // All track variants use INSIDE borders via inline box-shadow inset
+  // (consistent with the knob — required so the inset ring stays
+  // aligned to the track edge regardless of opacity). Tailwind v4's
+  // JIT can't extract template-built arbitrary values, so we set
+  // box-shadow as inline style.
+  // Special variant (Figma 2351:732 / 2353:798) stays blue on BOTH
+  // off and on states — the only state difference is knob position.
   let trackState: string;
-  if (disabled) {
-    trackState = 'bg-[var(--form-toggle-default-fill)] border-[var(--form-toggle-default-border)] opacity-50';
-  } else if (checked) {
-    if (variant === 'special') {
-      trackState = 'bg-[var(--form-toggle-special-fill)] border-[var(--form-toggle-special-border)]';
-    } else {
-      trackState = 'bg-[var(--form-toggle-checked-fill)] border-[var(--form-toggle-checked-border)]';
-    }
+  let trackBoxShadow: string;
+  if (isSpecial) {
+    // Special variant: always blue, off or on.
+    trackState = 'bg-[var(--form-toggle-special-fill)]';
+    trackBoxShadow = 'inset 0 0 0 1px var(--form-toggle-special-border)';
+  } else if (isOn) {
+    trackState = 'bg-[var(--form-toggle-checked-fill)]';
+    trackBoxShadow = 'inset 0 0 0 1px var(--form-toggle-checked-border)';
   } else {
-    trackState = 'bg-[var(--form-toggle-default-fill)] border-[var(--form-toggle-default-border)]';
+    trackState = 'bg-[var(--form-toggle-default-fill)]';
+    trackBoxShadow = 'inset 0 0 0 1px var(--form-toggle-default-border)';
+  }
+  // disabled applies opacity to the whole track + knob. Combined with
+  // checked={true} this produces the "Checked by Default" / system-
+  // required look from Figma 2905:4928 — faded green/blue track,
+  // crisp knob, non-interactive.
+  if (disabled) {
+    trackState += ' opacity-50';
   }
 
   /* ── Knob styles ───────────────────────────────────── */
+  // Knob border is drawn as an INSET ring (box-shadow inset) so it
+  // never extends past the track edge when the knob sits flush right.
+  // The drop shadow (also box-shadow) is layered alongside the inset
+  // ring per Figma 2262:218. Box-shadow is set via inline style because
+  // Tailwind v4's JIT can't extract token-interpolated arbitrary values
+  // built from template strings at build time.
   const knobBase = [
-    'w-[var(--spacing-16)] h-[var(--spacing-16)]',
+    knobSize,
     'rounded-full',
     'transition-transform duration-200 ease-in-out',
-    'shadow-sm shrink-0',
+    'shrink-0',
   ].join(' ');
 
-  let knobState: string;
-  if (checked) {
-    knobState = [
-      'translate-x-[var(--spacing-16)]',
-      'bg-[var(--form-toggle-checked-knob-fill)]',
-    ].join(' ');
-  } else {
-    knobState = [
-      'translate-x-0',
-      'bg-[var(--form-toggle-default-knob-fill)]',
-    ].join(' ');
-  }
+  // Knob ring color: special variant always uses the blue border;
+  // default variant uses green-when-on, grey-when-off.
+  const knobRingVar = isSpecial
+    ? 'var(--form-toggle-special-border)'
+    : isOn
+      ? 'var(--form-toggle-checked-knob-border)'
+      : 'var(--form-toggle-default-knob-border)';
+  const knobBoxShadow = `inset 0 0 0 1px ${knobRingVar}, 0 1px 2px 0 rgba(0,0,0,0.16)`;
+
+  // Knob fill: white when special or when on; grey-default-knob-fill otherwise.
+  const knobState =
+    isOn || isSpecial
+      ? 'bg-[var(--form-toggle-checked-knob-fill)]'
+      : 'bg-[var(--form-toggle-default-knob-fill)]';
+
+  // (trackSlotClass is computed below after `isVertical` is declared.)
+
+  // Layout: horizontal places the toggle beside the label-stack;
+  // vertical stacks the toggle below the label (Figma 1165:239 default).
+  const isVertical = layout === 'vertical';
+  const rootLayoutClass = isVertical
+    ? 'inline-flex flex-col items-start gap-[var(--spacing-4)]'
+    : 'inline-flex items-start gap-[var(--spacing-12)]';
+
+  // Toggle slot:
+  // - vertical layout: full 33px Toggle Container per Figma 1165:238
+  //   (4px top + 25px track + 4px bottom). The toggle is on its own
+  //   row, so the canonical 33px footprint applies.
+  // - horizontal layout: 21px slot (heading line-height). The 25px
+  //   track is taller than the line, so it visually overflows ±2px
+  //   above/below the heading; the row's items-start lets it grow.
+  //   Track-center then aligns with heading-row centerline (rule B:
+  //   leading-element follows top content row).
+  const trackSlotClass = isVertical
+    ? 'inline-flex items-center justify-center shrink-0 h-[33px] py-[var(--spacing-4)]'
+    : 'inline-flex items-center shrink-0 h-[var(--leading-21)]';
 
   return (
     <label
-      className={`inline-flex items-start gap-[var(--spacing-8)] select-none ${
+      className={`${rootLayoutClass} select-none ${
         disabled ? 'cursor-not-allowed' : 'cursor-pointer'
       } ${className}`}
       htmlFor={id}
     >
-      {/* Hidden native input */}
+      {/* In vertical layout, label sits above the toggle. */}
+      {isVertical && (label || helperText) && (
+        <span className="flex flex-col gap-[var(--spacing-4)]">
+          {label && (
+            <span
+              className={`${bodyTextClasses} ${
+                disabled
+                  ? 'text-[color:var(--form-input-disabled-text)]'
+                  : 'text-[color:var(--form-label-text)]'
+              }`}
+            >
+              {label}
+            </span>
+          )}
+          {helperText && (
+            <span className={`${captionTextClasses} text-[color:var(--form-label-info-text)]`}>
+              {helperText}
+            </span>
+          )}
+        </span>
+      )}
+
+      {/* Hidden native input. */}
       <input
         type="checkbox"
         role="switch"
         id={id}
         checked={checked}
         disabled={disabled}
-        onChange={() => onChange?.(!checked)}
+        onChange={() => {
+          if (disabled) return;
+          onChange?.(!checked);
+        }}
         className="sr-only"
         aria-checked={checked}
       />
 
-      {/* Custom track + knob */}
-      <span
-        className={`${trackBase} ${trackState}`}
-        onKeyDown={handleKeyDown}
-        tabIndex={disabled ? -1 : 0}
-        role="presentation"
-      >
-        <span className={`${knobBase} ${knobState}`} />
+      {/* Track slot — 21px-tall flex slot wraps the track so it
+          centers on the heading row's 21px line-height. */}
+      <span className={trackSlotClass}>
+        <span
+          className={`${trackBase} ${trackState}`}
+          style={{ boxShadow: trackBoxShadow }}
+          onKeyDown={handleKeyDown}
+          tabIndex={disabled ? -1 : 0}
+          role="presentation"
+        >
+          <span
+            className={`${knobBase} ${knobState}`}
+            style={{
+              boxShadow: knobBoxShadow,
+              transform: `translateX(${isOn ? knobTranslateX : 0}px)`,
+            }}
+          />
+        </span>
       </span>
 
-      {/* Label + helper text */}
-      {(label || helperText) && (
-        <span className="flex flex-col gap-[var(--spacing-2)]">
+      {/* Horizontal layout: label + helper text beside the toggle.
+          uses justify-center on the stack so it aligns with the heading
+          row top via the parent's items-start. Pattern matches
+          Checkbox / Radio post-Pattern-C alignment fix. */}
+      {!isVertical && (label || helperText) && (
+        <span className="flex flex-col gap-[var(--spacing-4)] justify-center">
           {label && (
             <span
               className={`${bodyTextClasses} ${

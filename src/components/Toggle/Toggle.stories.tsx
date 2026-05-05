@@ -47,6 +47,14 @@ export const DisabledChecked: Story = {
   args: { disabled: true, checked: true, label: 'Disabled (on)' },
 };
 
+export const VerticalLayout: Story = {
+  args: {
+    layout: 'vertical',
+    checked: true,
+    label: 'Notifications',
+  },
+};
+
 /* ── Interactive ───────────────────────────────────────── */
 
 const InteractiveToggle = () => {
