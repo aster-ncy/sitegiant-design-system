@@ -2,10 +2,8 @@ import { useState } from 'react';
 import type { Ref } from 'react';
 import { Icon } from '../Icon';
 
-/* ── Typography recipes (Figma Form Value section) ──────────────────────── */
-/* form-value: 14/21/regular for the standard input value text. The stepper
- * variant's center cell uses 14/17 (body-slim) — left as raw primitives for
- * a future body-slim sweep batch with its own Figma re-verification. */
+/* ── Typography recipes (Figma Form Value section + Pattern B) ────────── */
+/* form-value: 14/21/regular for the standard input value text. */
 const formValueTextClasses =
   'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
   'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
@@ -13,6 +11,12 @@ const formValueTextClasses =
 const formValueTextBoldClasses =
   'text-[length:var(--general-form-value-size)] leading-[var(--general-form-value-lineheight)] ' +
   'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-bold-weight)]';
+
+/* body-slim: 14/17/regular for the stepper variant's centered value cell —
+ * compact-row recipe shared with Quantity / TimeRange. */
+const bodySlimTextClasses =
+  'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
 
 export type NumberInputState =
   | 'default'
@@ -220,8 +224,7 @@ export const NumberInput = ({
             '[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none',
             'p-0',
             'text-center',
-            'text-[length:var(--text-14)] leading-[var(--leading-17)]',
-            'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+            bodySlimTextClasses,
             isDisabled
               ? 'text-[color:var(--form-input-disabled-text)] cursor-not-allowed'
               : 'text-[color:var(--form-input-value-text)]',
