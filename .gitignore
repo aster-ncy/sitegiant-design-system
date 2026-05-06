@@ -31,3 +31,12 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+
+# Internal design notes — keep local, do not publish.
+# Takedown completed 2026-05-06: docs/superpowers/ + docs/session-*.md
+# scrubbed from public history via git-filter-repo. Closed PR refs
+# (/pull/1..3) still expose the old diffs; accepted as out-of-scope.
+# These rules prevent any future internal notes from being committed.
+docs/superpowers/
+docs/session-*.md
+docs/codex-*.md
