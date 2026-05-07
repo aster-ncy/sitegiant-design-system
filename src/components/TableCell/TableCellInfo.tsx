@@ -11,6 +11,11 @@ export interface TableCellInfoStatus {
    * width (no truncation — multi-line by design).
    */
   body: ReactNode | ReactNode[];
+  /**
+   * Optional fixed visual line count for Figma table-row info variants.
+   * When omitted, body content keeps its natural height.
+   */
+  maxLines?: 1 | 2 | 3;
 }
 
 export interface TableCellInfoProps {
@@ -32,7 +37,21 @@ export interface TableCellInfoProps {
 // level <p> nested inside a <span> is invalid HTML and some assistive tech
 // flags it. Block <span>s give the same visual line-stacking without the
 // nesting problem.
-const renderBody = (body: ReactNode | ReactNode[]) => {
+const lineClampClass: Record<1 | 2 | 3, string> = {
+  1: 'sg-table-cell-info-clamp-1',
+  2: 'sg-table-cell-info-clamp-2',
+  3: 'sg-table-cell-info-clamp-3',
+};
+
+const renderBody = (body: ReactNode | ReactNode[], maxLines?: 1 | 2 | 3) => {
+  if (maxLines && !Array.isArray(body)) {
+    return (
+      <span className={lineClampClass[maxLines]}>
+        {body}
+      </span>
+    );
+  }
+
   if (Array.isArray(body)) {
     return body.map((paragraph, index) => (
       <span key={index} className="block">
@@ -113,7 +132,7 @@ export const TableCellInfo = ({
         {statuses.map((status, index) => (
           <div key={index} className="contents">
             <span className={labelHorizontalClasses}>{status.label}</span>
-            <div className={bodyClasses}>{renderBody(status.body)}</div>
+            <div className={bodyClasses}>{renderBody(status.body, status.maxLines)}</div>
           </div>
         ))}
       </div>
@@ -128,7 +147,7 @@ export const TableCellInfo = ({
           className="flex w-full flex-col gap-[var(--spacing-2)] items-start"
         >
           <span className={labelVerticalClasses}>{status.label}</span>
-          <div className={bodyClasses}>{renderBody(status.body)}</div>
+          <div className={bodyClasses}>{renderBody(status.body, status.maxLines)}</div>
         </div>
       ))}
     </div>

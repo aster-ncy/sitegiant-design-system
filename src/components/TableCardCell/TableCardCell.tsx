@@ -104,11 +104,11 @@ const topTierBaseClasses = [
 const topTierColumnClasses: Record<TableColumnPosition, string> = {
   // First column rounds top-left.
   first: 'rounded-tl-[var(--radius-4)]',
-  // Center has no corner radius and no extra borders beyond the base.
-  center: '',
+  // Center cells do not draw internal vertical dividers.
+  center: 'border-l-0',
   // Last column rounds top-right and paints right border to close the
-  // box; without this the rightmost edge of the card would be open.
-  last: 'rounded-tr-[var(--radius-4)] border-r',
+  // box, without an internal left divider.
+  last: 'rounded-tr-[var(--radius-4)] border-l-0 border-r',
 };
 
 // Bottom Tier base classes — Figma 3453:7822 (Default state) +
@@ -167,10 +167,7 @@ const bottomTierTextSpanClasses = [
 // Hover text classes — built in unconditionally on tier='top' (Figma
 // 3453:7593: Hover state bolds + greens text). Wired via group-hover/row
 // so the cell triggers on the parent <tr> being hovered.
-const topTierHoverTextClasses = [
-  'group-hover/row:font-[var(--font-weight-bold)]',
-  'group-hover/row:text-[color:var(--table-body-hover-text)]',
-].join(' ');
+const topTierHoverTextClass = 'sg-table-card-top-primary';
 
 // Top Tier text span — body 14/21 in --table-body-text. Hover-state
 // classes layered on top via group-hover/row.
@@ -181,7 +178,6 @@ const topTierTextSpanClasses = [
   'font-[var(--font-weight-regular)]',
   'text-[color:var(--table-body-text)]',
   'transition-colors duration-150',
-  topTierHoverTextClasses,
 ].join(' ');
 
 export const TableCardCell = (props: TableCardCellProps) => {
@@ -192,8 +188,9 @@ export const TableCardCell = (props: TableCardCellProps) => {
     const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
     // Forced-hover for Storybook / controlled state — apply bold + green
     // directly without waiting for :hover.
-    const forcedHoverText = hovered
-      ? 'font-[var(--font-weight-bold)] text-[color:var(--table-body-hover-text)]'
+    const primaryColumnHoverText = column === 'first' ? topTierHoverTextClass : '';
+    const forcedHoverText = hovered && column === 'first'
+      ? 'sg-table-card-top-primary-hover'
       : '';
 
     return (
@@ -212,6 +209,7 @@ export const TableCardCell = (props: TableCardCellProps) => {
         <span
           className={[
             topTierTextSpanClasses,
+            primaryColumnHoverText,
             forcedHoverText,
             textAlignmentClass[column],
           ].join(' ')}

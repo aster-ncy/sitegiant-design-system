@@ -49,6 +49,11 @@ type ActionTextLinkStory = StoryObj<React.ComponentProps<typeof TableCell> & { a
 type ActionIconButtonStory = StoryObj<React.ComponentProps<typeof TableCell> & { actionCount?: 1 | 2 | 3 }>;
 type IconStatusStory = StoryObj<React.ComponentProps<typeof TableCell> & { statusCount?: 1 | 2 | 3 }>;
 type TextInfoStory = StoryObj<React.ComponentProps<typeof TableCell> & { textWeight?: 'normal' | 'bold' }>;
+type DefaultInfoStory = StoryObj<React.ComponentProps<typeof TableCell> & {
+  alignment?: 'horizontal' | 'vertical';
+  statusCount?: 1 | 2 | 3;
+  paragraphCount?: 1 | 2 | 3;
+}>;
 
 const recipeOnlyControls = {
   children: { table: { disable: true } },
@@ -176,6 +181,25 @@ const textInfoSource = (textWeight: 'normal' | 'bold') => `<tr className="group/
       </span>
     </span>
   </span>
+</TableCell>
+  </td>
+</tr>`;
+
+const defaultInfoSource = (
+  alignment: 'horizontal' | 'vertical',
+  statusCount: 1 | 2 | 3,
+  paragraphCount: 1 | 2 | 3,
+) => `<tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
+  <td className="p-0">
+    <TableCell column="center" className="!items-start">
+  <TableCellInfo
+    ${alignment === 'vertical' ? 'alignment="vertical"\n    ' : ''}statuses={[
+${Array.from({ length: statusCount }).map((_, index) => {
+  const label = index === 0 ? 'Status Label' : `Status Label ${index + 1}`;
+  return `      { label: '${label}', body: 'Long Info Long Info Long Info Long Info ', maxLines: ${paragraphCount} }`;
+}).join(',\n')}
+    ]}
+  />
 </TableCell>
   </td>
 </tr>`;
@@ -1063,7 +1087,6 @@ export const TextInfo: TextInfoStory = {
  * Figma: Table Row - Listing (1262:9931), Column Sorting=First Column.
  */
 export const DefaultListing: Story = {
-  name: 'Default Listing',
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1091,7 +1114,6 @@ export const DefaultListing: Story = {
  * Figma: Table Row - Listing (1262:9931), Column Sorting=Center Column.
  */
 export const DefaultListingCenter: Story = {
-  name: 'Default Listing Center',
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1174,7 +1196,6 @@ export const PaymentShippingMethod: Story = {
  * and compact quantity stepper. Figma: Table Row - Form field (3251:9609).
  */
 export const FormField: Story = {
-  name: 'Form Field',
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1202,7 +1223,6 @@ export const FormField: Story = {
  * Figma: Table Row - Tag with Channel (3789:7967).
  */
 export const TagWithChannel: Story = {
-  name: 'Tag With Channel',
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -2929,6 +2949,192 @@ export const SubheaderWithSubrows: Story = {
  * s1 single-line label + body. Figma: alignment=Horizontal, statusCount=1,
  * paragraphCount=1.
  */
+/* TableCellInfo content variant (Figma Table Row - Info, 1270:2216) */
+
+const tableRowInfoLabels = ['Status Label', 'Status Label 2', 'Status Label 3'] as const;
+
+const tableRowInfoStatuses = (
+  statusCount: 1 | 2 | 3,
+  paragraphCount: 1 | 2 | 3,
+) => Array.from({ length: statusCount }).map((_, index) => ({
+  label: tableRowInfoLabels[index],
+  body: 'Long Info Long Info Long Info Long Info ',
+  maxLines: paragraphCount,
+}));
+
+const DefaultInfoCell = ({
+  alignment = 'horizontal',
+  statusCount = 1,
+  paragraphCount = 1,
+  column = 'center',
+  row = 'middle',
+  hovered = false,
+}: {
+  alignment?: 'horizontal' | 'vertical';
+  statusCount?: 1 | 2 | 3;
+  paragraphCount?: 1 | 2 | 3;
+  column?: 'center' | 'last';
+  row?: 'middle' | 'last';
+  hovered?: boolean;
+}) => (
+  <TableCell
+    column={column}
+    row={row}
+    hovered={hovered}
+    className="!items-start"
+  >
+    <TableCellInfo
+      alignment={alignment}
+      statuses={tableRowInfoStatuses(statusCount, paragraphCount)}
+    />
+  </TableCell>
+);
+
+/**
+ * Default table-row info, horizontal label/value layout. Figma:
+ * Table Row - Info (1270:2216), Type=Horizontal.
+ */
+export const DefaultInfoHorizontal: DefaultInfoStory = {
+  argTypes: {
+    ...recipeOnlyControls,
+    alignment: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
+    statusCount: { control: 'inline-radio', options: [1, 2, 3] },
+    paragraphCount: { control: 'inline-radio', options: [1, 2, 3] },
+  },
+  args: {
+    alignment: 'horizontal',
+    statusCount: 1,
+    paragraphCount: 1,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: defaultInfoSource('horizontal', 1, 1),
+      },
+    },
+  },
+  render: ({ alignment = 'horizontal', statusCount = 1, paragraphCount = 1 }) => (
+    <RowHoverPreview>
+      <DefaultInfoCell
+        alignment={alignment}
+        statusCount={statusCount}
+        paragraphCount={paragraphCount}
+      />
+    </RowHoverPreview>
+  ),
+};
+
+/**
+ * Default table-row info, vertical label/value layout. Figma:
+ * Table Row - Info (1270:2216), Type=Vertical.
+ */
+export const DefaultInfoVertical: DefaultInfoStory = {
+  argTypes: {
+    ...recipeOnlyControls,
+    alignment: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
+    statusCount: { control: 'inline-radio', options: [1, 2, 3] },
+    paragraphCount: { control: 'inline-radio', options: [1, 2, 3] },
+  },
+  args: {
+    alignment: 'vertical',
+    statusCount: 1,
+    paragraphCount: 1,
+  },
+  parameters: {
+    docs: {
+      source: {
+        code: defaultInfoSource('vertical', 1, 1),
+      },
+    },
+  },
+  render: ({ alignment = 'vertical', statusCount = 1, paragraphCount = 1 }) => (
+    <RowHoverPreview>
+      <DefaultInfoCell
+        alignment={alignment}
+        statusCount={statusCount}
+        paragraphCount={paragraphCount}
+      />
+    </RowHoverPreview>
+  ),
+};
+
+/**
+ * Figma parity matrix for default Table Row - Info. Covers horizontal/vertical
+ * layout, one/two/three info rows, paragraph count, center/last column padding,
+ * last-row divider, and hover fill.
+ */
+export const DefaultInfoMatrix: Story = {
+  tags: ['!dev', 'visual-qa'],
+  render: () => {
+    const alignments = ['horizontal', 'vertical'] as const;
+    const statusCounts = [1, 2, 3] as const;
+    const paragraphCounts = [1, 2, 3] as const;
+    const columns = ['center', 'last'] as const;
+    const rows = ['middle', 'last'] as const;
+
+    return (
+      <div className="flex flex-col gap-[var(--spacing-24)]">
+        <MatrixNote>
+          Visual check only. Use DefaultInfoHorizontal or DefaultInfoVertical for copyable product code.
+        </MatrixNote>
+        {paragraphCounts.map((paragraphCount) => (
+          <div key={paragraphCount} className="flex flex-col gap-[var(--spacing-16)]">
+            <MatrixLabel>{paragraphCount} paragraph{paragraphCount > 1 ? 's' : ''}</MatrixLabel>
+            {alignments.map((alignment) => (
+              <div key={`${paragraphCount}-${alignment}`} className="flex flex-col gap-[var(--spacing-8)]">
+                <MatrixLabel>{alignment}</MatrixLabel>
+                {statusCounts.map((statusCount) => (
+                  <InsetStoryFrame key={`${paragraphCount}-${alignment}-${statusCount}`}>
+                    <table className="border-collapse table-fixed">
+                      <thead>
+                        <tr>
+                          <th className="p-0 w-[120px]" />
+                          {columns.map((column) => (
+                            <th key={column} className="p-0 w-[213px]">
+                              <div className="px-[var(--spacing-6)] py-[var(--spacing-6)] text-left">
+                                <MatrixLabel>{statusCount} info / {column}</MatrixLabel>
+                              </div>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rows.flatMap((row) =>
+                          insetStates.map(({ label, hovered }) => (
+                            <tr key={`${paragraphCount}-${alignment}-${statusCount}-${row}-${label}`}>
+                              <td className="p-0 align-top">
+                                <div className="px-[var(--spacing-6)] py-[var(--spacing-6)]">
+                                  <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
+                                </div>
+                              </td>
+                              {columns.map((column) => (
+                                <td key={column} className="p-0 align-top">
+                                  <DefaultInfoCell
+                                    alignment={alignment}
+                                    statusCount={statusCount}
+                                    paragraphCount={paragraphCount}
+                                    column={column}
+                                    row={row}
+                                    hovered={hovered}
+                                  />
+                                </td>
+                              ))}
+                            </tr>
+                          )),
+                        )}
+                      </tbody>
+                    </table>
+                  </InsetStoryFrame>
+                ))}
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  },
+};
+
 export const InfoSingleLine: Story = {
   args: {
     inset: true,

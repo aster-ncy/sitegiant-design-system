@@ -16,6 +16,11 @@ const preview: Preview = {
       // 'off' - skip a11y checks entirely
       test: 'todo',
     },
+    docs: {
+      canvas: {
+        sourceState: 'hidden',
+      },
+    },
   },
   decorators: [
     (Story) => (

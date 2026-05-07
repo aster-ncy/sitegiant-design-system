@@ -1128,3 +1128,31 @@ body {
   background-color: var(--color-surface-card-inset) !important;
   font-weight: var(--font-weight-regular);
 }
+
+.group\/row:hover .sg-table-card-top-primary,
+.sg-table-card-top-primary-hover {
+  color: var(--table-body-hover-text);
+  font-weight: var(--font-weight-bold);
+}
+
+.sg-table-cell-info-clamp-1 {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sg-table-cell-info-clamp-2,
+.sg-table-cell-info-clamp-3 {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+}
+
+.sg-table-cell-info-clamp-2 {
+  -webkit-line-clamp: 2;
+}
+
+.sg-table-cell-info-clamp-3 {
+  -webkit-line-clamp: 3;
+}
