@@ -692,6 +692,7 @@ const TextListing = ({
  * args controls for copyable product code.
  */
 export const DefaultTextMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const weights = ['normal', 'bold'] as const;
 
@@ -766,6 +767,7 @@ export const DefaultTextMatrix: Story = {
  * or the args controls for copyable product code.
  */
 export const DefaultNumberMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const weights = ['normal', 'bold'] as const;
     const tones = ['default', 'success', 'danger'] as const;
@@ -1250,7 +1252,7 @@ export const TagWithChannel: Story = {
  * Visual check only. Use FormField for copyable product code.
  */
 export const FormFieldMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
       <MatrixNote>
@@ -1306,7 +1308,7 @@ export const FormFieldMatrix: Story = {
  * Visual check only. Use TagWithChannel for copyable product code.
  */
 export const TagWithChannelMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const columns = ['center', 'last'] as const;
 
@@ -1359,7 +1361,7 @@ export const TagWithChannelMatrix: Story = {
  * Visual check only. Use DefaultListing or DefaultListingCenter for copyable product code.
  */
 export const DefaultListingMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const columns = ['first', 'center'] as const;
 
@@ -1412,7 +1414,7 @@ export const DefaultListingMatrix: Story = {
  * Visual check only. Use ChannelIcon for copyable product code.
  */
 export const ChannelIconMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
       <MatrixNote>
@@ -1457,7 +1459,7 @@ export const ChannelIconMatrix: Story = {
  * Visual check only. Use PaymentShippingMethod for copyable product code.
  */
 export const PaymentShippingMethodMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
       <MatrixNote>
@@ -1502,7 +1504,7 @@ export const PaymentShippingMethodMatrix: Story = {
  * Visual check only. Use ProductOnly for copyable product code.
  */
 export const ProductOnlyMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const productCounts = [
       { label: '4+ products', count: 6 },
@@ -1561,7 +1563,7 @@ export const ProductOnlyMatrix: Story = {
  * Visual check only. Use TagAfter or TagFirst for copyable product code.
  */
 export const TagMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const orders = ['after', 'first'] as const;
     const counts = [1, 2, 3] as const;
@@ -1625,7 +1627,7 @@ export const TagMatrix: Story = {
  * Visual check only. Use IconStatus for copyable product code.
  */
 export const IconStatusMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const counts = [1, 2, 3] as const;
     const columns = ['center', 'last'] as const;
@@ -1683,7 +1685,7 @@ export const IconStatusMatrix: Story = {
  * Visual check only. Use StatusToggle for copyable product code.
  */
 export const StatusToggleMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const columns = ['center', 'last'] as const;
 
@@ -1736,7 +1738,7 @@ export const StatusToggleMatrix: Story = {
  * Visual check only. Use TextInfo for copyable product code.
  */
 export const TextInfoMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const weights = ['normal', 'bold'] as const;
 
@@ -1803,7 +1805,7 @@ export const TextInfoMatrix: Story = {
  * Visual check only. Use ActionTextLinks or ActionIconButtons for copyable product code.
  */
 export const ActionButtonMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const linkCounts = [1, 2, 3, 4] as const;
     const iconCounts = [1, 2, 3] as const;
@@ -2067,6 +2069,7 @@ export const InsetProgressStatus: Story = {
  * Do not copy this full story into product code.
  */
 export const InsetTextNumberMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const weights = ['normal', 'bold'] as const;
     const tones = ['default', 'success', 'danger'] as const;
@@ -2152,6 +2155,7 @@ export const InsetTextNumberMatrix: Story = {
  * into product code.
  */
 export const InsetFormFieldMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
     <InsetStoryFrame>
       <table className="border-collapse table-fixed w-[720px]">
@@ -2196,6 +2200,7 @@ export const InsetFormFieldMatrix: Story = {
  * into product code.
  */
 export const InsetIconMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
     <InsetStoryFrame>
       <table className="border-collapse table-fixed w-[480px]">
@@ -2240,6 +2245,7 @@ export const InsetIconMatrix: Story = {
  * full story into product code.
  */
 export const InsetActionButtonMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const linkCounts = [1, 2, 3, 4] as const;
     const iconCounts = [1, 2, 3] as const;
@@ -2340,6 +2346,7 @@ export const InsetActionButtonMatrix: Story = {
  * product code.
  */
 export const InsetExpandableMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
     <InsetStoryFrame>
       <table className="border-collapse table-fixed w-[360px]">
@@ -2386,6 +2393,7 @@ export const InsetExpandableMatrix: Story = {
  * one/two action rows. Do not copy this full story into product code.
  */
 export const InsetTagMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const orders = ['after', 'first'] as const;
     const counts = [1, 2] as const;
@@ -2448,6 +2456,7 @@ export const InsetTagMatrix: Story = {
  * full story into product code.
  */
 export const InsetStatusToggleMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const columns = ['center', 'last'] as const;
 
@@ -2501,6 +2510,7 @@ export const InsetStatusToggleMatrix: Story = {
  * this full story into product code.
  */
 export const InsetProgressStatusMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const statuses: Array<{ label: string; status: InsetProgressStatus }> = [
       { label: 'None', status: 'default' },
@@ -2665,6 +2675,7 @@ export const SubrowQuantityFieldError: Story = {
  * semantic tone. Do not copy this full story into product code.
  */
 export const SubrowTextNumberMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const tones = ['default', 'success', 'danger'] as const;
     const alignments = ['left', 'center', 'right'] as const;
@@ -2797,6 +2808,7 @@ export const SubrowTextNumberMatrix: Story = {
  * this full story into product code.
  */
 export const SubrowQuantityFieldMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const quantityStates: Array<{ label: string; state: QuantityState; focus?: boolean; hovered?: boolean }> = [
       { label: 'Default', state: 'default' },
@@ -3064,7 +3076,7 @@ export const DefaultInfoVertical: DefaultInfoStory = {
  * last-row divider, and hover fill.
  */
 export const DefaultInfoMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const alignments = ['horizontal', 'vertical'] as const;
     const statusCounts = [1, 2, 3] as const;
@@ -3288,6 +3300,7 @@ export const InfoMultiParagraph: Story = {
  * this full story into product code.
  */
 export const InfoMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const alignments = ['horizontal', 'vertical'] as const;
     const statusCounts = [1, 2, 3] as const;
@@ -3433,6 +3446,7 @@ export const MainSubLabelless: Story = {
  * full story into product code.
  */
 export const MainSubMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const types = ['default', 'mainBold'] as const;
     const columns = ['center', 'last'] as const;
@@ -3523,6 +3537,7 @@ export const TextListingRegular: Story = {
  * columns. Do not copy this full story into product code.
  */
 export const TextListingMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const titleWeights = ['bold', 'regular'] as const;
     const paragraphCounts = [1, 2, 3] as const;
@@ -3656,6 +3671,7 @@ export const ListingCenter: Story = {
  * full story into product code.
  */
 export const ListingMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => {
     const columns = ['first', 'center'] as const;
 
