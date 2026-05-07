@@ -1,22 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { ProductImageList } from './ProductImageList';
 import { ProductImage } from './ProductImage';
-
-/** Inline SVG thumbnail — never fails to load, good for offline Storybook. */
-const makeThumb = (n: number, hue: number) =>
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-       <rect width="100" height="100" fill="hsl(${hue} 60% 85%)"/>
-       <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
-             font-family="Roboto, sans-serif" font-size="36"
-             fill="hsl(${hue} 40% 30%)">${n}</text>
-     </svg>`,
-  );
+import { productImages } from '../../assets/product-images';
 
 const items = (count: number) =>
   Array.from({ length: count }, (_, i) => ({
-    src: makeThumb(i + 1, (i * 47) % 360),
+    src: productImages[i % productImages.length].src,
     alt: `Product ${i + 1}`,
   }));
 
@@ -26,7 +15,7 @@ const meta = {
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
   argTypes: {
-    size: { control: 'select', options: ['sm', 'md', 'lg', 'xl'] },
+    size: { control: 'select', options: ['sm', 'md', 'lg', 'atom', 'xl'] },
     maxVisible: { control: { type: 'number', min: 1 } },
   },
   args: {
@@ -52,6 +41,7 @@ export const MixedSizes: Story = {
       <ProductImageList size="sm" items={items(3)} />
       <ProductImageList size="md" items={items(3)} />
       <ProductImageList size="lg" items={items(3)} />
+      <ProductImageList size="atom" items={items(3)} />
       <ProductImageList size="xl" items={items(3)} />
     </div>
   ),
@@ -63,6 +53,7 @@ export const OverflowPerSize: Story = {
       <ProductImageList size="sm" items={items(8)} maxVisible={4} />
       <ProductImageList size="md" items={items(8)} maxVisible={4} />
       <ProductImageList size="lg" items={items(8)} maxVisible={4} />
+      <ProductImageList size="atom" items={items(8)} maxVisible={4} />
       <ProductImageList size="xl" items={items(8)} maxVisible={4} />
     </div>
   ),
@@ -75,6 +66,7 @@ export const EmptyPlaceholder: Story = {
       <ProductImage size="sm" />
       <ProductImage size="md" />
       <ProductImage size="lg" />
+      <ProductImage size="atom" />
       <ProductImage size="xl" />
     </div>
   ),
@@ -82,7 +74,24 @@ export const EmptyPlaceholder: Story = {
 
 export const SingleLarge: Story = {
   args: {
-    items: [{ src: makeThumb(1, 210), alt: 'Single product' }],
+    items: [productImages[0]],
     size: 'xl',
   },
+};
+
+export const FigmaAtoms: Story = {
+  name: 'Figma atoms',
+  render: () => (
+    <div className="flex items-center gap-[var(--spacing-20)]">
+      {productImages.map((item) => (
+        <ProductImage
+          key={item.alt}
+          src={item.src}
+          alt={item.alt}
+          size="atom"
+          className="border-0 rounded-none bg-transparent"
+        />
+      ))}
+    </div>
+  ),
 };

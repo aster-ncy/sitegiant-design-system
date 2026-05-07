@@ -219,8 +219,10 @@ export const Quantity = ({
         <span
           className={[
             'shrink-0',
-            size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]',
-            labelTextClasses,
+            isReadonly
+              ? ''
+              : size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]',
+            isReadonly ? bodySlimTextClasses : labelTextClasses,
             'text-[color:var(--form-label-text)]',
             isDisabled ? 'opacity-60' : '',
           ]

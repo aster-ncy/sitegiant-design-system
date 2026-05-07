@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { ReactNode } from 'react';
 import { TableCardCell } from './TableCardCell';
 import { Checkbox } from '../Checkbox';
 import { Pip } from '../Pip';
@@ -6,6 +7,8 @@ import { Toggle } from '../Toggle';
 import { Button } from '../Button';
 import { EllipsisButton } from '../Button';
 import { NumberInput } from '../NumberInput';
+import { Icon } from '../Icon';
+import { TextLink } from '../TextLink';
 
 const meta = {
   title: 'Tables/TableCardCell',
@@ -20,6 +23,36 @@ type Story = StoryObj<typeof TableCardCell>;
 // Outer card recipe — every story wraps cells in this shell so the
 // rounded corners visually close the box.
 const cardShell = 'rounded-[var(--radius-4)] overflow-hidden inline-block';
+
+const MatrixLabel = ({ children }: { children: ReactNode }) => (
+  <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
+    {children}
+  </span>
+);
+
+const MatrixNote = ({ children }: { children: ReactNode }) => (
+  <p className="max-w-[760px] text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">
+    {children}
+  </p>
+);
+
+const AppIcon = () => (
+  <span className="inline-flex size-[17px] items-center justify-center rounded-[var(--radius-2)] bg-[var(--color-sys-red-light)] text-[color:var(--color-sys-red-DEFAULT)]">
+    <Icon name="box" size={13} />
+  </span>
+);
+
+const UserIcon = () => (
+  <span className="inline-flex size-[17px] items-center justify-center rounded-full bg-[var(--color-space-mid)] text-[color:var(--color-icon-secondary)]">
+    <Icon name="user" size={13} />
+  </span>
+);
+
+const ProductThumb = () => (
+  <span className="inline-flex size-[32px] items-center justify-center rounded-[var(--radius-2)] bg-[var(--color-space-mid)] text-[color:var(--color-icon-secondary)]">
+    <Icon name="box" size={17} />
+  </span>
+);
 
 /* ── Top Tier ────────────────────────────────────────── */
 
@@ -114,6 +147,98 @@ export const TopTierWithLeadingIcon: Story = {
 
 /** Bottom Tier 3-row × 3-column matrix — proves continuous-strip
  *  borders + last-row rounded corners. Hover any row to see fill flip. */
+/**
+ * Visual matrix for Figma 3453:7497. This node was already represented
+ * by TopTierDefault, TopTierHovered, and TopTierWithLeadingIcon; keep
+ * those smaller stories for copyable product code.
+ */
+export const TopTierFigmaMatrix: Story = {
+  render: () => {
+    const columns = ['first', 'center', 'last'] as const;
+    const states = [
+      { label: 'Default', hovered: false },
+      { label: 'Hover', hovered: true },
+    ];
+    const contentRows = [
+      {
+        label: 'Default',
+        render: () => 'Product Name Here',
+      },
+      {
+        label: 'App Icon',
+        render: () => 'TikTok Shop',
+        leadingIcon: <AppIcon />,
+      },
+      {
+        label: 'User Icon',
+        render: () => 'Salesperson Name',
+        leadingIcon: <UserIcon />,
+      },
+      {
+        label: 'Product Image',
+        render: () => 'Product Name Here',
+        leadingIcon: <ProductThumb />,
+      },
+      {
+        label: 'Status',
+        render: () => <Pip type="success" pipStyle="default" label="Active" />,
+      },
+      {
+        label: 'Ellipsis',
+        render: () => '',
+        trailing: <EllipsisButton />,
+      },
+    ];
+
+    return (
+      <div className="flex flex-col gap-[var(--spacing-16)]">
+        <MatrixNote>
+          Visual check only. Use TopTierDefault, TopTierHovered, or TopTierWithLeadingIcon for copyable product code.
+        </MatrixNote>
+        <div className="grid grid-cols-[120px_1fr] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-12)]">
+          <div />
+          <div className="grid grid-cols-3 gap-[var(--spacing-16)]">
+            {columns.map((column) => (
+              <MatrixLabel key={column}>{column} column</MatrixLabel>
+            ))}
+          </div>
+          {contentRows.flatMap((contentRow) =>
+            states.map(({ label, hovered }) => (
+              <div key={`${contentRow.label}-${label}`} className="contents">
+                <MatrixLabel>
+                  {contentRow.label} / {label}
+                </MatrixLabel>
+                <div className={cardShell}>
+                  <table className="border-collapse table-fixed w-[720px]">
+                    <tbody>
+                      <tr className="group/row">
+                        {columns.map((column) => (
+                          <td key={column} className="p-0">
+                            <TableCardCell
+                              tier="top"
+                              column={column}
+                              hovered={hovered}
+                              checkbox={column === 'first' && contentRow.label === 'Default' ? <Checkbox size="sm" /> : undefined}
+                              leadingIcon={contentRow.leadingIcon}
+                              trailing={column === 'last' ? contentRow.trailing : undefined}
+                            >
+                              {contentRow.render()}
+                            </TableCardCell>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )),
+          )}
+        </div>
+      </div>
+    );
+  },
+};
+
 export const BottomTierMatrix: Story = {
   render: () => {
     const rows: Array<'first' | 'middle' | 'last'> = ['first', 'middle', 'last'];
@@ -184,4 +309,92 @@ export const BottomTierFormControls: Story = {
       </table>
     </div>
   ),
+};
+
+/**
+ * Visual matrix for Figma 3453:7727. BottomTierMatrix and
+ * BottomTierFormControls stay as the smaller copyable recipes.
+ */
+export const BottomTierFigmaMatrix: Story = {
+  render: () => {
+    const columns = ['first', 'center', 'last'] as const;
+    const rows = ['first', 'middle', 'last'] as const;
+    const states = [
+      { label: 'Default', hovered: false },
+      { label: 'Hover', hovered: true },
+    ];
+    const variants = [
+      {
+        label: 'Default',
+        formField: false,
+        render: () => 'Information here',
+      },
+      {
+        label: 'Action button',
+        formField: true,
+        render: () => <TextLink label="View detail" />,
+      },
+      {
+        label: 'Status toggle',
+        formField: true,
+        render: () => <Toggle checked={true} onChange={() => undefined} />,
+      },
+      {
+        label: 'Form field',
+        formField: true,
+        render: () => <NumberInput type="stepper" value="1" onChange={() => undefined} />,
+      },
+    ];
+
+    return (
+      <div className="flex flex-col gap-[var(--spacing-20)]">
+        <MatrixNote>
+          Visual check only. Use BottomTierMatrix or BottomTierFormControls for copyable product code.
+        </MatrixNote>
+        {variants.map((variant) => (
+          <div key={variant.label} className="flex flex-col gap-[var(--spacing-8)]">
+            <MatrixLabel>{variant.label}</MatrixLabel>
+            <div className="grid grid-cols-[120px_1fr] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-12)]">
+              <div />
+              <div className="grid grid-cols-3 gap-[var(--spacing-16)]">
+                {columns.map((column) => (
+                  <MatrixLabel key={column}>{column} column</MatrixLabel>
+                ))}
+              </div>
+              {states.map(({ label, hovered }) => (
+                <div key={label} className="contents">
+                  <MatrixLabel>{label}</MatrixLabel>
+                  <div className={cardShell}>
+                    <table className="border-collapse table-fixed w-[720px]">
+                      <tbody>
+                        {rows.map((row) => (
+                          <tr key={row} className="group/row">
+                            {columns.map((column) => (
+                              <td key={column} className="p-0">
+                                <TableCardCell
+                                  tier="bottom"
+                                  row={row}
+                                  column={column}
+                                  hovered={hovered}
+                                  formField={variant.formField}
+                                  checkbox={column === 'first' && variant.label === 'Default' ? <Checkbox size="sm" /> : undefined}
+                                  trailing={column === 'last' && variant.label === 'Default' ? <Icon name="box" size={17} /> : undefined}
+                                >
+                                  {variant.render()}
+                                </TableCardCell>
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  },
 };

@@ -1,4 +1,7 @@
-import { iconPaths, type IconName } from './iconPaths';
+import { channelIconPaths, type ChannelIconName } from './channelIconPaths';
+import { iconPaths, type IconName as CoreIconName, type IconPathData } from './iconPaths';
+
+export type IconName = CoreIconName | ChannelIconName;
 
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -34,6 +37,11 @@ const sizeMap: Record<IconSize, number> = {
   xl: 32,
 };
 
+const allIconPaths: Record<IconName, IconPathData> = {
+  ...iconPaths,
+  ...channelIconPaths,
+};
+
 /**
  * SiteGiant Icon component.
  *
@@ -52,7 +60,7 @@ export const Icon = ({
   label,
   onClick,
 }: IconProps) => {
-  const iconData = iconPaths[name];
+  const iconData = allIconPaths[name];
 
   if (!iconData) {
     console.warn(`[Icon] Unknown icon name: "${name}"`);
@@ -75,19 +83,24 @@ export const Icon = ({
       aria-hidden={label ? undefined : true}
       onClick={onClick}
     >
-      {iconData.paths.map((d, i) => (
-        <path
-          key={i}
-          d={d}
-          fill={iconData.stroke ? 'none' : fillColor}
-          stroke={iconData.stroke ? fillColor : undefined}
-          strokeWidth={iconData.stroke?.width}
-          strokeLinecap={iconData.stroke?.linecap}
-          strokeLinejoin={iconData.stroke?.linejoin}
-          fillRule={!iconData.stroke && iconData.fillRule === 'evenodd' ? 'evenodd' : undefined}
-          clipRule={!iconData.stroke && iconData.fillRule === 'evenodd' ? 'evenodd' : undefined}
-        />
-      ))}
+      {iconData.paths.map((path, i) => {
+        const pathData = typeof path === 'string' ? { d: path } : path;
+        const fillRule = pathData.fillRule ?? iconData.fillRule;
+
+        return (
+          <path
+            key={i}
+            d={pathData.d}
+            fill={iconData.stroke ? 'none' : pathData.fill ?? fillColor}
+            stroke={iconData.stroke ? fillColor : undefined}
+            strokeWidth={iconData.stroke?.width}
+            strokeLinecap={iconData.stroke?.linecap}
+            strokeLinejoin={iconData.stroke?.linejoin}
+            fillRule={!iconData.stroke && fillRule === 'evenodd' ? 'evenodd' : undefined}
+            clipRule={!iconData.stroke && fillRule === 'evenodd' ? 'evenodd' : undefined}
+          />
+        );
+      })}
     </svg>
   );
 };

@@ -1,4 +1,4 @@
-export type ProductImageSize = 'sm' | 'md' | 'lg' | 'xl';
+export type ProductImageSize = 'sm' | 'md' | 'lg' | 'xl' | 'atom';
 
 export interface ProductImageProps {
   /** Image URL. Omit to render the empty-state placeholder background only. */
@@ -15,6 +15,7 @@ const sizeClasses: Record<ProductImageSize, string> = {
   sm: 'w-[40px] h-[40px]',
   md: 'w-[44px] h-[44px]',
   lg: 'w-[56px] h-[56px]',
+  atom: 'w-[80px] h-[80px]',
   xl: 'w-[112px] h-[112px]',
 };
 

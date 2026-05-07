@@ -34,6 +34,10 @@ export type { BadgeProps, BadgeVariant, BadgeSize } from './Badge';
 export { Banner } from './Banner';
 export type { BannerProps, BannerVariant } from './Banner';
 
+// Remark
+export { Remark } from './Remark';
+export type { RemarkProps, RemarkState } from './Remark';
+
 // Button
 export { Button, PlusIcon } from './Button';
 export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';

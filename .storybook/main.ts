@@ -12,6 +12,11 @@ const config: StorybookConfig = {
     "@storybook/addon-docs",
     "@storybook/addon-onboarding"
   ],
-  "framework": "@storybook/react-vite"
+  "framework": "@storybook/react-vite",
+  "tags": {
+    "visual-qa": {
+      "defaultFilterSelection": "exclude"
+    }
+  }
 };
 export default config;

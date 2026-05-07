@@ -117,8 +117,8 @@ const topTierColumnClasses: Record<TableColumnPosition, string> = {
 const bottomTierBaseClasses = [
   // Outer flex layout per Figma.
   'relative flex w-full',
-  // Padding per Figma 3453:7822 (asymmetric: pt-12 pb-6).
-  'pl-[var(--spacing-12)] pr-[var(--spacing-6)] pt-[var(--spacing-12)] pb-[var(--spacing-6)]',
+  // Horizontal padding per Figma 3453:7822. Vertical padding is row-aware below.
+  'pl-[var(--spacing-12)] pr-[var(--spacing-6)]',
   // Default fill — flips to hover-fill on parent-row hover.
   'bg-[var(--table-body-fill)]',
   'group-hover/row:bg-[var(--table-body-hover-fill)]',
@@ -136,13 +136,13 @@ const bottomTierColumnClasses: Record<TableColumnPosition, string> = {
   last: 'border-r',
 };
 
-// Row-specific bottom border + corner radii. Only the last row paints
-// border-b (so middle rows form a continuous strip with the row above
-// and below).
+// Row-specific vertical padding + bottom border. Figma 3453:7727 uses
+// a compact middle row, with the first and last rows mirroring the
+// extra breathing room at the outside edges of the card.
 const bottomTierRowClasses: Record<TableCardCellRow, string> = {
-  first: '',
-  middle: '',
-  last: 'border-b',
+  first: 'pt-[var(--spacing-12)] pb-[var(--spacing-6)]',
+  middle: 'py-[var(--spacing-6)]',
+  last: 'pt-[var(--spacing-6)] pb-[var(--spacing-12)] border-b',
 };
 
 // Combined column × row corner radii — only the last row gets rounded
