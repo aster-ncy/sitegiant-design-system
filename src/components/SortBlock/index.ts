@@ -22,4 +22,7 @@ export type { SortBlockButtonProps, SortBlockButtonKind } from './SortBlockButto
 export { SortBlockImage } from './SortBlockImage';
 export type { SortBlockImageProps } from './SortBlockImage';
 
+export { SortBlockGroup } from './SortBlockGroup';
+export type { SortBlockGroupProps } from './SortBlockGroup';
+
 export type { SortBlockRow, SortBlockState } from './shared';
