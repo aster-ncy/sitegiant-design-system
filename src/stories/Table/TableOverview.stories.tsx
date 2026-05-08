@@ -383,24 +383,38 @@ const InsetTableDemo = () => (
   </div>
 );
 
-const RecordTableDemo = () => (
-  <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
-    <div className="grid w-[900px] grid-cols-[409px_190px_190px_111px]">
-      <RecordTableHeaderCell column="first" label="Listing" className={`${recordHeaderBorderClass} ${recordFirstColumnBorderClass}`} />
-      <RecordTableHeaderCell label="Price" checkbox={null} className={recordHeaderBorderClass} />
-      <RecordTableHeaderCell label="Stock" checkbox={null} className={recordHeaderBorderClass} />
-      <RecordTableHeaderCell column="last" align="left" label="Action" checkbox={null} sortable={false} className={recordHeaderBorderClass} />
-      <RecordTableListingCell column="first" className={`${recordBodyBorderClass} ${recordFirstColumnBorderClass}`} />
-      <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
-        <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
-      </TableCell>
-      <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
-        <NumberInput value="240" hideStepper className="!w-[124px]" />
-      </TableCell>
-      <RecordTableActionCell type="text" actionCount={2} className={recordBodyBorderClass} />
+const RecordTableDemo = () => {
+  const [editingStock, setEditingStock] = useState(false);
+
+  return (
+    <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
+      <div className="grid w-[900px] grid-cols-[409px_190px_190px_111px]">
+        <RecordTableHeaderCell column="first" label="Listing" className={`${recordHeaderBorderClass} ${recordFirstColumnBorderClass}`} />
+        <RecordTableHeaderCell label="Price" checkbox={null} className={recordHeaderBorderClass} />
+        <RecordTableHeaderCell label="Stock" checkbox={null} className={recordHeaderBorderClass} />
+        <RecordTableHeaderCell column="last" align="left" label="Action" checkbox={null} sortable={false} className={recordHeaderBorderClass} />
+        <RecordTableListingCell column="first" className={`${recordBodyBorderClass} ${recordFirstColumnBorderClass}`} />
+        <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
+          <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
+        </TableCell>
+        <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
+          {editingStock ? (
+            <NumberInput value="240" hideStepper className="!w-[124px]" inputRef={(el) => el?.focus()} />
+          ) : (
+            <button
+              type="button"
+              onClick={() => setEditingStock(true)}
+              className="inline-flex h-[35px] w-[124px] items-center justify-start rounded-[var(--radius-4)] border-0 bg-transparent px-[var(--spacing-12)] py-[var(--spacing-6)] text-left font-[family-name:var(--general-font-family)] text-[length:var(--general-form-value-size)] font-[weight:var(--general-body-weight)] leading-[var(--general-form-value-lineheight)] text-[color:var(--table-inset-body-text)] hover:bg-[var(--table-inset-body-hover-fill)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--button-primary-default-fill)]"
+            >
+              240
+            </button>
+          )}
+        </TableCell>
+        <RecordTableActionCell type="text" actionCount={2} className={recordBodyBorderClass} />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const CardTableDemo = () => (
   <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
