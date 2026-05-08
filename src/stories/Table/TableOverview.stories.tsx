@@ -271,12 +271,12 @@ const ExpandableRowsDemo = () => {
         <tbody>
           <tr>
             <td className="w-[48%] p-0">
-              <TableCell inset column="first" weight="bold">
+              <TableCell inset column="first" weight="bold" className={expanded ? 'shadow-none' : undefined}>
                 Shopee MY
               </TableCell>
             </td>
             <td className="w-[34%] p-0">
-              <TableCell inset align="right">
+              <TableCell inset align="right" className={expanded ? 'shadow-none' : undefined}>
                 RM 2,450.00
               </TableCell>
             </td>
@@ -285,6 +285,7 @@ const ExpandableRowsDemo = () => {
                 inset
                 column="last"
                 align="right"
+                className={expanded ? 'shadow-none' : undefined}
                 trailing={<TableExpandToggle expanded={expanded} onToggle={setExpanded} />}
               />
             </td>
