@@ -9,7 +9,6 @@ import {
   ProductImage,
   TableCardCell,
   TableCell,
-  TableCellInfo,
   TableCellListing,
   TableExpandToggle,
   TableHeaderCell,
@@ -46,6 +45,7 @@ const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text
 const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
 const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)]';
 const rowDividerCellClass = 'border-b border-solid border-[var(--table-divider-border)]';
+const insetRowDividerCellClass = 'border-b border-solid border-[var(--table-divider-lighter-border)]';
 
 const GuidanceRow = ({
   label,
@@ -328,6 +328,11 @@ const ExpandableRowsDemo = () => {
   );
 };
 
+const insetTableRows = [
+  { trackingNo: '220126-001', status: 'Ready' },
+  { trackingNo: '220126-002', status: 'Ready' },
+] as const;
+
 const InsetTableDemo = () => (
   <div className="inline-block">
     <table className="w-[720px] table-fixed border-separate border-spacing-0">
@@ -345,31 +350,30 @@ const InsetTableDemo = () => (
         </tr>
       </thead>
       <tbody>
-        <tr className="group/row hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
-          <td className="p-0">
-            <TableCell inset column="first" checkbox={<Checkbox size="sm" />}>
-              <TableCellInfo
-                alignment="vertical"
-                statuses={[{ label: 'Trip', body: '220126-001' }]}
-              />
-            </TableCell>
-          </td>
-          <td className="p-0">
-            <TableCell inset>
-              <Pip type="success" label="Ready" />
-            </TableCell>
-          </td>
-          <td className="p-0">
-            <TableCell
-              inset
-              column="last"
-              row="last"
-              align="left"
-            >
-              <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
-            </TableCell>
-          </td>
-        </tr>
+        {insetTableRows.map((row, index) => {
+          const isLastRow = index === insetTableRows.length - 1;
+          const dividerClass = isLastRow ? 'border-b border-solid border-[var(--table-divider-last-border)]' : insetRowDividerCellClass;
+
+          return (
+            <tr key={row.trackingNo} className="group/row hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
+              <td className={`p-0 ${dividerClass}`}>
+                <TableCell inset column="first" checkbox={<Checkbox size="sm" />} className="shadow-none">
+                  {row.trackingNo}
+                </TableCell>
+              </td>
+              <td className={`p-0 ${dividerClass}`}>
+                <TableCell inset className="shadow-none">
+                  <Pip type="success" label={row.status} />
+                </TableCell>
+              </td>
+              <td className={`p-0 ${dividerClass}`}>
+                <TableCell inset column="last" align="left" className="shadow-none">
+                  <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+                </TableCell>
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   </div>
