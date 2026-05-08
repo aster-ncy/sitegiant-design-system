@@ -14,7 +14,7 @@ import shopeeIcon from '../../assets/channel-icons/shopee.png';
 import { product1, productImages } from '../../assets/product-images';
 
 const meta = {
-  title: 'Tables/TableCardCell',
+  title: 'Tables/Card Table/Cell Atoms',
   component: TableCardCell,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

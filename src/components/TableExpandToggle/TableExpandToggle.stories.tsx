@@ -4,7 +4,7 @@ import { TableExpandToggle } from './TableExpandToggle';
 import { TableCell } from '../TableCell';
 
 const meta = {
-  title: 'Tables/TableExpandToggle',
+  title: 'Tables/Table Atoms/Expand Toggle',
   component: TableExpandToggle,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

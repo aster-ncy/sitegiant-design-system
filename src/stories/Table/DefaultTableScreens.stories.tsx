@@ -14,7 +14,7 @@ import { Pip } from '../../components/Pip';
  * `references/table_s4.png`, `table_s7.png`, `table_s8.png` (private).
  */
 const meta = {
-  title: 'Tables/Default Reference Screens',
+  title: 'Tables/Table Recipes/Standard Reference Screens',
   parameters: { layout: 'padded' },
 } satisfies Meta;
 

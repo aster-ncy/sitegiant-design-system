@@ -24,7 +24,7 @@ import { productImages } from '../../assets/product-images';
 import sitegiantDemoApp from '../../assets/method-images/sitegiant-demo-app.png';
 
 const meta = {
-  title: 'Tables/TableCell',
+  title: 'Tables/Table Atoms/Body Cell and Content Blocks',
   component: TableCell,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

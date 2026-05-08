@@ -8,7 +8,7 @@ import { RecordTableMoreInfoCell } from './RecordTableMoreInfoCell';
 import { RecordTableRowCell } from './RecordTableRowCell';
 
 const meta = {
-  title: 'Tables/RecordTable',
+  title: 'Tables/Record Table/Cells',
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
 } satisfies Meta;

@@ -3,7 +3,7 @@ import { TableSelectionBar } from './TableSelectionBar';
 import { Checkbox } from '../Checkbox';
 
 const meta = {
-  title: 'Tables/TableSelectionBar',
+  title: 'Tables/Table Atoms/Selection Bar',
   component: TableSelectionBar,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

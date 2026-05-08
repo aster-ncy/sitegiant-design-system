@@ -52,7 +52,7 @@ type ChannelKey = keyof typeof channelIconSources;
  * because they are integration documentation, not per-component variants.
  */
 const meta = {
-  title: 'Tables/Reference Screens',
+  title: 'Tables/Table Recipes/Inset Reference Screens',
   parameters: { layout: 'padded' },
 } satisfies Meta;
 

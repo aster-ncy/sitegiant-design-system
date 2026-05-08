@@ -5,7 +5,7 @@ import { sortDirectionToAria } from './sortDirectionToAria';
 import { Checkbox } from '../Checkbox';
 
 const meta = {
-  title: 'Tables/TableHeaderCell',
+  title: 'Tables/Table Atoms/Header Cell',
   component: TableHeaderCell,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],

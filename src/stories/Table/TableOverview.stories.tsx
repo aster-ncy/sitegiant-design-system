@@ -1,0 +1,530 @@
+import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
+import {
+  Checkbox,
+  Icon,
+  IconLink,
+  Pip,
+  PrefixInput,
+  ProductImage,
+  TableCardCell,
+  TableCell,
+  TableCellInfo,
+  TableCellListing,
+  TableExpandToggle,
+  TableHeaderCell,
+  TableSelectionBar,
+  TextLink,
+} from '../../components';
+import { RecordTableActionCell } from '../../components/RecordTable/RecordTableActionCell';
+import { RecordTableHeaderCell } from '../../components/RecordTable/RecordTableHeaderCell';
+import { RecordTableListingCell } from '../../components/RecordTable/RecordTableListingCell';
+import productImage from '../../assets/product-images/product-1.png';
+import shopeeIcon from '../../assets/channel-icons/shopee.png';
+
+const meta = {
+  title: 'Tables/Table',
+  parameters: {
+    layout: 'padded',
+    docs: {
+      description: {
+        component:
+          'Developer-facing table entry point. Start here for common table recipes, then use the lower-level Table Atoms pages when you need to tune individual cells.',
+      },
+    },
+  },
+  tags: ['autodocs'],
+} satisfies Meta;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+const pageShell = 'flex max-w-[1040px] flex-col gap-[var(--spacing-24)]';
+const sectionShell = 'flex flex-col gap-[var(--spacing-12)]';
+const headingClass = 'text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)] text-[color:var(--color-text-primary)]';
+const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-info)]';
+const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
+const tableShell = 'overflow-hidden rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)]';
+
+const GuidanceRow = ({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) => (
+  <div className="grid grid-cols-[160px_1fr] gap-[var(--spacing-16)] border-b border-solid border-[var(--table-divider-border)] py-[var(--spacing-8)] last:border-b-0">
+    <span className="font-[var(--font-weight-bold)] text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-primary)]">
+      {label}
+    </span>
+    <span className={bodyClass}>{children}</span>
+  </div>
+);
+
+const ProductThumb = () => (
+  <ProductImage src={productImage} alt="Product" size="md" />
+);
+
+const ChannelIcon = () => (
+  <img
+    src={shopeeIcon}
+    alt="Shopee"
+    className="size-[21px] shrink-0 rounded-[var(--radius-4)] object-cover"
+  />
+);
+
+const BasicTableDemo = () => (
+  <div className={tableShell}>
+    <table className="w-full table-fixed border-collapse">
+      <thead>
+        <tr>
+          <th className="w-[38%] p-0" aria-sort="none">
+            <TableHeaderCell column="first" label="Product" sortable />
+          </th>
+          <th className="w-[22%] p-0" aria-sort="none">
+            <TableHeaderCell label="Channel" sortable />
+          </th>
+          <th className="w-[18%] p-0" aria-sort="none">
+            <TableHeaderCell align="right" label="Stock" sortable />
+          </th>
+          <th className="w-[22%] p-0">
+            <TableHeaderCell column="last" align="right" label="Action" sortable={false} />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
+          <td className="p-0">
+            <TableCell column="first" boldOnRowHover>
+              Dynamo Laundry Capsules
+            </TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell leadingIcon={<ChannelIcon />}>Shopee MY</TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell align="right" tone="success">
+              240
+            </TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell
+              column="last"
+              align="right"
+              trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
+            />
+          </td>
+        </tr>
+        <tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
+          <td className="p-0">
+            <TableCell column="first" row="last" boldOnRowHover>
+              Flash Sale Bundle
+            </TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell row="last" leadingIcon={<ChannelIcon />}>Shopee MY</TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell row="last" align="right" tone="danger">
+              8
+            </TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell
+              row="last"
+              column="last"
+              align="right"
+              trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+);
+
+const SelectionTableDemo = () => (
+  <div className={tableShell}>
+    <TableSelectionBar
+      checkbox={<Checkbox size="sm" indeterminate />}
+      selectedCount={2}
+      actions={[
+        { key: 'print', label: 'Print' },
+        {
+          key: 'more',
+          label: 'More Action',
+          menuItems: [
+            { key: 'export', label: 'Export' },
+            { key: 'archive', label: 'Archive' },
+          ],
+        },
+      ]}
+      onDelete={() => undefined}
+    />
+    <table className="w-full table-fixed border-collapse">
+      <tbody>
+        {['Dynamo Laundry Capsules', 'Flash Sale Bundle'].map((name, index) => (
+          <tr key={name}>
+            <td className="w-[48%] p-0">
+              <TableCell
+                column="first"
+                selected
+                row={index === 1 ? 'last' : 'middle'}
+                checkbox={<Checkbox size="sm" checked />}
+              >
+                {name}
+              </TableCell>
+            </td>
+            <td className="w-[28%] p-0">
+              <TableCell selected row={index === 1 ? 'last' : 'middle'}>
+                Selected row
+              </TableCell>
+            </td>
+            <td className="w-[24%] p-0">
+              <TableCell selected column="last" row={index === 1 ? 'last' : 'middle'} align="right">
+                Ready
+              </TableCell>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+);
+
+const ActionLinksDemo = () => (
+  <div className={tableShell}>
+    <table className="w-full table-fixed border-collapse">
+      <tbody>
+        <tr>
+          <td className="w-[42%] p-0">
+            <TableCell column="first">Inventory Update</TableCell>
+          </td>
+          <td className="w-[34%] p-0">
+            <TableCell>
+              <div className="flex flex-col items-start gap-[var(--spacing-4)]">
+                <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+                <TextLink label="View detail" iconPosition="left" icon={<Icon name="external-link" size={17} />} />
+              </div>
+            </TableCell>
+          </td>
+          <td className="w-[24%] p-0">
+            <TableCell
+              column="last"
+              trailing={
+                <div className="flex items-center gap-[var(--spacing-8)]">
+                  <IconLink icon="edit" aria-label="Edit" showTooltip={false} />
+                  <IconLink icon="trash" aria-label="Delete" showTooltip={false} variant="danger" />
+                </div>
+              }
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+);
+
+const ExpandableRowsDemo = () => {
+  const [expanded, setExpanded] = useState(true);
+
+  return (
+    <div className={tableShell}>
+      <table className="w-full table-fixed border-collapse">
+        <tbody>
+          <tr>
+            <td className="w-[48%] p-0">
+              <TableCell inset column="first" weight="bold">
+                Shopee MY
+              </TableCell>
+            </td>
+            <td className="w-[34%] p-0">
+              <TableCell inset align="right">
+                RM 2,450.00
+              </TableCell>
+            </td>
+            <td className="w-[18%] p-0">
+              <TableCell
+                inset
+                column="last"
+                align="right"
+                trailing={<TableExpandToggle expanded={expanded} onToggle={setExpanded} />}
+              />
+            </td>
+          </tr>
+          {expanded && (
+            <>
+              <tr>
+                <td className="p-0">
+                  <TableHeaderCell subheader column="first" label="Store" />
+                </td>
+                <td className="p-0">
+                  <TableHeaderCell subheader align="right" label="Sales" />
+                </td>
+                <td className="p-0">
+                  <TableHeaderCell subheader column="last" align="right" label="Orders" />
+                </td>
+              </tr>
+              <tr>
+                <td className="p-0">
+                  <TableCell subrow column="first" leadingIcon={<ChannelIcon />}>
+                    Main Store
+                  </TableCell>
+                </td>
+                <td className="p-0">
+                  <TableCell subrow align="right" tone="success">
+                    RM 1,240.00
+                  </TableCell>
+                </td>
+                <td className="p-0">
+                  <TableCell subrow column="last" align="right">
+                    18
+                  </TableCell>
+                </td>
+              </tr>
+            </>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+const InsetTableDemo = () => (
+  <div className="inline-block rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)] p-[var(--spacing-16)]">
+    <table className="w-[720px] table-fixed border-collapse">
+      <thead>
+        <tr>
+          <th className="w-[42%] p-0">
+            <TableHeaderCell inset column="first" label="Tracking No." sortable />
+          </th>
+          <th className="w-[34%] p-0">
+            <TableHeaderCell inset label="Status" sortable />
+          </th>
+          <th className="w-[24%] p-0">
+            <TableHeaderCell inset column="last" align="right" label="Action" sortable={false} />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="group/row hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
+          <td className="p-0">
+            <TableCell inset column="first" checkbox={<Checkbox size="sm" />}>
+              <TableCellInfo
+                alignment="vertical"
+                statuses={[{ label: 'Trip', body: '220126-001' }]}
+              />
+            </TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell inset>
+              <Pip type="success" label="Ready" />
+            </TableCell>
+          </td>
+          <td className="p-0">
+            <TableCell
+              inset
+              column="last"
+              row="last"
+              align="right"
+              trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+);
+
+const RecordTableDemo = () => (
+  <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
+    <div className="grid w-[900px] grid-cols-[409px_190px_190px_111px]">
+      <RecordTableHeaderCell column="first" label="Listing" />
+      <RecordTableHeaderCell label="Price" checkbox={null} />
+      <RecordTableHeaderCell label="Stock" checkbox={null} />
+      <RecordTableHeaderCell column="last" align="right" label="Action" checkbox={null} sortable={false} />
+      <RecordTableListingCell column="first" />
+      <TableCell inset className="h-full border border-solid border-[var(--table-divider-border)]">
+        <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
+      </TableCell>
+      <TableCell inset className="h-full border border-solid border-[var(--table-divider-border)]">
+        240
+      </TableCell>
+      <RecordTableActionCell type="text" actionCount={2} />
+    </div>
+  </div>
+);
+
+const CardTableDemo = () => (
+  <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
+    <table className="w-[760px] table-fixed border-collapse">
+      <tbody>
+        <tr className="group/row">
+          <td className="w-[42%] p-0">
+            <TableCardCell tier="top" column="first" checkbox={<Checkbox size="sm" />}>
+              Product Group
+            </TableCardCell>
+          </td>
+          <td className="w-[34%] p-0">
+            <TableCardCell tier="top" column="center" leadingIcon={<ChannelIcon />}>
+              Shopee MY
+            </TableCardCell>
+          </td>
+          <td className="w-[24%] p-0">
+            <TableCardCell
+              tier="top"
+              column="last"
+              trailing={<IconLink icon="plus" aria-label="Add" showTooltip={false} />}
+            />
+          </td>
+        </tr>
+        <tr className="group/row">
+          <td className="p-0">
+            <TableCardCell tier="bottom" row="first" column="first" leadingIcon={<ProductThumb />}>
+              Dynamo 4in1 Laundry Capsules
+            </TableCardCell>
+          </td>
+          <td className="p-0">
+            <TableCardCell tier="bottom" row="first" column="center">
+              <Pip type="success" label="Published" />
+            </TableCardCell>
+          </td>
+          <td className="p-0">
+            <TableCardCell tier="bottom" row="first" column="last">
+              RM 29.90
+            </TableCardCell>
+          </td>
+        </tr>
+        <tr className="group/row">
+          <td className="p-0">
+            <TableCardCell tier="bottom" row="last" column="first">
+              <TableCellListing
+                productName="Variant A"
+                infoRows={[
+                  { label: 'SKU', value: 'DYN-001' },
+                  { label: 'Stock', value: '240' },
+                ]}
+              />
+            </TableCardCell>
+          </td>
+          <td className="p-0">
+            <TableCardCell tier="bottom" row="last" column="center">
+              Ready
+            </TableCardCell>
+          </td>
+          <td className="p-0">
+            <TableCardCell tier="bottom" row="last" column="last" formField>
+              <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+            </TableCardCell>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+);
+
+export const Overview: Story = {
+  render: () => (
+    <div className={pageShell}>
+      <section className={sectionShell}>
+        <h2 className={headingClass}>Choose the table pattern by use case</h2>
+        <p className={bodyClass}>
+          Use this page like a decision tree. The atom pages are still available for details, but most product work should start from one of these recipes.
+        </p>
+      </section>
+      <section className="rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)] px-[var(--spacing-16)]">
+        <GuidanceRow label="Standard table">
+          Use <code>TableHeaderCell</code> and <code>TableCell</code> for normal data tables.
+        </GuidanceRow>
+        <GuidanceRow label="Inset table">
+          Add <code>inset</code> when a table sits inside a card, modal, or nested panel.
+        </GuidanceRow>
+        <GuidanceRow label="Cell content">
+          Put <code>TableCellInfo</code>, <code>TableCellMainSub</code>, or <code>TableCellListing</code> inside <code>TableCell</code>. Do not use them as table rows.
+        </GuidanceRow>
+        <GuidanceRow label="Selection">
+          Use <code>Checkbox</code> in the cell slot and <code>TableSelectionBar</code> when selected rows replace the header.
+        </GuidanceRow>
+        <GuidanceRow label="Expandable rows">
+          Use <code>TableExpandToggle</code> in a trailing cell, then render subheader and subrow cells underneath.
+        </GuidanceRow>
+        <GuidanceRow label="Record table">
+          Use <code>RecordTable*</code> cells for listing-management tables with product detail, form-field, action, and more-info rows.
+        </GuidanceRow>
+        <GuidanceRow label="Card table">
+          Use <code>TableCardCell</code> for product-card style table rows with top and bottom tiers.
+        </GuidanceRow>
+      </section>
+    </div>
+  ),
+};
+
+export const BasicTable: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Basic table</h2>
+      <p className={noteClass}>Default data table recipe: header cells in a table header row, body cells in table body rows.</p>
+      <BasicTableDemo />
+    </div>
+  ),
+};
+
+export const CheckboxSelection: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Checkbox selection</h2>
+      <p className={noteClass}>Use the existing Checkbox atom in the checkbox slot; replace the header with TableSelectionBar when rows are selected.</p>
+      <SelectionTableDemo />
+    </div>
+  ),
+};
+
+export const ActionLinks: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Action links</h2>
+      <p className={noteClass}>Use TextLink for text actions and IconLink for icon-only actions inside TableCell content or trailing slots.</p>
+      <ActionLinksDemo />
+    </div>
+  ),
+};
+
+export const ExpandableRows: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Expandable rows</h2>
+      <p className={noteClass}>Use TableExpandToggle in the parent row, then render subheader and subrow cells below it.</p>
+      <ExpandableRowsDemo />
+    </div>
+  ),
+};
+
+export const InsetTable: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Inset table</h2>
+      <p className={noteClass}>Use inset header and body cells when the table sits inside a card, modal, drawer, or expanded row.</p>
+      <InsetTableDemo />
+    </div>
+  ),
+};
+
+export const RecordTable: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Record table</h2>
+      <p className={noteClass}>Use RecordTable cells for listing-management layouts that need product detail, editable fields, and compact row actions.</p>
+      <RecordTableDemo />
+    </div>
+  ),
+};
+
+export const CardTable: Story = {
+  render: () => (
+    <div className={sectionShell}>
+      <h2 className={headingClass}>Card table</h2>
+      <p className={noteClass}>Use TableCardCell when a table row is visually grouped as a card with a top tier and bottom tier rows.</p>
+      <CardTableDemo />
+    </div>
+  ),
+};
