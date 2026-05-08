@@ -397,19 +397,19 @@ const RecordTableDemo = () => {
         <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
           <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
         </TableCell>
-        <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
+        <TableCell
+          inset
+          className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass} ${editingStock ? '' : 'cursor-pointer'}`}
+          onClick={() => setEditingStock(true)}
+        >
           {editingStock ? (
             <div onBlur={() => setEditingStock(false)}>
               <NumberInput value="240" hideStepper className="!w-[124px]" inputRef={(el) => el?.focus()} />
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => setEditingStock(true)}
-              className="inline-flex h-[35px] w-[124px] items-center justify-start rounded-[var(--radius-4)] border-0 bg-transparent px-[var(--spacing-12)] py-[var(--spacing-6)] text-left font-[family-name:var(--general-font-family)] text-[length:var(--general-form-value-size)] font-[weight:var(--general-body-weight)] leading-[var(--general-form-value-lineheight)] text-[color:var(--table-inset-body-text)] hover:bg-[var(--table-inset-body-hover-fill)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--button-primary-default-fill)]"
-            >
+            <span className="inline-flex h-[35px] w-[124px] items-center justify-start rounded-[var(--radius-4)] px-[var(--spacing-12)] py-[var(--spacing-6)] text-left font-[family-name:var(--general-font-family)] text-[length:var(--general-form-value-size)] font-[weight:var(--general-body-weight)] leading-[var(--general-form-value-lineheight)] text-[color:var(--table-inset-body-text)]">
               240
-            </button>
+            </span>
           )}
         </TableCell>
         <RecordTableActionCell type="text" actionCount={2} className={recordBodyBorderClass} />

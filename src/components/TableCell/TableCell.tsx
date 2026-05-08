@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { MouseEventHandler, ReactNode } from 'react';
 import type { TableColumnPosition, TableTextAlignment } from '../TableHeaderCell';
 
 export type TableCellWeight = 'normal' | 'bold';
@@ -73,6 +73,8 @@ export interface TableCellProps {
   trailing?: ReactNode;
   /** Extra classes on the root cell. */
   className?: string;
+  /** Optional click handler for interactive table-cell recipes. */
+  onClick?: MouseEventHandler<HTMLDivElement>;
 }
 
 const columnPaddingX: Record<TableColumnPosition, string> = {
@@ -146,6 +148,7 @@ export const TableCell = ({
   leadingIcon,
   trailing,
   className = '',
+  onClick,
 }: TableCellProps) => {
   // Subrow implies inset — sub-rows only exist within inset tables.
   const isInset = inset || subrow;
@@ -211,6 +214,7 @@ export const TableCell = ({
 
   return (
     <div
+      onClick={onClick}
       className={[
         // `flex` (not `inline-flex`) so the cell occupies the full width
         // of its <td>; otherwise the bottom inset-shadow border under-
