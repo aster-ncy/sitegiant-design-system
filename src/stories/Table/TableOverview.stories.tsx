@@ -15,6 +15,7 @@ import {
   TableHeaderCell,
   TableSelectionBar,
   TextLink,
+  Toggle,
 } from '../../components';
 import { RecordTableActionCell } from '../../components/RecordTable/RecordTableActionCell';
 import { RecordTableHeaderCell } from '../../components/RecordTable/RecordTableHeaderCell';
@@ -50,6 +51,11 @@ const insetRowDividerCellClass = 'border-b border-solid border-[var(--table-divi
 const recordHeaderBorderClass = '[border-width:1px_1px_1px_0]';
 const recordBodyBorderClass = '[border-width:0_1px_1px_0]';
 const recordFirstColumnBorderClass = '[border-left-width:1px]';
+const cardTopCellClass = '!pl-[var(--spacing-24)] !pr-[var(--spacing-12)]';
+const cardCenterCellClass = `${cardTopCellClass} !border-l-0`;
+const cardBottomCellClass = '!h-[105px] !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-24)]';
+const cardNestedHeaderCellClass = '!h-[45px] !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !py-[var(--spacing-12)] border-b';
+const cardNestedBodyCellClass = '!h-[181px] !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-24)]';
 
 const GuidanceRow = ({
   label,
@@ -64,10 +70,6 @@ const GuidanceRow = ({
     </span>
     <span className={bodyClass}>{children}</span>
   </div>
-);
-
-const ProductThumb = () => (
-  <ProductImage src={productImage} alt="Product" size="md" />
 );
 
 const ChannelIcon = () => (
@@ -387,7 +389,7 @@ const RecordTableDemo = () => {
   const [editingStock, setEditingStock] = useState(false);
 
   return (
-    <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
+    <div className="inline-block">
       <div className="grid w-[900px] grid-cols-[409px_190px_190px_111px]">
         <RecordTableHeaderCell column="first" label="Listing" className={`${recordHeaderBorderClass} ${recordFirstColumnBorderClass}`} />
         <RecordTableHeaderCell label="Price" checkbox={null} className={recordHeaderBorderClass} />
@@ -418,66 +420,199 @@ const RecordTableDemo = () => {
   );
 };
 
-const CardTableDemo = () => (
-  <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
-    <table className="w-[760px] table-fixed border-collapse">
+/* Reference: references/table_s13.png — Shopee Ratings.
+ * Top tier: checkbox + reviewer + review# + channel.
+ * Bottom tier: product image+meta | rating + review text | timestamp | toggle. */
+const RatingsCardTableDemo = () => (
+  <div className="inline-flex items-start gap-[var(--spacing-12)]">
+    <span className="inline-flex pt-[var(--spacing-14)]">
+      <Checkbox size="sm" />
+    </span>
+    <div className="w-[980px] overflow-hidden rounded-[var(--radius-4)] border border-solid border-[color:var(--table-divider-border)]">
+      <div className="group/row grid grid-cols-[28%_48%_24%] border-b border-solid border-[color:var(--table-divider-border)]">
+        <TableCardCell tier="top" column="first" className={`${cardTopCellClass} !rounded-none !border-0`}>
+          <span className="inline-flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full bg-[var(--color-space-light)] text-[length:var(--text-12)] leading-none text-[color:var(--color-text-info)]">A</span>
+          <span>Tiffany</span>
+        </TableCardCell>
+        <TableCardCell tier="top" column="center" className={`${cardCenterCellClass} !rounded-none !border-0`}>#233</TableCardCell>
+        <TableCardCell tier="top" column="last" className={`${cardCenterCellClass} !rounded-none !border-0`}>
+          <span className="ml-auto inline-flex items-center gap-[var(--spacing-8)]">
+            <ChannelIcon />
+            <span>Shopee MY</span>
+          </span>
+        </TableCardCell>
+      </div>
+      <div className="group/row grid grid-cols-[28%_48%_24%]">
+        <TableCardCell tier="bottom" row="last" column="first" className={`${cardBottomCellClass} !rounded-none !border-0`}>
+          <TableCellListing
+            image={<ProductImage src={productImage} alt="Dynamo" size="lg" />}
+            productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
+            infoRows={[
+              { label: 'Variant', value: 'Red' },
+              { label: 'SKU', value: '1902839204' },
+            ]}
+          />
+        </TableCardCell>
+        <TableCardCell tier="bottom" row="last" column="center" className={`${cardBottomCellClass} !rounded-none !border-0`}>
+          <span className="flex flex-col items-start gap-[var(--spacing-4)]">
+            <span className="inline-flex items-center gap-[2px] text-[color:var(--color-sys-orange-light)]">
+              <Icon name="star-full" size={16} />
+              <Icon name="star-full" size={16} />
+              <Icon name="star-full" size={16} />
+              <Icon name="star-full" size={16} />
+              <Icon name="star-full" size={16} color="var(--color-space-DEFAULT)" />
+            </span>
+            <span>Baju dalam keadaan baik. Pembungkusan pun teliti.</span>
+          </span>
+        </TableCardCell>
+        <TableCardCell tier="bottom" row="last" column="last" className={`${cardBottomCellClass} !rounded-none !border-0`}>
+          <span className="flex w-full items-start justify-between gap-[var(--spacing-12)]">
+            <span>22 May 2025 11:58am</span>
+            <Toggle checked />
+          </span>
+        </TableCardCell>
+      </div>
+    </div>
+  </div>
+);
+
+/* Reference: references/table_s14.png — Order Processing.
+ * Top tier: package id / packing note / tracking number / courier.
+ * Bottom tier: order id meta | product card | order date | status pips | amounts | cancel | webstore tag.
+ * Uses a 7-column colgroup; top-tier cells use colSpan. */
+const OrderProcessingCardTableDemo = () => (
+  <div className="inline-block">
+    <table className="w-[1000px] table-fixed border-collapse">
+      <colgroup>
+        <col className="w-[10%]" />
+        <col className="w-[26%]" />
+        <col className="w-[14%]" />
+        <col className="w-[12%]" />
+        <col className="w-[17%]" />
+        <col className="w-[8%]" />
+        <col className="w-[13%]" />
+      </colgroup>
       <tbody>
         <tr className="group/row">
-          <td className="w-[42%] p-0">
-            <TableCardCell tier="top" column="first" checkbox={<Checkbox size="sm" />}>
-              Product Group
+          <td colSpan={1} className="p-0">
+            <TableCardCell tier="top" column="first" className={cardTopCellClass}>
+              <span className="flex flex-col gap-[2px]">
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Package ID</span>
+                <span className="font-[var(--font-weight-bold)]">7</span>
+              </span>
             </TableCardCell>
           </td>
-          <td className="w-[34%] p-0">
-            <TableCardCell tier="top" column="center" leadingIcon={<ChannelIcon />}>
-              Shopee MY
+          <td colSpan={2} className="p-0">
+            <TableCardCell tier="top" column="center" className={cardCenterCellClass}>
+              <span className="flex flex-col gap-[2px]">
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Packing Note</span>
+                <span>—</span>
+              </span>
             </TableCardCell>
           </td>
-          <td className="w-[24%] p-0">
-            <TableCardCell
-              tier="top"
-              column="last"
-              trailing={<IconLink icon="plus" aria-label="Add" showTooltip={false} />}
-            />
+          <td colSpan={2} className="p-0">
+            <TableCardCell tier="top" column="center" className={cardCenterCellClass}>
+              <span className="flex flex-col gap-[2px]">
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Tracking No</span>
+                <span>4678326478</span>
+              </span>
+            </TableCardCell>
+          </td>
+          <td colSpan={2} className="p-0">
+            <TableCardCell tier="top" column="last" className={cardCenterCellClass}>
+              <span className="flex flex-col gap-[2px]">
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Courier Service</span>
+                <span>Others (Self-Delivery)</span>
+              </span>
+            </TableCardCell>
           </td>
         </tr>
         <tr className="group/row">
-          <td className="p-0">
-            <TableCardCell tier="bottom" row="first" column="first" leadingIcon={<ProductThumb />}>
-              Dynamo 4in1 Laundry Capsules
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="first" column="first" className={cardNestedHeaderCellClass}>
+              <span className="font-[var(--font-weight-bold)]">#7</span>
             </TableCardCell>
           </td>
-          <td className="p-0">
-            <TableCardCell tier="bottom" row="first" column="center">
-              <Pip type="success" label="Published" />
+          <td colSpan={2} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="first" column="center" className={`${cardNestedHeaderCellClass} !border-l-0`}>
+              <span className="flex items-center gap-[var(--spacing-20)]">
+                <span>COID: -</span>
+                <span>INV: -</span>
+              </span>
             </TableCardCell>
           </td>
-          <td className="p-0">
-            <TableCardCell tier="bottom" row="first" column="last">
-              RM 29.90
+          <td colSpan={3} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="first" column="center" className={`${cardNestedHeaderCellClass} !border-l-0`}>
+              <span className="flex min-w-0 items-center gap-[var(--spacing-8)]">
+                <span className="truncate">Edward</span>
+                <span className="shrink-0">|</span>
+                <span className="truncate">Pulau Pinang, Malaysia</span>
+                <Icon name="edit-pen" size={17} color="var(--color-sys-blue-DEFAULT)" />
+              </span>
+            </TableCardCell>
+          </td>
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="first" column="last" className={`${cardNestedHeaderCellClass} !border-l-0`}>
+              <span className="ml-auto inline-flex items-center gap-[var(--spacing-8)]">
+                <Pip type="success" label="Webstore" />
+              </span>
             </TableCardCell>
           </td>
         </tr>
         <tr className="group/row">
-          <td className="p-0">
-            <TableCardCell tier="bottom" row="last" column="first">
+          <td colSpan={2} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="last" column="first" className={cardNestedBodyCellClass}>
               <TableCellListing
-                productName="Variant A"
+                image={<ProductImage src={productImage} alt="Product" size="lg" />}
+                productName="[TESTING PRODUCT, DO NOT BUY] FishBone Keychain"
                 infoRows={[
-                  { label: 'SKU', value: 'DYN-001' },
-                  { label: 'Stock', value: '240' },
+                  { label: 'iSKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
+                  { label: 'SKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
+                  { label: 'Color/Size', value: 'Black/5cm' },
                 ]}
+                extras={<span>RM299.00 <span className="text-[color:var(--color-sys-blue-DEFAULT)]">x 1</span></span>}
               />
             </TableCardCell>
           </td>
-          <td className="p-0">
-            <TableCardCell tier="bottom" row="last" column="center">
-              Ready
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="last" column="center" className={`${cardNestedBodyCellClass} !border-l-0`}>
+              <span className="flex flex-col gap-[var(--spacing-4)]">
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Order Date</span>
+                <span>13-02-2026</span>
+                <span>10:45:20</span>
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Pickup</span>
+              </span>
             </TableCardCell>
           </td>
-          <td className="p-0">
-            <TableCardCell tier="bottom" row="last" column="last" formField>
-              <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="last" column="center" className={`${cardNestedBodyCellClass} !border-l-0`}>
+              <span className="flex flex-col gap-[var(--spacing-4)]">
+                <Pip type="warning" label="Processed" />
+                <Pip type="success" label="Paid" />
+              </span>
+            </TableCardCell>
+          </td>
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="last" column="center" className={`${cardNestedBodyCellClass} !border-l-0`}>
+              <span className="flex flex-col gap-[var(--spacing-4)]">
+                <span className="text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)]">RM299.00</span>
+                <span>Cash on delivery</span>
+                <span className="flex items-center gap-[var(--spacing-4)] text-[color:var(--color-sys-green-DEFAULT)]">
+                  <Icon name="coins" size={17} />
+                  RM299.00
+                </span>
+                <span className="text-[color:var(--color-sys-green-DEFAULT)]">100%</span>
+              </span>
+            </TableCardCell>
+          </td>
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="last" column="center" formField className={`${cardNestedBodyCellClass} !border-l-0`}>
+              <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
+            </TableCardCell>
+          </td>
+          <td colSpan={1} className="p-0 align-top">
+            <TableCardCell tier="bottom" row="last" column="last" className={`${cardNestedBodyCellClass} !border-l-0`}>
+              <span />
             </TableCardCell>
           </td>
         </tr>
@@ -586,8 +721,13 @@ export const CardTable: Story = {
   render: () => (
     <div className={sectionShell}>
       <h2 className={headingClass}>Card table</h2>
-      <p className={noteClass}>Use TableCardCell when a table row is visually grouped as a card with a top tier and bottom tier rows.</p>
-      <CardTableDemo />
+      <p className={noteClass}>Use TableCardCell when a table row is visually grouped as a card with a top-tier strip + bottom-tier content row. Two reference recipes:</p>
+      <h3 className="mt-[var(--spacing-12)] text-[length:var(--text-14)] leading-[var(--leading-21)] font-[var(--font-weight-bold)] text-[color:var(--color-text-primary)]">Ratings card</h3>
+      <p className={noteClass}>Top tier: reviewer + review# + channel. Bottom tier: product listing + rating + timestamp + status toggle.</p>
+      <RatingsCardTableDemo />
+      <h3 className="mt-[var(--spacing-24)] text-[length:var(--text-14)] leading-[var(--leading-21)] font-[var(--font-weight-bold)] text-[color:var(--color-text-primary)]">Order processing card</h3>
+      <p className={noteClass}>Top tier: package id / packing note / tracking / courier label-value pairs. Bottom tier: order id + product + dates + status pips + amounts + actions.</p>
+      <OrderProcessingCardTableDemo />
     </div>
   ),
 };
