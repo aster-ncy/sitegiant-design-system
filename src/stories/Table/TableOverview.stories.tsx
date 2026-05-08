@@ -86,10 +86,10 @@ const BasicTableDemo = () => (
             <TableHeaderCell label="Channel" sortable />
           </th>
           <th className="w-[18%] p-0" aria-sort="none">
-            <TableHeaderCell align="right" label="Stock" sortable />
+            <TableHeaderCell align="center" label="Stock" sortable />
           </th>
           <th className="w-[22%] p-0">
-            <TableHeaderCell column="last" align="right" label="Action" sortable={false} />
+            <TableHeaderCell column="last" align="left" label="Action" sortable={false} />
           </th>
         </tr>
       </thead>
@@ -104,17 +104,18 @@ const BasicTableDemo = () => (
             <TableCell leadingIcon={<ChannelIcon />} className="shadow-none">Shopee MY</TableCell>
           </td>
           <td className={`p-0 ${rowDividerCellClass}`}>
-            <TableCell align="right" tone="success" className="shadow-none">
+            <TableCell align="center" tone="success" className="shadow-none">
               240
             </TableCell>
           </td>
           <td className={`p-0 ${rowDividerCellClass}`}>
             <TableCell
               column="last"
-              align="right"
+              align="left"
               className="shadow-none"
-              trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
-            />
+            >
+              <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+            </TableCell>
           </td>
         </tr>
         <tr className="group/row hover:[&_td]:bg-[var(--table-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
@@ -127,7 +128,7 @@ const BasicTableDemo = () => (
             <TableCell row="last" leadingIcon={<ChannelIcon />}>Shopee MY</TableCell>
           </td>
           <td className="p-0">
-            <TableCell row="last" align="right" tone="danger">
+            <TableCell row="last" align="center" tone="danger">
               8
             </TableCell>
           </td>
@@ -135,9 +136,10 @@ const BasicTableDemo = () => (
             <TableCell
               row="last"
               column="last"
-              align="right"
-              trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
-            />
+              align="left"
+            >
+              <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+            </TableCell>
           </td>
         </tr>
         <tr aria-hidden="true">
