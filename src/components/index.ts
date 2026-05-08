@@ -292,12 +292,23 @@ export { StatusCard } from './StatusCard';
 export type { StatusCardProps, StatusCardStatus, StatusCardSize } from './StatusCard';
 
 // TableCell
-export { TableCell } from './TableCell';
+export {
+  TableCell,
+  TableCellInfo,
+  TableCellMainSub,
+  TableCellListing,
+} from './TableCell';
 export type {
   TableCellProps,
   TableCellWeight,
   TableCellTone,
   TableRowPosition,
+  TableCellInfoProps,
+  TableCellInfoAlignment,
+  TableCellInfoStatus,
+  TableCellMainSubProps,
+  TableCellListingProps,
+  TableCellListingInfoRow,
 } from './TableCell';
 
 // TableCardCell
@@ -322,6 +333,7 @@ export { TableSelectionBar } from './TableSelectionBar';
 export type {
   TableSelectionBarProps,
   TableSelectionBarAction,
+  TableSelectionBarMenuItem,
 } from './TableSelectionBar';
 
 // RecordTable
