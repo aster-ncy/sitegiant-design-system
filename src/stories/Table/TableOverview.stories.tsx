@@ -399,7 +399,9 @@ const RecordTableDemo = () => {
         </TableCell>
         <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
           {editingStock ? (
-            <NumberInput value="240" hideStepper className="!w-[124px]" inputRef={(el) => el?.focus()} />
+            <div onBlur={() => setEditingStock(false)}>
+              <NumberInput value="240" hideStepper className="!w-[124px]" inputRef={(el) => el?.focus()} />
+            </div>
           ) : (
             <button
               type="button"
