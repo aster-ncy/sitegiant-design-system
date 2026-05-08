@@ -107,12 +107,13 @@ const actionLinksSource = (count: 1 | 2 | 3 | 4) => `<tr className="group/row ho
     <TableCell column="last" className="!items-start">
   <span className="inline-flex flex-col items-start gap-[var(--spacing-4)]">
     {Array.from({ length: ${count} }).map((_, index) => (
-      <TextLink
-        key={index}
-        label="Button"
-        iconPosition="left"
-        icon={<Icon name="plus" size={17} />}
-      />
+      <span key={index} className="inline-flex items-start py-[var(--spacing-2)]">
+        <TextLink
+          label="Button"
+          iconPosition="left"
+          icon={<Icon name="plus" size={17} />}
+        />
+      </span>
     ))}
   </span>
 </TableCell>
@@ -122,13 +123,14 @@ const actionLinksSource = (count: 1 | 2 | 3 | 4) => `<tr className="group/row ho
 const actionIconsSource = (count: 1 | 2 | 3) => `<tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
   <td className="p-0">
     <TableCell column="last">
-  <span className="inline-flex items-center gap-[var(--spacing-12)]">
+  <span className="inline-flex items-center gap-[var(--spacing-6)]">
     {Array.from({ length: ${count} }).map((_, index) => (
       <IconLink
         key={index}
         icon="plus"
         aria-label={\`Action \${index + 1}\`}
         showTooltip={false}
+        className="inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
       />
     ))}
   </span>
@@ -430,25 +432,26 @@ const ShopeeIcon = () => (
 const ActionLinks = ({ count }: { count: 1 | 2 | 3 | 4 }) => (
   <span className="inline-flex flex-col items-start gap-[var(--spacing-4)]">
     {Array.from({ length: count }).map((_, index) => (
-      <TextLink
-        key={index}
-        label="Button"
-        iconPosition="left"
-        icon={<Icon name="plus" size={17} />}
-      />
+      <span key={index} className="inline-flex items-start py-[var(--spacing-2)]">
+        <TextLink
+          label="Button"
+          iconPosition="left"
+          icon={<Icon name="plus" size={17} />}
+        />
+      </span>
     ))}
   </span>
 );
 
 const ActionIcons = ({ count }: { count: 1 | 2 | 3 }) => (
-  <span className="inline-flex items-center gap-[var(--spacing-12)]">
+  <span className="inline-flex items-center gap-[var(--spacing-6)]">
     {Array.from({ length: count }).map((_, index) => (
       <IconLink
         key={index}
         icon="plus"
         aria-label={`Action ${index + 1}`}
         showTooltip={false}
-        className="inline-flex items-center justify-center text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)]"
+        className="inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
       />
     ))}
   </span>

@@ -15,13 +15,9 @@ export interface TextLinkProps {
 }
 
 const textClasses: Record<TextLinkVariant, string> = {
-  basic: 'text-[color:var(--text-link-basic-default)] hover:text-[color:var(--text-link-basic-hover)]',
+  basic:
+    'text-[color:var(--text-link-basic-default)] hover:text-[color:var(--text-link-basic-hover)] active:text-[color:var(--text-link-basic-clicked)]',
   subtle: 'text-[color:var(--text-link-subtle-default)] hover:text-[color:var(--text-link-subtle-hover)]',
-};
-
-const disabledTextClasses: Record<TextLinkVariant, string> = {
-  basic: 'text-[color:var(--text-link-basic-default)]',
-  subtle: 'text-[color:var(--text-link-subtle-default)]',
 };
 
 export const TextLink = ({
@@ -42,8 +38,8 @@ export const TextLink = ({
         'inline-flex items-center gap-[var(--spacing-4)] whitespace-nowrap',
         'rounded-[var(--radius-120)]',
         'transition-colors',
-        disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer',
-        disabled ? disabledTextClasses[variant] : textClasses[variant],
+        disabled ? 'cursor-not-allowed text-[color:var(--text-link-disabled)]' : 'cursor-pointer',
+        disabled ? '' : textClasses[variant],
         className,
       ]
         .filter(Boolean)
