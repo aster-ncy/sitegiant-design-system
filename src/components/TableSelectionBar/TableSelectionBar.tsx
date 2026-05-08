@@ -151,7 +151,7 @@ export const TableSelectionBar = ({
         'relative flex items-center gap-[var(--spacing-12)] w-full',
         'pl-[var(--spacing-24)] pr-[var(--spacing-12)] py-[var(--spacing-16)]',
         'bg-[var(--table-header-fill)]',
-        'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]',
+        'shadow-[inset_0_-1px_0_0_var(--table-divider-border)]',
         className,
       ]
         .filter(Boolean)

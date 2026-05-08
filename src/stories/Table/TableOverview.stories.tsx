@@ -168,7 +168,7 @@ const SelectionTableDemo = () => (
       ]}
       onDelete={() => undefined}
     />
-    <table className="w-full table-fixed border-collapse">
+    <table className="w-full table-fixed border-separate border-spacing-0">
       <tbody>
         {['Dynamo Laundry Capsules', 'Flash Sale Bundle'].map((name, index) => (
           <tr key={name}>
@@ -194,6 +194,9 @@ const SelectionTableDemo = () => (
             </td>
           </tr>
         ))}
+        <tr aria-hidden="true">
+          <td colSpan={3} className="h-[20px] p-0" />
+        </tr>
       </tbody>
     </table>
   </div>
