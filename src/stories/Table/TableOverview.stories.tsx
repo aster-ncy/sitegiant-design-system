@@ -45,6 +45,7 @@ const headingClass = 'text-[length:var(--text-16)] leading-[var(--leading-24)] f
 const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-info)]';
 const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
 const tableShell = 'overflow-hidden rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)]';
+const rowDividerCellClass = 'border-b border-solid border-[var(--table-divider-border)]';
 
 const GuidanceRow = ({
   label,
@@ -75,7 +76,7 @@ const ChannelIcon = () => (
 
 const BasicTableDemo = () => (
   <div className={tableShell}>
-    <table className="w-full table-fixed border-collapse">
+    <table className="w-full table-fixed border-separate border-spacing-0">
       <thead>
         <tr>
           <th className="w-[38%] p-0" aria-sort="none">
@@ -93,29 +94,30 @@ const BasicTableDemo = () => (
         </tr>
       </thead>
       <tbody>
-        <tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
-          <td className="p-0">
-            <TableCell column="first" boldOnRowHover>
+        <tr className="group/row hover:[&_td]:bg-[var(--table-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
+          <td className={`p-0 ${rowDividerCellClass}`}>
+            <TableCell column="first" boldOnRowHover className="shadow-none">
               Dynamo Laundry Capsules
             </TableCell>
           </td>
-          <td className="p-0">
-            <TableCell leadingIcon={<ChannelIcon />}>Shopee MY</TableCell>
+          <td className={`p-0 ${rowDividerCellClass}`}>
+            <TableCell leadingIcon={<ChannelIcon />} className="shadow-none">Shopee MY</TableCell>
           </td>
-          <td className="p-0">
-            <TableCell align="right" tone="success">
+          <td className={`p-0 ${rowDividerCellClass}`}>
+            <TableCell align="right" tone="success" className="shadow-none">
               240
             </TableCell>
           </td>
-          <td className="p-0">
+          <td className={`p-0 ${rowDividerCellClass}`}>
             <TableCell
               column="last"
               align="right"
+              className="shadow-none"
               trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
             />
           </td>
         </tr>
-        <tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
+        <tr className="group/row hover:[&_td]:bg-[var(--table-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
           <td className="p-0">
             <TableCell column="first" row="last" boldOnRowHover>
               Flash Sale Bundle
@@ -137,6 +139,9 @@ const BasicTableDemo = () => (
               trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
             />
           </td>
+        </tr>
+        <tr aria-hidden="true">
+          <td colSpan={4} className="h-[20px] p-0" />
         </tr>
       </tbody>
     </table>

@@ -167,7 +167,7 @@ export const TableHeaderCell = ({
     fillClass,
     isInset
       ? ''
-      : 'shadow-[inset_0_-1px_0_0_var(--table-divider-last-border)]',
+      : 'shadow-[inset_0_-1px_0_0_var(--table-divider-border)]',
     insetCornerClass,
     insetCornerLastClass,
     className,
