@@ -324,6 +324,27 @@ export type {
   TableSelectionBarAction,
 } from './TableSelectionBar';
 
+// RecordTable
+export {
+  RecordTableHeaderCell,
+  RecordTableListingCell,
+  RecordTableFormFieldCell,
+  RecordTableActionCell,
+  RecordTableRowCell,
+  RecordTableMoreInfoCell,
+} from './RecordTable';
+export type {
+  RecordTableHeaderCellProps,
+  RecordTableListingCellProps,
+  RecordTableFormFieldCellProps,
+  RecordTableActionCellProps,
+  RecordTableActionCellType,
+  RecordTableActionCount,
+  RecordTableRowCellProps,
+  RecordTableMoreInfoCellProps,
+  RecordTableMoreInfoColumn,
+} from './RecordTable';
+
 // Tag
 export { Tag } from './Tag';
 export type { TagProps } from './Tag';
