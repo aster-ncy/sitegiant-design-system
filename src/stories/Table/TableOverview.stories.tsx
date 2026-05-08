@@ -355,9 +355,9 @@ const InsetTableDemo = () => (
           const dividerClass = isLastRow ? 'border-b border-solid border-[var(--table-divider-last-border)]' : insetRowDividerCellClass;
 
           return (
-            <tr key={row.trackingNo} className="group/row hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
+            <tr key={row.trackingNo} className="group/row hover:[&_td]:bg-[var(--table-inset-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
               <td className={`p-0 ${dividerClass}`}>
-                <TableCell inset column="first" checkbox={<Checkbox size="sm" />} className="shadow-none">
+                <TableCell inset column="first" checkbox={<Checkbox size="sm" />} boldOnRowHover className="shadow-none">
                   {row.trackingNo}
                 </TableCell>
               </td>
