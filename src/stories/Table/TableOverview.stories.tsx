@@ -213,8 +213,12 @@ const ActionLinksDemo = () => (
           <td className={`w-[34%] p-0 ${rowDividerCellClass}`}>
             <TableCell className="shadow-none">
               <div className="flex flex-col items-start gap-[var(--spacing-4)]">
-                <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
-                <TextLink label="View detail" iconPosition="left" icon={<Icon name="external-link" size={17} />} />
+                <div className="flex items-start py-[var(--spacing-2)]">
+                  <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+                </div>
+                <div className="flex items-start py-[var(--spacing-2)]">
+                  <TextLink label="View detail" iconPosition="left" icon={<Icon name="external-link" size={17} />} />
+                </div>
               </div>
             </TableCell>
           </td>
@@ -223,9 +227,28 @@ const ActionLinksDemo = () => (
               column="last"
               className="shadow-none"
               trailing={
-                <div className="flex items-center gap-[var(--spacing-8)]">
-                  <IconLink icon="edit" aria-label="Edit" showTooltip={false} />
-                  <IconLink icon="trash" aria-label="Delete" showTooltip={false} variant="danger" />
+                <div className="flex items-center gap-[var(--spacing-6)]">
+                  <IconLink
+                    icon="edit"
+                    aria-label="Edit"
+                    showTooltip={false}
+                    className={[
+                      'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
+                      'text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)]',
+                      'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+                    ].join(' ')}
+                  />
+                  <IconLink
+                    icon="trash"
+                    aria-label="Delete"
+                    showTooltip={false}
+                    variant="danger"
+                    className={[
+                      'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
+                      'text-[color:var(--icon-link-danger-default)] hover:text-[color:var(--icon-link-danger-hover)] active:text-[color:var(--icon-link-danger-clicked)]',
+                      'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+                    ].join(' ')}
+                  />
                 </div>
               }
             />
