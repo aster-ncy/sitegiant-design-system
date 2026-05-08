@@ -151,6 +151,7 @@ export const AllStates: Story = {
         <Checkbox disabled label="Disabled unchecked" />
         <Checkbox disabled checked label="Disabled checked" />
         <Checkbox disabled indeterminate label="Disabled indeterminate" />
+        <Checkbox lockedChecked label="Locked checked" />
       </div>
     </div>
   ),
