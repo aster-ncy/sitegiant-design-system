@@ -3,6 +3,7 @@ import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 import { Pip } from '../Pip';
 import { ProductImage } from '../ProductImageList';
+import { TextLink } from '../TextLink';
 import type { TableColumnPosition } from '../TableHeaderCell';
 import productImage from '../../assets/product-images/product-1.png';
 import sitegiantWebstore from '../../assets/channel-icons/sitegiant-webstore.png';
@@ -42,19 +43,12 @@ const SmallTextLink = ({
   icon: ReactNode;
   label: string;
 }) => (
-  <button
-    type="button"
-    className={[
-      'inline-flex items-center gap-[var(--spacing-2)] whitespace-nowrap',
-      'text-[length:var(--general-caption-size)] leading-[var(--leading-15)]',
-      'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-      'text-[color:var(--text-link-basic-default)]',
-      'bg-transparent border-0 p-0 cursor-pointer',
-    ].join(' ')}
-  >
-    {icon}
-    <span>{label}</span>
-  </button>
+  <TextLink
+    label={label}
+    iconPosition="left"
+    icon={icon}
+    className="gap-[var(--spacing-2)] [&_span]:!text-[length:var(--general-caption-size)] [&_span]:!leading-[var(--leading-15)]"
+  />
 );
 
 /**
@@ -117,19 +111,12 @@ export const RecordTableListingCell = ({
         </div>
 
         <div className="flex w-full flex-col items-start gap-[var(--spacing-4)]">
-          <button
-            type="button"
-            className={[
-              'inline-flex h-[17px] items-center justify-center gap-[var(--spacing-4)]',
-              'rounded-[var(--radius-120)] bg-transparent border-0 p-0 cursor-pointer',
-              'text-[length:var(--table-body-size)] leading-[var(--leading-17)]',
-              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-              'text-[color:var(--text-link-basic-default)]',
-            ].join(' ')}
-          >
-            <Icon name="edit-pen" size={17} />
-            <span>Edit</span>
-          </button>
+          <TextLink
+            label="Edit"
+            iconPosition="left"
+            icon={<Icon name="edit-pen" size={17} />}
+            className="h-[17px]"
+          />
 
           <div className="flex flex-col items-start gap-[var(--spacing-2)] pl-[21px]">
             <InfoRow label="Info 1:" value="2" />

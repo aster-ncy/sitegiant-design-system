@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
+import { TextLink } from '../TextLink';
 
 export type RecordTableMoreInfoColumn = 'first' | 'center';
 
@@ -78,19 +79,12 @@ export const RecordTableMoreInfoCell = ({
         </div>
 
         {showTextLink && (
-          <button
-            type="button"
-            className={[
-              'inline-flex h-[17px] items-center justify-center gap-[var(--spacing-4)]',
-              'rounded-[var(--radius-120)] bg-transparent border-0 p-0 cursor-pointer',
-              'text-[length:var(--general-button-text-link-size)] leading-[var(--general-button-text-link-lineheight)]',
-              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-              'text-[color:var(--text-link-basic-default)]',
-            ].join(' ')}
-          >
-            <Icon name="edit-pen" size={17} />
-            <span>Edit</span>
-          </button>
+          <TextLink
+            label="Edit"
+            iconPosition="left"
+            icon={<Icon name="edit-pen" size={17} />}
+            className="h-[17px]"
+          />
         )}
       </div>
     </div>

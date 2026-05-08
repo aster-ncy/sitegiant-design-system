@@ -1,4 +1,6 @@
 import { Icon } from '../Icon';
+import { IconLink } from '../IconLink';
+import { TextLink } from '../TextLink';
 
 export type RecordTableActionCellType = 'text' | 'icon';
 export type RecordTableActionCount = 1 | 2 | 3 | 4;
@@ -17,33 +19,21 @@ const actionCountsByType: Record<RecordTableActionCellType, RecordTableActionCou
 };
 
 const ActionTextButton = ({ label }: { label: string }) => (
-  <button
-    type="button"
-    className={[
-      'inline-flex h-[17px] items-center justify-center gap-[var(--spacing-4)]',
-      'rounded-[var(--radius-120)] bg-transparent border-0 p-0 cursor-pointer',
-      'text-[length:var(--general-button-text-link-size)] leading-[var(--general-button-text-link-lineheight)]',
-      'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-      'text-[color:var(--text-link-basic-default)]',
-    ].join(' ')}
-  >
-    <Icon name="plus" size={17} />
-    <span>{label}</span>
-  </button>
+  <TextLink
+    label={label}
+    iconPosition="left"
+    icon={<Icon name="plus" size={17} />}
+    className="h-[17px]"
+  />
 );
 
 const ActionIconButton = () => (
-  <button
-    type="button"
+  <IconLink
+    icon="plus"
     aria-label="Button"
-    className={[
-      'inline-flex h-[17px] w-[17px] items-center justify-center',
-      'rounded-[var(--radius-120)] bg-transparent border-0 p-0 cursor-pointer',
-      'text-[color:var(--text-link-basic-default)]',
-    ].join(' ')}
-  >
-    <Icon name="plus" size={17} />
-  </button>
+    showTooltip={false}
+    className="inline-flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
+  />
 );
 
 /**

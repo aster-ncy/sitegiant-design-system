@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Checkbox } from '../Checkbox';
-import { Icon } from '../Icon';
+import { IconLink } from '../IconLink';
 import type { TableColumnPosition } from '../TableHeaderCell';
 import shopeeIcon from '../../assets/channel-icons/shopee.png';
 
@@ -78,17 +78,12 @@ export const RecordTableRowCell = ({
           )}
         </div>
         {showActionIcon && (
-          <button
-            type="button"
+          <IconLink
+            icon="plus"
             aria-label="Action"
-            className={[
-              'inline-flex h-[21px] w-[17px] shrink-0 items-center justify-center',
-              'rounded-[var(--radius-120)] border-0 bg-transparent p-0 cursor-pointer',
-              'text-[color:var(--text-link-basic-default)]',
-            ].join(' ')}
-          >
-            <Icon name="plus" size={17} />
-          </button>
+            showTooltip={false}
+            className="inline-flex h-[21px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
+          />
         )}
       </div>
     </div>
