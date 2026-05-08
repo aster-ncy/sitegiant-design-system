@@ -46,6 +46,9 @@ const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text
 const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)]';
 const rowDividerCellClass = 'border-b border-solid border-[var(--table-divider-border)]';
 const insetRowDividerCellClass = 'border-b border-solid border-[var(--table-divider-lighter-border)]';
+const recordHeaderBorderClass = '[border-width:1px_1px_1px_0]';
+const recordBodyBorderClass = '[border-width:0_1px_1px_0]';
+const recordFirstColumnBorderClass = '[border-left-width:1px]';
 
 const GuidanceRow = ({
   label,
@@ -382,18 +385,18 @@ const InsetTableDemo = () => (
 const RecordTableDemo = () => (
   <div className="inline-block overflow-hidden rounded-[var(--radius-4)]">
     <div className="grid w-[900px] grid-cols-[409px_190px_190px_111px]">
-      <RecordTableHeaderCell column="first" label="Listing" />
-      <RecordTableHeaderCell label="Price" checkbox={null} />
-      <RecordTableHeaderCell label="Stock" checkbox={null} />
-      <RecordTableHeaderCell column="last" align="right" label="Action" checkbox={null} sortable={false} />
-      <RecordTableListingCell column="first" />
-      <TableCell inset className="h-full border border-solid border-[var(--table-divider-border)]">
+      <RecordTableHeaderCell column="first" label="Listing" className={`${recordHeaderBorderClass} ${recordFirstColumnBorderClass}`} />
+      <RecordTableHeaderCell label="Price" checkbox={null} className={recordHeaderBorderClass} />
+      <RecordTableHeaderCell label="Stock" checkbox={null} className={recordHeaderBorderClass} />
+      <RecordTableHeaderCell column="last" align="left" label="Action" checkbox={null} sortable={false} className={recordHeaderBorderClass} />
+      <RecordTableListingCell column="first" className={`${recordBodyBorderClass} ${recordFirstColumnBorderClass}`} />
+      <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
         <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
       </TableCell>
-      <TableCell inset className="h-full border border-solid border-[var(--table-divider-border)]">
+      <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
         240
       </TableCell>
-      <RecordTableActionCell type="text" actionCount={2} />
+      <RecordTableActionCell type="text" actionCount={2} className={recordBodyBorderClass} />
     </div>
   </div>
 );
