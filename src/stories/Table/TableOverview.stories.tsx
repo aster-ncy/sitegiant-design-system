@@ -267,7 +267,7 @@ const ExpandableRowsDemo = () => {
 
   return (
     <div className={tableShell}>
-      <table className="w-full table-fixed border-collapse">
+      <table className="w-full table-fixed border-separate border-spacing-0">
         <tbody>
           <tr>
             <td className="w-[48%] p-0">
@@ -329,7 +329,7 @@ const ExpandableRowsDemo = () => {
 
 const InsetTableDemo = () => (
   <div className="inline-block rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)] p-[var(--spacing-16)]">
-    <table className="w-[720px] table-fixed border-collapse">
+    <table className="w-[720px] table-fixed border-separate border-spacing-0">
       <thead>
         <tr>
           <th className="w-[42%] p-0">
@@ -339,7 +339,7 @@ const InsetTableDemo = () => (
             <TableHeaderCell inset label="Status" sortable />
           </th>
           <th className="w-[24%] p-0">
-            <TableHeaderCell inset column="last" align="right" label="Action" sortable={false} />
+            <TableHeaderCell inset column="last" align="left" label="Action" sortable={false} />
           </th>
         </tr>
       </thead>
@@ -363,9 +363,10 @@ const InsetTableDemo = () => (
               inset
               column="last"
               row="last"
-              align="right"
-              trailing={<TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />}
-            />
+              align="left"
+            >
+              <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+            </TableCell>
           </td>
         </tr>
       </tbody>
