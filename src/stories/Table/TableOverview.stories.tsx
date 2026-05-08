@@ -204,23 +204,24 @@ const SelectionTableDemo = () => (
 
 const ActionLinksDemo = () => (
   <div className={tableShell}>
-    <table className="w-full table-fixed border-collapse">
+    <table className="w-full table-fixed border-separate border-spacing-0">
       <tbody>
         <tr>
-          <td className="w-[42%] p-0">
-            <TableCell column="first">Inventory Update</TableCell>
+          <td className={`w-[42%] p-0 ${rowDividerCellClass}`}>
+            <TableCell column="first" className="shadow-none">Inventory Update</TableCell>
           </td>
-          <td className="w-[34%] p-0">
-            <TableCell>
+          <td className={`w-[34%] p-0 ${rowDividerCellClass}`}>
+            <TableCell className="shadow-none">
               <div className="flex flex-col items-start gap-[var(--spacing-4)]">
                 <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
                 <TextLink label="View detail" iconPosition="left" icon={<Icon name="external-link" size={17} />} />
               </div>
             </TableCell>
           </td>
-          <td className="w-[24%] p-0">
+          <td className={`w-[24%] p-0 ${rowDividerCellClass}`}>
             <TableCell
               column="last"
+              className="shadow-none"
               trailing={
                 <div className="flex items-center gap-[var(--spacing-8)]">
                   <IconLink icon="edit" aria-label="Edit" showTooltip={false} />
@@ -229,6 +230,9 @@ const ActionLinksDemo = () => (
               }
             />
           </td>
+        </tr>
+        <tr aria-hidden="true">
+          <td colSpan={3} className="h-[20px] p-0" />
         </tr>
       </tbody>
     </table>
