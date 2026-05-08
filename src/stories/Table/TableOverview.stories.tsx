@@ -270,22 +270,22 @@ const ExpandableRowsDemo = () => {
       <table className="w-full table-fixed border-separate border-spacing-0">
         <tbody>
           <tr>
-            <td className="w-[48%] p-0">
-              <TableCell inset column="first" weight="bold" className={expanded ? 'shadow-none' : undefined}>
+            <td className={`w-[48%] p-0 ${expanded ? '' : rowDividerCellClass}`}>
+              <TableCell inset column="first" weight="bold" className="shadow-none">
                 Shopee MY
               </TableCell>
             </td>
-            <td className="w-[34%] p-0">
-              <TableCell inset align="right" className={expanded ? 'shadow-none' : undefined}>
+            <td className={`w-[34%] p-0 ${expanded ? '' : rowDividerCellClass}`}>
+              <TableCell inset align="right" className="shadow-none">
                 RM 2,450.00
               </TableCell>
             </td>
-            <td className="w-[18%] p-0">
+            <td className={`w-[18%] p-0 ${expanded ? '' : rowDividerCellClass}`}>
               <TableCell
                 inset
                 column="last"
                 align="right"
-                className={expanded ? 'shadow-none' : undefined}
+                className="shadow-none"
                 trailing={<TableExpandToggle expanded={expanded} onToggle={setExpanded} />}
               />
             </td>
