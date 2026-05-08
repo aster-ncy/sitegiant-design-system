@@ -4,6 +4,7 @@ import {
   Checkbox,
   Icon,
   IconLink,
+  NumberInput,
   Pip,
   PrefixInput,
   ProductImage,
@@ -394,7 +395,7 @@ const RecordTableDemo = () => (
         <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
       </TableCell>
       <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
-        240
+        <NumberInput value="240" hideStepper className="!w-[124px]" />
       </TableCell>
       <RecordTableActionCell type="text" actionCount={2} className={recordBodyBorderClass} />
     </div>
