@@ -45,6 +45,7 @@ const headingClass = 'text-[length:var(--text-16)] leading-[var(--leading-24)] f
 const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-info)]';
 const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
 const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)]';
+const squareTableShell = 'overflow-hidden border border-solid border-[var(--table-divider-border)]';
 const rowDividerCellClass = 'border-b border-solid border-[var(--table-divider-border)]';
 
 const GuidanceRow = ({
@@ -266,7 +267,7 @@ const ExpandableRowsDemo = () => {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <div className={tableShell}>
+    <div className={squareTableShell}>
       <table className="w-full table-fixed border-separate border-spacing-0">
         <tbody>
           <tr>
