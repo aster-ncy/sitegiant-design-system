@@ -11,7 +11,6 @@ import {
   TableCardCell,
   TableCardCellListing,
   TableCell,
-  TableCellListing,
   TableExpandToggle,
   TableHeaderCell,
   TableSelectionBar,
@@ -443,13 +442,11 @@ const RatingsCardTableDemo = () => (
       </div>
       <div className="group/row grid grid-cols-[32%_40%_18%_10%]">
         <TableCardCell tier="bottom" row="last" column="first" mode="default" bottomVariant="listing" className={`${cardBottomHeightClass} !rounded-none !border-0`}>
-          <TableCellListing
+          <TableCardCellListing
             image={<ProductImage src={productImage} alt="Dynamo" size="lg" />}
             productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
-            infoRows={[
-              { label: 'Variant', value: 'Red' },
-              { label: 'SKU', value: '1902839204' },
-            ]}
+            variant={{ label: 'Variant', value: 'Red' }}
+            sku={{ label: 'SKU', value: '1902839204' }}
           />
         </TableCardCell>
         <TableCardCell tier="bottom" row="last" column="center" mode="default" className={`${cardBottomHeightClass} !rounded-none !border-0`}>
