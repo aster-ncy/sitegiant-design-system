@@ -40,3 +40,7 @@ Thumbs.db
 docs/superpowers/
 docs/session-*.md
 docs/codex-*.md
+
+# Internal team rules. AGENTS.md mirrors workspace policy that the
+# multi-agent setup reads; not useful publicly and may evolve fast.
+AGENTS.md
