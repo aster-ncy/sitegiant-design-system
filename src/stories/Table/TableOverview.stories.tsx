@@ -428,12 +428,12 @@ const RatingsCardTableDemo = () => (
     </span>
     <div className="w-[980px] overflow-hidden rounded-[var(--radius-4)] border border-solid border-[color:var(--table-divider-border)]">
       <div className="group/row grid grid-cols-[32%_40%_18%_10%] border-b border-solid border-[color:var(--table-divider-border)]">
-        <TableCardCell tier="top" column="first" mode="default" className="!rounded-none !border-0">
+        <TableCardCell tier="top" column="first" mode="default" className="!items-center !rounded-none !border-0">
           <span className="inline-flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full bg-[var(--color-space-DEFAULT)] text-[length:var(--text-12)] leading-none text-[color:var(--color-text-info)]">A</span>
           <span>Tiffany</span>
         </TableCardCell>
-        <TableCardCell tier="top" column="center" mode="default" className={`${cardCenterNoBorderClass} !rounded-none !border-0`}>#233</TableCardCell>
-        <TableCardCell tier="top" column="last" mode="default" className={`${cardCenterNoBorderClass} !rounded-none !border-0 col-span-2`}>
+        <TableCardCell tier="top" column="center" mode="default" className={`${cardCenterNoBorderClass} !items-center !rounded-none !border-0`}>#233</TableCardCell>
+        <TableCardCell tier="top" column="last" mode="default" className={`${cardCenterNoBorderClass} !items-center !rounded-none !border-0 col-span-2`}>
           <span className="inline-flex items-center gap-[var(--spacing-8)]">
             <ChannelIcon />
             <span>Shopee MY</span>
