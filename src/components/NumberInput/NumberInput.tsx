@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import type { Ref } from 'react';
+import type { ReactNode, Ref } from 'react';
 import { Icon } from '../Icon';
+import type { IconName } from '../Icon/iconPaths';
 
 /* ── Typography recipes (Figma Form Value section + Pattern B) ────────── */
 /* form-value: 14/21/regular for the standard input value text. */
@@ -17,6 +18,15 @@ const formValueTextBoldClasses =
 const bodySlimTextClasses =
   'text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] ' +
   'font-[family-name:var(--general-font-family)] font-[weight:var(--general-body-weight)]';
+
+/* caption-slim 12/15 — used by the inline-hint pip when validation surfaces a
+ * compact warning beside the stepper (e.g. "10 unlocated" inside a stock cell).
+ * Renders at regular weight; nested elements (e.g. a consumer-supplied
+ * <strong>) can promote to medium where needed. */
+const captionSlimRegular =
+  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)] ' +
+  'font-[family-name:var(--general-font-family)] font-[weight:var(--general-caption-weight)] ' +
+  'whitespace-nowrap';
 
 export type NumberInputState =
   | 'default'
@@ -69,6 +79,28 @@ export interface NumberInputProps {
   hideStepper?: boolean;
   /** Stepper layout — 'default' (vertical chevrons) or 'stepper' (−/+ flanks). */
   type?: NumberInputType;
+  /**
+   * Optional inline hint pip rendered AFTER the stepper, inside the same
+   * shared border, separated from the stepper by a divider matching the
+   * stepper's left edge. Use for compact stock/quantity validation copy
+   * such as "10 unlocated" — keeps the affordance attached to the field
+   * instead of pushing it to a separate `helperText` line below.
+   *
+   * Only applies to `type='default'` (vertical-stepper layout); ignored
+   * by `type='stepper'` (no shell to attach to).
+   */
+  inlineHint?: {
+    /** Optional leading icon (15×15). Pass an iconPaths name; when omitted
+     *  the hint renders text-only. */
+    icon?: IconName;
+    /** Hint label. Use a `<>` fragment to mix weights (e.g.
+     *  `<><strong>10</strong> unlocated</>` to bold the count).
+     *  When the value is a string, it renders as a single regular-weight run. */
+    text: ReactNode;
+    /** Tone — 'danger' colors icon + text in danger red (caption-slim);
+     *  'default' uses info color. Defaults to 'default'. */
+    tone?: 'default' | 'danger';
+  };
 }
 
 const wrapperBorderByValidation: Record<NumberInputValidation, string> = {
@@ -114,6 +146,7 @@ export const NumberInput = ({
   inputRef,
   hideStepper = false,
   type = 'default',
+  inlineHint,
 }: NumberInputProps) => {
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState<string>(defaultValue ?? '');
@@ -363,6 +396,45 @@ export const NumberInput = ({
             />
           </button>
         </div>
+      )}
+
+      {/* Inline hint pip — sits inside the shared border, divider-separated
+       *  from the stepper (mirrors the stepper's own left-border treatment).
+       *  Hidden in readonly/disabled because the validation states that
+       *  surface this affordance don't apply there. */}
+      {inlineHint && !isReadonly && !isDisabled && (
+        <span
+          className={[
+            'inline-flex items-center gap-[var(--spacing-2)] shrink-0',
+            'pl-[var(--spacing-8)] pr-[var(--spacing-12)]',
+            size === 'slim' ? 'py-[var(--spacing-2)]' : 'py-[var(--spacing-6)]',
+            'border-l border-solid border-[var(--form-input-default-border)]',
+          ].join(' ')}
+        >
+          {inlineHint.icon && (
+            <Icon
+              name={inlineHint.icon}
+              size={15}
+              color={
+                inlineHint.tone === 'danger'
+                  ? 'var(--color-icon-danger)'
+                  : 'var(--color-icon-secondary)'
+              }
+            />
+          )}
+          {/* Outer span renders regular weight; nested elements (e.g. a
+           *  consumer-supplied <strong>) can promote to medium where needed. */}
+          <span
+            className={[
+              captionSlimRegular,
+              inlineHint.tone === 'danger'
+                ? 'text-[color:var(--color-text-danger)]'
+                : 'text-[color:var(--color-text-info)]',
+            ].join(' ')}
+          >
+            {inlineHint.text}
+          </span>
+        </span>
       )}
     </div>
   );

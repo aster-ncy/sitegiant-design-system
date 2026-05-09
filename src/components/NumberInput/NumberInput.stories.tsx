@@ -145,3 +145,35 @@ export const StepperDisabled: Story = {
     state: 'disabled',
   },
 };
+
+/**
+ * `inlineHint` renders a compact pip (icon + caption-slim text) AFTER the
+ * stepper, inside the same shared border. Used by inset-table stock cells
+ * where validation copy must stay attached to the field instead of pushing
+ * to a separate helperText line below.
+ */
+export const InlineHintDanger: Story = {
+  args: {
+    defaultValue: '1',
+    validation: 'error',
+    inlineHint: {
+      icon: 'alert-triangle',
+      tone: 'danger',
+      text: (
+        <>
+          <strong className="font-[weight:var(--font-weight-medium)]">10</strong> unlocated
+        </>
+      ),
+    },
+  },
+};
+
+export const InlineHintDefault: Story = {
+  args: {
+    defaultValue: '5',
+    inlineHint: {
+      icon: 'help-circle',
+      text: 'in stock',
+    },
+  },
+};
