@@ -1,7 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
 import { TableCardCell } from './TableCardCell';
-import type { TableCardCellTopVariant, TableCardCellBottomVariant } from './TableCardCell';
+import { TableCardCellListing } from './TableCardCellListing';
+import type {
+  TableCardCellTopVariant,
+  TableCardCellBottomVariant,
+  TableCardCellMode,
+  TableCardCellRow,
+} from './TableCardCell';
+import type { TableColumnPosition } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
 import { Pip } from '../Pip';
 import { Toggle } from '../Toggle';
@@ -17,7 +24,15 @@ import { product1, productImages } from '../../assets/product-images';
 const meta = {
   title: 'Tables/Card Table/Cell Atoms',
   component: TableCardCell,
-  parameters: { layout: 'padded' },
+  parameters: {
+    layout: 'padded',
+    // Honor declaration order in both the Controls panel and the Docs
+    // page args table — Storybook defaults to alphabetical otherwise.
+    // `tier` is hidden by default because every reference/matrix story
+    // is hardcoded to one tier; only the Playground story re-includes
+    // it via its own `parameters.controls.exclude` override.
+    controls: { sort: 'none', exclude: ['tier'] },
+  },
   tags: ['autodocs'],
   argTypes: {
     mode: {
@@ -26,6 +41,68 @@ const meta = {
       description:
         'Sizing mode. `default` = standard-table padding (pl-24 pr-12 / pb-24 last row); `inset` = inset-table padding (pl-12 pr-6 / pb-12 last row).',
       table: { defaultValue: { summary: 'default' } },
+    },
+    tier: {
+      control: { type: 'inline-radio' },
+      options: ['top', 'bottom'] satisfies ReadonlyArray<'top' | 'bottom'>,
+      description: 'Discriminated-union tier. Top tier reads `topVariant`; bottom tier reads `bottomVariant` + `row`.',
+      table: { defaultValue: { summary: 'top' } },
+    },
+    topVariant: {
+      control: { type: 'select' },
+      if: { arg: 'tier', eq: 'top' },
+      options: ['default', 'app-icon', 'user-icon', 'status', 'product-image'] satisfies ReadonlyArray<TableCardCellTopVariant>,
+      description: [
+        'Top-tier content variant — only adjusts the gap between `leadingIcon` and the text span.',
+        '',
+        '- `default` — 12px gap. No leading icon, or neutral leading element.',
+        '- `app-icon` — 4px gap. Pair with a 21px channel/app tile (Shopee, Webstore).',
+        '- `user-icon` — 4px gap. Pair with a 21px avatar/initials circle.',
+        '- `status` — 12px gap. Type marker for Pip-based top tiers. No layout change vs `default`.',
+        '- `product-image` — 12px gap. Type marker for ProductImage-led top tiers. No layout change.',
+      ].join('\n'),
+      table: { defaultValue: { summary: 'default' } },
+    },
+    bottomVariant: {
+      control: { type: 'select' },
+      if: { arg: 'tier', neq: 'top' },
+      options: [
+        'default',
+        'data',
+        'listing',
+        'status',
+        'star-rating',
+        'status-toggle',
+        'action-button',
+        'form-field',
+      ] satisfies ReadonlyArray<TableCardCellBottomVariant>,
+      description: [
+        'Bottom-tier content variant. Most are **type-vocabulary only** (semantic marker; visuals come from caller children). Three variant values change atom layout.',
+        '',
+        '- `default` — generic body row. No layout side-effects.',
+        '- `data` — label-over-value / numeric / currency rows (positive/negative tone lives in children). Type marker only.',
+        '- `listing` — product-listing block. Pair with `<TableCardCellListing>` children for Figma 1458:3174. Type marker only.',
+        '- `status` — Pip-based status rows (single or stacked). Type marker only.',
+        '- `star-rating` — star-rating + review-text rows. Type marker only.',
+        '- `status-toggle` — Toggle in `trailing`. **On `column="last"`, padding flips to `pl-12 pr-24`** so the control sits flush right.',
+        '- `action-button` — Button / IconButton in `trailing`. Same `column="last"` padding flip as `status-toggle`.',
+        '- `form-field` — hosts form controls (NumberInput / Toggle / Button). **Switches alignment to `items-center`** per Figma 3453:7841.',
+      ].join('\n'),
+      table: { defaultValue: { summary: 'default' } },
+    },
+    column: {
+      control: { type: 'inline-radio' },
+      options: ['first', 'center', 'last'] satisfies ReadonlyArray<TableColumnPosition>,
+      description:
+        'Column position. Drives border + radius placement. **`last` is required to see the `action-button` / `status-toggle` padding flip.**',
+      table: { defaultValue: { summary: 'first' } },
+    },
+    row: {
+      control: { type: 'inline-radio' },
+      if: { arg: 'tier', neq: 'top' },
+      options: ['first', 'middle', 'last'] satisfies ReadonlyArray<TableCardCellRow>,
+      description: 'Bottom-tier row position (only meaningful when tier renders a bottom cell). Drives vertical padding + bottom corner radii.',
+      table: { defaultValue: { summary: 'first' } },
     },
   },
   args: {
@@ -52,6 +129,27 @@ const MatrixNote = ({ children }: { children: ReactNode }) => (
   <p className="max-w-[760px] text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">
     {children}
   </p>
+);
+
+// Heavier top-level group label for matrices that have multiple
+// nesting levels — distinguishes group boundaries from cell labels.
+const MatrixHeading = ({
+  children,
+  level = 1,
+}: {
+  children: ReactNode;
+  level?: 1 | 2;
+}) => (
+  <span
+    className={[
+      'font-[var(--font-weight-bold)] text-[color:var(--color-text-primary)]',
+      level === 1
+        ? 'text-[length:var(--text-16)] leading-[var(--leading-21)]'
+        : 'text-[length:var(--text-14)] leading-[var(--leading-17)]',
+    ].join(' ')}
+  >
+    {children}
+  </span>
 );
 
 const AppIcon = () => (
@@ -364,6 +462,10 @@ const bottomTierHeightClass = (height: number) => ({
   181: '!h-[181px]',
 }[height] ?? '');
 
+// Standalone bottom-tier wrapper — clips ONLY the bottom corners so the
+// cell's own rounded-bl/br on row='last' shows clean while the top
+// edge stays square (a bottom tier never paints top corners; rounding
+// them via overflow-hidden would be a visual lie).
 const BottomTierRecipeFrame = ({
   children,
   width,
@@ -371,7 +473,7 @@ const BottomTierRecipeFrame = ({
   children: ReactNode;
   width: number;
 }) => (
-  <div className={cardShell}>
+  <div className="overflow-hidden rounded-b-[var(--radius-4)] inline-block">
     <table className="border-collapse table-fixed" style={{ width }}>
       <tbody>
         <tr className="group/row">
@@ -471,18 +573,36 @@ const BottomStatusValue = ({ count = 1 }: { count?: 1 | 2 }) => (
   </div>
 );
 
+// Half-filled star — single star-full glyph with orange left half and
+// grey right half. Layers two stacked star-full icons; the top one is
+// grey and clipped to its right half so the orange beneath shows
+// through on the left.
+const HalfStar = ({ size = 16 }: { size?: number }) => (
+  <span
+    className="relative inline-flex shrink-0 items-center"
+    style={{ width: size, height: size }}
+  >
+    <Icon name="star-full" size={size} />
+    <span
+      className="absolute inset-0 inline-flex"
+      style={{ clipPath: 'inset(0 0 0 50%)' }}
+    >
+      <Icon name="star-full" size={size} color="var(--color-space-DEFAULT)" />
+    </span>
+  </span>
+);
+
 const StarRatingValue = () => (
-  <div className="flex flex-col gap-[var(--spacing-4)]">
-    <span className="inline-flex items-center gap-[var(--spacing-1)] text-[color:var(--status-warning-text)]">
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Icon key={index} name="star-full" size={16} />
-      ))}
+  <span className="flex flex-col items-start gap-[var(--spacing-4)]">
+    <span className="inline-flex items-center gap-[2px] text-[color:var(--color-sys-orange-light)]">
+      <Icon name="star-full" size={16} />
+      <Icon name="star-full" size={16} />
+      <Icon name="star-full" size={16} />
+      <Icon name="star-full" size={16} />
+      <HalfStar size={16} />
     </span>
-    <span className="inline-flex items-center gap-[var(--spacing-4)] whitespace-nowrap">
-      <span className="text-[color:var(--text-default-text-info)]">Info:</span>
-      <span>Table Body Data</span>
-    </span>
-  </div>
+    <span>Baju dalam keadaan baik. Pembungkusan pun teliti.</span>
+  </span>
 );
 
 const BottomActionButtonValue = () => (
@@ -613,16 +733,30 @@ const bottomTierVariantProp = (type: BottomTierVariant): TableCardCellBottomVari
   return 'default';
 };
 
+// Shared variant → demo-content map keyed off the canonical prop type
+// `TableCardCellBottomVariant`. Both the Figma matrix renderer and the
+// Playground story delegate here so a new variant only needs one wiring.
+// `listing` is the only variant where callers diverge: the matrix uses
+// the legacy 3-column `BottomListingValue` (image + info + "x 1"); the
+// Playground uses the canonical `TableCardCellListing` helper. Pass a
+// `listing` override to swap.
+const bottomVariantContent = (
+  variant: TableCardCellBottomVariant,
+  overrides?: { listing?: ReactNode },
+): ReactNode => {
+  if (variant === 'data') return <BottomDataValue tone="success" />;
+  if (variant === 'listing') return overrides?.listing ?? <BottomListingValue />;
+  if (variant === 'status') return <BottomStatusValue count={1} />;
+  if (variant === 'star-rating') return <StarRatingValue />;
+  if (variant === 'action-button') return <BottomActionButtonValue />;
+  if (variant === 'status-toggle') return <Toggle checked={true} onChange={() => undefined} />;
+  if (variant === 'form-field') return <BottomTierQuantityValue />;
+  return <BottomInfoValue />;
+};
+
 const bottomTierContent = (type: BottomTierVariant) => {
   if (type === 'Default') return <BottomInfoValue />;
-  if (type === 'Data') return <BottomDataValue tone="success" />;
-  if (type === 'Listing') return <BottomListingValue />;
-  if (type === 'Status') return <BottomStatusValue count={1} />;
-  if (type === 'Star Rating') return <StarRatingValue />;
-  if (type === 'Action Button') return <BottomActionButtonValue />;
-  if (type === 'Status Toggle') return <Toggle checked={true} onChange={() => undefined} />;
-  if (type === 'Form Field') return <BottomTierQuantityValue />;
-  return null;
+  return bottomVariantContent(bottomTierVariantProp(type));
 };
 
 const renderBottomTierFigmaCell = ({
@@ -668,6 +802,141 @@ const renderBottomTierFigmaCell = ({
       {cell}
     </BottomTierGutterFrame>
   );
+};
+
+// ---------------------------------------------------------------------------
+// Playground — single live cell driven by Controls panel.
+// Exported FIRST so Storybook lands here by default. Lets you flip
+// mode / tier / topVariant / bottomVariant / column / row and see the atom
+// respond. The matrix stories below render fixed compositions and ignore
+// topVariant/bottomVariant; this is the one that actually consumes them.
+// ---------------------------------------------------------------------------
+
+type PlaygroundTier = 'top' | 'bottom' | 'bottom-with-top';
+
+type PlaygroundArgs = {
+  mode: TableCardCellMode;
+  tier: PlaygroundTier;
+  topVariant: TableCardCellTopVariant;
+  bottomVariant: TableCardCellBottomVariant;
+  column: TableColumnPosition;
+  row: TableCardCellRow;
+};
+
+const playgroundLeadingIcon = (variant: TableCardCellTopVariant): ReactNode => {
+  if (variant === 'app-icon') return <AppIcon />;
+  if (variant === 'user-icon') return <UserIcon />;
+  if (variant === 'product-image') return <ProductThumb />;
+  if (variant === 'status') return <Pip type="info" pipStyle="default" label="Status" />;
+  return null;
+};
+
+const playgroundListingDemo = (
+  <TableCardCellListing
+    image={<ListingProductImage index={1} />}
+    pip={<Pip type="success" pipStyle="default" label="Published" />}
+    productName="DYNAMO 4in1 Laundry Capsules — Anti-Bacterial Lavender 35s"
+    variant={{ label: 'Variant:', value: 'Lavender 35s' }}
+    sku={{ label: 'SKU:', value: '1902839204' }}
+    properties={[{ label: 'Product Property', value: 'Property (+RM0.00)' }]}
+  />
+);
+
+const playgroundBottomChildren = (variant: TableCardCellBottomVariant): ReactNode =>
+  bottomVariantContent(variant, { listing: playgroundListingDemo });
+
+/** Live playground — flip every prop and watch the atom respond. Start
+ *  here to learn what each variant does, then jump into the matrix
+ *  stories below for the full Figma reference compositions. */
+export const Playground: StoryObj<PlaygroundArgs> = {
+  parameters: {
+    // Re-include `tier` for the Playground (meta default excludes it
+    // because reference stories are hardcoded to one tier).
+    controls: { sort: 'none', exclude: [] },
+  },
+  argTypes: {
+    // Playground-only override: extend tier with a third value that
+    // composites a fixed top tier above a live bottom cell. Scoped
+    // here (not at meta) so Autodocs doesn't imply the atom accepts
+    // 'bottom-with-top' as a real prop value.
+    tier: {
+      control: { type: 'inline-radio' },
+      options: ['top', 'bottom', 'bottom-with-top'] satisfies ReadonlyArray<PlaygroundTier>,
+      description: [
+        'Which tier(s) to render in the Playground story.',
+        '',
+        '- `top` — top tier alone (closes naturally with its own borders). Reads `topVariant`.',
+        '- `bottom` — bottom tier alone (raw — partial borders, since siblings normally close the box). Reads `bottomVariant` + `row`.',
+        '- `bottom-with-top` — fixed top tier above a live bottom cell so the card closes naturally on top. Reads `bottomVariant` + `row`.',
+      ].join('\n'),
+      table: { defaultValue: { summary: 'top' } },
+    },
+  },
+  args: {
+    mode: 'default',
+    tier: 'top',
+    topVariant: 'app-icon',
+    bottomVariant: 'default',
+    column: 'first',
+    row: 'first',
+  },
+  render: ({ mode, tier, topVariant, bottomVariant, column, row }) => {
+    // Render the cell honestly — borders + corners reflect what the
+    // atom paints for the given column/row (single-column slice of a
+    // real card). `bottom-with-top` adds a fixed top tier above the
+    // bottom cell so the card closes naturally on top; `bottom` alone
+    // shows the raw bottom cell with whatever borders the atom paints
+    // standalone.
+    const wrapWidth = column === 'last' ? 220 : 320;
+    return (
+      <div className="inline-block" style={{ width: wrapWidth }}>
+        <table className="border-collapse w-full table-fixed">
+          <tbody>
+            {tier === 'top' ? (
+              <tr className="group/row">
+                <td className="p-0">
+                  <TableCardCell
+                    tier="top"
+                    column={column}
+                    mode={mode}
+                    topVariant={topVariant}
+                    leadingIcon={playgroundLeadingIcon(topVariant)}
+                  >
+                    Top tier — variant: {topVariant}
+                  </TableCardCell>
+                </td>
+              </tr>
+            ) : (
+              <>
+                {tier === 'bottom-with-top' && (
+                  <tr className="group/row">
+                    <td className="p-0">
+                      <TableCardCell tier="top" column={column} mode={mode} topVariant="default">
+                        Top tier (header)
+                      </TableCardCell>
+                    </td>
+                  </tr>
+                )}
+                <tr className="group/row">
+                  <td className="p-0">
+                    <TableCardCell
+                      tier="bottom"
+                      row={row}
+                      column={column}
+                      mode={mode}
+                      bottomVariant={bottomVariant}
+                    >
+                      {playgroundBottomChildren(bottomVariant)}
+                    </TableCardCell>
+                  </td>
+                </tr>
+              </>
+            )}
+          </tbody>
+        </table>
+      </div>
+    );
+  },
 };
 
 /* ── Top Tier ────────────────────────────────────────── */
@@ -1059,38 +1328,41 @@ export const BottomTierListingMatrix: Story = {
           Visual check only. Use BottomTierListing or BottomTierListingExpanded for copyable product code.
         </MatrixNote>
         {expansionModes.map((expansion) => (
-          <div key={expansion.label} className="flex flex-col gap-[var(--spacing-12)]">
-            <MatrixLabel>{expansion.label}</MatrixLabel>
+          <div key={expansion.label} className="flex flex-col gap-[var(--spacing-16)]">
+            <MatrixHeading level={1}>{expansion.label}</MatrixHeading>
             {states.map((state) => (
-              <div key={state.label} className="flex flex-col gap-[var(--spacing-8)]">
-                <MatrixLabel>{state.label}</MatrixLabel>
+              <div key={state.label} className="flex flex-col gap-[var(--spacing-12)]">
+                <MatrixHeading level={2}>{state.label}</MatrixHeading>
                 <div className="grid grid-cols-2 gap-[var(--spacing-24)]">
                   {columns.map((column) => (
                     <div key={column} className="flex flex-col gap-[var(--spacing-12)]">
                       <MatrixLabel>{column} column</MatrixLabel>
                       {checkboxOptions.map((option) => (
-                        <BottomTierRecipeFrame key={option.label} width={option.withCheckbox ? 427 : 374}>
-                          <TableCardCell
-                            tier="bottom"
-                            row="last"
-                            column={column}
-                            hovered={state.hovered}
-                            mode={mode}
-                            bottomVariant="listing"
-                            className={[
-                              '!h-auto',
-                              expansion.expanded ? '!min-h-[640px]' : '!min-h-[181px]',
-                              option.withCheckbox ? '!w-[427px]' : '!w-[374px]',
-                              '!items-start',
-                            ].join(' ')}
-                          >
-                            {expansion.expanded || option.withCheckbox ? (
-                              <BottomListingStackValue expanded={expansion.expanded} withCheckbox={option.withCheckbox} />
-                            ) : (
-                              <BottomListingValue />
-                            )}
-                          </TableCardCell>
-                        </BottomTierRecipeFrame>
+                        <div key={option.label} className="flex flex-col gap-[var(--spacing-4)]">
+                          <MatrixLabel>{option.label}</MatrixLabel>
+                          <BottomTierRecipeFrame width={option.withCheckbox ? 427 : 374}>
+                            <TableCardCell
+                              tier="bottom"
+                              row="last"
+                              column={column}
+                              hovered={state.hovered}
+                              mode={mode}
+                              bottomVariant="listing"
+                              className={[
+                                '!h-auto',
+                                expansion.expanded ? '!min-h-[640px]' : '!min-h-[181px]',
+                                option.withCheckbox ? '!w-[427px]' : '!w-[374px]',
+                                '!items-start',
+                              ].join(' ')}
+                            >
+                              {expansion.expanded || option.withCheckbox ? (
+                                <BottomListingStackValue expanded={expansion.expanded} withCheckbox={option.withCheckbox} />
+                              ) : (
+                                <BottomListingValue />
+                              )}
+                            </TableCardCell>
+                          </BottomTierRecipeFrame>
+                        </div>
                       ))}
                     </div>
                   ))}
