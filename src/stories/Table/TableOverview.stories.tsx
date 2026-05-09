@@ -532,7 +532,7 @@ const OrderProcessingCardTableDemo = () => (
     {/* Outer bottom tier — wraps the nested inner card. White panel between
         outer top strip and inner card; horizontal/bottom padding gives the
         inner card a visible inset on white background. */}
-    <div className="bg-[color:var(--color-surface-card)] px-[var(--spacing-12)] pb-[var(--spacing-12)] pt-[var(--spacing-12)] border-x border-b border-solid border-[color:var(--table-divider-border)] rounded-b-[var(--radius-4)]">
+    <div className="bg-[color:var(--color-surface-card)] px-[var(--spacing-24)] pt-[var(--spacing-12)] pb-[var(--spacing-24)] border-x border-b border-solid border-[color:var(--table-divider-border)] rounded-b-[var(--radius-4)]">
       {/* Inner card uses flex rows (not <table>) so cells in the same row
           auto-stretch to the tallest sibling's height. That lets the atom's
           column-coordinated borders and corner radii close the inner card
