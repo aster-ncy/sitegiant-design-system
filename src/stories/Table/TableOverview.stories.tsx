@@ -429,20 +429,20 @@ const RatingsCardTableDemo = () => (
       <Checkbox size="sm" />
     </span>
     <div className="w-[980px] overflow-hidden rounded-[var(--radius-4)] border border-solid border-[color:var(--table-divider-border)]">
-      <div className="group/row grid grid-cols-[28%_48%_24%] border-b border-solid border-[color:var(--table-divider-border)]">
+      <div className="group/row grid grid-cols-[32%_40%_18%_10%] border-b border-solid border-[color:var(--table-divider-border)]">
         <TableCardCell tier="top" column="first" className={`${cardTopCellClass} !rounded-none !border-0`}>
-          <span className="inline-flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full bg-[var(--color-space-light)] text-[length:var(--text-12)] leading-none text-[color:var(--color-text-info)]">A</span>
+          <span className="inline-flex h-[24px] w-[24px] shrink-0 items-center justify-center rounded-full bg-[var(--color-space-DEFAULT)] text-[length:var(--text-12)] leading-none text-[color:var(--color-text-info)]">A</span>
           <span>Tiffany</span>
         </TableCardCell>
         <TableCardCell tier="top" column="center" className={`${cardCenterCellClass} !rounded-none !border-0`}>#233</TableCardCell>
-        <TableCardCell tier="top" column="last" className={`${cardCenterCellClass} !rounded-none !border-0`}>
-          <span className="ml-auto inline-flex items-center gap-[var(--spacing-8)]">
+        <TableCardCell tier="top" column="last" className={`${cardCenterCellClass} !rounded-none !border-0 col-span-2`}>
+          <span className="inline-flex items-center gap-[var(--spacing-8)]">
             <ChannelIcon />
             <span>Shopee MY</span>
           </span>
         </TableCardCell>
       </div>
-      <div className="group/row grid grid-cols-[28%_48%_24%]">
+      <div className="group/row grid grid-cols-[32%_40%_18%_10%]">
         <TableCardCell tier="bottom" row="last" column="first" className={`${cardBottomCellClass} !rounded-none !border-0`}>
           <TableCellListing
             image={<ProductImage src={productImage} alt="Dynamo" size="lg" />}
@@ -465,11 +465,11 @@ const RatingsCardTableDemo = () => (
             <span>Baju dalam keadaan baik. Pembungkusan pun teliti.</span>
           </span>
         </TableCardCell>
-        <TableCardCell tier="bottom" row="last" column="last" className={`${cardBottomCellClass} !rounded-none !border-0`}>
-          <span className="flex w-full items-start justify-between gap-[var(--spacing-12)]">
-            <span>22 May 2025 11:58am</span>
-            <Toggle checked />
-          </span>
+        <TableCardCell tier="bottom" row="last" column="center" className={`${cardBottomCellClass} !rounded-none !border-0`}>
+          <span className="whitespace-nowrap">22 May 2025 11:58am</span>
+        </TableCardCell>
+        <TableCardCell tier="bottom" row="last" column="last" className={`${cardBottomCellClass} !rounded-none !border-0 !pl-[var(--spacing-12)] !pr-[var(--spacing-24)]`}>
+          <Toggle checked />
         </TableCardCell>
       </div>
     </div>
