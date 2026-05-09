@@ -606,9 +606,9 @@ const OrderProcessingCardTableDemo = () => (
               <span className="flex flex-col gap-[var(--spacing-4)]">
                 <span className="text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)]">RM299.00</span>
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Cash on delivery</span>
-                <span className="flex items-center gap-[var(--spacing-4)] text-[color:var(--color-sys-green-DEFAULT)]">
-                  <Icon name="coin" size={17} />
-                  RM299.00
+                <span className="flex items-center gap-[var(--spacing-4)]">
+                  <Icon name="database" size={17} color="var(--color-text-info)" />
+                  <span className="text-[color:var(--color-sys-green-DEFAULT)]">RM299.00</span>
                 </span>
                 <span className="pl-[calc(17px+var(--spacing-4))] text-[color:var(--color-sys-green-DEFAULT)]">100%</span>
               </span>
