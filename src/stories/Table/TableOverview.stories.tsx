@@ -485,12 +485,11 @@ const OrderProcessingCardTableDemo = () => (
     <table className="w-[1000px] table-fixed border-collapse">
       <colgroup>
         <col className="w-[10%]" />
-        <col className="w-[26%]" />
-        <col className="w-[14%]" />
-        <col className="w-[12%]" />
-        <col className="w-[17%]" />
-        <col className="w-[8%]" />
-        <col className="w-[13%]" />
+        <col className="w-[22%]" />
+        <col className="w-[16%]" />
+        <col className="w-[10%]" />
+        <col className="w-[24%]" />
+        <col className="w-[18%]" />
       </colgroup>
       <tbody>
         <tr className="group/row">
@@ -518,7 +517,7 @@ const OrderProcessingCardTableDemo = () => (
               </span>
             </TableCardCell>
           </td>
-          <td colSpan={2} className="p-0">
+          <td colSpan={1} className="p-0">
             <TableCardCell tier="top" column="last" className={cardCenterCellClass}>
               <span className="flex flex-col gap-[2px]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Courier Service</span>
@@ -541,7 +540,7 @@ const OrderProcessingCardTableDemo = () => (
               </span>
             </TableCardCell>
           </td>
-          <td colSpan={3} className="p-0 align-top">
+          <td colSpan={2} className="p-0 align-top">
             <TableCardCell tier="bottom" row="first" column="center" className={`${cardNestedHeaderCellClass} !border-l-0`}>
               <span className="flex min-w-0 items-center gap-[var(--spacing-8)]">
                 <span className="truncate">Edward</span>
@@ -606,13 +605,8 @@ const OrderProcessingCardTableDemo = () => (
             </TableCardCell>
           </td>
           <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="center" formField className={`${cardNestedBodyCellClass} !border-l-0`}>
+            <TableCardCell tier="bottom" row="last" column="last" formField className={`${cardNestedBodyCellClass} !border-l-0`}>
               <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
-            </TableCardCell>
-          </td>
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="last" className={`${cardNestedBodyCellClass} !border-l-0`}>
-              <span />
             </TableCardCell>
           </td>
         </tr>
