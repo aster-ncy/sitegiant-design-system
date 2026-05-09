@@ -99,7 +99,7 @@ export type TableCardCellProps =
        *  text instead of changing fill) per Figma 3453:7497. */
       tier: 'top';
       row?: never;
-      /** Top-tier content variant — adjusts gap/alignment around leadingIcon slot. */
+      /** Top-tier content variant — adjusts gap around leadingIcon slot. */
       topVariant?: TableCardCellTopVariant;
     })
   | (TableCardCellBase & {

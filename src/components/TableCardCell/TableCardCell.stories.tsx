@@ -754,10 +754,8 @@ const bottomVariantContent = (
   return <BottomInfoValue />;
 };
 
-const bottomTierContent = (type: BottomTierVariant) => {
-  if (type === 'Default') return <BottomInfoValue />;
-  return bottomVariantContent(bottomTierVariantProp(type));
-};
+const bottomTierContent = (type: BottomTierVariant) =>
+  bottomVariantContent(bottomTierVariantProp(type));
 
 const renderBottomTierFigmaCell = ({
   type,
