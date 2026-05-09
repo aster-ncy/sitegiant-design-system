@@ -28,6 +28,7 @@ import shopeeMy from '../../assets/channel-icons/shopee-my.png';
 import shopeeSg from '../../assets/channel-icons/shopee-sg.png';
 import tiktokMy from '../../assets/channel-icons/tiktok-my.png';
 import lazadaMy from '../../assets/channel-icons/lazada-my.png';
+import { WarehouseInfoDemo } from './WarehouseInfoDemo';
 
 // Channel/marketplace brand assets sourced from the SiteGiant Figma "App
 // Icon" library. These are live third-party brand marks (Shopee, TikTok,
@@ -913,6 +914,17 @@ export const S9OrderReturn: Story = {
       </table>
     </div>
   ),
+};
+
+/* ── WarehouseInfo screen ──────────────────────────────── */
+
+/**
+ * Warehouse Info — interactive inset-table screen matching Figma node
+ * 7927:76394. Composes Toggle, Dropdown, Input, Quantity, DashedButton,
+ * SortBlock family, and IconButton into a fully interactive card.
+ */
+export const WarehouseInfoScreen: Story = {
+  render: () => <WarehouseInfoDemo />,
 };
 
 /* ── s10 Shocking Sale ─────────────────────────────────── */

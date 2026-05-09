@@ -1,11 +1,15 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useEffect, useRef, useState } from 'react';
+import { WarehouseInfoDemo } from '../../stories/Table/WarehouseInfoDemo';
 import { SortBlockGroup } from './SortBlockGroup';
 import { SortBlockDefault } from './SortBlockDefault';
 import { SortBlockMainSub } from './SortBlockMainSub';
 import { SortBlockLongContent } from './SortBlockLongContent';
 import { SortBlockIcon } from './SortBlockIcon';
 import { Icon } from '../Icon';
+import { Input } from '../Input';
+import { DatePicker } from '../DatePicker';
+import { LABEL_CLASSES } from './shared';
 
 const meta = {
   title: 'Information/SortBlock/SortBlockGroup',
@@ -262,4 +266,82 @@ const RefDemo = () => {
 
 export const WithRef: Story = {
   render: () => <RefDemo />,
+};
+
+/* ── WithInputCells — Figma node 2092:1173 row recipe ─────────────── */
+
+/**
+ * Demonstrates a SortBlockGroup row composed of input-bearing cells per
+ * Figma node 2092:1173: drag handle, index, three input cells (plain input,
+ * DatePicker with inline "Expiry Date" label, Input with inline "Notes"
+ * label), and a close button. Each input cell is a plain `<div>` wearing the
+ * SortBlock fill with `px-6 py-4` — tighter than `SortBlockDefault`'s default
+ * because the form controls already supply their own internal padding.
+ *
+ * SortBlock itself stays readonly-only by spec — input fields compose into
+ * SortBlock-styled cells rather than becoming a new SortBlock state.
+ *
+ * **A11y note:** the visible "Expiry Date" / "Notes" spans are SortBlock
+ * cell labels, not form labels — they are not associated with the controls
+ * via `htmlFor`. This is intentional for the visual recipe; production
+ * consumers should pair `Input` / `DatePicker` with their own `label` prop
+ * (which renders an associated `<label htmlFor>`) for a11y-valid forms.
+ */
+/* ── WarehouseInfoScreen — full interactive screen ────────────────── */
+
+/**
+ * Warehouse Info screen (Figma node 7927:76394) — composed from SortBlock
+ * family members and form components. Demonstrates real interactive DnD-
+ * ready rows with add/remove rack and batch actions.
+ */
+export const WarehouseInfoScreen: Story = {
+  render: () => <WarehouseInfoDemo />,
+};
+
+export const WithInputCells: Story = {
+  render: () => (
+    <Stack>
+      <SortBlockGroup>
+        {/* Drag handle cell — items-center per single-row alignment rule */}
+        <SortBlockIcon className="self-stretch w-[45px] !items-center">
+          <Icon name="drag" size={17} color="var(--color-icon-secondary)" />
+        </SortBlockIcon>
+
+        {/* Index cell — primary-toned digit, not info */}
+        <div className="self-stretch w-[70px] bg-[color:var(--sorting-block-sorting-fill)] px-[var(--spacing-6)] py-[var(--spacing-4)] flex items-center justify-center">
+          <span className="font-[family-name:var(--general-font-family)] text-[length:var(--general-body-size)] leading-[var(--general-body-slim-lineheight)] font-[weight:var(--general-body-weight)] text-[color:var(--color-text-primary)]">
+            1
+          </span>
+        </div>
+
+        {/* Cell A — plain input, no inline label */}
+        <div className="self-stretch w-[250px] bg-[color:var(--sorting-block-sorting-fill)] px-[var(--spacing-6)] py-[var(--spacing-4)] flex items-center">
+          <Input className="flex-1 min-w-0" defaultValue="2023-03-09-1" />
+        </div>
+
+        {/* Cell B — inline label + DatePicker */}
+        <div className="self-stretch w-[270px] bg-[color:var(--sorting-block-sorting-fill)] px-[var(--spacing-6)] py-[var(--spacing-4)] flex items-center gap-[var(--spacing-8)]">
+          <span className={LABEL_CLASSES}>Expiry Date</span>
+          <DatePicker className="flex-1 min-w-0" defaultValue="2020-08-18" />
+        </div>
+
+        {/* Cell C — inline label + Input */}
+        <div className="self-stretch w-[270px] bg-[color:var(--sorting-block-sorting-fill)] px-[var(--spacing-6)] py-[var(--spacing-4)] flex items-center gap-[var(--spacing-8)]">
+          <span className={LABEL_CLASSES}>Notes</span>
+          <Input className="flex-1 min-w-0" defaultValue="testinggggggggggggg" />
+        </div>
+
+        {/* Close button cell — items-center per single-row alignment rule */}
+        <SortBlockIcon className="self-stretch w-[45px] !items-center">
+          <button
+            type="button"
+            aria-label="Remove row"
+            className="inline-flex items-center justify-center bg-transparent border-none p-0 cursor-pointer"
+          >
+            <Icon name="close" size={17} color="var(--color-icon-secondary)" />
+          </button>
+        </SortBlockIcon>
+      </SortBlockGroup>
+    </Stack>
+  ),
 };
