@@ -54,8 +54,6 @@ const recordFirstColumnBorderClass = '[border-left-width:1px]';
 const cardTopCellClass = '!pl-[var(--spacing-24)] !pr-[var(--spacing-12)]';
 const cardCenterCellClass = `${cardTopCellClass} !border-l-0`;
 const cardBottomCellClass = '!h-[105px] !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-24)]';
-const cardNestedHeaderCellClass = '!h-[45px] !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !py-[var(--spacing-12)] border-b';
-const cardNestedBodyCellClass = '!h-[181px] !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-24)]';
 
 const GuidanceRow = ({
   label,
@@ -481,19 +479,18 @@ const RatingsCardTableDemo = () => (
  * Bottom tier: order id meta | product card | order date | status pips | amounts | cancel | webstore tag.
  * Uses a 7-column colgroup; top-tier cells use colSpan. */
 const OrderProcessingCardTableDemo = () => (
-  <div className="inline-block">
-    <table className="w-[1000px] table-fixed border-collapse">
+  <div className="inline-flex w-[1000px] flex-col overflow-hidden rounded-[var(--radius-4)] border border-solid border-[color:var(--table-divider-border)]">
+    {/* Outer top tier — Package ID / Packing Note / Tracking No / Courier Service */}
+    <table className="w-full table-fixed border-collapse">
       <colgroup>
-        <col className="w-[10%]" />
-        <col className="w-[22%]" />
         <col className="w-[16%]" />
-        <col className="w-[10%]" />
-        <col className="w-[24%]" />
-        <col className="w-[18%]" />
+        <col className="w-[28%]" />
+        <col className="w-[28%]" />
+        <col className="w-[28%]" />
       </colgroup>
       <tbody>
         <tr className="group/row">
-          <td colSpan={1} className="p-0">
+          <td className="p-0">
             <TableCardCell tier="top" column="first" className={cardTopCellClass}>
               <span className="flex flex-col gap-[2px]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Package ID</span>
@@ -501,7 +498,7 @@ const OrderProcessingCardTableDemo = () => (
               </span>
             </TableCardCell>
           </td>
-          <td colSpan={2} className="p-0">
+          <td className="p-0">
             <TableCardCell tier="top" column="center" className={cardCenterCellClass}>
               <span className="flex flex-col gap-[2px]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Packing Note</span>
@@ -509,7 +506,7 @@ const OrderProcessingCardTableDemo = () => (
               </span>
             </TableCardCell>
           </td>
-          <td colSpan={2} className="p-0">
+          <td className="p-0">
             <TableCardCell tier="top" column="center" className={cardCenterCellClass}>
               <span className="flex flex-col gap-[2px]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Tracking No</span>
@@ -517,7 +514,7 @@ const OrderProcessingCardTableDemo = () => (
               </span>
             </TableCardCell>
           </td>
-          <td colSpan={1} className="p-0">
+          <td className="p-0">
             <TableCardCell tier="top" column="last" className={cardCenterCellClass}>
               <span className="flex flex-col gap-[2px]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Courier Service</span>
@@ -526,92 +523,107 @@ const OrderProcessingCardTableDemo = () => (
             </TableCardCell>
           </td>
         </tr>
-        <tr className="group/row">
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="first" column="first" className={cardNestedHeaderCellClass}>
-              <span className="font-[var(--font-weight-bold)]">#7</span>
-            </TableCardCell>
-          </td>
-          <td colSpan={2} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="first" column="center" className={`${cardNestedHeaderCellClass} !border-l-0`}>
-              <span className="flex items-center gap-[var(--spacing-20)]">
-                <span>COID: -</span>
-                <span>INV: -</span>
-              </span>
-            </TableCardCell>
-          </td>
-          <td colSpan={2} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="first" column="center" className={`${cardNestedHeaderCellClass} !border-l-0`}>
-              <span className="flex min-w-0 items-center gap-[var(--spacing-8)]">
-                <span className="truncate">Edward</span>
-                <span className="shrink-0">|</span>
-                <span className="truncate">Pulau Pinang, Malaysia</span>
-                <Icon name="edit-pen" size={17} color="var(--color-sys-blue-DEFAULT)" />
-              </span>
-            </TableCardCell>
-          </td>
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="first" column="last" className={`${cardNestedHeaderCellClass} !border-l-0`}>
-              <span className="ml-auto inline-flex items-center gap-[var(--spacing-8)]">
-                <Pip type="success" label="Webstore" />
-              </span>
-            </TableCardCell>
-          </td>
-        </tr>
-        <tr className="group/row">
-          <td colSpan={2} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="first" className={cardNestedBodyCellClass}>
-              <TableCellListing
-                image={<ProductImage src={productImage} alt="Product" size="lg" />}
-                productName="[TESTING PRODUCT, DO NOT BUY] FishBone Keychain"
-                infoRows={[
-                  { label: 'iSKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
-                  { label: 'SKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
-                  { label: 'Color/Size', value: 'Black/5cm' },
-                ]}
-                extras={<span>RM299.00 <span className="text-[color:var(--color-sys-blue-DEFAULT)]">x 1</span></span>}
-              />
-            </TableCardCell>
-          </td>
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="center" className={`${cardNestedBodyCellClass} !border-l-0`}>
-              <span className="flex flex-col gap-[var(--spacing-4)]">
-                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Order Date</span>
-                <span>13-02-2026</span>
-                <span>10:45:20</span>
-                <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Pickup</span>
-              </span>
-            </TableCardCell>
-          </td>
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="center" className={`${cardNestedBodyCellClass} !border-l-0`}>
-              <span className="flex flex-col gap-[var(--spacing-4)]">
-                <Pip type="warning" label="Processed" />
-                <Pip type="success" label="Paid" />
-              </span>
-            </TableCardCell>
-          </td>
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="center" className={`${cardNestedBodyCellClass} !border-l-0`}>
-              <span className="flex flex-col gap-[var(--spacing-4)]">
-                <span className="text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)]">RM299.00</span>
-                <span>Cash on delivery</span>
-                <span className="flex items-center gap-[var(--spacing-4)] text-[color:var(--color-sys-green-DEFAULT)]">
-                  <Icon name="coins" size={17} />
-                  RM299.00
-                </span>
-                <span className="text-[color:var(--color-sys-green-DEFAULT)]">100%</span>
-              </span>
-            </TableCardCell>
-          </td>
-          <td colSpan={1} className="p-0 align-top">
-            <TableCardCell tier="bottom" row="last" column="last" formField className={`${cardNestedBodyCellClass} !border-l-0`}>
-              <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
-            </TableCardCell>
-          </td>
-        </tr>
       </tbody>
     </table>
+    {/* Outer bottom tier — wraps the nested inner card */}
+    <div className="bg-[color:var(--color-surface-card)] px-[var(--spacing-12)] pb-[var(--spacing-12)] pt-[var(--spacing-4)]">
+      <div className="overflow-hidden rounded-[var(--radius-4)] border border-solid border-[color:var(--table-divider-border)]">
+        <table className="w-full table-fixed border-collapse">
+          <colgroup>
+            <col className="w-[8%]" />
+            <col className="w-[30%]" />
+            <col className="w-[14%]" />
+            <col className="w-[12%]" />
+            <col className="w-[22%]" />
+            <col className="w-[14%]" />
+          </colgroup>
+          <tbody>
+            {/* Inner top tier — #7 + COID/INV / Edward / Webstore */}
+            <tr className="group/row">
+              <td colSpan={2} className="p-0 align-top">
+                <TableCardCell tier="top" column="first" className={cardTopCellClass}>
+                  <span className="flex items-center gap-[var(--spacing-20)]">
+                    <span className="font-[var(--font-weight-bold)]">#7</span>
+                    <span>COID: -</span>
+                    <span>INV: -</span>
+                  </span>
+                </TableCardCell>
+              </td>
+              <td colSpan={2} className="p-0 align-top">
+                <TableCardCell tier="top" column="center" className={cardCenterCellClass}>
+                  <span className="flex min-w-0 items-center gap-[var(--spacing-8)]">
+                    <span className="truncate">Edward</span>
+                    <span className="shrink-0">|</span>
+                    <span className="truncate">Pulau Pinang, Malaysia</span>
+                    <Icon name="edit-pen" size={17} color="var(--color-sys-blue-DEFAULT)" />
+                  </span>
+                </TableCardCell>
+              </td>
+              <td colSpan={2} className="p-0 align-top">
+                <TableCardCell tier="top" column="last" className={cardCenterCellClass}>
+                  <span className="ml-auto inline-flex items-center gap-[var(--spacing-8)]">
+                    <Pip type="success" label="Webstore" />
+                  </span>
+                </TableCardCell>
+              </td>
+            </tr>
+            {/* Inner bottom tier — product / Order Date / Status / Amounts / × */}
+            <tr className="group/row">
+              <td colSpan={2} className="p-0 align-top">
+                <TableCardCell tier="bottom" row="last" column="first" className={cardBottomCellClass}>
+                  <TableCellListing
+                    image={<ProductImage src={productImage} alt="Product" size="lg" />}
+                    productName="[TESTING PRODUCT, DO NOT BUY] FishBone Keychain"
+                    infoRows={[
+                      { label: 'iSKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
+                      { label: 'SKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
+                      { label: 'Color/Size', value: 'Black/5cm' },
+                    ]}
+                    extras={<span>RM299.00 <span className="text-[color:var(--color-sys-blue-DEFAULT)]">x 1</span></span>}
+                  />
+                </TableCardCell>
+              </td>
+              <td colSpan={1} className="p-0 align-top">
+                <TableCardCell tier="bottom" row="last" column="center" className={`${cardBottomCellClass} !border-l-0`}>
+                  <span className="flex flex-col gap-[var(--spacing-4)]">
+                    <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Order Date</span>
+                    <span>13-02-2026</span>
+                    <span>10:45:20</span>
+                    <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">Pickup</span>
+                  </span>
+                </TableCardCell>
+              </td>
+              <td colSpan={1} className="p-0 align-top">
+                <TableCardCell tier="bottom" row="last" column="center" className={`${cardBottomCellClass} !border-l-0`}>
+                  <span className="flex flex-col gap-[var(--spacing-4)]">
+                    <Pip type="warning" label="Processed" />
+                    <Pip type="success" label="Paid" />
+                  </span>
+                </TableCardCell>
+              </td>
+              <td colSpan={1} className="p-0 align-top">
+                <TableCardCell tier="bottom" row="last" column="center" className={`${cardBottomCellClass} !border-l-0`}>
+                  <span className="flex flex-col gap-[var(--spacing-4)]">
+                    <span className="text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)]">RM299.00</span>
+                    <span>Cash on delivery</span>
+                    <span className="flex items-center gap-[var(--spacing-4)] text-[color:var(--color-sys-green-DEFAULT)]">
+                      <Icon name="coins" size={17} />
+                      RM299.00
+                    </span>
+                    <span className="text-[color:var(--color-sys-green-DEFAULT)]">100%</span>
+                  </span>
+                </TableCardCell>
+              </td>
+              <td colSpan={1} className="p-0 align-top">
+                <TableCardCell tier="bottom" row="last" column="last" formField className={`${cardBottomCellClass} !border-l-0`}>
+                  <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
+                </TableCardCell>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 );
 
