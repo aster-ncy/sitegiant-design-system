@@ -1159,9 +1159,8 @@ export const BottomTierMatrix: Story = {
   },
 };
 
-/** Bottom Tier hosting form controls — `formField` flips inner
- *  alignment to items-center so NumberInput / Toggle / Button sit
- *  vertically centred in the cell. */
+/** Bottom Tier hosting form controls — `bottomVariant="form-field"`
+ *  centres NumberInput / Toggle / Button vertically in the cell. */
 export const BottomTierFormControls: Story = {
   render: () => (
     <div className={cardShell}>
@@ -1169,7 +1168,7 @@ export const BottomTierFormControls: Story = {
         <tbody>
           <tr className="group/row">
             <td className="p-0">
-              <TableCardCell tier="bottom" row="first" column="first" formField>
+              <TableCardCell tier="bottom" row="first" column="first" bottomVariant="form-field">
                 <NumberInput value="1" onChange={() => undefined} />
               </TableCardCell>
             </td>
@@ -1178,7 +1177,7 @@ export const BottomTierFormControls: Story = {
                 tier="bottom"
                 row="first"
                 column="center"
-                formField
+                bottomVariant="form-field"
                 trailing={<Toggle checked={true} onChange={() => undefined} />}
               />
             </td>
@@ -1187,7 +1186,7 @@ export const BottomTierFormControls: Story = {
                 tier="bottom"
                 row="last"
                 column="last"
-                formField
+                bottomVariant="form-field"
                 trailing={<Button variant="primary" size="sm" label="Save" />}
               />
             </td>

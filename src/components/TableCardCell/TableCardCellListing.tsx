@@ -99,29 +99,23 @@ export const TableCardCellListing = ({
 
   return (
     <span className="flex w-full items-start gap-[var(--spacing-12)]">
-      {/* Image + optional badge */}
       <span className="relative inline-flex shrink-0 overflow-visible">
         {image}
         {badge && badge}
       </span>
-
-      {/* Product info stack */}
       <span className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-4)]">
         {pip && pip}
-        {/* Product name — bold, max 2 lines clamp */}
         <span className="max-h-[34px] overflow-hidden font-[family-name:var(--font-sans)] text-[length:var(--table-body-size)] font-[var(--font-weight-bold)] leading-[var(--leading-17)] text-[color:var(--text-default-text-primary)]">
           {productName}
         </span>
-
-        {/* Variant + SKU rows at caption size */}
-        {hasCaptionRows && (
+        {(hasCaptionRows || showProperties) && (
           <span className="flex w-full min-w-0 flex-col gap-[var(--spacing-8)]">
-            <span className="flex flex-col gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)]">
-              {variant && <ListingInfoRow label={variant.label} value={variant.value} />}
-              {sku && <ListingInfoRow label={sku.label} value={sku.value} />}
-            </span>
-
-            {/* Property rows at caption-small size — hidden in collapse mode */}
+            {hasCaptionRows && (
+              <span className="flex flex-col gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--general-caption-slim-lineheight)]">
+                {variant && <ListingInfoRow label={variant.label} value={variant.value} />}
+                {sku && <ListingInfoRow label={sku.label} value={sku.value} />}
+              </span>
+            )}
             {showProperties && (
               <span className="flex flex-col gap-[var(--spacing-4)] text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)]">
                 {properties!.map((prop, index) => (

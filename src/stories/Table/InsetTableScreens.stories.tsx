@@ -987,17 +987,17 @@ export const S10ShockingSale: Story = {
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center" formField>
+                      <TableCardCell tier="bottom" row={row} column="center" bottomVariant="form-field">
                         <NumberInput value={v.price} onChange={() => undefined} />
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center" formField>
+                      <TableCardCell tier="bottom" row={row} column="center" bottomVariant="form-field">
                         <NumberInput value={v.offPercent} onChange={() => undefined} />
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center" formField>
+                      <TableCardCell tier="bottom" row={row} column="center" bottomVariant="form-field">
                         <NumberInput value={v.campaignStock} onChange={() => undefined} />
                       </TableCardCell>
                     </td>
@@ -1011,7 +1011,7 @@ export const S10ShockingSale: Story = {
                         tier="bottom"
                         row={row}
                         column="last"
-                        formField
+                        bottomVariant="form-field"
                         trailing={<Toggle checked={v.enabled} onChange={() => undefined} />}
                       >
                         {v.purchaseLimit || 'No limit'}

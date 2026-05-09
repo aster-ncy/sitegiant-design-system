@@ -13,8 +13,7 @@ export type TableCardCellTopVariant =
   | 'app-icon'
   | 'user-icon'
   | 'status'
-  | 'product-image'
-  | 'ellipsis';
+  | 'product-image';
 
 /** Bottom-tier content variant — encodes layout/padding/alignment differences per variant. */
 export type TableCardCellBottomVariant =
@@ -71,13 +70,10 @@ export type TableCardCellProps =
        *  'middle' = inner row; 'last' = bottom of card (rounded bottom
        *  corners). */
       row: TableCardCellRow;
-      /** Bottom-tier content variant — encodes layout/padding/alignment per Figma 1438:4957. */
+      /** Bottom-tier content variant — encodes layout/padding/alignment per Figma 1438:4957.
+       *  Set to 'form-field' to centre form controls (NumberInput / Toggle / Button)
+       *  vertically per Figma 3453:7841. */
       bottomVariant?: TableCardCellBottomVariant;
-      /**
-       * When true (or implied by bottomVariant='form-field'), switches inner
-       * flex from items-start to items-center per Figma 3453:7841.
-       */
-      formField?: boolean;
     });
 
 /**
@@ -301,16 +297,13 @@ export const TableCardCell = (props: TableCardCellProps) => {
   }
 
   // tier === 'bottom'
-  const { row, formField } = props;
+  const { row } = props;
   const bottomVariant = props.bottomVariant ?? 'default';
-  // form-field variant implies formField alignment
-  const isFormField = formField || bottomVariant === 'form-field';
+  const isFormField = bottomVariant === 'form-field';
   const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
   const forcedHoverFill = hovered
     ? '!bg-[var(--table-body-hover-fill)]'
     : '';
-  // Form-field cells centre their content vertically (NumberInput,
-  // Toggle, Button etc.); plain text cells anchor to top.
   const innerAlignment = isFormField ? 'items-center' : 'items-start';
 
   return (
