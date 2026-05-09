@@ -7,7 +7,22 @@ export type TableCardCellRow = 'first' | 'middle' | 'last';
 /** Default mode: Figma 1432:2527 + 1438:4957. Inset mode: Figma 3453:7497 (legacy baseline). */
 export type TableCardCellMode = 'default' | 'inset';
 
-/** Top-tier content variant — encodes spacing/layout around the leading-icon slot. */
+/**
+ * Top-tier content variant — adjusts the gap between the `leadingIcon` slot
+ * and the text span. The atom does NOT render the icon for you; pass the
+ * appropriate node via `leadingIcon` and pick the variant that matches.
+ *
+ * - `default` — 12px gap. Use when there's no leading icon, or with a
+ *   neutral leading element (chevron, checkbox-only).
+ * - `app-icon` — 4px gap. Use with a 21px channel/app tile (Shopee,
+ *   Webstore, etc.). Tighter spacing per Figma 1432:2527.
+ * - `user-icon` — 4px gap. Use with a 21px avatar/initials circle.
+ *   Same tightening as `app-icon`.
+ * - `status` — 12px gap. Type-vocabulary marker for status-led top tiers
+ *   (Pip + label). No layout difference vs `default` today.
+ * - `product-image` — 12px gap. Type-vocabulary marker for top tiers
+ *   that lead with a ProductImage thumbnail. No layout difference today.
+ */
 export type TableCardCellTopVariant =
   | 'default'
   | 'app-icon'
@@ -15,7 +30,33 @@ export type TableCardCellTopVariant =
   | 'status'
   | 'product-image';
 
-/** Bottom-tier content variant — encodes layout/padding/alignment differences per variant. */
+/**
+ * Bottom-tier content variant — encodes layout/padding/alignment for each
+ * row type. Most variants are **type-vocabulary only** (semantic marker
+ * for the caller; visual differences live in the children you pass). Three
+ * variant values change atom layout: `form-field` re-centres the row,
+ * `action-button` / `status-toggle` flip the last-column padding.
+ *
+ * - `default` — generic body row. No layout side-effects. Use for plain
+ *   text / link rows that don't fit the named variants.
+ * - `data` — type marker for label-over-value or numeric/currency rows
+ *   (positive/negative tone lives in caller children). No layout change.
+ * - `listing` — type marker for the product-listing block. Pair with
+ *   `<TableCardCellListing>` as children for the Figma 1458:3174 recipe.
+ *   No layout change at the atom level.
+ * - `status` — type marker for Pip-based status rows (single or stacked).
+ *   No layout change.
+ * - `star-rating` — type marker for star-rating + review-text rows.
+ *   No layout change.
+ * - `status-toggle` — Toggle in the trailing slot. On `column='last'`,
+ *   horizontal padding flips to `pl-12 pr-24` so the control sits flush
+ *   with the card's right edge. (Mode-agnostic.)
+ * - `action-button` — Button / IconButton in the trailing slot. Same
+ *   `column='last'` padding flip as `status-toggle`.
+ * - `form-field` — hosts form controls (NumberInput / Toggle / Button)
+ *   that need vertical centring. Switches inner alignment from
+ *   `items-start` to `items-center` per Figma 3453:7841.
+ */
 export type TableCardCellBottomVariant =
   | 'default'
   | 'data'
@@ -192,21 +233,23 @@ const bottomTierHPad = (
   return 'pl-[var(--spacing-12)] pr-[var(--spacing-6)]';
 };
 
-// Column-specific borders + corner radii.
+// Column-specific borders + corner radii. Center + last cells suppress
+// their own left border so internal verticals don't double-paint —
+// matches the top tier's border-coordination contract.
 const bottomTierColumnClasses: Record<TableColumnPosition, string> = {
   first: '',
-  center: '',
-  last: 'border-r',
+  center: 'border-l-0',
+  last: 'border-l-0 border-r',
 };
 
 // Row-specific vertical padding + bottom border.
-// Inset mode: first pt-12 pb-6 / middle py-6 / last pt-6 pb-12.
-// Default mode: first py-12 / middle py-6 / last pt-6 pb-24.
+// Default mode: first pt-12 pb-12 / middle pt-12 pb-12 / last pt-12 pb-24.
+// Inset mode:   first pt-12 pb-6  / middle py-6        / last pt-6  pb-12.
 const bottomTierRowClasses = (mode: TableCardCellMode, row: TableCardCellRow): string => {
   if (mode === 'default') {
     return {
       first: 'pt-[var(--spacing-12)] pb-[var(--spacing-12)]',
-      middle: 'py-[var(--spacing-6)]',
+      middle: 'pt-[var(--spacing-12)] pb-[var(--spacing-12)]',
       last: 'pt-[var(--spacing-12)] pb-[var(--spacing-24)] border-b',
     }[row];
   }
