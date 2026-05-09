@@ -19,6 +19,20 @@ const meta = {
   component: TableCardCell,
   parameters: { layout: 'padded' },
   tags: ['autodocs'],
+  argTypes: {
+    mode: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'inset'] satisfies ReadonlyArray<'default' | 'inset'>,
+      description:
+        'Sizing mode. `default` = standard-table padding (pl-24 pr-12 / pb-24 last row); `inset` = inset-table padding (pl-12 pr-6 / pb-12 last row).',
+      table: { defaultValue: { summary: 'default' } },
+    },
+  },
+  args: {
+    // Demo cells default to 'default' so the toolbar control starts where Card
+    // Tables typically live; toggle to 'inset' to see the compact baseline.
+    mode: 'default',
+  },
 } satisfies Meta<typeof TableCardCell>;
 
 export default meta;
@@ -92,7 +106,7 @@ const TopTierPlusButton = () => (
 );
 
 const topTierActionCellClass =
-  '!h-[45px] !w-[93px] !min-w-[93px] !max-w-[93px] shrink-0 !justify-center !pl-[var(--spacing-12)] !pr-[var(--spacing-24)] !py-[var(--spacing-6)]';
+  '!h-[45px] !w-[93px] !min-w-[93px] !max-w-[93px] shrink-0 !justify-center !py-[var(--spacing-6)]';
 
 const topTierFirstStoryCellClass = '!h-[45px] !w-[248px] !min-w-[248px] !max-w-[248px] shrink-0';
 const topTierCenterStoryCellClass = '!h-[45px] !w-[259px] !min-w-[259px] !max-w-[259px] shrink-0';
@@ -212,18 +226,20 @@ const renderTopTierFigmaCell = ({
   column,
   hovered = false,
   textState = 'normal',
+  mode = 'default',
 }: {
   type: string;
   column: 'first' | 'center' | 'last';
   hovered?: boolean;
   textState?: 'normal' | 'bold' | 'link';
+  mode?: 'default' | 'inset';
 }) => {
   const cell = (
     <TableCardCell
       tier="top"
       column={column}
       hovered={hovered}
-      mode="default"
+      mode={mode}
       topVariant={topTierVariantProp(type)}
       leadingIcon={topTierLeading(type)}
       className={topTierContainerWidth(type, column)}
@@ -615,12 +631,14 @@ const renderBottomTierFigmaCell = ({
   row = 'last',
   hovered = false,
   withGutter = false,
+  mode = 'default',
 }: {
   type: BottomTierVariant;
   column: 'first' | 'center' | 'last';
   row?: BottomTierRow;
   hovered?: boolean;
   withGutter?: boolean;
+  mode?: 'default' | 'inset';
 }) => {
   const width = bottomTierVariantWidth(type, column, withGutter);
   const contentWidth = withGutter ? width - 53 : width;
@@ -631,7 +649,7 @@ const renderBottomTierFigmaCell = ({
       row={row}
       column={column}
       hovered={hovered}
-      mode="default"
+      mode={mode}
       bottomVariant={bottomTierVariantProp(type)}
       className={[
         bottomTierWidthClass(contentWidth),
@@ -657,17 +675,18 @@ const renderBottomTierFigmaCell = ({
 /** Top Tier 3-column row — Default state. Hover the row to see bold
  *  + green text on the first column (parent-driven via `group/row`). */
 export const TopTierDefault: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <div className={topTierRowShell}>
-      <TableCardCell tier="top" column="first" checkbox={<Checkbox size="sm" />} className={topTierFirstStoryCellClass}>
+      <TableCardCell tier="top" column="first" mode={mode} checkbox={<Checkbox size="sm" />} className={topTierFirstStoryCellClass}>
         Product Name Here
       </TableCardCell>
-      <TableCardCell tier="top" column="center" className={topTierCenterStoryCellClass}>
+      <TableCardCell tier="top" column="center" mode={mode} className={topTierCenterStoryCellClass}>
         Center cell
       </TableCardCell>
       <TableCardCell
         tier="top"
         column="last"
+        mode={mode}
         className={topTierActionCellClass}
       >
         <TopTierPlusButton />
@@ -679,17 +698,18 @@ export const TopTierDefault: Story = {
 /** Top Tier with `hovered` prop forced — proves the bold-green text
  *  state outside of mouse-hover (useful for visual regression). */
 export const TopTierHovered: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <div className={topTierRowShell}>
-      <TableCardCell tier="top" column="first" hovered className={topTierFirstStoryCellClass}>
+      <TableCardCell tier="top" column="first" mode={mode} hovered className={topTierFirstStoryCellClass}>
         Hovered first
       </TableCardCell>
-      <TableCardCell tier="top" column="center" hovered className={topTierCenterStoryCellClass}>
+      <TableCardCell tier="top" column="center" mode={mode} hovered className={topTierCenterStoryCellClass}>
         Hovered center
       </TableCardCell>
       <TableCardCell
         tier="top"
         column="last"
+        mode={mode}
         hovered
         className={topTierActionCellClass}
       >
@@ -701,56 +721,57 @@ export const TopTierHovered: Story = {
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Default. */
 export const TopTierInfo: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <TopTierStoryTable>
-      {renderTopTierFigmaCell({ type: 'Default', column: 'first' })}
+      {renderTopTierFigmaCell({ type: 'Default', column: 'first', mode })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=App Icon. */
 export const TopTierAppIcon: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <TopTierStoryTable width={216}>
-      {renderTopTierFigmaCell({ type: 'App Icon', column: 'first' })}
+      {renderTopTierFigmaCell({ type: 'App Icon', column: 'first', mode })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=User Icon. */
 export const TopTierUserIcon: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <TopTierStoryTable width={216}>
-      {renderTopTierFigmaCell({ type: 'User Icon', column: 'first' })}
+      {renderTopTierFigmaCell({ type: 'User Icon', column: 'first', mode })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Status. */
 export const TopTierStatusPip: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <TopTierStoryTable width={217}>
-      {renderTopTierFigmaCell({ type: 'Status', column: 'first' })}
+      {renderTopTierFigmaCell({ type: 'Status', column: 'first', mode })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Product Image. */
 export const TopTierProductImage: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <TopTierStoryTable width={247}>
-      {renderTopTierFigmaCell({ type: 'Product Image', column: 'first' })}
+      {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', mode })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Action Icon Button. */
 export const TopTierAddButton: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <TopTierStoryTable width={93}>
       <TableCardCell
         tier="top"
         column="last"
+        mode={mode}
         className={topTierActionCellClass}
       >
         <TopTierPlusButton />
@@ -762,23 +783,25 @@ export const TopTierAddButton: Story = {
 /** Top Tier with leadingIcon (App Icon / Product Image equivalents). */
 export const TopTierWithLeadingIcon: Story = {
   parameters: { layout: 'centered' },
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <div className="flex min-h-[116px] items-center">
       <div className={topTierRowShell}>
         <TableCardCell
           tier="top"
           column="first"
+          mode={mode}
           leadingIcon={<AppIcon />}
           className={topTierFirstStoryCellClass}
         >
           Product with icon
         </TableCardCell>
-        <TableCardCell tier="top" column="center" className={topTierCenterStoryCellClass}>
+        <TableCardCell tier="top" column="center" mode={mode} className={topTierCenterStoryCellClass}>
           <Pip type="success" pipStyle="default" label="Active" />
         </TableCardCell>
         <TableCardCell
           tier="top"
           column="last"
+          mode={mode}
           className={topTierActionCellClass}
         >
           <TopTierPlusButton />
@@ -798,7 +821,7 @@ export const TopTierWithLeadingIcon: Story = {
  */
 export const TopTierFigmaMatrix: Story = {
   tags: ['!dev', 'visual-qa'],
-  render: () => {
+  render: ({ mode = 'default' }) => {
     const columns: Array<'first' | 'center' | 'last'> = ['first', 'center', 'last'];
     const defaultRows = [
       { label: 'Default', hovered: false },
@@ -832,7 +855,7 @@ export const TopTierFigmaMatrix: Story = {
                       <tr className="group/row">
                         {columns.map((column) => (
                           <td key={column} className="p-0">
-                            {renderTopTierFigmaCell({ type: 'Default', column, hovered })}
+                            {renderTopTierFigmaCell({ type: 'Default', column, hovered, mode })}
                           </td>
                         ))}
                       </tr>
@@ -861,7 +884,7 @@ export const TopTierFigmaMatrix: Story = {
                           <tr className="group/row">
                             {columns.map((column) => (
                               <td key={column} className="p-0">
-                                {renderTopTierFigmaCell({ type, column, hovered, textState })}
+                                {renderTopTierFigmaCell({ type, column, hovered, textState, mode })}
                               </td>
                             ))}
                           </tr>
@@ -879,7 +902,7 @@ export const TopTierFigmaMatrix: Story = {
                           <tr>
                             {columns.map((column) => (
                               <td key={column} className="p-0">
-                                {renderTopTierFigmaCell({ type, column, textState: 'link' })}
+                                {renderTopTierFigmaCell({ type, column, textState: 'link', mode })}
                               </td>
                             ))}
                           </tr>
@@ -907,7 +930,7 @@ export const TopTierFigmaMatrix: Story = {
                     <tr>
                       {columns.map((column) => (
                         <td key={column} className="p-0">
-                          {renderTopTierFigmaCell({ type: 'Status', column })}
+                          {renderTopTierFigmaCell({ type: 'Status', column, mode })}
                         </td>
                       ))}
                     </tr>
@@ -930,7 +953,7 @@ export const TopTierFigmaMatrix: Story = {
                   <tr>
                     {(['normal', 'bold'] as const).map((textState) => (
                       <td key={textState} className="p-0">
-                        {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', textState })}
+                        {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', textState, mode })}
                       </td>
                     ))}
                   </tr>
@@ -960,49 +983,49 @@ export const TopTierFigmaMatrix: Story = {
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Default. */
 export const BottomTierInfo: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={248}>
-      {renderBottomTierFigmaCell({ type: 'Default', column: 'first', row: 'first', withGutter: true })}
+      {renderBottomTierFigmaCell({ type: 'Default', column: 'first', row: 'first', withGutter: true, mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Default, Row Sorting=Last Row. */
 export const BottomTierInfoLastRow: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={248}>
-      {renderBottomTierFigmaCell({ type: 'Default', column: 'first', row: 'last', withGutter: true })}
+      {renderBottomTierFigmaCell({ type: 'Default', column: 'first', row: 'last', withGutter: true, mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Data. */
 export const BottomTierData: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={223}>
-      {renderBottomTierFigmaCell({ type: 'Data', column: 'first', row: 'last', withGutter: true })}
+      {renderBottomTierFigmaCell({ type: 'Data', column: 'first', row: 'last', withGutter: true, mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: _Table Row - Bottom Tier - Listing (1458:3174), collapsed item content. */
 export const BottomTierListing: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={374}>
-      {renderBottomTierFigmaCell({ type: 'Listing', column: 'first', row: 'last' })}
+      {renderBottomTierFigmaCell({ type: 'Listing', column: 'first', row: 'last', mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier Listing matrix (1445:2740), expanded list. */
 export const BottomTierListingExpanded: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={427}>
       <TableCardCell
         tier="bottom"
         row="last"
         column="first"
-        mode="default"
+        mode={mode}
         bottomVariant="listing"
         className="!h-auto !min-h-[640px] !w-[427px] !items-start"
       >
@@ -1015,13 +1038,13 @@ export const BottomTierListingExpanded: Story = {
 /** Visual matrix for Figma 1445:2740. Hidden from default docs/navigation. */
 export const BottomTierListingMatrix: Story = {
   tags: ['!dev', 'visual-qa'],
-  render: () => {
+  render: ({ mode = 'default' }) => {
     const columns: Array<'first' | 'center'> = ['first', 'center'];
     const states = [
       { label: 'Default', hovered: false },
       { label: 'Hover', hovered: true },
     ];
-    const modes = [
+    const expansionModes = [
       { label: 'Collapse', expanded: false },
       { label: 'Expand', expanded: true },
     ];
@@ -1035,9 +1058,9 @@ export const BottomTierListingMatrix: Story = {
         <MatrixNote>
           Visual check only. Use BottomTierListing or BottomTierListingExpanded for copyable product code.
         </MatrixNote>
-        {modes.map((mode) => (
-          <div key={mode.label} className="flex flex-col gap-[var(--spacing-12)]">
-            <MatrixLabel>{mode.label}</MatrixLabel>
+        {expansionModes.map((expansion) => (
+          <div key={expansion.label} className="flex flex-col gap-[var(--spacing-12)]">
+            <MatrixLabel>{expansion.label}</MatrixLabel>
             {states.map((state) => (
               <div key={state.label} className="flex flex-col gap-[var(--spacing-8)]">
                 <MatrixLabel>{state.label}</MatrixLabel>
@@ -1052,17 +1075,17 @@ export const BottomTierListingMatrix: Story = {
                             row="last"
                             column={column}
                             hovered={state.hovered}
-                            mode="default"
+                            mode={mode}
                             bottomVariant="listing"
                             className={[
                               '!h-auto',
-                              mode.expanded ? '!min-h-[640px]' : '!min-h-[181px]',
+                              expansion.expanded ? '!min-h-[640px]' : '!min-h-[181px]',
                               option.withCheckbox ? '!w-[427px]' : '!w-[374px]',
                               '!items-start',
                             ].join(' ')}
                           >
-                            {mode.expanded || option.withCheckbox ? (
-                              <BottomListingStackValue expanded={mode.expanded} withCheckbox={option.withCheckbox} />
+                            {expansion.expanded || option.withCheckbox ? (
+                              <BottomListingStackValue expanded={expansion.expanded} withCheckbox={option.withCheckbox} />
                             ) : (
                               <BottomListingValue />
                             )}
@@ -1083,51 +1106,51 @@ export const BottomTierListingMatrix: Story = {
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status. */
 export const BottomTierStatusPip: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={223}>
-      {renderBottomTierFigmaCell({ type: 'Status', column: 'first', row: 'last', withGutter: true })}
+      {renderBottomTierFigmaCell({ type: 'Status', column: 'first', row: 'last', withGutter: true, mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Action Button. */
 export const BottomTierActionButton: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={93}>
-      {renderBottomTierFigmaCell({ type: 'Action Button', column: 'last', row: 'last' })}
+      {renderBottomTierFigmaCell({ type: 'Action Button', column: 'last', row: 'last', mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Star Rating. */
 export const BottomTierStarRating: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={223}>
-      {renderBottomTierFigmaCell({ type: 'Star Rating', column: 'first', row: 'last', withGutter: true })}
+      {renderBottomTierFigmaCell({ type: 'Star Rating', column: 'first', row: 'last', withGutter: true, mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status Toggle. */
 export const BottomTierStatusToggle: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={104}>
-      {renderBottomTierFigmaCell({ type: 'Status Toggle', column: 'last', row: 'first' })}
+      {renderBottomTierFigmaCell({ type: 'Status Toggle', column: 'last', row: 'first', mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Form Field. */
 export const BottomTierQuantityField: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <BottomTierRecipeFrame width={195}>
-      {renderBottomTierFigmaCell({ type: 'Form Field', column: 'first', row: 'first', withGutter: true })}
+      {renderBottomTierFigmaCell({ type: 'Form Field', column: 'first', row: 'first', withGutter: true, mode })}
     </BottomTierRecipeFrame>
   ),
 };
 
 export const BottomTierMatrix: Story = {
-  render: () => {
+  render: ({ mode = 'default' }) => {
     const rows: Array<'first' | 'middle' | 'last'> = ['first', 'middle', 'last'];
     return (
       <div className={cardShell}>
@@ -1136,17 +1159,17 @@ export const BottomTierMatrix: Story = {
             {rows.map((row) => (
               <tr key={row} className="group/row">
                 <td className="p-0">
-                  <TableCardCell tier="bottom" row={row} column="first">
+                  <TableCardCell tier="bottom" row={row} column="first" mode={mode}>
                     {row} first
                   </TableCardCell>
                 </td>
                 <td className="p-0">
-                  <TableCardCell tier="bottom" row={row} column="center">
+                  <TableCardCell tier="bottom" row={row} column="center" mode={mode}>
                     {row} center
                   </TableCardCell>
                 </td>
                 <td className="p-0">
-                  <TableCardCell tier="bottom" row={row} column="last">
+                  <TableCardCell tier="bottom" row={row} column="last" mode={mode}>
                     {row} last
                   </TableCardCell>
                 </td>
@@ -1162,13 +1185,13 @@ export const BottomTierMatrix: Story = {
 /** Bottom Tier hosting form controls — `bottomVariant="form-field"`
  *  centres NumberInput / Toggle / Button vertically in the cell. */
 export const BottomTierFormControls: Story = {
-  render: () => (
+  render: ({ mode = 'default' }) => (
     <div className={cardShell}>
       <table className="border-collapse table-fixed w-[600px]">
         <tbody>
           <tr className="group/row">
             <td className="p-0">
-              <TableCardCell tier="bottom" row="first" column="first" bottomVariant="form-field">
+              <TableCardCell tier="bottom" row="first" column="first" mode={mode} bottomVariant="form-field">
                 <NumberInput value="1" onChange={() => undefined} />
               </TableCardCell>
             </td>
@@ -1177,6 +1200,7 @@ export const BottomTierFormControls: Story = {
                 tier="bottom"
                 row="first"
                 column="center"
+                mode={mode}
                 bottomVariant="form-field"
                 trailing={<Toggle checked={true} onChange={() => undefined} />}
               />
@@ -1186,6 +1210,7 @@ export const BottomTierFormControls: Story = {
                 tier="bottom"
                 row="last"
                 column="last"
+                mode={mode}
                 bottomVariant="form-field"
                 trailing={<Button variant="primary" size="sm" label="Save" />}
               />
@@ -1203,7 +1228,7 @@ export const BottomTierFormControls: Story = {
  */
 export const BottomTierFigmaMatrix: Story = {
   tags: ['!dev', 'visual-qa'],
-  render: () => {
+  render: ({ mode = 'default' }) => {
     const columns: Array<'first' | 'center' | 'last'> = ['first', 'center', 'last'];
     const states = [
       { label: 'Default', hovered: false },
@@ -1258,6 +1283,7 @@ export const BottomTierFigmaMatrix: Story = {
                                 row: variant.row,
                                 hovered,
                                 withGutter: column === 'first' && variant.withFirstGutter,
+                                mode,
                               })}
                             </td>
                           ))}
