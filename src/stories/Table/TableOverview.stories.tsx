@@ -574,7 +574,10 @@ const OrderProcessingCardTableDemo = () => (
                 </TableCardCell>
               </td>
             </tr>
-            {/* Inner bottom tier — product / Order Date / Status / Amounts / × */}
+            {/* Inner bottom tier — product / Order Date / Status / Amounts / ×.
+                Bottom border lives on the <td> so it lands at a single shared
+                y-position regardless of cell content height; the cell <div>
+                cancels its own border-b via !border-b-0 to avoid doubling. */}
             <tr className="group/row">
               <td colSpan={2} className="p-0 align-top border-b border-solid border-[color:var(--table-divider-border)]">
                 <TableCardCell tier="bottom" row="last" column="first" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-b-0">
