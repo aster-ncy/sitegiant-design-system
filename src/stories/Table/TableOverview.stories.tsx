@@ -544,10 +544,12 @@ const OrderProcessingCardTableDemo = () => (
             <col className="w-[10%]" />
           </colgroup>
           <tbody>
-            {/* Inner top tier — #7 + COID/INV / Edward / Webstore */}
+            {/* Inner top tier — #7 + COID/INV / Edward / Webstore.
+                Use !pl-12 (matching body cells) so content X-positions in the
+                strip align vertically with body content X-positions. */}
             <tr>
               <td colSpan={2} className="p-0 align-top">
-                <TableCardCell tier="top" column="first" className={cardTopCellClass}>
+                <TableCardCell tier="top" column="first" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)]">
                   <span className="flex items-center gap-[var(--spacing-20)] whitespace-nowrap">
                     <span className="font-[var(--font-weight-bold)]">#7</span>
                     <span>COID: -</span>
@@ -556,7 +558,7 @@ const OrderProcessingCardTableDemo = () => (
                 </TableCardCell>
               </td>
               <td colSpan={2} className="p-0 align-top">
-                <TableCardCell tier="top" column="center" className={cardCenterCellClass}>
+                <TableCardCell tier="top" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)] !border-l-0">
                   <span className="flex min-w-0 items-center gap-[var(--spacing-8)] whitespace-nowrap">
                     <span>Edward</span>
                     <span className="shrink-0">|</span>
@@ -566,7 +568,7 @@ const OrderProcessingCardTableDemo = () => (
                 </TableCardCell>
               </td>
               <td colSpan={2} className="p-0 align-top">
-                <TableCardCell tier="top" column="last" className={cardCenterCellClass}>
+                <TableCardCell tier="top" column="last" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)] !border-l-0">
                   <span className="inline-flex w-fit items-center gap-[var(--spacing-8)]">
                     <img src={webstoreIcon} alt="Webstore" className="size-[21px] shrink-0 rounded-[var(--radius-4)] object-cover" />
                     <span>Webstore</span>
