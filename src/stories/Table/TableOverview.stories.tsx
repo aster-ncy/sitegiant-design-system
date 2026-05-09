@@ -533,108 +533,98 @@ const OrderProcessingCardTableDemo = () => (
         outer top strip and inner card; horizontal/bottom padding gives the
         inner card a visible inset on white background. */}
     <div className="bg-[color:var(--color-surface-card)] px-[var(--spacing-12)] pb-[var(--spacing-12)] pt-[var(--spacing-12)] border-x border-b border-solid border-[color:var(--table-divider-border)] rounded-b-[var(--radius-4)]">
+      {/* Inner card uses flex rows (not <table>) so cells in the same row
+          auto-stretch to the tallest sibling's height. That lets the atom's
+          column-coordinated borders and corner radii close the inner card
+          even when content heights vary widely (×-icon vs product listing). */}
       <div className="overflow-hidden rounded-[var(--radius-4)]">
-        <table className="w-full table-fixed border-collapse">
-          <colgroup>
-            <col className="w-[6%]" />
-            <col className="w-[28%]" />
-            <col className="w-[18%]" />
-            <col className="w-[14%]" />
-            <col className="w-[24%]" />
-            <col className="w-[10%]" />
-          </colgroup>
-          <tbody>
-            {/* Inner top tier — #7 + COID/INV / Edward / Webstore.
-                Use !pl-12 (matching body cells) so content X-positions in the
-                strip align vertically with body content X-positions. */}
-            <tr>
-              <td colSpan={2} className="p-0 align-top">
-                <TableCardCell tier="top" column="first" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)]">
-                  <span className="flex items-center gap-[var(--spacing-20)] whitespace-nowrap">
-                    <span className="font-[var(--font-weight-bold)]">#7</span>
-                    <span>COID: -</span>
-                    <span>INV: -</span>
-                  </span>
-                </TableCardCell>
-              </td>
-              <td colSpan={2} className="p-0 align-top">
-                <TableCardCell tier="top" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)] !border-l-0">
-                  <span className="flex min-w-0 items-center gap-[var(--spacing-8)] whitespace-nowrap">
-                    <span>Edward</span>
-                    <span className="shrink-0">|</span>
-                    <span>Pulau Pinang, Malaysia</span>
-                    <Icon name="edit-pen" size={17} color="var(--color-sys-blue-DEFAULT)" />
-                  </span>
-                </TableCardCell>
-              </td>
-              <td colSpan={2} className="p-0 align-top">
-                <TableCardCell tier="top" column="last" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)] !border-l-0">
-                  <span className="inline-flex w-fit items-center gap-[var(--spacing-8)]">
-                    <img src={webstoreIcon} alt="Webstore" className="size-[21px] shrink-0 rounded-[var(--radius-4)] object-cover" />
-                    <span>Webstore</span>
-                  </span>
-                </TableCardCell>
-              </td>
-            </tr>
-            {/* Inner bottom tier — product / Order Date / Status / Amounts / ×.
-                Bottom border lives on the <td> so it lands at a single shared
-                y-position regardless of cell content height; the cell <div>
-                cancels its own border-b via !border-b-0 to avoid doubling. */}
-            <tr className="group/row">
-              <td colSpan={2} className="p-0 align-top border-b border-solid border-[color:var(--table-divider-border)]">
-                <TableCardCell tier="bottom" row="last" column="first" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-b-0">
-                  <TableCellListing
-                    image={<ProductImage src={productImage} alt="Product" size="lg" />}
-                    productName="[TESTING PRODUCT, DO NOT BUY] FishBone Keychain"
-                    infoRows={[
-                      { label: 'iSKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
-                      { label: 'SKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
-                      { label: 'Color/Size', value: 'Black/5cm' },
-                    ]}
-                    extras={<span>RM299.00 <span className="text-[color:var(--color-sys-blue-DEFAULT)]">x <span className="font-[var(--font-weight-bold)]">1</span></span></span>}
-                  />
-                </TableCardCell>
-              </td>
-              <td colSpan={1} className="p-0 align-top border-b border-solid border-[color:var(--table-divider-border)]">
-                <TableCardCell tier="bottom" row="last" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0 !border-b-0">
-                  <span className="flex flex-col gap-[var(--spacing-4)]">
-                    <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Order Date</span>
-                    <span>13-02-2026</span>
-                    <span>10:45:20</span>
-                    <span className="mt-[var(--spacing-8)] text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Shipping Method</span>
-                    <span>Pickup</span>
-                  </span>
-                </TableCardCell>
-              </td>
-              <td colSpan={1} className="p-0 align-top border-b border-solid border-[color:var(--table-divider-border)]">
-                <TableCardCell tier="bottom" row="last" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0 !border-b-0">
-                  <span className="flex flex-col items-start gap-[var(--spacing-4)]">
-                    <Pip type="warning" label="Processed" />
-                    <Pip type="success" label="Paid" />
-                  </span>
-                </TableCardCell>
-              </td>
-              <td colSpan={1} className="p-0 align-top border-b border-solid border-[color:var(--table-divider-border)]">
-                <TableCardCell tier="bottom" row="last" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0 !border-b-0">
-                  <span className="flex flex-col gap-[var(--spacing-4)]">
-                    <span className="text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)]">RM299.00</span>
-                    <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Cash on delivery</span>
-                    <span className="flex items-center gap-[var(--spacing-4)] text-[color:var(--color-sys-green-DEFAULT)]">
-                      <Icon name="coin" size={17} />
-                      RM299.00
-                    </span>
-                    <span className="pl-[calc(17px+var(--spacing-4))] text-[color:var(--color-sys-green-DEFAULT)]">100%</span>
-                  </span>
-                </TableCardCell>
-              </td>
-              <td colSpan={1} className="p-0 align-top border-b border-solid border-[color:var(--table-divider-border)]">
-                <TableCardCell tier="bottom" row="last" column="last" formField className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0 !border-b-0">
-                  <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
-                </TableCardCell>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        {/* Inner top tier — #7 + COID/INV / Edward / Webstore */}
+        <div className="flex">
+          <div className="w-[34%]">
+            <TableCardCell tier="top" column="first" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)]">
+              <span className="flex items-center gap-[var(--spacing-20)] whitespace-nowrap">
+                <span className="font-[var(--font-weight-bold)]">#7</span>
+                <span>COID: -</span>
+                <span>INV: -</span>
+              </span>
+            </TableCardCell>
+          </div>
+          <div className="w-[32%]">
+            <TableCardCell tier="top" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)]">
+              <span className="flex min-w-0 items-center gap-[var(--spacing-8)] whitespace-nowrap">
+                <span>Edward</span>
+                <span className="shrink-0">|</span>
+                <span>Pulau Pinang, Malaysia</span>
+                <Icon name="edit-pen" size={17} color="var(--color-sys-blue-DEFAULT)" />
+              </span>
+            </TableCardCell>
+          </div>
+          <div className="w-[34%]">
+            <TableCardCell tier="top" column="last" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)]">
+              <span className="ml-auto inline-flex w-fit items-center gap-[var(--spacing-8)]">
+                <img src={webstoreIcon} alt="Webstore" className="size-[21px] shrink-0 rounded-[var(--radius-4)] object-cover" />
+                <span>Webstore</span>
+              </span>
+            </TableCardCell>
+          </div>
+        </div>
+        {/* Inner bottom tier — product / Order Date / Status / Amounts / ×.
+            Flex children stretch by default → every cell matches the
+            tallest cell's height, so the atom's borders + corner radii
+            close the card box without any wrapper-border workaround. */}
+        <div className="group/row flex">
+          <div className="flex w-[34%]">
+            <TableCardCell tier="bottom" row="last" column="first" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)]">
+              <TableCellListing
+                image={<ProductImage src={productImage} alt="Product" size="lg" />}
+                productName="[TESTING PRODUCT, DO NOT BUY] FishBone Keychain"
+                infoRows={[
+                  { label: 'iSKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
+                  { label: 'SKU', value: 'cute-keycap-fidget-clicker-keychain-fishbone-black' },
+                  { label: 'Color/Size', value: 'Black/5cm' },
+                ]}
+                extras={<span>RM299.00 <span className="text-[color:var(--color-sys-blue-DEFAULT)]">x <span className="font-[var(--font-weight-bold)]">1</span></span></span>}
+              />
+            </TableCardCell>
+          </div>
+          <div className="flex w-[18%]">
+            <TableCardCell tier="bottom" row="last" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0">
+              <span className="flex flex-col gap-[var(--spacing-4)]">
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Order Date</span>
+                <span>13-02-2026</span>
+                <span>10:45:20</span>
+                <span className="mt-[var(--spacing-8)] text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Shipping Method</span>
+                <span>Pickup</span>
+              </span>
+            </TableCardCell>
+          </div>
+          <div className="flex w-[14%]">
+            <TableCardCell tier="bottom" row="last" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0">
+              <span className="flex flex-col items-start gap-[var(--spacing-4)]">
+                <Pip type="warning" label="Processed" />
+                <Pip type="success" label="Paid" />
+              </span>
+            </TableCardCell>
+          </div>
+          <div className="flex w-[24%]">
+            <TableCardCell tier="bottom" row="last" column="center" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-6)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0">
+              <span className="flex flex-col gap-[var(--spacing-4)]">
+                <span className="text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)]">RM299.00</span>
+                <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Cash on delivery</span>
+                <span className="flex items-center gap-[var(--spacing-4)] text-[color:var(--color-sys-green-DEFAULT)]">
+                  <Icon name="coin" size={17} />
+                  RM299.00
+                </span>
+                <span className="pl-[calc(17px+var(--spacing-4))] text-[color:var(--color-sys-green-DEFAULT)]">100%</span>
+              </span>
+            </TableCardCell>
+          </div>
+          <div className="flex w-[10%]">
+            <TableCardCell tier="bottom" row="last" column="last" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-12)] !border-l-0">
+              <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
+            </TableCardCell>
+          </div>
+        </div>
       </div>
     </div>
   </div>
