@@ -4,6 +4,29 @@ import type { TableColumnPosition } from '../TableHeaderCell';
 /** Vertical row position within a card (only meaningful for tier='bottom'). */
 export type TableCardCellRow = 'first' | 'middle' | 'last';
 
+/** Default mode: Figma 1432:2527 + 1438:4957. Inset mode: Figma 3453:7497 (legacy baseline). */
+export type TableCardCellMode = 'default' | 'inset';
+
+/** Top-tier content variant — encodes spacing/layout around the leading-icon slot. */
+export type TableCardCellTopVariant =
+  | 'default'
+  | 'app-icon'
+  | 'user-icon'
+  | 'status'
+  | 'product-image'
+  | 'ellipsis';
+
+/** Bottom-tier content variant — encodes layout/padding/alignment differences per variant. */
+export type TableCardCellBottomVariant =
+  | 'default'
+  | 'data'
+  | 'listing'
+  | 'status'
+  | 'star-rating'
+  | 'status-toggle'
+  | 'action-button'
+  | 'form-field';
+
 interface TableCardCellBase {
   /** Cell content. */
   children?: ReactNode;
@@ -22,6 +45,11 @@ interface TableCardCellBase {
   selected?: boolean;
   /** Extra classes on the root cell. */
   className?: string;
+  /**
+   * Padding mode. 'inset' (default) uses inset-table spacing (pl-12 pr-6).
+   * 'default' uses standard-table spacing (pl-24 pr-12).
+   */
+  mode?: TableCardCellMode;
 }
 
 export type TableCardCellProps =
@@ -31,6 +59,8 @@ export type TableCardCellProps =
        *  text instead of changing fill) per Figma 3453:7497. */
       tier: 'top';
       row?: never;
+      /** Top-tier content variant — adjusts gap/alignment around leadingIcon slot. */
+      topVariant?: TableCardCellTopVariant;
     })
   | (TableCardCellBase & {
       /** Bottom tier — content rows under the Top Tier header. White fill
@@ -41,29 +71,34 @@ export type TableCardCellProps =
        *  'middle' = inner row; 'last' = bottom of card (rounded bottom
        *  corners). */
       row: TableCardCellRow;
-      /** When true, switches inner flex from items-start to items-center
-       *  per Figma 3453:7841 — used when the cell hosts a form control
-       *  (NumberInput, Toggle, Button etc.). */
+      /** Bottom-tier content variant — encodes layout/padding/alignment per Figma 1438:4957. */
+      bottomVariant?: TableCardCellBottomVariant;
+      /**
+       * When true (or implied by bottomVariant='form-field'), switches inner
+       * flex from items-start to items-center per Figma 3453:7841.
+       */
       formField?: boolean;
     });
 
 /**
- * TableCardCell — Figma: Inset Table Row - Card - Top Tier (3453:7497)
- * + Bottom Tier (3453:7727).
+ * TableCardCell — Figma: Inset Table Row - Card - Top Tier (3453:7497) /
+ * Default Table - Card - Top Tier (1432:2527) + Bottom Tier (1438:4957).
  *
- * Card-style inset-table cell. Stack one Top Tier row + N Bottom Tier
- * rows inside a `<tr>`/`<td>` matrix wrapped in a rounded outer div to
- * form a product card with header + variant rows. Reference: live ERP
- * "Shocking Sale" variant editor (references/inset_table_s10.png).
+ * Card-style cell for inset or default tables. Stack one Top Tier row + N
+ * Bottom Tier rows inside a `<tr>`/`<td>` matrix wrapped in a rounded outer
+ * div to form a product card with header + variant rows.
+ *
+ * Set `mode="default"` for standard-table padding (pl-24 pr-12); omit for
+ * inset-table padding (pl-12 pr-6, the legacy baseline).
  *
  * Outer card recipe (caller's responsibility):
  * ```tsx
  * <div className="rounded-[var(--radius-4)] overflow-hidden">
  *   <table className="border-collapse w-full table-fixed">
  *     <tbody>
- *       <tr><TableCardCell tier="top" column="first">...</TableCardCell> ...</tr>
- *       <tr><TableCardCell tier="bottom" row="first" column="first">...</TableCardCell> ...</tr>
- *       <tr><TableCardCell tier="bottom" row="last" column="first">...</TableCardCell> ...</tr>
+ *       <tr><TableCardCell mode="default" tier="top" column="first">...</TableCardCell> ...</tr>
+ *       <tr><TableCardCell mode="default" tier="bottom" row="first" column="first">...</TableCardCell> ...</tr>
+ *       <tr><TableCardCell mode="default" tier="bottom" row="last" column="first">...</TableCardCell> ...</tr>
  *     </tbody>
  *   </table>
  * </div>
@@ -80,15 +115,21 @@ const textAlignmentClass: Record<TableColumnPosition, string> = {
   last: 'justify-start text-left',
 };
 
-// Top Tier base classes — Figma 3453:7574 (Default state).
+// Top Tier horizontal padding — mode-aware.
+const topTierHPad: Record<TableCardCellMode, string> = {
+  inset: 'pl-[var(--spacing-12)] pr-[var(--spacing-6)]',
+  default: 'pl-[var(--spacing-24)] pr-[var(--spacing-12)]',
+};
+
+// Top Tier base classes — Figma 3453:7574 (Default/Inset state) /
+// 1432:2527 (Default mode).
 // Constant fill --table-body-hover-fill (#fafafb) in BOTH default and
 // hover; hover applies bold + green to the text span via the parent
 // <tr className="group/row">. See spec §"Hover behavior".
 const topTierBaseClasses = [
-  // Outer flex layout per Figma.
-  'relative flex gap-[var(--spacing-12)] items-start w-full',
-  // Padding per Figma 3453:7574.
-  'pl-[var(--spacing-12)] pr-[var(--spacing-6)] py-[var(--spacing-12)]',
+  // Outer flex layout per Figma. py-12 is shared across modes.
+  'relative flex items-start w-full',
+  'py-[var(--spacing-12)]',
   // Constant fill — hover does NOT flip this.
   'bg-[var(--table-body-hover-fill)]',
   // Border colour shared by all card cells.
@@ -111,14 +152,22 @@ const topTierColumnClasses: Record<TableColumnPosition, string> = {
   last: 'rounded-tr-[var(--radius-4)] border-l-0 border-r',
 };
 
+/**
+ * Gap between leading-icon and text content, keyed by topVariant.
+ * App Icon / User Icon → 4px (tighter fit per Figma 1432:2527).
+ * Everything else retains the 12px default.
+ */
+const topTierGapClass = (variant: TableCardCellTopVariant): string => {
+  if (variant === 'app-icon' || variant === 'user-icon') return 'gap-[var(--spacing-4)]';
+  return 'gap-[var(--spacing-12)]';
+};
+
 // Bottom Tier base classes — Figma 3453:7822 (Default state) +
 // 3453:8104 (Hover). Default fill white; hover flips to --table-body-
 // hover-fill via parent <tr className="group/row">.
 const bottomTierBaseClasses = [
   // Outer flex layout per Figma.
   'relative flex w-full',
-  // Horizontal padding per Figma 3453:7822. Vertical padding is row-aware below.
-  'pl-[var(--spacing-12)] pr-[var(--spacing-6)]',
   // Default fill — flips to hover-fill on parent-row hover.
   'bg-[var(--table-body-fill)]',
   'group-hover/row:bg-[var(--table-body-hover-fill)]',
@@ -129,6 +178,24 @@ const bottomTierBaseClasses = [
   'transition-colors duration-150',
 ].join(' ');
 
+// Bottom Tier horizontal padding — mode-aware.
+// action-button / status-toggle on the last column swap padding regardless of
+// mode (trailing-action padding flip per Figma 1438:4957).
+const bottomTierHPad = (
+  mode: TableCardCellMode,
+  variant: TableCardCellBottomVariant,
+  column: TableColumnPosition,
+): string => {
+  const isTrailingAction = (variant === 'action-button' || variant === 'status-toggle') && column === 'last';
+  if (isTrailingAction) {
+    // Last column of action/toggle variants always uses reversed padding so the
+    // control sits flush with the card's right edge.
+    return 'pl-[var(--spacing-12)] pr-[var(--spacing-24)]';
+  }
+  if (mode === 'default') return 'pl-[var(--spacing-24)] pr-[var(--spacing-12)]';
+  return 'pl-[var(--spacing-12)] pr-[var(--spacing-6)]';
+};
+
 // Column-specific borders + corner radii.
 const bottomTierColumnClasses: Record<TableColumnPosition, string> = {
   first: '',
@@ -136,13 +203,22 @@ const bottomTierColumnClasses: Record<TableColumnPosition, string> = {
   last: 'border-r',
 };
 
-// Row-specific vertical padding + bottom border. Figma 3453:7727 uses
-// a compact middle row, with the first and last rows mirroring the
-// extra breathing room at the outside edges of the card.
-const bottomTierRowClasses: Record<TableCardCellRow, string> = {
-  first: 'pt-[var(--spacing-12)] pb-[var(--spacing-6)]',
-  middle: 'py-[var(--spacing-6)]',
-  last: 'pt-[var(--spacing-6)] pb-[var(--spacing-12)] border-b',
+// Row-specific vertical padding + bottom border.
+// Inset mode: first pt-12 pb-6 / middle py-6 / last pt-6 pb-12.
+// Default mode: first py-12 / middle py-6 / last pt-6 pb-24.
+const bottomTierRowClasses = (mode: TableCardCellMode, row: TableCardCellRow): string => {
+  if (mode === 'default') {
+    return {
+      first: 'pt-[var(--spacing-12)] pb-[var(--spacing-12)]',
+      middle: 'py-[var(--spacing-6)]',
+      last: 'pt-[var(--spacing-12)] pb-[var(--spacing-24)] border-b',
+    }[row];
+  }
+  return {
+    first: 'pt-[var(--spacing-12)] pb-[var(--spacing-6)]',
+    middle: 'py-[var(--spacing-6)]',
+    last: 'pt-[var(--spacing-6)] pb-[var(--spacing-12)] border-b',
+  }[row];
 };
 
 // Combined column × row corner radii — only the last row gets rounded
@@ -181,9 +257,10 @@ const topTierTextSpanClasses = [
 ].join(' ');
 
 export const TableCardCell = (props: TableCardCellProps) => {
-  const { children, column, checkbox, leadingIcon, trailing, hovered, selected, className = '' } = props;
+  const { children, column, checkbox, leadingIcon, trailing, hovered, selected, className = '', mode = 'inset' } = props;
 
   if (props.tier === 'top') {
+    const topVariant = props.topVariant ?? 'default';
     // Selection wins over everything (matches TableCell behaviour).
     const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
     // Forced-hover for Storybook / controlled state — apply bold + green
@@ -197,6 +274,8 @@ export const TableCardCell = (props: TableCardCellProps) => {
       <div
         className={[
           topTierBaseClasses,
+          topTierHPad[mode],
+          topTierGapClass(topVariant),
           topTierColumnClasses[column],
           fillOverride,
           className,
@@ -223,20 +302,24 @@ export const TableCardCell = (props: TableCardCellProps) => {
 
   // tier === 'bottom'
   const { row, formField } = props;
+  const bottomVariant = props.bottomVariant ?? 'default';
+  // form-field variant implies formField alignment
+  const isFormField = formField || bottomVariant === 'form-field';
   const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
   const forcedHoverFill = hovered
     ? '!bg-[var(--table-body-hover-fill)]'
     : '';
   // Form-field cells centre their content vertically (NumberInput,
   // Toggle, Button etc.); plain text cells anchor to top.
-  const innerAlignment = formField ? 'items-center' : 'items-start';
+  const innerAlignment = isFormField ? 'items-center' : 'items-start';
 
   return (
     <div
       className={[
         bottomTierBaseClasses,
+        bottomTierHPad(mode, bottomVariant, column),
         bottomTierColumnClasses[column],
-        bottomTierRowClasses[row],
+        bottomTierRowClasses(mode, row),
         bottomTierCornerClasses(column, row),
         innerAlignment,
         'gap-[var(--spacing-12)]',
@@ -253,7 +336,7 @@ export const TableCardCell = (props: TableCardCellProps) => {
       <span
         className={[
           bottomTierTextSpanClasses,
-          formField ? 'items-center' : 'items-start',
+          isFormField ? 'items-center' : 'items-start',
           textAlignmentClass[column],
         ].join(' ')}
       >

@@ -312,8 +312,16 @@ export type {
 } from './TableCell';
 
 // TableCardCell
-export { TableCardCell } from './TableCardCell';
-export type { TableCardCellProps, TableCardCellRow } from './TableCardCell';
+export { TableCardCell, TableCardCellListing } from './TableCardCell';
+export type {
+  TableCardCellProps,
+  TableCardCellRow,
+  TableCardCellMode,
+  TableCardCellTopVariant,
+  TableCardCellBottomVariant,
+  TableCardCellListingProps,
+  TableCardCellListingProperty,
+} from './TableCardCell';
 
 // TableExpandToggle
 export { TableExpandToggle } from './TableExpandToggle';

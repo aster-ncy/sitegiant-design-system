@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ReactNode } from 'react';
 import { TableCardCell } from './TableCardCell';
+import type { TableCardCellTopVariant, TableCardCellBottomVariant } from './TableCardCell';
 import { Checkbox } from '../Checkbox';
 import { Pip } from '../Pip';
 import { Toggle } from '../Toggle';
@@ -164,7 +165,13 @@ const topTierContainerWidth = (type: string, column: 'first' | 'center' | 'last'
   return 'w-[195px]';
 };
 
-const topTierCompactGap = '!gap-[var(--spacing-4)]';
+const topTierVariantProp = (type: string): TableCardCellTopVariant => {
+  if (type === 'App Icon') return 'app-icon';
+  if (type === 'User Icon') return 'user-icon';
+  if (type === 'Status') return 'status';
+  if (type === 'Product Image') return 'product-image';
+  return 'default';
+};
 
 const topTierContent = (type: string, textState: 'normal' | 'bold' | 'link') => {
   const textClass = `whitespace-nowrap ${textState === 'bold' ? 'font-[var(--font-weight-bold)]' : ''}`;
@@ -200,12 +207,6 @@ const topTierLeading = (type: string) => {
   return undefined;
 };
 
-const topTierTypeClass = (type: string) => {
-  if (type === 'App Icon' || type === 'User Icon') return topTierCompactGap;
-  if (type === 'Product Image') return '!gap-[var(--spacing-12)]';
-  return '';
-};
-
 const renderTopTierFigmaCell = ({
   type,
   column,
@@ -222,8 +223,10 @@ const renderTopTierFigmaCell = ({
       tier="top"
       column={column}
       hovered={hovered}
+      mode="default"
+      topVariant={topTierVariantProp(type)}
       leadingIcon={topTierLeading(type)}
-      className={`${topTierContainerWidth(type, column)} !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] ${topTierTypeClass(type)}`}
+      className={topTierContainerWidth(type, column)}
     >
       {topTierContent(type, textState)}
     </TableCardCell>
@@ -583,6 +586,17 @@ const BottomListingStackValue = ({
   );
 };
 
+const bottomTierVariantProp = (type: BottomTierVariant): TableCardCellBottomVariant => {
+  if (type === 'Data') return 'data';
+  if (type === 'Listing') return 'listing';
+  if (type === 'Status') return 'status';
+  if (type === 'Star Rating') return 'star-rating';
+  if (type === 'Action Button') return 'action-button';
+  if (type === 'Status Toggle') return 'status-toggle';
+  if (type === 'Form Field') return 'form-field';
+  return 'default';
+};
+
 const bottomTierContent = (type: BottomTierVariant) => {
   if (type === 'Default') return <BottomInfoValue />;
   if (type === 'Data') return <BottomDataValue tone="success" />;
@@ -610,7 +624,6 @@ const renderBottomTierFigmaCell = ({
 }) => {
   const width = bottomTierVariantWidth(type, column, withGutter);
   const contentWidth = withGutter ? width - 53 : width;
-  const isControl = type === 'Action Button' || type === 'Status Toggle' || type === 'Form Field';
   const height = bottomTierCellHeight(type, row);
   const cell = (
     <TableCardCell
@@ -618,13 +631,11 @@ const renderBottomTierFigmaCell = ({
       row={row}
       column={column}
       hovered={hovered}
-      formField={isControl}
+      mode="default"
+      bottomVariant={bottomTierVariantProp(type)}
       className={[
         bottomTierWidthClass(contentWidth),
         bottomTierHeightClass(height),
-        '!pl-[var(--spacing-24)] !pr-[var(--spacing-12)]',
-        row === 'first' ? '!py-[var(--spacing-12)]' : '!pt-[var(--spacing-12)] !pb-[var(--spacing-24)]',
-        type === 'Action Button' || type === 'Status Toggle' ? '!pl-[var(--spacing-12)] !pr-[var(--spacing-24)]' : '',
         type === 'Form Field' ? '!items-center !justify-center !py-[var(--spacing-6)]' : '',
       ].filter(Boolean).join(' ')}
     >
@@ -991,7 +1002,9 @@ export const BottomTierListingExpanded: Story = {
         tier="bottom"
         row="last"
         column="first"
-        className="!h-auto !min-h-[640px] !w-[427px] !items-start !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-24)]"
+        mode="default"
+        bottomVariant="listing"
+        className="!h-auto !min-h-[640px] !w-[427px] !items-start"
       >
         <BottomListingStackValue expanded withCheckbox />
       </TableCardCell>
@@ -1039,11 +1052,13 @@ export const BottomTierListingMatrix: Story = {
                             row="last"
                             column={column}
                             hovered={state.hovered}
+                            mode="default"
+                            bottomVariant="listing"
                             className={[
                               '!h-auto',
                               mode.expanded ? '!min-h-[640px]' : '!min-h-[181px]',
                               option.withCheckbox ? '!w-[427px]' : '!w-[374px]',
-                              '!items-start !pl-[var(--spacing-24)] !pr-[var(--spacing-12)] !pt-[var(--spacing-12)] !pb-[var(--spacing-24)]',
+                              '!items-start',
                             ].join(' ')}
                           >
                             {mode.expanded || option.withCheckbox ? (
