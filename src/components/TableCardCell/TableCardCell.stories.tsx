@@ -832,10 +832,14 @@ const unifiedBottomCellWidth = (
 
   // Listing variant has its own wide canvas.
   if (variant === 'listing') return 374 + checkboxBonus;
-  // Trailing-action variants (action-button / status-toggle) only make
-  // sense on last column visually; use the narrow trailing width.
-  if (variant === 'action-button') return 104;
-  if (variant === 'status-toggle') return 104;
+  // Trailing-action variants (action-button / status-toggle) are
+  // canonically `column='last'` (where the 104px trailing slot fits).
+  // The Controls panel does allow flipping them to first/center for
+  // experimentation, so use the same default-row widths in those
+  // columns and apply the checkbox bonus where applicable.
+  if (variant === 'action-button' || variant === 'status-toggle') {
+    return ({ first: 248, center: 200, last: 104 }[column]) + checkboxBonus;
+  }
   // Form field variant: medium width to host NumberInput / Toggle.
   if (variant === 'form-field') return ({ first: 195, center: 158, last: 195 }[column]) + checkboxBonus;
   // Default / data / status / star-rating: align with Figma matrix widths.
@@ -1496,8 +1500,8 @@ export const BottomTierStatusPip: StoryObj<UnifiedBottomArgs> = {
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Action Button.
  *  Canonical column is `last` (trailing-action padding flips to
- *  `pl-12 pr-24` there). Setting `column='first'` / `'center'` is valid
- *  but undocumented in Figma. */
+ *  `pl-12 pr-24` there, 104px cell). First/center columns are not in
+ *  Figma but render sensibly via the default 248/200px widths. */
 export const BottomTierActionButton: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
   args: { mode: 'default', row: 'last', column: 'last', withCheckbox: false },

@@ -266,10 +266,13 @@ export const Toggle = ({
           </span>
         </span>
       ) : (
-        // Horizontal: 21px outer slot carries the peer-focus-visible
+        // Horizontal: outer wrapper carries the peer-focus-visible
         // ring (the input + this wrapper are direct siblings of <label>,
-        // so the peer selector resolves correctly). Inner 33px slot
-        // overflows by ±6px around the label-line center.
+        // so the peer selector resolves correctly). With a label, the
+        // wrapper applies a 21px slot so the inner 33px Toggle Container
+        // overflows ±6px around the label-line center; without a label,
+        // the wrapper is class-less and the 33px slot is the bounding
+        // box.
         <span
           className={`${horizontalToggleWrapperClass} rounded-full peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1 peer-focus-visible:ring-[var(--button-primary-default-fill)]`}
         >
