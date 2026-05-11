@@ -47,6 +47,7 @@ const headingClass = 'text-[length:var(--text-16)] leading-[var(--leading-24)] f
 const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-info)]';
 const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
 const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)] bg-[var(--table-body-fill)]';
+const guidanceShell = 'rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)] bg-[var(--table-body-fill)] px-[var(--spacing-16)]';
 const bodyCellSurfaceClass = 'bg-[var(--table-body-fill)]';
 const insetBodyCellSurfaceClass = 'bg-[var(--table-inset-body-fill)]';
 const insetSubrowCellSurfaceClass = 'bg-[var(--table-inset-subrow-fill)]';
@@ -670,7 +671,7 @@ export const Overview: Story = {
           Use this page like a decision tree. The atom pages are still available for details, but most product work should start from one of these recipes.
         </p>
       </section>
-      <section className="rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)] px-[var(--spacing-16)]">
+      <section className={guidanceShell}>
         <GuidanceRow label="Standard table">
           Use <code>TableHeaderCell</code> and <code>TableCell</code> for normal data tables.
         </GuidanceRow>
