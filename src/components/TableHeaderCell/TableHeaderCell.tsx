@@ -62,6 +62,34 @@ export interface TableHeaderCellProps {
   iconAriaLabel?: string;
 }
 
+const SortIndicator = ({
+  direction,
+  inactiveClassName,
+  activeClassName,
+}: {
+  direction?: 'asc' | 'desc' | null;
+  inactiveClassName: string;
+  activeClassName: string;
+}) => {
+  const topClassName = direction === 'asc' ? activeClassName : inactiveClassName;
+  const bottomClassName = direction === 'desc' ? activeClassName : inactiveClassName;
+
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      width={17}
+      height={17}
+      className="shrink-0"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path d="M12 6L7 11H17L12 6Z" fill="currentColor" className={topClassName} />
+      <path d="M7 13L12 18L17 13H7Z" fill="currentColor" className={bottomClassName} />
+    </svg>
+  );
+};
+
 const columnPaddingX: Record<TableColumnPosition, string> = {
   first: 'pl-[var(--spacing-24)] pr-[var(--spacing-12)]',
   center: 'px-[var(--spacing-12)]',
@@ -189,6 +217,9 @@ export const TableHeaderCell = ({
     : isInset
       ? 'text-[color:var(--table-inset-header-icon)]'
       : 'text-[color:var(--table-header-icon)]';
+  const activeSortIconColorClass = disabled
+    ? 'text-[color:var(--table-header-disabled-text)]'
+    : 'text-[color:var(--color-text-secondary)]';
 
   const titleClasses = [
     // `leading-none` clamps the label span's bounding box to glyph
@@ -256,13 +287,7 @@ export const TableHeaderCell = ({
   //      anchor to and visually floats. If a column genuinely has no
   //      header text, use `type='icon'` instead.
   const hasLabel = label !== undefined && label !== null && label !== '';
-  const sortIcon = sortable && !subheader && hasLabel
-    ? sortDirection === 'asc'
-      ? 'arrow-up'
-      : sortDirection === 'desc'
-        ? 'arrow-down'
-        : 'menu-swap'
-    : null;
+  const showSortIndicator = sortable && !subheader && hasLabel;
 
   return (
     <div className={cellClasses}>
@@ -311,11 +336,11 @@ export const TableHeaderCell = ({
               header, adopt a different pattern; don't drop truncate
               here without also restoring leading on the title-block. */}
           {hasLabel && <span className="truncate">{label}</span>}
-          {sortIcon && (
-            <Icon
-              name={sortIcon as Parameters<typeof Icon>[0]['name']}
-              size={17}
-              className={['shrink-0', iconColorClass].join(' ')}
+          {showSortIndicator && (
+            <SortIndicator
+              direction={sortDirection}
+              inactiveClassName={iconColorClass}
+              activeClassName={activeSortIconColorClass}
             />
           )}
         </button>

@@ -23,23 +23,66 @@ import shopeeMy from '../../assets/channel-icons/shopee-my.png';
 import { productImages } from '../../assets/product-images';
 import sitegiantDemoApp from '../../assets/method-images/sitegiant-demo-app.png';
 
+type TableMode = 'default' | 'inset';
+type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
+  mode?: TableMode;
+};
+
 const meta = {
-  title: 'Tables/Table Atoms/Body Cell and Content Blocks',
+  title: 'Tables/Table Atoms/Body Cell',
   component: TableCell,
-  parameters: { layout: 'padded' },
+  subcomponents: { TableCellInfo, TableCellMainSub, TableCellListing },
+  parameters: {
+    layout: 'padded',
+    controls: {
+      sort: 'none',
+      exclude: ['inset', 'checkbox', 'leadingIcon', 'trailing', 'className', 'onClick'],
+    },
+  },
   tags: ['autodocs'],
   argTypes: {
-    column: { control: 'inline-radio', options: ['first', 'center', 'last'] },
-    align: { control: 'inline-radio', options: ['left', 'center', 'right'] },
-    weight: { control: 'inline-radio', options: ['normal', 'bold'] },
-    tone: { control: 'inline-radio', options: ['default', 'success', 'danger'] },
-    row: { control: 'inline-radio', options: ['first', 'middle', 'last'] },
+    mode: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'inset'] satisfies ReadonlyArray<TableMode>,
+      description: 'Storybook control for table density/fill. Maps to the component `inset` prop.',
+      table: { defaultValue: { summary: 'default' } },
+    },
+    column: {
+      control: { type: 'inline-radio' },
+      options: ['first', 'center', 'last'],
+    },
+    align: {
+      control: { type: 'inline-radio' },
+      options: ['left', 'center', 'right'],
+    },
+    weight: {
+      control: { type: 'inline-radio' },
+      options: ['normal', 'bold'],
+    },
+    tone: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'success', 'danger'],
+    },
+    row: {
+      control: { type: 'inline-radio' },
+      options: ['first', 'middle', 'last'],
+    },
     hovered: { control: 'boolean' },
+    selected: { control: 'boolean' },
+    subrow: {
+      control: 'boolean',
+      description: 'Nested sub-row state. Sub-row implies inset mode and uses the subrow fill/padding.',
+    },
+    boldOnRowHover: { control: 'boolean' },
   },
   args: {
+    mode: 'default',
     children: 'Table Body Data',
   },
-} satisfies Meta<typeof TableCell>;
+  render: ({ mode = 'default', inset, ...args }) => (
+    <TableCell {...args} inset={mode === 'inset' || inset} />
+  ),
+} satisfies Meta<TableCellStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -389,6 +432,9 @@ const Cell = ({ children, ...rest }: React.ComponentProps<typeof TableCell>) => 
     <TableCell {...rest}>{children}</TableCell>
   </td>
 );
+
+const fullTableShellClass = 'overflow-hidden rounded-[var(--radius-12)] bg-[var(--table-body-fill)]';
+const fullTableHeaderCellClass = '!min-h-[calc(var(--leading-21)+var(--spacing-40))]';
 
 const insetColumns = ['first', 'center', 'last'] as const;
 const insetRows = ['middle', 'last'] as const;
@@ -3794,55 +3840,67 @@ export const WithExpandToggle: Story = {
 
 export const FullTable: Story = {
   render: () => (
-    <table className="border-collapse w-full table-fixed">
-      <thead>
-        <tr>
-          <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell column="first" align="left" label="Product" sortable checkbox={<Checkbox size="sm" />} />
-          </th>
-          <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell column="center" align="left" label="SKU" sortable />
-          </th>
-          <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell column="center" align="right" label="Stock" sortable />
-          </th>
-          <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell column="center" align="right" label="Price" sortable />
-          </th>
-          <th className="p-0">
-            <TableHeaderCell column="last" align="left" label="Action" />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
-            Wireless mouse
-          </Cell>
-          <Cell column="center" align="left">SKU-1042</Cell>
-          <Cell column="center" align="right">128</Cell>
-          <Cell column="center" align="right">RM 89.00</Cell>
-          <Cell column="last" align="left">⋯</Cell>
-        </tr>
-        <tr>
-          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
-            USB-C Hub
-          </Cell>
-          <Cell column="center" align="left">SKU-2103</Cell>
-          <Cell column="center" align="right">42</Cell>
-          <Cell column="center" align="right">RM 159.00</Cell>
-          <Cell column="last" align="left">⋯</Cell>
-        </tr>
-        <tr>
-          <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox size="sm" />}>
-            Mechanical keyboard
-          </Cell>
-          <Cell column="center" align="left" row="last">SKU-3088</Cell>
-          <Cell column="center" align="right" row="last">7</Cell>
-          <Cell column="center" align="right" row="last">RM 459.00</Cell>
-          <Cell column="last" align="left" row="last">⋯</Cell>
-        </tr>
-      </tbody>
-    </table>
+    <div className={fullTableShellClass}>
+      <table className="w-full table-fixed border-separate border-spacing-0">
+        <thead>
+          <tr>
+            <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
+              <TableHeaderCell
+                column="first"
+                align="left"
+                label="Product"
+                sortable
+                checkbox={<Checkbox size="sm" />}
+                className={fullTableHeaderCellClass}
+              />
+            </th>
+            <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
+              <TableHeaderCell column="center" align="left" label="SKU" sortable className={fullTableHeaderCellClass} />
+            </th>
+            <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
+              <TableHeaderCell column="center" align="right" label="Stock" sortable className={fullTableHeaderCellClass} />
+            </th>
+            <th className="p-0" aria-sort={sortDirectionToAria(null, true)}>
+              <TableHeaderCell column="center" align="right" label="Price" sortable className={fullTableHeaderCellClass} />
+            </th>
+            <th className="p-0">
+              <TableHeaderCell column="last" align="left" label="Action" className={fullTableHeaderCellClass} />
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
+              Wireless mouse
+            </Cell>
+            <Cell column="center" align="left">SKU-1042</Cell>
+            <Cell column="center" align="right">128</Cell>
+            <Cell column="center" align="right">RM 89.00</Cell>
+            <Cell column="last" align="left">⋯</Cell>
+          </tr>
+          <tr>
+            <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />}>
+              USB-C Hub
+            </Cell>
+            <Cell column="center" align="left">SKU-2103</Cell>
+            <Cell column="center" align="right">42</Cell>
+            <Cell column="center" align="right">RM 159.00</Cell>
+            <Cell column="last" align="left">⋯</Cell>
+          </tr>
+          <tr>
+            <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox size="sm" />}>
+              Mechanical keyboard
+            </Cell>
+            <Cell column="center" align="left" row="last">SKU-3088</Cell>
+            <Cell column="center" align="right" row="last">7</Cell>
+            <Cell column="center" align="right" row="last">RM 459.00</Cell>
+            <Cell column="last" align="left" row="last">⋯</Cell>
+          </tr>
+          <tr aria-hidden="true">
+            <td colSpan={5} className="h-[20px] bg-[var(--table-body-fill)] p-0" />
+          </tr>
+        </tbody>
+      </table>
+    </div>
   ),
 };
