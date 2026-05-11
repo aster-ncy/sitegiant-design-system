@@ -46,7 +46,11 @@ const sectionShell = 'flex flex-col gap-[var(--spacing-12)]';
 const headingClass = 'text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)] text-[color:var(--color-text-primary)]';
 const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-info)]';
 const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
-const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)]';
+const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)] bg-[var(--table-body-fill)]';
+const bodyCellSurfaceClass = 'bg-[var(--table-body-fill)]';
+const insetBodyCellSurfaceClass = 'bg-[var(--table-inset-body-fill)]';
+const insetSubrowCellSurfaceClass = 'bg-[var(--table-inset-subrow-fill)]';
+const selectedCellSurfaceClass = 'bg-[var(--color-sys-blue-lighter)]';
 const rowDividerCellClass = 'border-b border-solid border-[var(--table-divider-border)]';
 const insetRowDividerCellClass = 'border-b border-solid border-[var(--table-divider-lighter-border)]';
 const recordHeaderBorderClass = '[border-width:1px_1px_1px_0]';
@@ -78,6 +82,41 @@ const ChannelIcon = () => (
   />
 );
 
+const DefaultTableBottomGap = ({ colSpan }: { colSpan: number }) => (
+  <tr aria-hidden="true">
+    <td colSpan={colSpan} className={`h-[20px] p-0 ${bodyCellSurfaceClass}`} />
+  </tr>
+);
+
+const ActionIconLinks = () => (
+  <div className="flex items-center gap-[var(--spacing-6)]">
+    <IconLink
+      icon="edit"
+      aria-label="Edit"
+      showTooltip={false}
+      className={[
+        'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
+        'text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)]',
+        'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+      ].join(' ')}
+    />
+    <IconLink
+      icon="trash"
+      aria-label="Delete"
+      showTooltip={false}
+      variant="danger"
+      className={[
+        'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
+        'text-[color:var(--icon-link-danger-default)] hover:text-[color:var(--icon-link-danger-hover)] active:text-[color:var(--icon-link-danger-clicked)]',
+        'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+      ].join(' ')}
+    />
+  </div>
+);
+
+const actionTextLinkRows = ['Inventory Update', 'Stock Adjustment', 'Listing Detail'] as const;
+const actionIconRows = ['Dynamo Laundry Capsules', 'Flash Sale Bundle', 'Starter Kit'] as const;
+
 const BasicTableDemo = () => (
   <div className={tableShell}>
     <table className="w-full table-fixed border-separate border-spacing-0">
@@ -99,20 +138,20 @@ const BasicTableDemo = () => (
       </thead>
       <tbody>
         <tr className="group/row hover:[&_td]:bg-[var(--table-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
-          <td className={`p-0 ${rowDividerCellClass}`}>
+          <td className={`p-0 ${bodyCellSurfaceClass} ${rowDividerCellClass}`}>
             <TableCell column="first" boldOnRowHover className="shadow-none">
               Dynamo Laundry Capsules
             </TableCell>
           </td>
-          <td className={`p-0 ${rowDividerCellClass}`}>
+          <td className={`p-0 ${bodyCellSurfaceClass} ${rowDividerCellClass}`}>
             <TableCell leadingIcon={<ChannelIcon />} className="shadow-none">Shopee MY</TableCell>
           </td>
-          <td className={`p-0 ${rowDividerCellClass}`}>
+          <td className={`p-0 ${bodyCellSurfaceClass} ${rowDividerCellClass}`}>
             <TableCell align="center" tone="success" className="shadow-none">
               240
             </TableCell>
           </td>
-          <td className={`p-0 ${rowDividerCellClass}`}>
+          <td className={`p-0 ${bodyCellSurfaceClass} ${rowDividerCellClass}`}>
             <TableCell
               column="last"
               align="left"
@@ -123,20 +162,20 @@ const BasicTableDemo = () => (
           </td>
         </tr>
         <tr className="group/row hover:[&_td]:bg-[var(--table-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
-          <td className="p-0">
+          <td className={`p-0 ${bodyCellSurfaceClass}`}>
             <TableCell column="first" row="last" boldOnRowHover>
               Flash Sale Bundle
             </TableCell>
           </td>
-          <td className="p-0">
+          <td className={`p-0 ${bodyCellSurfaceClass}`}>
             <TableCell row="last" leadingIcon={<ChannelIcon />}>Shopee MY</TableCell>
           </td>
-          <td className="p-0">
+          <td className={`p-0 ${bodyCellSurfaceClass}`}>
             <TableCell row="last" align="center" tone="danger">
               8
             </TableCell>
           </td>
-          <td className="p-0">
+          <td className={`p-0 ${bodyCellSurfaceClass}`}>
             <TableCell
               row="last"
               column="last"
@@ -146,9 +185,7 @@ const BasicTableDemo = () => (
             </TableCell>
           </td>
         </tr>
-        <tr aria-hidden="true">
-          <td colSpan={4} className="h-[20px] p-0" />
-        </tr>
+        <DefaultTableBottomGap colSpan={4} />
       </tbody>
     </table>
   </div>
@@ -176,7 +213,7 @@ const SelectionTableDemo = () => (
       <tbody>
         {['Dynamo Laundry Capsules', 'Flash Sale Bundle'].map((name, index) => (
           <tr key={name}>
-            <td className="w-[48%] p-0">
+            <td className={`w-[48%] p-0 ${selectedCellSurfaceClass}`}>
               <TableCell
                 column="first"
                 selected
@@ -186,83 +223,82 @@ const SelectionTableDemo = () => (
                 {name}
               </TableCell>
             </td>
-            <td className="w-[28%] p-0">
+            <td className={`w-[28%] p-0 ${selectedCellSurfaceClass}`}>
               <TableCell selected row={index === 1 ? 'last' : 'middle'}>
                 Selected row
               </TableCell>
             </td>
-            <td className="w-[24%] p-0">
+            <td className={`w-[24%] p-0 ${selectedCellSurfaceClass}`}>
               <TableCell selected column="last" row={index === 1 ? 'last' : 'middle'} align="right">
                 Ready
               </TableCell>
             </td>
           </tr>
         ))}
-        <tr aria-hidden="true">
-          <td colSpan={3} className="h-[20px] p-0" />
-        </tr>
+        <DefaultTableBottomGap colSpan={3} />
       </tbody>
     </table>
   </div>
 );
 
 const ActionLinksDemo = () => (
-  <div className={tableShell}>
-    <table className="w-full table-fixed border-separate border-spacing-0">
-      <tbody>
-        <tr>
-          <td className={`w-[42%] p-0 ${rowDividerCellClass}`}>
-            <TableCell column="first" className="shadow-none">Inventory Update</TableCell>
-          </td>
-          <td className={`w-[34%] p-0 ${rowDividerCellClass}`}>
-            <TableCell className="shadow-none">
-              <div className="flex flex-col items-start gap-[var(--spacing-4)]">
-                <div className="flex items-start py-[var(--spacing-2)]">
-                  <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
-                </div>
-                <div className="flex items-start py-[var(--spacing-2)]">
-                  <TextLink label="View detail" iconPosition="left" icon={<Icon name="external-link" size={17} />} />
-                </div>
-              </div>
-            </TableCell>
-          </td>
-          <td className={`w-[24%] p-0 ${rowDividerCellClass}`}>
-            <TableCell
-              column="last"
-              className="shadow-none"
-              trailing={
-                <div className="flex items-center gap-[var(--spacing-6)]">
-                  <IconLink
-                    icon="edit"
-                    aria-label="Edit"
-                    showTooltip={false}
-                    className={[
-                      'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
-                      'text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)]',
-                      'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
-                    ].join(' ')}
-                  />
-                  <IconLink
-                    icon="trash"
-                    aria-label="Delete"
-                    showTooltip={false}
-                    variant="danger"
-                    className={[
-                      'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
-                      'text-[color:var(--icon-link-danger-default)] hover:text-[color:var(--icon-link-danger-hover)] active:text-[color:var(--icon-link-danger-clicked)]',
-                      'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
-                    ].join(' ')}
-                  />
-                </div>
-              }
-            />
-          </td>
-        </tr>
-        <tr aria-hidden="true">
-          <td colSpan={3} className="h-[20px] p-0" />
-        </tr>
-      </tbody>
-    </table>
+  <div className="flex flex-col gap-[var(--spacing-12)]">
+    <div className={tableShell}>
+      <table className="w-full table-fixed border-separate border-spacing-0">
+        <tbody>
+          {actionTextLinkRows.map((name, index) => {
+            const isLastRow = index === actionTextLinkRows.length - 1;
+            const rowPosition = isLastRow ? 'last' : 'middle';
+            const dividerClass = isLastRow ? '' : rowDividerCellClass;
+
+            return (
+              <tr key={name} className="h-[94px]">
+                <td className={`w-[42%] p-0 align-top ${bodyCellSurfaceClass} ${dividerClass}`}>
+                  <TableCell column="first" row={rowPosition} className="!h-[94px] !items-start shadow-none">{name}</TableCell>
+                </td>
+                <td className={`w-[58%] p-0 align-top ${bodyCellSurfaceClass} ${dividerClass}`}>
+                  <TableCell row={rowPosition} column="last" className="!h-[94px] !items-start shadow-none">
+                    <div className="flex flex-col items-start gap-[var(--spacing-4)]">
+                      <div className="flex items-start py-[var(--spacing-2)]">
+                        <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
+                      </div>
+                      <div className="flex items-start py-[var(--spacing-2)]">
+                        <TextLink label="View detail" iconPosition="left" icon={<Icon name="external-link" size={17} />} />
+                      </div>
+                    </div>
+                  </TableCell>
+                </td>
+              </tr>
+            );
+          })}
+          <DefaultTableBottomGap colSpan={2} />
+        </tbody>
+      </table>
+    </div>
+
+    <div className={tableShell}>
+      <table className="w-full table-fixed border-separate border-spacing-0">
+        <tbody>
+          {actionIconRows.map((name, index) => {
+            const isLastRow = index === actionIconRows.length - 1;
+            const rowPosition = isLastRow ? 'last' : 'middle';
+            const dividerClass = isLastRow ? '' : rowDividerCellClass;
+
+            return (
+              <tr key={name} className="h-[81px]">
+                <td className={`w-[76%] p-0 align-middle ${bodyCellSurfaceClass} ${dividerClass}`}>
+                  <TableCell column="first" row={rowPosition} className="!h-[81px] !items-center shadow-none">{name}</TableCell>
+                </td>
+                <td className={`w-[24%] p-0 align-middle ${bodyCellSurfaceClass} ${dividerClass}`}>
+                  <TableCell row={rowPosition} column="last" align="right" className="!h-[81px] !items-center shadow-none" trailing={<ActionIconLinks />} />
+                </td>
+              </tr>
+            );
+          })}
+          <DefaultTableBottomGap colSpan={2} />
+        </tbody>
+      </table>
+    </div>
   </div>
 );
 
@@ -270,21 +306,21 @@ const ExpandableRowsDemo = () => {
   const [expanded, setExpanded] = useState(true);
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden bg-[var(--table-inset-body-fill)]">
       <table className="w-full table-fixed border-separate border-spacing-0">
         <tbody>
           <tr>
-            <td className={`w-[48%] p-0 ${expanded ? '' : rowDividerCellClass}`}>
+            <td className={`w-[48%] p-0 ${insetBodyCellSurfaceClass} ${expanded ? '' : rowDividerCellClass}`}>
               <TableCell inset column="first" weight="bold" className="shadow-none">
                 Shopee MY
               </TableCell>
             </td>
-            <td className={`w-[34%] p-0 ${expanded ? '' : rowDividerCellClass}`}>
+            <td className={`w-[34%] p-0 ${insetBodyCellSurfaceClass} ${expanded ? '' : rowDividerCellClass}`}>
               <TableCell inset align="right" className="shadow-none">
                 RM 2,450.00
               </TableCell>
             </td>
-            <td className={`w-[18%] p-0 ${expanded ? '' : rowDividerCellClass}`}>
+            <td className={`w-[18%] p-0 ${insetBodyCellSurfaceClass} ${expanded ? '' : rowDividerCellClass}`}>
               <TableCell
                 inset
                 column="last"
@@ -297,28 +333,28 @@ const ExpandableRowsDemo = () => {
           {expanded && (
             <>
               <tr>
-                <td className="p-0">
+                <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
                   <TableHeaderCell subheader column="first" label="Store" />
                 </td>
-                <td className="p-0">
+                <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
                   <TableHeaderCell subheader align="right" label="Sales" />
                 </td>
-                <td className="p-0">
+                <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
                   <TableHeaderCell subheader column="last" align="right" label="Orders" />
                 </td>
               </tr>
               <tr>
-                <td className="p-0">
+                <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
                   <TableCell subrow column="first" leadingIcon={<ChannelIcon />}>
                     Main Store
                   </TableCell>
                 </td>
-                <td className="p-0">
+                <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
                   <TableCell subrow align="right" tone="success">
                     RM 1,240.00
                   </TableCell>
                 </td>
-                <td className="p-0">
+                <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
                   <TableCell subrow column="last" align="right">
                     18
                   </TableCell>
@@ -360,17 +396,17 @@ const InsetTableDemo = () => (
 
           return (
             <tr key={row.trackingNo} className="group/row hover:[&_td]:bg-[var(--table-inset-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
-              <td className={`p-0 ${dividerClass}`}>
+              <td className={`p-0 ${insetBodyCellSurfaceClass} ${dividerClass}`}>
                 <TableCell inset column="first" checkbox={<Checkbox size="sm" />} boldOnRowHover className="shadow-none">
                   {row.trackingNo}
                 </TableCell>
               </td>
-              <td className={`p-0 ${dividerClass}`}>
+              <td className={`p-0 ${insetBodyCellSurfaceClass} ${dividerClass}`}>
                 <TableCell inset className="shadow-none">
                   <Pip type="success" label={row.status} />
                 </TableCell>
               </td>
-              <td className={`p-0 ${dividerClass}`}>
+              <td className={`p-0 ${insetBodyCellSurfaceClass} ${dividerClass}`}>
                 <TableCell inset column="last" align="left" className="shadow-none">
                   <TextLink label="Edit" iconPosition="left" icon={<Icon name="edit-pen" size={17} />} />
                 </TableCell>
