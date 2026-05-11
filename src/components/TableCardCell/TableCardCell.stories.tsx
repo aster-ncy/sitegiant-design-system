@@ -1370,7 +1370,7 @@ export const BottomTierListingExpanded: StoryObj<UnifiedBottomArgs> = {
         column={column}
         mode={mode}
         bottomVariant="listing"
-        className="!h-auto !min-h-[640px] !w-[427px] !items-start"
+        className="!w-[427px]"
       >
         <BottomListingStackValue expanded withCheckbox />
       </TableCardCell>
