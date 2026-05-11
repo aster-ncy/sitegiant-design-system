@@ -13,7 +13,6 @@ import type { TableColumnPosition } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
 import { Pip } from '../Pip';
 import { Toggle } from '../Toggle';
-import { Button } from '../Button';
 import { NumberInput } from '../NumberInput';
 import { Icon } from '../Icon';
 import { TextLink } from '../TextLink';
@@ -1868,46 +1867,6 @@ export const BottomTierMatrix: Story = {
       </div>
     );
   },
-};
-
-/** Bottom Tier hosting form controls — `bottomVariant="form-field"`
- *  centres NumberInput / Toggle / Button vertically in the cell. */
-export const BottomTierFormControls: Story = {
-  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => (
-    <div className={cardShell}>
-      <table className="border-collapse table-fixed w-[600px]">
-        <tbody>
-          <tr className="group/row">
-            <td className="p-0">
-              <TableCardCell tier="bottom" row="first" column="first" mode={mode} bottomVariant="form-field">
-                <NumberInput value="1" onChange={() => undefined} />
-              </TableCardCell>
-            </td>
-            <td className="p-0">
-              <TableCardCell
-                tier="bottom"
-                row="first"
-                column="center"
-                mode={mode}
-                bottomVariant="form-field"
-                trailing={<Toggle checked={true} onChange={() => undefined} />}
-              />
-            </td>
-            <td className="p-0">
-              <TableCardCell
-                tier="bottom"
-                row="last"
-                column="last"
-                mode={mode}
-                bottomVariant="form-field"
-                trailing={<Button variant="primary" size="sm" label="Save" />}
-              />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  ),
 };
 
 /**
