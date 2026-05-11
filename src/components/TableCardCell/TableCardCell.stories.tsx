@@ -340,12 +340,14 @@ const renderTopTierFigmaCell = ({
   hovered = false,
   textState = 'normal',
   mode = 'default',
+  withCheckbox = true,
 }: {
   type: string;
   column: 'first' | 'center' | 'last';
   hovered?: boolean;
   textState?: 'normal' | 'bold' | 'link';
   mode?: 'default' | 'inset';
+  withCheckbox?: boolean;
 }) => {
   const cell = (
     <TableCardCell
@@ -361,7 +363,15 @@ const renderTopTierFigmaCell = ({
     </TableCardCell>
   );
 
-  if (column !== 'first' || !['Default', 'App Icon', 'User Icon', 'Status', 'Product Image'].includes(type)) {
+  // Checkbox frame only meaningful when:
+  //  - column === 'first' (checkbox always sits at the card's left edge)
+  //  - type is one of the 5 wrappable Figma variants
+  //  - withCheckbox is on
+  if (
+    !withCheckbox ||
+    column !== 'first' ||
+    !['Default', 'App Icon', 'User Icon', 'Status', 'Product Image'].includes(type)
+  ) {
     return cell;
   }
 
@@ -912,6 +922,24 @@ const unifiedBottomParameters = {
   controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant'] },
 };
 
+// Top Tier first-column single-cell reference stories — these render
+// a single top-tier cell with a hardcoded variant + column='first',
+// so the only useful controls are `mode` and `withCheckbox` (to toggle
+// the row-select Checkbox). Other arg controls would be dead toggles.
+const topTierFirstColParameters = {
+  controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant', 'column', 'row'] },
+};
+
+// Args shape for top-tier first-column reference stories.
+// `column` is hidden via `topTierFirstColParameters.controls.exclude`
+// but kept in args so the `withCheckbox` argType's
+// `if: { arg: 'column', eq: 'first' }` conditional resolves true.
+type TopTierFirstColArgs = {
+  mode: TableCardCellMode;
+  withCheckbox: boolean;
+  column: TableColumnPosition;
+};
+
 // ---------------------------------------------------------------------------
 // Playground — single live cell driven by Controls panel.
 // Exported FIRST so Storybook lands here by default. Lets you flip
@@ -929,6 +957,7 @@ type PlaygroundArgs = {
   bottomVariant: TableCardCellBottomVariant;
   column: TableColumnPosition;
   row: TableCardCellRow;
+  withCheckbox: boolean;
 };
 
 const playgroundLeadingIcon = (variant: TableCardCellTopVariant): ReactNode => {
@@ -988,15 +1017,19 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     bottomVariant: 'default',
     column: 'first',
     row: 'first',
+    withCheckbox: false,
   },
-  render: ({ mode, tier, topVariant, bottomVariant, column, row }) => {
+  render: ({ mode, tier, topVariant, bottomVariant, column, row, withCheckbox }) => {
     // Render the cell honestly — borders + corners reflect what the
     // atom paints for the given column/row (single-column slice of a
     // real card). `bottom-with-top` adds a fixed top tier above the
     // bottom cell so the card closes naturally on top; `bottom` alone
     // shows the raw bottom cell with whatever borders the atom paints
-    // standalone.
-    const wrapWidth = column === 'last' ? 220 : 320;
+    // standalone. `withCheckbox` only fires on `column='first'` (matches
+    // the row-select checkbox's canonical position in Figma 1438:4957).
+    const showCheckbox = withCheckbox && column === 'first';
+    const checkboxNode = showCheckbox ? <Checkbox size="sm" /> : undefined;
+    const wrapWidth = (column === 'last' ? 220 : 320) + (showCheckbox ? 53 : 0);
     return (
       <div className="inline-block" style={{ width: wrapWidth }}>
         <table className="border-collapse w-full table-fixed">
@@ -1009,6 +1042,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
                     column={column}
                     mode={mode}
                     topVariant={topVariant}
+                    checkbox={checkboxNode}
                     leadingIcon={playgroundLeadingIcon(topVariant)}
                   >
                     Top tier — variant: {topVariant}
@@ -1020,7 +1054,13 @@ export const Playground: StoryObj<PlaygroundArgs> = {
                 {tier === 'bottom-with-top' && (
                   <tr className="group/row">
                     <td className="p-0">
-                      <TableCardCell tier="top" column={column} mode={mode} topVariant="default">
+                      <TableCardCell
+                        tier="top"
+                        column={column}
+                        mode={mode}
+                        topVariant="default"
+                        checkbox={checkboxNode}
+                      >
                         Top tier (header)
                       </TableCardCell>
                     </td>
@@ -1034,6 +1074,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
                       column={column}
                       mode={mode}
                       bottomVariant={bottomVariant}
+                      checkbox={tier === 'bottom' ? checkboxNode : undefined}
                     >
                       {playgroundBottomChildren(bottomVariant)}
                     </TableCardCell>
@@ -1098,46 +1139,56 @@ export const TopTierHovered: Story = {
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Default. */
-export const TopTierInfo: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierInfo: StoryObj<TopTierFirstColArgs> = {
+  parameters: topTierFirstColParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <TopTierStoryTable>
-      {renderTopTierFigmaCell({ type: 'Default', column: 'first', mode })}
+      {renderTopTierFigmaCell({ type: 'Default', column: 'first', mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=App Icon. */
-export const TopTierAppIcon: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierAppIcon: StoryObj<TopTierFirstColArgs> = {
+  parameters: topTierFirstColParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <TopTierStoryTable width={216}>
-      {renderTopTierFigmaCell({ type: 'App Icon', column: 'first', mode })}
+      {renderTopTierFigmaCell({ type: 'App Icon', column: 'first', mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=User Icon. */
-export const TopTierUserIcon: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierUserIcon: StoryObj<TopTierFirstColArgs> = {
+  parameters: topTierFirstColParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <TopTierStoryTable width={216}>
-      {renderTopTierFigmaCell({ type: 'User Icon', column: 'first', mode })}
+      {renderTopTierFigmaCell({ type: 'User Icon', column: 'first', mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Status. */
-export const TopTierStatusPip: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierStatusPip: StoryObj<TopTierFirstColArgs> = {
+  parameters: topTierFirstColParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <TopTierStoryTable width={217}>
-      {renderTopTierFigmaCell({ type: 'Status', column: 'first', mode })}
+      {renderTopTierFigmaCell({ type: 'Status', column: 'first', mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Product Image. */
-export const TopTierProductImage: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierProductImage: StoryObj<TopTierFirstColArgs> = {
+  parameters: topTierFirstColParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <TopTierStoryTable width={247}>
-      {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', mode })}
+      {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
