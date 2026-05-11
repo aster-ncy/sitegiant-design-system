@@ -131,13 +131,54 @@ export default meta;
 type Story = StoryObj<typeof TableCardCell>;
 
 // Outer card recipe — every story wraps cells in this shell so the
-// rounded corners visually close the box.
+// rounded corners visually close the box. Default rounds all 4 corners
+// (good for full-card demos); column-specific shells round only the
+// corner the actual cell paints when it sits at that column position
+// in a real Card Table row.
 const cardShell = 'rounded-[var(--radius-4)] overflow-hidden inline-block';
+const cardShellTopLeft = 'rounded-tl-[var(--radius-4)] overflow-hidden inline-block';
+const cardShellTopRight = 'rounded-tr-[var(--radius-4)] overflow-hidden inline-block';
 
 const MatrixLabel = ({ children }: { children: ReactNode }) => (
   <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
     {children}
   </span>
+);
+
+// Column header strip for matrix blocks — places `first column` /
+// `center column` / `last column` labels directly above each cell using
+// the same px track widths the cell row uses (so labels never drift).
+// Pass the same width tuple you pass to the cell `<table>` below.
+const MatrixColumnHeaders = ({
+  widthsPx,
+}: {
+  widthsPx: [number, number, number];
+}) => (
+  <div className="flex" style={{ width: widthsPx.reduce((a, b) => a + b, 0) }}>
+    {(['first', 'center', 'last'] as const).map((column, i) => (
+      <div key={column} className="shrink-0 px-[var(--spacing-12)]" style={{ width: widthsPx[i] }}>
+        <MatrixLabel>{column} column</MatrixLabel>
+      </div>
+    ))}
+  </div>
+);
+
+// Variable-arity header strip for matrix blocks where some variants
+// only render a subset of columns (e.g. Status Toggle → center+last,
+// Action Button → last only). Each label sits directly above the cell
+// of matching width.
+const MatrixColumnHeadersFlex = ({
+  cells,
+}: {
+  cells: Array<{ column: 'first' | 'center' | 'last'; width: number }>;
+}) => (
+  <div className="flex" style={{ width: cells.reduce((a, c) => a + c.width, 0) }}>
+    {cells.map(({ column, width }) => (
+      <div key={column} className="shrink-0 px-[var(--spacing-12)]" style={{ width }}>
+        <MatrixLabel>{column} column</MatrixLabel>
+      </div>
+    ))}
+  </div>
 );
 
 const MatrixNote = ({ children }: { children: ReactNode }) => (
@@ -226,8 +267,27 @@ const topTierCenterStoryCellClass = '!h-[45px] !w-[259px] !min-w-[259px] !max-w-
 
 const topTierRowShell = 'inline-flex overflow-hidden rounded-t-[var(--radius-4)] group/row';
 
-const TopTierStoryTable = ({ children, width = 248 }: { children: ReactNode; width?: number }) => (
-  <div className={cardShell}>
+// Picks the corner-rounded shell that matches a single-cell top-tier
+// reference. A standalone top-tier cell only paints the corner it would
+// paint inside a real row (top-left for first, top-right for last,
+// neither for center) — so the wrapper rounds the same corner instead
+// of cheating with all-four-corner rounding.
+const cardShellForTopTierColumn = (column: TableColumnPosition) => {
+  if (column === 'first') return cardShellTopLeft;
+  if (column === 'last') return cardShellTopRight;
+  return 'overflow-hidden inline-block';
+};
+
+const TopTierStoryTable = ({
+  children,
+  width = 248,
+  column = 'first',
+}: {
+  children: ReactNode;
+  width?: number;
+  column?: TableColumnPosition;
+}) => (
+  <div className={cardShellForTopTierColumn(column)}>
     <table className="border-collapse table-fixed" style={{ width }}>
       <tbody>
         <tr className="group/row">
@@ -249,6 +309,25 @@ const TopTierCheckboxFrame = ({
     <span className="inline-flex shrink-0 items-start py-[var(--spacing-14)]">
       <Checkbox size="sm" />
     </span>
+    {children}
+  </div>
+);
+
+// Bottom Tier counterpart of `TopTierCheckboxFrame` — same 53px gutter
+// (24px left padding + 17px Checkbox slot + 12px gap) but the slot is
+// EMPTY. In a real Card Table the row-select Checkbox lives in the top
+// tier above; the bottom-tier wrapper just reserves matching outside
+// space so the bottom card's left edge aligns with the top card's left
+// edge when both are in "with Checkbox" mode.
+const BottomTierCheckboxGutter = ({
+  children,
+  width,
+}: {
+  children: ReactNode;
+  width: number;
+}) => (
+  <div className="inline-flex items-start gap-[var(--spacing-12)] pl-[var(--spacing-24)]" style={{ width }}>
+    <span className="inline-flex shrink-0 size-[17px]" aria-hidden />
     {children}
   </div>
 );
@@ -281,6 +360,19 @@ const topTierVariantCellClass = (type: string, column: 'first' | 'center' | 'las
   if (type === 'Product Image') return 'w-[247px]';
 
   return topTierCellClass(column);
+};
+
+// Pixel column widths used by the matrix tables — kept in sync with
+// `topTierVariantCellClass` so the column header row above each block
+// can reproduce the exact same track widths and the labels sit directly
+// over the cells they label.
+const topTierVariantColumnWidthsPx = (
+  type: 'Default' | 'App Icon' | 'User Icon' | 'Status' | 'Product Image',
+): [number, number, number] => {
+  if (type === 'App Icon' || type === 'User Icon') return [216, 151, 187];
+  if (type === 'Status') return [217, 152, 188];
+  if (type === 'Product Image') return [247, 247, 247];
+  return [248, 184, 220];
 };
 
 const topTierContainerWidth = (type: string, column: 'first' | 'center' | 'last') => {
@@ -440,18 +532,6 @@ const bottomTierVariantWidth = (
   return 93;
 };
 
-const bottomTierCellHeight = (type: BottomTierVariant, row: BottomTierRow) => {
-  if (type === 'Default') return row === 'first' ? 45 : 81;
-  if (type === 'Action Button') return row === 'first' ? 57 : 93;
-  if (type === 'Status Toggle') return row === 'first' ? 57 : 93;
-  if (type === 'Form Field') return row === 'first' ? 45 : 87;
-  if (type === 'Data') return 103;
-  if (type === 'Listing') return 181;
-  if (type === 'Status') return 125;
-  if (type === 'Star Rating') return 105;
-  return 45;
-};
-
 const bottomTierWidthClass = (width: number) => ({
   40: 'w-[40px]',
   51: 'w-[51px]',
@@ -473,19 +553,6 @@ const bottomTierWidthClass = (width: number) => ({
   338: 'w-[338px]',
   374: 'w-[374px]',
 }[width] ?? 'w-auto');
-
-const bottomTierHeightClass = (height: number) => ({
-  45: '!h-[45px]',
-  57: '!h-[57px]',
-  81: '!h-[81px]',
-  87: '!h-[87px]',
-  93: '!h-[93px]',
-  103: '!h-[103px]',
-  105: '!h-[105px]',
-  125: '!h-[125px]',
-  127: '!h-[127px]',
-  181: '!h-[181px]',
-}[height] ?? '');
 
 // Standalone bottom-tier wrapper — clips ONLY the bottom corners so the
 // cell's own rounded-bl/br on row='last' shows clean while the top
@@ -794,7 +861,13 @@ const renderBottomTierFigmaCell = ({
 }) => {
   const width = bottomTierVariantWidth(type, column, withGutter);
   const contentWidth = withGutter ? width - 53 : width;
-  const height = bottomTierCellHeight(type, row);
+  // Cell heights are intentionally driven by content rather than forced
+  // to the Figma per-variant spec — in a real Card Table all cells in a
+  // row equalize to the tallest sibling, but the matrix renders cells
+  // individually so a forced height paints unsightly empty space below
+  // shorter content (e.g. 81px Default last-row hosting a 17px text).
+  // Form Field still pins height/alignment because its NumberInput needs
+  // a vertically centered slot to look right.
   const cell = (
     <TableCardCell
       tier="bottom"
@@ -805,7 +878,6 @@ const renderBottomTierFigmaCell = ({
       bottomVariant={bottomTierVariantProp(type)}
       className={[
         bottomTierWidthClass(contentWidth),
-        bottomTierHeightClass(height),
         type === 'Form Field' ? '!items-center !justify-center !py-[var(--spacing-6)]' : '',
       ].filter(Boolean).join(' ')}
     >
@@ -833,27 +905,24 @@ const renderBottomTierFigmaCell = ({
 const unifiedBottomCellWidth = (
   variant: TableCardCellBottomVariant,
   column: TableColumnPosition,
-  withCheckbox: boolean,
 ): number => {
-  // First-column cells widen by ~53px when a Checkbox occupies the
-  // leading slot — same delta the legacy figma-matrix renderer used
-  // (248 → 301 for default, 374 → 427 for listing).
-  const checkboxBonus = column === 'first' && withCheckbox ? 53 : 0;
+  // Cell base width — when a row-select Checkbox is in play the +53px
+  // gutter sits OUTSIDE the cell (via `BottomTierCheckboxGutter`), so
+  // the cell itself stays at this base width regardless of withCheckbox.
 
   // Listing variant has its own wide canvas.
-  if (variant === 'listing') return 374 + checkboxBonus;
+  if (variant === 'listing') return 374;
   // Trailing-action variants (action-button / status-toggle) are
   // canonically `column='last'` (where the 104px trailing slot fits).
   // The Controls panel does allow flipping them to first/center for
-  // experimentation, so use the same default-row widths in those
-  // columns and apply the checkbox bonus where applicable.
+  // experimentation, so use the same default-row widths in those columns.
   if (variant === 'action-button' || variant === 'status-toggle') {
-    return ({ first: 248, center: 200, last: 104 }[column]) + checkboxBonus;
+    return { first: 248, center: 200, last: 104 }[column];
   }
   // Form field variant: medium width to host NumberInput / Toggle.
-  if (variant === 'form-field') return ({ first: 195, center: 158, last: 195 }[column]) + checkboxBonus;
+  if (variant === 'form-field') return { first: 195, center: 158, last: 195 }[column];
   // Default / data / status / star-rating: align with Figma matrix widths.
-  return ({ first: 248, center: 200, last: 248 }[column]) + checkboxBonus;
+  return { first: 248, center: 200, last: 248 }[column];
 };
 
 const renderUnifiedBottomCell = ({
@@ -869,24 +938,26 @@ const renderUnifiedBottomCell = ({
   mode: TableCardCellMode;
   withCheckbox?: boolean;
 }) => {
-  // Row-select Checkbox: only renders on column='first' (matches Figma
-  // 1438:4957 "with Checkbox" column). On other columns, the atom's
-  // checkbox slot is left empty and the cell uses its non-checkbox width.
-  const showCheckbox = withCheckbox && column === 'first';
-  const width = unifiedBottomCellWidth(variant, column, showCheckbox);
+  // Bottom Tier "with Checkbox": adds an OUTSIDE 53px empty gutter to
+  // the left of the rounded card on column='first'. The cell itself
+  // stays at its base width — no internal checkbox slot — because in a
+  // real Card Table the row-select Checkbox lives in the top tier above
+  // and the bottom card's left edge aligns with the top card's left
+  // edge via the matching outside gutter (no Checkbox rendered here).
+  const showCheckboxGutter = withCheckbox && column === 'first';
+  const cellWidth = unifiedBottomCellWidth(variant, column);
   // Form-field variant: atom handles items-center alignment; no extra
   // class override needed (was hardcoded in the legacy figma-matrix
   // renderer to compensate for fixed-height cells).
-  return (
-    <BottomTierRecipeFrame width={width}>
+  const card = (
+    <BottomTierRecipeFrame width={cellWidth}>
       <TableCardCell
         tier="bottom"
         row={row}
         column={column}
         mode={mode}
         bottomVariant={variant}
-        checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
-        className={bottomTierWidthClass(width)}
+        className={bottomTierWidthClass(cellWidth)}
       >
         {variant === 'listing'
           ? // Use the canonical TableCardCellListing helper for the
@@ -905,6 +976,10 @@ const renderUnifiedBottomCell = ({
       </TableCardCell>
     </BottomTierRecipeFrame>
   );
+  if (showCheckboxGutter) {
+    return <BottomTierCheckboxGutter width={cellWidth + 53}>{card}</BottomTierCheckboxGutter>;
+  }
+  return card;
 };
 
 // Shared args shape for the unified bottom-tier reference stories.
@@ -922,23 +997,31 @@ const unifiedBottomParameters = {
   controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant'] },
 };
 
-// Top Tier first-column single-cell reference stories — these render
-// a single top-tier cell with a hardcoded variant + column='first',
-// so the only useful controls are `mode` and `withCheckbox` (to toggle
-// the row-select Checkbox). Other arg controls would be dead toggles.
+// Top Tier first-column single-cell reference stories — render a single
+// top-tier cell with a hardcoded variant. `column` is a live control so
+// users can flip between first/center/last and watch border + corner
+// placement adapt; `withCheckbox` auto-hides on non-first columns via the
+// meta-level `if: { arg: 'column', eq: 'first' }`.
 const topTierFirstColParameters = {
-  controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant', 'column', 'row'] },
+  controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant', 'row'] },
 };
 
 // Args shape for top-tier first-column reference stories.
-// `column` is hidden via `topTierFirstColParameters.controls.exclude`
-// but kept in args so the `withCheckbox` argType's
-// `if: { arg: 'column', eq: 'first' }` conditional resolves true.
 type TopTierFirstColArgs = {
   mode: TableCardCellMode;
   withCheckbox: boolean;
   column: TableColumnPosition;
 };
+
+// Pick the outer table width for a top-tier reference story. Mirrors the
+// cell's own width class for the active column so the table tracks the
+// cell on every column flip — including the checkbox-wrapped first-column
+// case, where `TopTierCheckboxFrame` itself is sized to this same value.
+const topTierStoryTableWidth = (type: string, column: TableColumnPosition) =>
+  Number.parseInt(
+    topTierVariantCellClass(type, column).match(/\d+/)?.[0] ?? '248',
+    10,
+  );
 
 // ---------------------------------------------------------------------------
 // Playground — single live cell driven by Controls panel.
@@ -966,6 +1049,18 @@ const playgroundLeadingIcon = (variant: TableCardCellTopVariant): ReactNode => {
   if (variant === 'product-image') return <ProductThumb />;
   if (variant === 'status') return <Pip type="info" pipStyle="default" label="Status" />;
   return null;
+};
+
+// Realistic top-tier content per variant — used by the Playground so the
+// Docs page Primary preview reads like a real Card Table row, not like
+// debug output. The Controls panel below it still surfaces which variant
+// is active.
+const playgroundTopChildren = (variant: TableCardCellTopVariant): ReactNode => {
+  if (variant === 'app-icon') return 'Shopee';
+  if (variant === 'user-icon') return 'Customer Name';
+  if (variant === 'product-image') return 'Product Name Here';
+  if (variant === 'status') return 'Order #100123';
+  return 'Product Name Here';
 };
 
 const playgroundListingDemo = (
@@ -1026,64 +1121,70 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     // bottom cell so the card closes naturally on top; `bottom` alone
     // shows the raw bottom cell with whatever borders the atom paints
     // standalone. `withCheckbox` only fires on `column='first'` (matches
-    // the row-select checkbox's canonical position in Figma 1438:4957).
+    // the row-select checkbox's canonical position in Figma 1438:4957)
+    // and follows the Card Table convention: checkbox sits OUTSIDE the
+    // cell in the gutter, never inside via the cell's `checkbox` prop.
     const showCheckbox = withCheckbox && column === 'first';
-    const checkboxNode = showCheckbox ? <Checkbox size="sm" /> : undefined;
-    const wrapWidth = (column === 'last' ? 220 : 320) + (showCheckbox ? 53 : 0);
-    return (
-      <div className="inline-block" style={{ width: wrapWidth }}>
-        <table className="border-collapse w-full table-fixed">
-          <tbody>
-            {tier === 'top' ? (
-              <tr className="group/row">
-                <td className="p-0">
-                  <TableCardCell
-                    tier="top"
-                    column={column}
-                    mode={mode}
-                    topVariant={topVariant}
-                    checkbox={checkboxNode}
-                    leadingIcon={playgroundLeadingIcon(topVariant)}
-                  >
-                    Top tier — variant: {topVariant}
-                  </TableCardCell>
-                </td>
-              </tr>
-            ) : (
-              <>
-                {tier === 'bottom-with-top' && (
-                  <tr className="group/row">
-                    <td className="p-0">
-                      <TableCardCell
-                        tier="top"
-                        column={column}
-                        mode={mode}
-                        topVariant="default"
-                        checkbox={checkboxNode}
-                      >
-                        Top tier (header)
-                      </TableCardCell>
-                    </td>
-                  </tr>
-                )}
+    const cellWidth = column === 'last' ? 220 : 320;
+    const wrapWidth = cellWidth + (showCheckbox ? 53 : 0);
+    const cardTable = (
+      <table className="border-collapse table-fixed" style={{ width: cellWidth }}>
+        <tbody>
+          {tier === 'top' ? (
+            <tr className="group/row">
+              <td className="p-0">
+                <TableCardCell
+                  tier="top"
+                  column={column}
+                  mode={mode}
+                  topVariant={topVariant}
+                  leadingIcon={playgroundLeadingIcon(topVariant)}
+                >
+                  {playgroundTopChildren(topVariant)}
+                </TableCardCell>
+              </td>
+            </tr>
+          ) : (
+            <>
+              {tier === 'bottom-with-top' && (
                 <tr className="group/row">
                   <td className="p-0">
                     <TableCardCell
-                      tier="bottom"
-                      row={row}
+                      tier="top"
                       column={column}
                       mode={mode}
-                      bottomVariant={bottomVariant}
-                      checkbox={tier === 'bottom' ? checkboxNode : undefined}
+                      topVariant="default"
                     >
-                      {playgroundBottomChildren(bottomVariant)}
+                      Product Name Here
                     </TableCardCell>
                   </td>
                 </tr>
-              </>
-            )}
-          </tbody>
-        </table>
+              )}
+              <tr className="group/row">
+                <td className="p-0">
+                  <TableCardCell
+                    tier="bottom"
+                    row={row}
+                    column={column}
+                    mode={mode}
+                    bottomVariant={bottomVariant}
+                  >
+                    {playgroundBottomChildren(bottomVariant)}
+                  </TableCardCell>
+                </td>
+              </tr>
+            </>
+          )}
+        </tbody>
+      </table>
+    );
+    return (
+      <div className="inline-block" style={{ width: wrapWidth }}>
+        {showCheckbox ? (
+          <TopTierCheckboxFrame width={wrapWidth}>{cardTable}</TopTierCheckboxFrame>
+        ) : (
+          cardTable
+        )}
       </div>
     );
   },
@@ -1091,14 +1192,84 @@ export const Playground: StoryObj<PlaygroundArgs> = {
 
 /* ── Top Tier ────────────────────────────────────────── */
 
+// Args shape for the multi-cell Top Tier row demos. `withCheckbox`
+// toggles the row-select Checkbox on the first cell only (other cells
+// never carry one). The full row already shows first/center/last
+// simultaneously, so no `column` control is needed — but `column` stays
+// in args (hidden via `controls.exclude`) so the meta-level
+// `withCheckbox` argType conditional `if: { arg: 'column', eq: 'first' }`
+// resolves true and the toggle stays visible in the Controls panel.
+type TopTierRowArgs = {
+  mode: TableCardCellMode;
+  withCheckbox: boolean;
+  column: TableColumnPosition;
+};
+
+const topTierRowParameters = {
+  controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant', 'column', 'row'] },
+};
+
+// First-cell width when the row checkbox is enabled — matches Figma's
+// 53px shift (24px left padding + 17px Checkbox + 12px gap) on top of
+// the 248px cell. Mirrors the math used by `unifiedBottomCellWidth` for
+// the Bottom Tier first-column stories.
+const topTierFirstStoryCellWithCheckboxWidth = 248 + 53;
+
+// Renders the first cell of a multi-cell Top Tier row with an optional
+// row-select Checkbox. Card Table convention (matching the 5 single-cell
+// reference stories): checkbox always sits OUTSIDE the cell in
+// `TopTierCheckboxFrame`, occupying the gutter to the left of the cell,
+// regardless of mode. The cell itself never carries a `checkbox` prop.
+const renderTopTierRowFirstCellWithCheckbox = ({
+  mode,
+  withCheckbox,
+  hovered = false,
+  leadingIcon,
+  topVariant,
+  children,
+}: {
+  mode: TableCardCellMode;
+  withCheckbox: boolean;
+  hovered?: boolean;
+  leadingIcon?: ReactNode;
+  topVariant?: TableCardCellTopVariant;
+  children: ReactNode;
+}) => {
+  const cell = (
+    <TableCardCell
+      tier="top"
+      column="first"
+      mode={mode}
+      hovered={hovered || undefined}
+      topVariant={topVariant}
+      leadingIcon={leadingIcon}
+      className={topTierFirstStoryCellClass}
+    >
+      {children}
+    </TableCardCell>
+  );
+  if (withCheckbox) {
+    return (
+      <TopTierCheckboxFrame width={topTierFirstStoryCellWithCheckboxWidth}>
+        {cell}
+      </TopTierCheckboxFrame>
+    );
+  }
+  return cell;
+};
+
 /** Top Tier 3-column row — Default state. Hover the row to see bold
  *  + green text on the first column (parent-driven via `group/row`). */
-export const TopTierDefault: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierDefault: StoryObj<TopTierRowArgs> = {
+  parameters: topTierRowParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <div className={topTierRowShell}>
-      <TableCardCell tier="top" column="first" mode={mode} checkbox={<Checkbox size="sm" />} className={topTierFirstStoryCellClass}>
-        Product Name Here
-      </TableCardCell>
+      {renderTopTierRowFirstCellWithCheckbox({
+        mode,
+        withCheckbox,
+        children: 'Product Name Here',
+      })}
       <TableCardCell tier="top" column="center" mode={mode} className={topTierCenterStoryCellClass}>
         Center cell
       </TableCardCell>
@@ -1116,12 +1287,17 @@ export const TopTierDefault: Story = {
 
 /** Top Tier with `hovered` prop forced — proves the bold-green text
  *  state outside of mouse-hover (useful for visual regression). */
-export const TopTierHovered: Story = {
-  render: ({ mode = 'default' }) => (
+export const TopTierHovered: StoryObj<TopTierRowArgs> = {
+  parameters: topTierRowParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
     <div className={topTierRowShell}>
-      <TableCardCell tier="top" column="first" mode={mode} hovered className={topTierFirstStoryCellClass}>
-        Hovered first
-      </TableCardCell>
+      {renderTopTierRowFirstCellWithCheckbox({
+        mode,
+        withCheckbox,
+        hovered: true,
+        children: 'Hovered first',
+      })}
       <TableCardCell tier="top" column="center" mode={mode} hovered className={topTierCenterStoryCellClass}>
         Hovered center
       </TableCardCell>
@@ -1142,9 +1318,9 @@ export const TopTierHovered: Story = {
 export const TopTierInfo: StoryObj<TopTierFirstColArgs> = {
   parameters: topTierFirstColParameters,
   args: { mode: 'default', withCheckbox: true, column: 'first' },
-  render: ({ mode, withCheckbox }) => (
-    <TopTierStoryTable>
-      {renderTopTierFigmaCell({ type: 'Default', column: 'first', mode, withCheckbox })}
+  render: ({ mode, withCheckbox, column }) => (
+    <TopTierStoryTable width={topTierStoryTableWidth('Default', column)} column={column}>
+      {renderTopTierFigmaCell({ type: 'Default', column, mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
@@ -1153,9 +1329,9 @@ export const TopTierInfo: StoryObj<TopTierFirstColArgs> = {
 export const TopTierAppIcon: StoryObj<TopTierFirstColArgs> = {
   parameters: topTierFirstColParameters,
   args: { mode: 'default', withCheckbox: true, column: 'first' },
-  render: ({ mode, withCheckbox }) => (
-    <TopTierStoryTable width={216}>
-      {renderTopTierFigmaCell({ type: 'App Icon', column: 'first', mode, withCheckbox })}
+  render: ({ mode, withCheckbox, column }) => (
+    <TopTierStoryTable width={topTierStoryTableWidth('App Icon', column)} column={column}>
+      {renderTopTierFigmaCell({ type: 'App Icon', column, mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
@@ -1164,9 +1340,9 @@ export const TopTierAppIcon: StoryObj<TopTierFirstColArgs> = {
 export const TopTierUserIcon: StoryObj<TopTierFirstColArgs> = {
   parameters: topTierFirstColParameters,
   args: { mode: 'default', withCheckbox: true, column: 'first' },
-  render: ({ mode, withCheckbox }) => (
-    <TopTierStoryTable width={216}>
-      {renderTopTierFigmaCell({ type: 'User Icon', column: 'first', mode, withCheckbox })}
+  render: ({ mode, withCheckbox, column }) => (
+    <TopTierStoryTable width={topTierStoryTableWidth('User Icon', column)} column={column}>
+      {renderTopTierFigmaCell({ type: 'User Icon', column, mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
@@ -1175,9 +1351,9 @@ export const TopTierUserIcon: StoryObj<TopTierFirstColArgs> = {
 export const TopTierStatusPip: StoryObj<TopTierFirstColArgs> = {
   parameters: topTierFirstColParameters,
   args: { mode: 'default', withCheckbox: true, column: 'first' },
-  render: ({ mode, withCheckbox }) => (
-    <TopTierStoryTable width={217}>
-      {renderTopTierFigmaCell({ type: 'Status', column: 'first', mode, withCheckbox })}
+  render: ({ mode, withCheckbox, column }) => (
+    <TopTierStoryTable width={topTierStoryTableWidth('Status', column)} column={column}>
+      {renderTopTierFigmaCell({ type: 'Status', column, mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
@@ -1186,9 +1362,9 @@ export const TopTierStatusPip: StoryObj<TopTierFirstColArgs> = {
 export const TopTierProductImage: StoryObj<TopTierFirstColArgs> = {
   parameters: topTierFirstColParameters,
   args: { mode: 'default', withCheckbox: true, column: 'first' },
-  render: ({ mode, withCheckbox }) => (
-    <TopTierStoryTable width={247}>
-      {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', mode, withCheckbox })}
+  render: ({ mode, withCheckbox, column }) => (
+    <TopTierStoryTable width={topTierStoryTableWidth('Product Image', column)} column={column}>
+      {renderTopTierFigmaCell({ type: 'Product Image', column, mode, withCheckbox })}
     </TopTierStoryTable>
   ),
 };
@@ -1196,7 +1372,7 @@ export const TopTierProductImage: StoryObj<TopTierFirstColArgs> = {
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Action Icon Button. */
 export const TopTierAddButton: Story = {
   render: ({ mode = 'default' }) => (
-    <TopTierStoryTable width={93}>
+    <TopTierStoryTable width={93} column="last">
       <TableCardCell
         tier="top"
         column="last"
@@ -1210,32 +1386,29 @@ export const TopTierAddButton: Story = {
 };
 
 /** Top Tier with leadingIcon (App Icon / Product Image equivalents). */
-export const TopTierWithLeadingIcon: Story = {
-  parameters: { layout: 'centered' },
-  render: ({ mode = 'default' }) => (
-    <div className="flex min-h-[116px] items-center">
-      <div className={topTierRowShell}>
-        <TableCardCell
-          tier="top"
-          column="first"
-          mode={mode}
-          leadingIcon={<AppIcon />}
-          className={topTierFirstStoryCellClass}
-        >
-          Product with icon
-        </TableCardCell>
-        <TableCardCell tier="top" column="center" mode={mode} className={topTierCenterStoryCellClass}>
-          <Pip type="success" pipStyle="default" label="Active" />
-        </TableCardCell>
-        <TableCardCell
-          tier="top"
-          column="last"
-          mode={mode}
-          className={topTierActionCellClass}
-        >
-          <TopTierPlusButton />
-        </TableCardCell>
-      </div>
+export const TopTierWithLeadingIcon: StoryObj<TopTierRowArgs> = {
+  parameters: topTierRowParameters,
+  args: { mode: 'default', withCheckbox: true, column: 'first' },
+  render: ({ mode, withCheckbox }) => (
+    <div className={topTierRowShell}>
+      {renderTopTierRowFirstCellWithCheckbox({
+        mode,
+        withCheckbox,
+        topVariant: 'app-icon',
+        leadingIcon: <AppIcon />,
+        children: 'Product with icon',
+      })}
+      <TableCardCell tier="top" column="center" mode={mode} className={topTierCenterStoryCellClass}>
+        <Pip type="success" pipStyle="default" label="Active" />
+      </TableCardCell>
+      <TableCardCell
+        tier="top"
+        column="last"
+        mode={mode}
+        className={topTierActionCellClass}
+      >
+        <TopTierPlusButton />
+      </TableCardCell>
     </div>
   ),
 };
@@ -1249,7 +1422,8 @@ export const TopTierWithLeadingIcon: Story = {
  * above for copyable product code.
  */
 export const TopTierFigmaMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!autodocs', 'visual-qa'],
+  parameters: { layout: 'fullscreen' },
   render: ({ mode = 'default' }) => {
     const columns: Array<'first' | 'center' | 'last'> = ['first', 'center', 'last'];
     const defaultRows = [
@@ -1270,21 +1444,176 @@ export const TopTierFigmaMatrix: Story = {
         <div className="grid grid-cols-[112px_1fr] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-12)]">
           <MatrixLabel>Default</MatrixLabel>
           <div className="flex flex-col gap-[var(--spacing-12)]">
-            <div className="grid grid-cols-3 gap-[var(--spacing-16)]">
-              {columns.map((column) => (
-                <MatrixLabel key={column}>{column} column</MatrixLabel>
-              ))}
+            <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+              <span />
+              <MatrixColumnHeaders widthsPx={topTierVariantColumnWidthsPx('Default')} />
             </div>
-            {defaultRows.map(({ label, hovered }) => (
-              <div key={label} className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
-                <MatrixLabel>{label}</MatrixLabel>
+            {defaultRows.map(({ label, hovered }) => {
+              const widths = topTierVariantColumnWidthsPx('Default');
+              return (
+                <div key={label} className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+                  <MatrixLabel>{label}</MatrixLabel>
+                  <div className={cardShell}>
+                    <table
+                      className="border-collapse table-fixed"
+                      style={{ width: widths.reduce((a, b) => a + b, 0) }}
+                    >
+                      <colgroup>
+                        {columns.map((column, i) => (
+                          <col key={column} style={{ width: widths[i] }} />
+                        ))}
+                      </colgroup>
+                      <tbody>
+                        <tr className="group/row">
+                          {columns.map((column) => (
+                            <td key={column} className="p-0">
+                              {renderTopTierFigmaCell({ type: 'Default', column, hovered, mode })}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {(['App Icon', 'User Icon'] as const).map((type) => (
+            <div key={type} className="contents">
+              <MatrixLabel>{type}</MatrixLabel>
+              <div className="flex flex-col gap-[var(--spacing-12)]">
+                <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+                  <span />
+                  <MatrixColumnHeaders widthsPx={topTierVariantColumnWidthsPx(type)} />
+                </div>
+                {iconRows.map(({ label, hovered, textState }) => {
+                  const widths = topTierVariantColumnWidthsPx(type);
+                  return (
+                    <div key={label} className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+                      <MatrixLabel>{label}</MatrixLabel>
+                      <div className={cardShell}>
+                        <table
+                          className="border-collapse table-fixed"
+                          style={{ width: widths.reduce((a, b) => a + b, 0) }}
+                        >
+                          <colgroup>
+                            {columns.map((column, i) => (
+                              <col key={column} style={{ width: widths[i] }} />
+                            ))}
+                          </colgroup>
+                          <tbody>
+                            <tr className="group/row">
+                              {columns.map((column) => (
+                                <td key={column} className="p-0">
+                                  {renderTopTierFigmaCell({ type, column, hovered, textState, mode })}
+                                </td>
+                              ))}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })}
+                {type === 'User Icon' && (() => {
+                  const widths = topTierVariantColumnWidthsPx(type);
+                  return (
+                    <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+                      <MatrixLabel>Text link</MatrixLabel>
+                      <div className={cardShell}>
+                        <table
+                          className="border-collapse table-fixed"
+                          style={{ width: widths.reduce((a, b) => a + b, 0) }}
+                        >
+                          <colgroup>
+                            {columns.map((column, i) => (
+                              <col key={column} style={{ width: widths[i] }} />
+                            ))}
+                          </colgroup>
+                          <tbody>
+                            <tr>
+                              {columns.map((column) => (
+                                <td key={column} className="p-0">
+                                  {renderTopTierFigmaCell({ type, column, textState: 'link', mode })}
+                                </td>
+                              ))}
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          ))}
+
+          <MatrixLabel>Status</MatrixLabel>
+          {(() => {
+            const widths = topTierVariantColumnWidthsPx('Status');
+            return (
+              <div className="flex flex-col gap-[var(--spacing-12)]">
+                <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+                  <span />
+                  <MatrixColumnHeaders widthsPx={widths} />
+                </div>
+                <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
+                  <MatrixLabel>Default</MatrixLabel>
+                  <div className={cardShell}>
+                    <table
+                      className="border-collapse table-fixed"
+                      style={{ width: widths.reduce((a, b) => a + b, 0) }}
+                    >
+                      <colgroup>
+                        {columns.map((column, i) => (
+                          <col key={column} style={{ width: widths[i] }} />
+                        ))}
+                      </colgroup>
+                      <tbody>
+                        <tr>
+                          {columns.map((column) => (
+                            <td key={column} className="p-0">
+                              {renderTopTierFigmaCell({ type: 'Status', column, mode })}
+                            </td>
+                          ))}
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            );
+          })()}
+
+          <MatrixLabel>Product Image</MatrixLabel>
+          {(() => {
+            // Product Image cells are 247px regardless of column (per
+            // topTierVariantCellClass), so the two-cell weight comparison
+            // table is exactly 494px wide. The matrix shows column='first'
+            // for both weights — only the text font-weight differs.
+            const productImageCellWidth = 247;
+            return (
+              <div className="flex flex-col gap-[var(--spacing-12)]">
+                <div className="grid grid-cols-2 gap-[var(--spacing-16)]">
+                  {(['Normal weight', 'Bold weight'] as const).map((label) => (
+                    <MatrixLabel key={label}>{label}</MatrixLabel>
+                  ))}
+                </div>
                 <div className={cardShell}>
-                  <table className="border-collapse table-fixed w-[720px]">
+                  <table
+                    className="border-collapse table-fixed"
+                    style={{ width: productImageCellWidth * 2 }}
+                  >
+                    <colgroup>
+                      <col style={{ width: productImageCellWidth }} />
+                      <col style={{ width: productImageCellWidth }} />
+                    </colgroup>
                     <tbody>
-                      <tr className="group/row">
-                        {columns.map((column) => (
-                          <td key={column} className="p-0">
-                            {renderTopTierFigmaCell({ type: 'Default', column, hovered, mode })}
+                      <tr>
+                        {(['normal', 'bold'] as const).map((textState) => (
+                          <td key={textState} className="p-0">
+                            {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', textState, mode })}
                           </td>
                         ))}
                       </tr>
@@ -1292,109 +1621,13 @@ export const TopTierFigmaMatrix: Story = {
                   </table>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {(['App Icon', 'User Icon'] as const).map((type) => (
-            <div key={type} className="contents">
-              <MatrixLabel>{type}</MatrixLabel>
-              <div className="flex flex-col gap-[var(--spacing-12)]">
-                <div className="grid grid-cols-3 gap-[var(--spacing-16)]">
-                  {columns.map((column) => (
-                    <MatrixLabel key={column}>{column} column</MatrixLabel>
-                  ))}
-                </div>
-                {iconRows.map(({ label, hovered, textState }) => (
-                  <div key={label} className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
-                    <MatrixLabel>{label}</MatrixLabel>
-                    <div className={cardShell}>
-                      <table className="border-collapse table-fixed w-[720px]">
-                        <tbody>
-                          <tr className="group/row">
-                            {columns.map((column) => (
-                              <td key={column} className="p-0">
-                                {renderTopTierFigmaCell({ type, column, hovered, textState, mode })}
-                              </td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                ))}
-                {type === 'User Icon' && (
-                  <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
-                    <MatrixLabel>Text link</MatrixLabel>
-                    <div className={cardShell}>
-                      <table className="border-collapse table-fixed w-[720px]">
-                        <tbody>
-                          <tr>
-                            {columns.map((column) => (
-                              <td key={column} className="p-0">
-                                {renderTopTierFigmaCell({ type, column, textState: 'link', mode })}
-                              </td>
-                            ))}
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-
-          <MatrixLabel>Status</MatrixLabel>
-          <div className="flex flex-col gap-[var(--spacing-12)]">
-            <div className="grid grid-cols-3 gap-[var(--spacing-16)]">
-              {columns.map((column) => (
-                <MatrixLabel key={column}>{column} column</MatrixLabel>
-              ))}
-            </div>
-            <div className="grid grid-cols-[72px_1fr] items-start gap-x-[var(--spacing-12)]">
-              <MatrixLabel>Default</MatrixLabel>
-              <div className={cardShell}>
-                <table className="border-collapse table-fixed w-[720px]">
-                  <tbody>
-                    <tr>
-                      {columns.map((column) => (
-                        <td key={column} className="p-0">
-                          {renderTopTierFigmaCell({ type: 'Status', column, mode })}
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-
-          <MatrixLabel>Product Image</MatrixLabel>
-          <div className="flex flex-col gap-[var(--spacing-12)]">
-            <div className="grid grid-cols-2 gap-[var(--spacing-16)]">
-              {(['Normal weight', 'Bold weight'] as const).map((label) => (
-                <MatrixLabel key={label}>{label}</MatrixLabel>
-              ))}
-            </div>
-            <div className={cardShell}>
-              <table className="border-collapse table-fixed w-[520px]">
-                <tbody>
-                  <tr>
-                    {(['normal', 'bold'] as const).map((textState) => (
-                      <td key={textState} className="p-0">
-                        {renderTopTierFigmaCell({ type: 'Product Image', column: 'first', textState, mode })}
-                      </td>
-                    ))}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+            );
+          })()}
 
           <MatrixLabel>Action Icon Button</MatrixLabel>
           <div className="flex flex-col gap-[var(--spacing-12)]">
             <MatrixLabel>Last column</MatrixLabel>
-            <TopTierStoryTable width={93}>
+            <TopTierStoryTable width={93} column="last">
               <TableCardCell
                 tier="top"
                 column="last"
@@ -1471,7 +1704,8 @@ export const BottomTierListingExpanded: StoryObj<UnifiedBottomArgs> = {
 
 /** Visual matrix for Figma 1445:2740. Hidden from default docs/navigation. */
 export const BottomTierListingMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!autodocs', 'visual-qa'],
+  parameters: { layout: 'fullscreen' },
   render: ({ mode = 'default' }) => {
     const columns: Array<'first' | 'center'> = ['first', 'center'];
     const states = [
@@ -1587,6 +1821,8 @@ export const BottomTierQuantityField: StoryObj<UnifiedBottomArgs> = {
 };
 
 export const BottomTierMatrix: Story = {
+  tags: ['!autodocs', 'visual-qa'],
+  parameters: { layout: 'fullscreen' },
   render: ({ mode = 'default' }) => {
     const rows: Array<'first' | 'middle' | 'last'> = ['first', 'middle', 'last'];
     return (
@@ -1664,7 +1900,8 @@ export const BottomTierFormControls: Story = {
  * stories above for copyable product code.
  */
 export const BottomTierFigmaMatrix: Story = {
-  tags: ['!dev', 'visual-qa'],
+  tags: ['!autodocs', 'visual-qa'],
+  parameters: { layout: 'fullscreen' },
   render: ({ mode = 'default' }) => {
     const columns: Array<'first' | 'center' | 'last'> = ['first', 'center', 'last'];
     const states = [
@@ -1695,44 +1932,56 @@ export const BottomTierFigmaMatrix: Story = {
         <MatrixNote>
           Visual check only. Use BottomTierInfo, BottomTierData, BottomTierStatusPip, BottomTierActionButton, BottomTierStarRating, BottomTierStatusToggle, or BottomTierQuantityField for copyable product code.
         </MatrixNote>
-        {variants.map((variant) => (
-          <div key={variant.label} className="flex flex-col gap-[var(--spacing-8)]">
-            <MatrixLabel>{variant.label}</MatrixLabel>
-            <div className="grid grid-cols-[90px_1fr] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-12)]">
-              <div />
-              <div className="flex gap-[var(--spacing-16)]">
-                {variant.columns.map((column) => (
-                  <MatrixLabel key={column}>{column} column</MatrixLabel>
+        {variants.map((variant) => {
+          const cellWidths = variant.columns.map((column) => ({
+            column,
+            width: bottomTierVariantWidth(
+              variant.type,
+              column,
+              column === 'first' && !!variant.withFirstGutter,
+            ),
+          }));
+          const tableWidth = cellWidths.reduce((a, c) => a + c.width, 0);
+          return (
+            <div key={variant.label} className="flex flex-col gap-[var(--spacing-8)]">
+              <MatrixLabel>{variant.label}</MatrixLabel>
+              <div className="grid grid-cols-[90px_1fr] gap-x-[var(--spacing-16)] gap-y-[var(--spacing-12)]">
+                <div />
+                <MatrixColumnHeadersFlex cells={cellWidths} />
+                {states.map(({ label, hovered }) => (
+                  <div key={label} className="contents">
+                    <MatrixLabel>{label}</MatrixLabel>
+                    <div className={cardShell}>
+                      <table className="border-collapse table-fixed" style={{ width: tableWidth }}>
+                        <colgroup>
+                          {cellWidths.map(({ column, width }) => (
+                            <col key={column} style={{ width }} />
+                          ))}
+                        </colgroup>
+                        <tbody>
+                          <tr className="group/row">
+                            {variant.columns.map((column) => (
+                              <td key={column} className="p-0">
+                                {renderBottomTierFigmaCell({
+                                  type: variant.type,
+                                  column,
+                                  row: variant.row,
+                                  hovered,
+                                  withGutter: column === 'first' && variant.withFirstGutter,
+                                  mode,
+                                })}
+                              </td>
+                            ))}
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
                 ))}
               </div>
-              {states.map(({ label, hovered }) => (
-                <div key={label} className="contents">
-                  <MatrixLabel>{label}</MatrixLabel>
-                  <div className={cardShell}>
-                    <table className="border-collapse table-fixed">
-                      <tbody>
-                        <tr className="group/row">
-                          {variant.columns.map((column) => (
-                            <td key={column} className="p-0">
-                              {renderBottomTierFigmaCell({
-                                type: variant.type,
-                                column,
-                                row: variant.row,
-                                hovered,
-                                withGutter: column === 'first' && variant.withFirstGutter,
-                                mode,
-                              })}
-                            </td>
-                          ))}
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              ))}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   },
