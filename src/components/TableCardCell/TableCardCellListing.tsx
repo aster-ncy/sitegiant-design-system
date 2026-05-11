@@ -46,10 +46,10 @@ const ListingInfoRow = ({
   medium?: boolean;
 }) => (
   <span className="inline-flex max-w-full items-start gap-[var(--spacing-4)]">
-    <span className="shrink-0 whitespace-nowrap text-[color:var(--text-default-text-info)]">{label}</span>
+    <span className="shrink-0 whitespace-nowrap text-[color:var(--color-text-info)]">{label}</span>
     <span
       className={[
-        'min-w-0 truncate text-[color:var(--text-default-text-primary)]',
+        'min-w-0 truncate text-[color:var(--color-text-primary)]',
         medium ? 'font-[var(--font-weight-medium)]' : '',
       ]
         .filter(Boolean)
@@ -105,7 +105,7 @@ export const TableCardCellListing = ({
       </span>
       <span className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-4)]">
         {pip && pip}
-        <span className="max-h-[34px] overflow-hidden font-[family-name:var(--font-sans)] text-[length:var(--table-body-size)] font-[var(--font-weight-bold)] leading-[var(--leading-17)] text-[color:var(--text-default-text-primary)]">
+        <span className="max-h-[34px] overflow-hidden font-[family-name:var(--font-sans)] text-[length:var(--table-body-size)] font-[var(--font-weight-bold)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
           {productName}
         </span>
         {(hasCaptionRows || showProperties) && (
@@ -130,7 +130,7 @@ export const TableCardCellListing = ({
             )}
           </span>
         )}
-        {extras && <span className="text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--text-default-text-primary)]">{extras}</span>}
+        {extras && <span className="text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--color-text-primary)]">{extras}</span>}
       </span>
     </span>
   );

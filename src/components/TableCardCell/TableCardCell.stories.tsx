@@ -164,7 +164,7 @@ const AppIcon = () => (
 );
 
 const UserIcon = () => (
-  <span className="inline-flex size-[21px] items-center justify-center rounded-full bg-[var(--color-surface-empty-state-placeholder-fill)] text-[length:var(--general-body-large-size)] leading-[var(--general-body-slim-lineheight)] text-[color:var(--text-default-text-primary)]">
+  <span className="inline-flex size-[21px] items-center justify-center rounded-full bg-[var(--color-surface-empty-state-placeholder-fill)] text-[length:var(--general-body-large-size)] leading-[var(--general-body-slim-lineheight)] text-[color:var(--color-text-primary)]">
     A
   </span>
 );
@@ -188,7 +188,7 @@ const TopTierInfoValue = ({
 }) => (
   <span className="inline-flex min-w-0 items-center gap-[var(--spacing-4)]">
     <span className="inline-flex items-center gap-[var(--spacing-4)] whitespace-nowrap">
-      <span className="text-[color:var(--text-default-text-info)]">{info}</span>
+      <span className="text-[color:var(--color-text-info)]">{info}</span>
       <span>{value}</span>
     </span>
     <span className="shrink-0">
@@ -199,7 +199,7 @@ const TopTierInfoValue = ({
 
 const TopTierStatus = ({ label = 'Tag Label' }: { label?: string }) => (
   <>
-    <span className="text-[color:var(--text-default-text-info)]">{label}</span>
+    <span className="text-[color:var(--color-text-info)]">{label}</span>
     <Pip type="warning" pipStyle="default" label="Pip Text" />
   </>
 );
@@ -513,7 +513,7 @@ const BottomInfoValue = ({
 }) => (
   <span className="inline-flex items-center gap-[var(--spacing-8)] whitespace-nowrap">
     <span className="inline-flex items-center gap-[var(--spacing-4)]">
-      <span className="text-[color:var(--text-default-text-info)]">{info}</span>
+      <span className="text-[color:var(--color-text-info)]">{info}</span>
       <span>{value}</span>
     </span>
     <PaperclipIndicator />
@@ -528,7 +528,7 @@ const BottomPlainInfoValue = ({
   info?: string;
 }) => (
   <span className="inline-flex items-center gap-[var(--spacing-4)] whitespace-nowrap">
-    <span className="text-[color:var(--text-default-text-info)]">{info}</span>
+    <span className="text-[color:var(--color-text-info)]">{info}</span>
     <span>{value}</span>
   </span>
 );
@@ -566,7 +566,7 @@ const BottomStatusValue = ({ count = 1 }: { count?: 1 | 2 }) => (
       </span>
     )}
     <span className="inline-flex items-center gap-[var(--spacing-4)] whitespace-nowrap">
-      <span className="text-[color:var(--text-default-text-info)]">Info:</span>
+      <span className="text-[color:var(--color-text-info)]">Info:</span>
       <span>Table Body Data</span>
     </span>
     <TextLink label="Tracking" iconPosition="left" icon={<Icon name="truck" size={15} />} />
@@ -644,8 +644,8 @@ const ListingInfoRow = ({
   medium?: boolean;
 }) => (
   <span className="inline-flex max-w-full items-start gap-[var(--spacing-4)]">
-    <span className="shrink-0 whitespace-nowrap text-[color:var(--text-default-text-info)]">{label}</span>
-    <span className={['min-w-0 truncate text-[color:var(--text-default-text-primary)]', medium ? 'font-[var(--font-weight-medium)]' : ''].join(' ')}>
+    <span className="shrink-0 whitespace-nowrap text-[color:var(--color-text-info)]">{label}</span>
+    <span className={['min-w-0 truncate text-[color:var(--color-text-primary)]', medium ? 'font-[var(--font-weight-medium)]' : ''].join(' ')}>
       {value}
     </span>
   </span>
@@ -654,7 +654,7 @@ const ListingInfoRow = ({
 const ListingProductInfo = () => (
   <span className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-4)]">
     <Pip type="success" pipStyle="default" label="Published" />
-    <span className="max-h-[34px] overflow-hidden font-[family-name:var(--font-sans)] text-[length:var(--table-body-size)] font-[var(--font-weight-bold)] leading-[var(--leading-17)] text-[color:var(--text-default-text-primary)]">
+    <span className="max-h-[34px] overflow-hidden font-[family-name:var(--font-sans)] text-[length:var(--table-body-size)] font-[var(--font-weight-bold)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
       DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs
     </span>
     <span className="flex w-full min-w-0 flex-col gap-[var(--spacing-8)]">
@@ -676,7 +676,7 @@ const BottomListingValue = ({ imageIndex = 1 }: { imageIndex?: number }) => (
       <ListingProductImage index={imageIndex} />
     </span>
     <ListingProductInfo />
-    <span className="shrink-0 whitespace-nowrap pt-[var(--spacing-2)] text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)] text-[color:var(--text-default-text-primary)]">
+    <span className="shrink-0 whitespace-nowrap pt-[var(--spacing-2)] text-[length:var(--general-caption-small-size)] leading-[var(--general-caption-small-lineheight)] text-[color:var(--color-text-primary)]">
       x 1
     </span>
   </span>
