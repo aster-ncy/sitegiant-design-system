@@ -28,10 +28,15 @@ const meta = {
     layout: 'padded',
     // Honor declaration order in both the Controls panel and the Docs
     // page args table — Storybook defaults to alphabetical otherwise.
-    // `tier` is hidden by default because every reference/matrix story
-    // is hardcoded to one tier; only the Playground story re-includes
-    // it via its own `parameters.controls.exclude` override.
-    controls: { sort: 'none', exclude: ['tier'] },
+    // Every reference/matrix story hardcodes tier/variant/column/row,
+    // so those controls would be dead toggles. The meta default hides
+    // them; only the Playground story re-includes them via its own
+    // `parameters.controls.exclude` override. `mode` stays visible
+    // because the toolbar control flips it across every story.
+    controls: {
+      sort: 'none',
+      exclude: ['tier', 'topVariant', 'bottomVariant', 'column', 'row'],
+    },
   },
   tags: ['autodocs'],
   argTypes: {
@@ -848,8 +853,9 @@ const playgroundBottomChildren = (variant: TableCardCellBottomVariant): ReactNod
  *  stories below for the full Figma reference compositions. */
 export const Playground: StoryObj<PlaygroundArgs> = {
   parameters: {
-    // Re-include `tier` for the Playground (meta default excludes it
-    // because reference stories are hardcoded to one tier).
+    // Re-include every control for the Playground (meta default
+    // excludes tier/topVariant/bottomVariant/column/row because
+    // reference/matrix stories hardcode them).
     controls: { sort: 'none', exclude: [] },
   },
   argTypes: {
