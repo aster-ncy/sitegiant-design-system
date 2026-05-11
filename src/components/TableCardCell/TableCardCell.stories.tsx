@@ -344,7 +344,9 @@ const topTierColumnWidth: Record<'first' | 'center' | 'last', string> = {
 
 const topTierCellClass = (column: 'first' | 'center' | 'last') => topTierColumnWidth[column];
 
-const topTierVariantCellClass = (type: string, column: 'first' | 'center' | 'last') => {
+type TopTierFigmaVariant = 'Default' | 'App Icon' | 'User Icon' | 'Status' | 'Product Image';
+
+const topTierVariantCellClass = (type: TopTierFigmaVariant, column: 'first' | 'center' | 'last') => {
   if (type === 'App Icon' || type === 'User Icon') {
     return {
       first: 'w-[216px]',
@@ -371,7 +373,7 @@ const topTierVariantCellClass = (type: string, column: 'first' | 'center' | 'las
 // can reproduce the exact same track widths and the labels sit directly
 // over the cells they label.
 const topTierVariantColumnWidthsPx = (
-  type: 'Default' | 'App Icon' | 'User Icon' | 'Status' | 'Product Image',
+  type: TopTierFigmaVariant,
 ): [number, number, number] => {
   if (type === 'App Icon' || type === 'User Icon') return [216, 151, 187];
   if (type === 'Status') return [217, 152, 188];
@@ -379,7 +381,7 @@ const topTierVariantColumnWidthsPx = (
   return [248, 184, 220];
 };
 
-const topTierContainerWidth = (type: string, column: 'first' | 'center' | 'last') => {
+const topTierContainerWidth = (type: TopTierFigmaVariant, column: 'first' | 'center' | 'last') => {
   if (column !== 'first') return topTierVariantCellClass(type, column);
 
   if (type === 'App Icon' || type === 'User Icon') return 'w-[163px]';
@@ -388,7 +390,7 @@ const topTierContainerWidth = (type: string, column: 'first' | 'center' | 'last'
   return 'w-[195px]';
 };
 
-const topTierVariantProp = (type: string): TableCardCellTopVariant => {
+const topTierVariantProp = (type: TopTierFigmaVariant): TableCardCellTopVariant => {
   if (type === 'App Icon') return 'app-icon';
   if (type === 'User Icon') return 'user-icon';
   if (type === 'Status') return 'status';
@@ -396,7 +398,7 @@ const topTierVariantProp = (type: string): TableCardCellTopVariant => {
   return 'default';
 };
 
-const topTierContent = (type: string, textState: 'normal' | 'bold' | 'link') => {
+const topTierContent = (type: TopTierFigmaVariant, textState: 'normal' | 'bold' | 'link') => {
   const textClass = `whitespace-nowrap ${textState === 'bold' ? 'font-[var(--font-weight-bold)]' : ''}`;
 
   if (type === 'Default') {
@@ -423,7 +425,7 @@ const topTierContent = (type: string, textState: 'normal' | 'bold' | 'link') => 
   return null;
 };
 
-const topTierLeading = (type: string) => {
+const topTierLeading = (type: TopTierFigmaVariant) => {
   if (type === 'App Icon') return <AppIcon />;
   if (type === 'User Icon') return <UserIcon />;
   if (type === 'Product Image') return <ProductThumb />;
@@ -438,7 +440,7 @@ const renderTopTierFigmaCell = ({
   mode = 'default',
   withCheckbox = true,
 }: {
-  type: string;
+  type: TopTierFigmaVariant;
   column: 'first' | 'center' | 'last';
   hovered?: boolean;
   textState?: 'normal' | 'bold' | 'link';
@@ -1031,7 +1033,7 @@ type TopTierFirstColArgs = {
 // cell's own width class for the active column so the table tracks the
 // cell on every column flip — including the checkbox-wrapped first-column
 // case, where `TopTierCheckboxFrame` itself is sized to this same value.
-const topTierStoryTableWidth = (type: string, column: TableColumnPosition) =>
+const topTierStoryTableWidth = (type: TopTierFigmaVariant, column: TableColumnPosition) =>
   Number.parseInt(
     topTierVariantCellClass(type, column).match(/\d+/)?.[0] ?? '248',
     10,
