@@ -492,17 +492,12 @@ const BottomTierRecipeFrame = ({
 const BottomTierGutterFrame = ({
   children,
   width,
-  row,
 }: {
   children: ReactNode;
   width: number;
-  row: BottomTierRow;
 }) => (
   <div
-    className={[
-      'inline-flex items-start pl-[53px]',
-      row === 'last' ? 'pb-[var(--spacing-24)]' : '',
-    ].filter(Boolean).join(' ')}
+    className="inline-flex items-start pl-[53px]"
     style={{ width }}
   >
     {children}
@@ -801,10 +796,89 @@ const renderBottomTierFigmaCell = ({
   if (!withGutter) return cell;
 
   return (
-    <BottomTierGutterFrame width={width} row={row}>
+    <BottomTierGutterFrame width={width}>
       {cell}
     </BottomTierGutterFrame>
   );
+};
+
+// ---------------------------------------------------------------------------
+// Unified Bottom Tier renderer — used by the row/column-configurable
+// reference stories below. Each variant gets ONE story whose Controls
+// panel exposes both `row` (first/middle/last) and `column`
+// (first/center/last). Wraps in BottomTierRecipeFrame so the cell's
+// own bottom-rounded corners + bottom border close the box cleanly.
+// ---------------------------------------------------------------------------
+
+const unifiedBottomCellWidth = (variant: TableCardCellBottomVariant, column: TableColumnPosition): number => {
+  // Listing variant has its own wide canvas.
+  if (variant === 'listing') return 374;
+  // Trailing-action variants (action-button / status-toggle) only make
+  // sense on last column visually; use the narrow trailing width.
+  if (variant === 'action-button') return 104;
+  if (variant === 'status-toggle') return 104;
+  // Form field variant: medium width to host NumberInput / Toggle.
+  if (variant === 'form-field') return { first: 195, center: 158, last: 195 }[column];
+  // Default / data / status / star-rating: align with Figma matrix widths.
+  return { first: 248, center: 200, last: 248 }[column];
+};
+
+const renderUnifiedBottomCell = ({
+  variant,
+  row,
+  column,
+  mode,
+}: {
+  variant: TableCardCellBottomVariant;
+  row: TableCardCellRow;
+  column: TableColumnPosition;
+  mode: TableCardCellMode;
+}) => {
+  const width = unifiedBottomCellWidth(variant, column);
+  // Form-field variant: atom handles items-center alignment; no extra
+  // class override needed (was hardcoded in the legacy figma-matrix
+  // renderer to compensate for fixed-height cells).
+  return (
+    <BottomTierRecipeFrame width={width}>
+      <TableCardCell
+        tier="bottom"
+        row={row}
+        column={column}
+        mode={mode}
+        bottomVariant={variant}
+        className={bottomTierWidthClass(width)}
+      >
+        {variant === 'listing'
+          ? // Use the canonical TableCardCellListing helper for the
+            // listing variant so callers see the recommended recipe.
+            (
+              <TableCardCellListing
+                image={<ListingProductImage index={1} />}
+                pip={<Pip type="success" pipStyle="default" label="Published" />}
+                productName="DYNAMO 4in1 Laundry Capsules — Anti-Bacterial Lavender 35s"
+                variant={{ label: 'Variant:', value: 'Lavender 35s' }}
+                sku={{ label: 'SKU:', value: '1902839204' }}
+                properties={[{ label: 'Product Property', value: 'Property (+RM0.00)' }]}
+              />
+            )
+          : bottomVariantContent(variant)}
+      </TableCardCell>
+    </BottomTierRecipeFrame>
+  );
+};
+
+// Shared args shape for the unified bottom-tier reference stories.
+type UnifiedBottomArgs = {
+  mode: TableCardCellMode;
+  row: TableCardCellRow;
+  column: TableColumnPosition;
+};
+
+// Shared meta override that re-includes `row` + `column` controls (the
+// meta default hides them since the Playground exception was the only
+// place developers could flip them).
+const unifiedBottomParameters = {
+  controls: { sort: 'none', exclude: ['tier', 'topVariant', 'bottomVariant'] },
 };
 
 // ---------------------------------------------------------------------------
@@ -1254,40 +1328,30 @@ export const TopTierFigmaMatrix: Story = {
   },
 };
 
-/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Default. */
-export const BottomTierInfo: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={248}>
-      {renderBottomTierFigmaCell({ type: 'Default', column: 'first', row: 'first', withGutter: true, mode })}
-    </BottomTierRecipeFrame>
-  ),
-};
-
-/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Default, Row Sorting=Last Row. */
-export const BottomTierInfoLastRow: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={248}>
-      {renderBottomTierFigmaCell({ type: 'Default', column: 'first', row: 'last', withGutter: true, mode })}
-    </BottomTierRecipeFrame>
-  ),
+/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Default.
+ *  Flip `row` (first/middle/last) + `column` (first/center/last) in
+ *  the Controls panel to see how the atom paints borders, vertical
+ *  padding, and rounded bottom corners for each position. Toggling
+ *  `mode` between default/inset reveals the spacing difference
+ *  (default = pl-24 pr-12 / pb-24 last; inset = pl-12 pr-6 / pb-12 last). */
+export const BottomTierInfo: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'first', column: 'first' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'default', row, column, mode }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Data. */
-export const BottomTierData: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={223}>
-      {renderBottomTierFigmaCell({ type: 'Data', column: 'first', row: 'last', withGutter: true, mode })}
-    </BottomTierRecipeFrame>
-  ),
+export const BottomTierData: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'last', column: 'first' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'data', row, column, mode }),
 };
 
 /** Figma: _Table Row - Bottom Tier - Listing (1458:3174), collapsed item content. */
-export const BottomTierListing: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={374}>
-      {renderBottomTierFigmaCell({ type: 'Listing', column: 'first', row: 'last', mode })}
-    </BottomTierRecipeFrame>
-  ),
+export const BottomTierListing: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'last', column: 'first' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'listing', row, column, mode }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier Listing matrix (1445:2740), expanded list. */
@@ -1381,48 +1445,43 @@ export const BottomTierListingMatrix: Story = {
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status. */
-export const BottomTierStatusPip: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={223}>
-      {renderBottomTierFigmaCell({ type: 'Status', column: 'first', row: 'last', withGutter: true, mode })}
-    </BottomTierRecipeFrame>
-  ),
+export const BottomTierStatusPip: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'last', column: 'first' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'status', row, column, mode }),
 };
 
-/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Action Button. */
-export const BottomTierActionButton: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={93}>
-      {renderBottomTierFigmaCell({ type: 'Action Button', column: 'last', row: 'last', mode })}
-    </BottomTierRecipeFrame>
-  ),
+/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Action Button.
+ *  Canonical column is `last` (trailing-action padding flips to
+ *  `pl-12 pr-24` there). Setting `column='first'` / `'center'` is valid
+ *  but undocumented in Figma. */
+export const BottomTierActionButton: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'last', column: 'last' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'action-button', row, column, mode }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Star Rating. */
-export const BottomTierStarRating: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={223}>
-      {renderBottomTierFigmaCell({ type: 'Star Rating', column: 'first', row: 'last', withGutter: true, mode })}
-    </BottomTierRecipeFrame>
-  ),
+export const BottomTierStarRating: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'last', column: 'first' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'star-rating', row, column, mode }),
 };
 
-/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status Toggle. */
-export const BottomTierStatusToggle: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={104}>
-      {renderBottomTierFigmaCell({ type: 'Status Toggle', column: 'last', row: 'first', mode })}
-    </BottomTierRecipeFrame>
-  ),
+/** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status Toggle.
+ *  Canonical column is `last` (same trailing-action padding flip as
+ *  Action Button). */
+export const BottomTierStatusToggle: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'first', column: 'last' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'status-toggle', row, column, mode }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Form Field. */
-export const BottomTierQuantityField: Story = {
-  render: ({ mode = 'default' }) => (
-    <BottomTierRecipeFrame width={195}>
-      {renderBottomTierFigmaCell({ type: 'Form Field', column: 'first', row: 'first', withGutter: true, mode })}
-    </BottomTierRecipeFrame>
-  ),
+export const BottomTierQuantityField: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'first', column: 'first' },
+  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'form-field', row, column, mode }),
 };
 
 export const BottomTierMatrix: Story = {
