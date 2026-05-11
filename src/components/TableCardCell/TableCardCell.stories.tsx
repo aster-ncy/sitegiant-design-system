@@ -35,7 +35,7 @@ const meta = {
     // because the toolbar control flips it across every story.
     controls: {
       sort: 'none',
-      exclude: ['tier', 'topVariant', 'bottomVariant', 'column', 'row'],
+      exclude: ['tier', 'topVariant', 'bottomVariant', 'column', 'row', 'withCheckbox'],
     },
   },
   tags: ['autodocs'],
@@ -108,6 +108,16 @@ const meta = {
       options: ['first', 'middle', 'last'] satisfies ReadonlyArray<TableCardCellRow>,
       description: 'Bottom-tier row position (only meaningful when tier renders a bottom cell). Drives vertical padding + bottom corner radii.',
       table: { defaultValue: { summary: 'first' } },
+    },
+    // Synthetic story-arg (not a component prop) — toggles a row-select
+    // Checkbox in the first-column slot. Only meaningful on `column='first'`
+    // since the checkbox always sits flush with the card's left edge;
+    // other columns wouldn't visually accommodate it.
+    withCheckbox: {
+      control: { type: 'boolean' },
+      if: { arg: 'column', eq: 'first' },
+      description: 'Show a row-select Checkbox in the first-column slot. Only visible when `column="first"`.',
+      table: { defaultValue: { summary: 'false' } },
     },
   },
   args: {
@@ -810,17 +820,26 @@ const renderBottomTierFigmaCell = ({
 // own bottom-rounded corners + bottom border close the box cleanly.
 // ---------------------------------------------------------------------------
 
-const unifiedBottomCellWidth = (variant: TableCardCellBottomVariant, column: TableColumnPosition): number => {
+const unifiedBottomCellWidth = (
+  variant: TableCardCellBottomVariant,
+  column: TableColumnPosition,
+  withCheckbox: boolean,
+): number => {
+  // First-column cells widen by ~53px when a Checkbox occupies the
+  // leading slot — same delta the legacy figma-matrix renderer used
+  // (248 → 301 for default, 374 → 427 for listing).
+  const checkboxBonus = column === 'first' && withCheckbox ? 53 : 0;
+
   // Listing variant has its own wide canvas.
-  if (variant === 'listing') return 374;
+  if (variant === 'listing') return 374 + checkboxBonus;
   // Trailing-action variants (action-button / status-toggle) only make
   // sense on last column visually; use the narrow trailing width.
   if (variant === 'action-button') return 104;
   if (variant === 'status-toggle') return 104;
   // Form field variant: medium width to host NumberInput / Toggle.
-  if (variant === 'form-field') return { first: 195, center: 158, last: 195 }[column];
+  if (variant === 'form-field') return ({ first: 195, center: 158, last: 195 }[column]) + checkboxBonus;
   // Default / data / status / star-rating: align with Figma matrix widths.
-  return { first: 248, center: 200, last: 248 }[column];
+  return ({ first: 248, center: 200, last: 248 }[column]) + checkboxBonus;
 };
 
 const renderUnifiedBottomCell = ({
@@ -828,13 +847,19 @@ const renderUnifiedBottomCell = ({
   row,
   column,
   mode,
+  withCheckbox = false,
 }: {
   variant: TableCardCellBottomVariant;
   row: TableCardCellRow;
   column: TableColumnPosition;
   mode: TableCardCellMode;
+  withCheckbox?: boolean;
 }) => {
-  const width = unifiedBottomCellWidth(variant, column);
+  // Row-select Checkbox: only renders on column='first' (matches Figma
+  // 1438:4957 "with Checkbox" column). On other columns, the atom's
+  // checkbox slot is left empty and the cell uses its non-checkbox width.
+  const showCheckbox = withCheckbox && column === 'first';
+  const width = unifiedBottomCellWidth(variant, column, showCheckbox);
   // Form-field variant: atom handles items-center alignment; no extra
   // class override needed (was hardcoded in the legacy figma-matrix
   // renderer to compensate for fixed-height cells).
@@ -846,6 +871,7 @@ const renderUnifiedBottomCell = ({
         column={column}
         mode={mode}
         bottomVariant={variant}
+        checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
         className={bottomTierWidthClass(width)}
       >
         {variant === 'listing'
@@ -872,6 +898,7 @@ type UnifiedBottomArgs = {
   mode: TableCardCellMode;
   row: TableCardCellRow;
   column: TableColumnPosition;
+  withCheckbox: boolean;
 };
 
 // Shared meta override that re-includes `row` + `column` controls (the
@@ -1336,46 +1363,55 @@ export const TopTierFigmaMatrix: Story = {
  *  (default = pl-24 pr-12 / pb-24 last; inset = pl-12 pr-6 / pb-12 last). */
 export const BottomTierInfo: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'first', column: 'first' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'default', row, column, mode }),
+  args: { mode: 'default', row: 'first', column: 'first', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'default', row, column, mode, withCheckbox }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Data. */
 export const BottomTierData: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'first' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'data', row, column, mode }),
+  args: { mode: 'default', row: 'last', column: 'first', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'data', row, column, mode, withCheckbox }),
 };
 
 /** Figma: _Table Row - Bottom Tier - Listing (1458:3174), collapsed item content. */
 export const BottomTierListing: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'first' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'listing', row, column, mode }),
+  args: { mode: 'default', row: 'last', column: 'first', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'listing', row, column, mode, withCheckbox }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier Listing matrix (1445:2740), expanded list. */
 /** Figma: Table Row - Card - Bottom Tier Listing matrix (1445:2740), expanded
  *  list of stacked product items + checkbox. Uses the legacy stacked
  *  `BottomListingStackValue` (image + info + "x 1") which differs from the
- *  collapsed BottomTierListing variant's canonical TableCardCellListing. */
+ *  collapsed BottomTierListing variant's canonical TableCardCellListing.
+ *  Checkbox is rendered INSIDE the stack here (per Figma 1445:2740),
+ *  not via the atom's checkbox slot. */
 export const BottomTierListingExpanded: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'first' },
-  render: ({ mode, row, column }) => (
-    <BottomTierRecipeFrame width={427}>
-      <TableCardCell
-        tier="bottom"
-        row={row}
-        column={column}
-        mode={mode}
-        bottomVariant="listing"
-        className="!w-[427px]"
-      >
-        <BottomListingStackValue expanded withCheckbox />
-      </TableCardCell>
-    </BottomTierRecipeFrame>
-  ),
+  args: { mode: 'default', row: 'last', column: 'first', withCheckbox: true },
+  render: ({ mode, row, column, withCheckbox }) => {
+    const stackedCheckbox = withCheckbox && column === 'first';
+    const cellWidth = stackedCheckbox ? 427 : 374;
+    return (
+      <BottomTierRecipeFrame width={cellWidth}>
+        <TableCardCell
+          tier="bottom"
+          row={row}
+          column={column}
+          mode={mode}
+          bottomVariant="listing"
+          className={stackedCheckbox ? '!w-[427px]' : '!w-[374px]'}
+        >
+          <BottomListingStackValue expanded withCheckbox={stackedCheckbox} />
+        </TableCardCell>
+      </BottomTierRecipeFrame>
+    );
+  },
 };
 
 /** Visual matrix for Figma 1445:2740. Hidden from default docs/navigation. */
@@ -1453,8 +1489,9 @@ export const BottomTierListingMatrix: Story = {
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status. */
 export const BottomTierStatusPip: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'first' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'status', row, column, mode }),
+  args: { mode: 'default', row: 'last', column: 'first', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'status', row, column, mode, withCheckbox }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Action Button.
@@ -1463,15 +1500,17 @@ export const BottomTierStatusPip: StoryObj<UnifiedBottomArgs> = {
  *  but undocumented in Figma. */
 export const BottomTierActionButton: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'last' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'action-button', row, column, mode }),
+  args: { mode: 'default', row: 'last', column: 'last', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'action-button', row, column, mode, withCheckbox }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Star Rating. */
 export const BottomTierStarRating: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'first' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'star-rating', row, column, mode }),
+  args: { mode: 'default', row: 'last', column: 'first', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'star-rating', row, column, mode, withCheckbox }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Status Toggle.
@@ -1479,15 +1518,17 @@ export const BottomTierStarRating: StoryObj<UnifiedBottomArgs> = {
  *  Action Button). */
 export const BottomTierStatusToggle: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'last', column: 'last' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'status-toggle', row, column, mode }),
+  args: { mode: 'default', row: 'last', column: 'last', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'status-toggle', row, column, mode, withCheckbox }),
 };
 
 /** Figma: Table Row - Card - Bottom Tier (1438:4957), Type=Form Field. */
 export const BottomTierQuantityField: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'first', column: 'first' },
-  render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'form-field', row, column, mode }),
+  args: { mode: 'default', row: 'first', column: 'first', withCheckbox: false },
+  render: ({ mode, row, column, withCheckbox }) =>
+    renderUnifiedBottomCell({ variant: 'form-field', row, column, mode, withCheckbox }),
 };
 
 export const BottomTierMatrix: Story = {
