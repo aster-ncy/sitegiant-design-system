@@ -1355,13 +1355,19 @@ export const BottomTierListing: StoryObj<UnifiedBottomArgs> = {
 };
 
 /** Figma: Table Row - Card - Bottom Tier Listing matrix (1445:2740), expanded list. */
-export const BottomTierListingExpanded: Story = {
-  render: ({ mode = 'default' }) => (
+/** Figma: Table Row - Card - Bottom Tier Listing matrix (1445:2740), expanded
+ *  list of stacked product items + checkbox. Uses the legacy stacked
+ *  `BottomListingStackValue` (image + info + "x 1") which differs from the
+ *  collapsed BottomTierListing variant's canonical TableCardCellListing. */
+export const BottomTierListingExpanded: StoryObj<UnifiedBottomArgs> = {
+  parameters: unifiedBottomParameters,
+  args: { mode: 'default', row: 'last', column: 'first' },
+  render: ({ mode, row, column }) => (
     <BottomTierRecipeFrame width={427}>
       <TableCardCell
         tier="bottom"
-        row="last"
-        column="first"
+        row={row}
+        column={column}
         mode={mode}
         bottomVariant="listing"
         className="!h-auto !min-h-[640px] !w-[427px] !items-start"
@@ -1473,7 +1479,7 @@ export const BottomTierStarRating: StoryObj<UnifiedBottomArgs> = {
  *  Action Button). */
 export const BottomTierStatusToggle: StoryObj<UnifiedBottomArgs> = {
   parameters: unifiedBottomParameters,
-  args: { mode: 'default', row: 'first', column: 'last' },
+  args: { mode: 'default', row: 'last', column: 'last' },
   render: ({ mode, row, column }) => renderUnifiedBottomCell({ variant: 'status-toggle', row, column, mode }),
 };
 

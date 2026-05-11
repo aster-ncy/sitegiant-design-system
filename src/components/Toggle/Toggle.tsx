@@ -179,7 +179,14 @@ export const Toggle = ({
   // visual, no clipping). With the row set to items-start, the toggle
   // aligns to the label's first text line regardless of whether
   // helperText pushes the stack to ~38px tall.
-  const horizontalToggleWrapperClass = isVertical
+  //
+  // Only applied when a label/helperText is actually present — without
+  // a label there's nothing to align against, and the 21px slot would
+  // make the toggle's bounding box smaller than its visible 25px track,
+  // causing parents to shrink around the wrapper while the track
+  // overflows outside the cell (Status Toggle in a TableCardCell).
+  const hasLabel = Boolean(label || helperText);
+  const horizontalToggleWrapperClass = isVertical || !hasLabel
     ? ''
     : 'inline-flex items-center justify-center shrink-0 h-[var(--leading-21)]';
 
