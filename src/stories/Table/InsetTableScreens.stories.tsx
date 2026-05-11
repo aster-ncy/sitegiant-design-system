@@ -47,7 +47,7 @@ type ChannelKey = keyof typeof channelIconSources;
  * composes the existing Table primitives — the goal is to prove the
  * primitives can express every observed pattern without one-off product
  * code. Fixture data is fictional; references/inset_table_sN.png hold the
- * (private) source screenshots.
+ * source screenshots.
  *
  * Stories live under src/stories/ rather than alongside their primitives
  * because they are integration documentation, not per-component variants.

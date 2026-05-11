@@ -173,8 +173,7 @@ const topTierBaseClasses = [
   'border-[color:var(--table-divider-border)] border-solid',
   // Top + bottom always painted on Top Tier.
   'border-t border-b',
-  // Left always painted (every cell paints its own left edge — Codex
-  // border-coordination rule from spec §"Border coordination contract").
+  // Left always painted so each cell owns its outer edge.
   'border-l',
   'transition-colors duration-150',
 ].join(' ');

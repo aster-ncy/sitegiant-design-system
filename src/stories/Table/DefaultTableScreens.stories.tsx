@@ -11,7 +11,7 @@ import { Pip } from '../../components/Pip';
  *
  * Pairs with InsetTableScreens.stories.tsx (s1..s9) — the same primitives
  * with `inset` flipped off. Source screenshots live at
- * `references/table_s4.png`, `table_s7.png`, `table_s8.png` (private).
+ * `references/table_s4.png`, `table_s7.png`, `table_s8.png`.
  */
 const meta = {
   title: 'Tables/Table Recipes/Standard Reference Screens',

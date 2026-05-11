@@ -18,7 +18,7 @@ from pathlib import Path
 # Resolve paths relative to this script so the build is portable across
 # machines. Layout assumed:
 #   <workspace>/
-#     figma-design-system/icon/channel icon/*.svg     (private, source)
+#     figma-design-system/icon/channel icon/*.svg     (source export)
 #     sitegiant-storybook/scripts/build-channel-icons.py
 #     sitegiant-storybook/src/components/Icon/channelIconPaths.ts (output)
 _SCRIPT_DIR = Path(__file__).resolve().parent

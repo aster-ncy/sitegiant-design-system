@@ -58,7 +58,7 @@ export const Password: Story = {
   args: {
     type: 'password',
     placeholder: 'Password',
-    defaultValue: 'super-secret',
+    defaultValue: 'example-password',
     hintText: 'At least 8 characters',
   },
 };

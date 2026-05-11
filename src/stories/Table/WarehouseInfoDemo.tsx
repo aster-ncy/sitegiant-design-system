@@ -330,7 +330,7 @@ const RackRowView = ({
   onAddBatch,
   onRemoveBatch,
 }: RackRowProps) => {
-  // Per AGENTS rule #7: when the row contains multi-row content (the nested
+  // When the row contains multi-row content (the nested
   // batch column has 2+ stacked sub-rows), every sibling cell must top-align
   // so they don't drift to the visual middle of the tallest stretched cell.
   // Single-row cases stay center.

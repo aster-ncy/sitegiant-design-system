@@ -50,7 +50,7 @@ sitegiant-storybook/
   state (matching the Figma variable names), not `active`.
 - Cover all variants, sizes, and states in `*.stories.tsx`.
 
-See `AGENTS.md` for the full house-style rules used by AI-assisted contributors.
+Follow the existing component and Storybook conventions when adding new work.
 
 ## Trademarks
 
