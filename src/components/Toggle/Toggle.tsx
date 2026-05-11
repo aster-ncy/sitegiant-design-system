@@ -45,9 +45,14 @@ export interface ToggleProps {
 
 /*
  * Figma spec (Form/toggle):
- * - Track: 36×20px (derived from spacing system)
- * - Knob: 16×16px circle, 2px offset from edges
- * - States: unchecked, checked (default green), checked (special blue), disabled
+ * - Default variant: 44×25 track + 25×25 knob (knob travels 19px) per
+ *   Figma 1165:218.
+ * - Special variant: 24×12 track + 12×12 knob (knob travels 12px) per
+ *   Figma 2351:732 — stays blue in both off/on states.
+ * - Toggle Container (the surrounding frame): 33px tall with py-4,
+ *   per Figma 1165:238 (vertical) and 1222:1054 (horizontal).
+ * - States: unchecked, checked (default green), checked (special blue),
+ *   disabled, disabled+checked ("Checked by Default" / lockedChecked).
  */
 
 /**
@@ -153,22 +158,30 @@ export const Toggle = ({
   // Layout: horizontal places the toggle beside the label-stack;
   // vertical stacks the toggle below the label (Figma 1165:239 default).
   const isVertical = layout === 'vertical';
+  // Horizontal uses items-start so the toggle pairs with the LABEL
+  // line of the label-stack (not the combined label+hint stack); the
+  // 21px outer wrapper around the 33px Toggle Container carries that
+  // alignment (see horizontalToggleWrapper below). Vertical stacks
+  // (column flow), so items-start is natural.
   const rootLayoutClass = isVertical
     ? 'inline-flex flex-col items-start gap-[var(--spacing-4)]'
     : 'inline-flex items-start gap-[var(--spacing-12)]';
 
-  // Toggle slot:
-  // - vertical layout: full 33px Toggle Container per Figma 1165:238
-  //   (4px top + 25px track + 4px bottom). The toggle is on its own
-  //   row, so the canonical 33px footprint applies.
-  // - horizontal layout: 21px slot (heading line-height). The 25px
-  //   track is taller than the line, so it visually overflows ±2px
-  //   above/below the heading; the row's items-start lets it grow.
-  //   Track-center then aligns with heading-row centerline (rule B:
-  //   leading-element follows top content row).
-  const trackSlotClass = isVertical
-    ? 'inline-flex items-center justify-center shrink-0 h-[33px] py-[var(--spacing-4)]'
-    : 'inline-flex items-center shrink-0 h-[var(--leading-21)]';
+  // Toggle Container — canonical 33px frame in BOTH layouts per Figma
+  // 1165:238 (vertical) and 1222:1054 (horizontal): 4px top + 25px
+  // track + 4px bottom.
+  const trackSlotClass =
+    'inline-flex items-center justify-center shrink-0 h-[33px] py-[var(--spacing-4)]';
+
+  // Horizontal-only outer wrapper — a 21px line-height slot that
+  // vertical-centers the 33px Toggle Container around the LABEL line.
+  // The 33px container overflows ±6px outside this slot (overflow is
+  // visual, no clipping). With the row set to items-start, the toggle
+  // aligns to the label's first text line regardless of whether
+  // helperText pushes the stack to ~38px tall.
+  const horizontalToggleWrapperClass = isVertical
+    ? ''
+    : 'inline-flex items-center justify-center shrink-0 h-[var(--leading-21)]';
 
   return (
     <label
@@ -177,8 +190,11 @@ export const Toggle = ({
       } ${className}`}
       htmlFor={id}
     >
-      {/* In vertical layout, label sits above the toggle. */}
-      {isVertical && (label || helperText) && (
+      {/* Label-stack — sits above the toggle in vertical (column flow)
+          and to the LEFT of the toggle in horizontal (row flow) per
+          Figma 1165:239 / 1222:1051. Rendered first in DOM in both
+          layouts so the row order is label → toggle. */}
+      {(label || helperText) && (
         <span className="flex flex-col gap-[var(--spacing-4)]">
           {label && (
             <span
@@ -217,49 +233,54 @@ export const Toggle = ({
         aria-checked={checked}
       />
 
-      {/* Track slot — slot height varies by layout (see trackSlotClass).
-          Focus ring lives here so peer-focus-visible: targets a sibling
-          of <input class='peer'>. */}
-      <span
-        className={`${trackSlotClass} rounded-full peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1 peer-focus-visible:ring-[var(--button-primary-default-fill)]`}
-      >
+      {/* Toggle Container — canonical 33px frame. In horizontal layout
+          it's wrapped in a 21px outer slot so the 33px frame centers
+          around the label's first text line (track-center coincides
+          with label-line center); helperText hangs below without
+          dragging the toggle down. Focus ring lives on whichever span
+          is a direct sibling of <input class='peer'>: the 33px slot in
+          vertical, the 21px wrapper in horizontal. */}
+      {isVertical ? (
         <span
-          className={`${trackBase} ${trackState}`}
-          style={{ boxShadow: trackBoxShadow }}
-          aria-hidden="true"
+          className={`${trackSlotClass} rounded-full peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1 peer-focus-visible:ring-[var(--button-primary-default-fill)]`}
         >
           <span
-            className={`${knobBase} ${knobState}`}
-            style={{
-              boxShadow: knobBoxShadow,
-              transform: `translateX(${isOn ? knobTranslateX : 0}px)`,
-            }}
-          />
-        </span>
-      </span>
-
-      {/* Horizontal layout: label + helper text beside the toggle.
-          uses justify-center on the stack so it aligns with the heading
-          row top via the parent's items-start. Pattern matches
-          Checkbox / Radio post-Pattern-C alignment fix. */}
-      {!isVertical && (label || helperText) && (
-        <span className="flex flex-col gap-[var(--spacing-4)] justify-center">
-          {label && (
+            className={`${trackBase} ${trackState}`}
+            style={{ boxShadow: trackBoxShadow }}
+            aria-hidden="true"
+          >
             <span
-              className={`${bodyTextClasses} ${
-                disabled
-                  ? 'text-[color:var(--form-input-disabled-text)]'
-                  : 'text-[color:var(--form-label-text)]'
-              }`}
+              className={`${knobBase} ${knobState}`}
+              style={{
+                boxShadow: knobBoxShadow,
+                transform: `translateX(${isOn ? knobTranslateX : 0}px)`,
+              }}
+            />
+          </span>
+        </span>
+      ) : (
+        // Horizontal: 21px outer slot carries the peer-focus-visible
+        // ring (the input + this wrapper are direct siblings of <label>,
+        // so the peer selector resolves correctly). Inner 33px slot
+        // overflows by ±6px around the label-line center.
+        <span
+          className={`${horizontalToggleWrapperClass} rounded-full peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-offset-1 peer-focus-visible:ring-[var(--button-primary-default-fill)]`}
+        >
+          <span className={trackSlotClass}>
+            <span
+              className={`${trackBase} ${trackState}`}
+              style={{ boxShadow: trackBoxShadow }}
+              aria-hidden="true"
             >
-              {label}
+              <span
+                className={`${knobBase} ${knobState}`}
+                style={{
+                  boxShadow: knobBoxShadow,
+                  transform: `translateX(${isOn ? knobTranslateX : 0}px)`,
+                }}
+              />
             </span>
-          )}
-          {helperText && (
-            <span className={`${captionTextClasses} text-[color:var(--form-label-info-text)]`}>
-              {helperText}
-            </span>
-          )}
+          </span>
         </span>
       )}
     </label>
