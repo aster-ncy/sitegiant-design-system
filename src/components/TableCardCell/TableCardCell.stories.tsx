@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { TableCardCell } from './TableCardCell';
 import { TableCardCellListing } from './TableCardCellListing';
 import type {
+  TableCardCellProps,
   TableCardCellTopVariant,
   TableCardCellBottomVariant,
   TableCardCellMode,
@@ -20,6 +21,10 @@ import { ProductImage } from '../ProductImageList';
 import { IconButton } from '../TopBar/IconButton';
 import shopeeIcon from '../../assets/channel-icons/shopee.png';
 import { product1, productImages } from '../../assets/product-images';
+
+type TableCardCellStoryArgs = TableCardCellProps & {
+  withCheckbox?: boolean;
+};
 
 const meta = {
   title: 'Tables/Card Table/Cell Atoms',
@@ -125,10 +130,10 @@ const meta = {
     // Tables typically live; toggle to 'inset' to see the compact baseline.
     mode: 'default',
   },
-} satisfies Meta<typeof TableCardCell>;
+} satisfies Meta<TableCardCellStoryArgs>;
 
 export default meta;
-type Story = StoryObj<typeof TableCardCell>;
+type Story = StoryObj<TableCardCellStoryArgs>;
 
 // Outer card recipe — every story wraps cells in this shell so the
 // rounded corners visually close the box. Default rounds all 4 corners
@@ -554,18 +559,28 @@ const bottomTierWidthClass = (width: number) => ({
   374: 'w-[374px]',
 }[width] ?? 'w-auto');
 
-// Standalone bottom-tier wrapper — clips ONLY the bottom corners so the
-// cell's own rounded-bl/br on row='last' shows clean while the top
-// edge stays square (a bottom tier never paints top corners; rounding
-// them via overflow-hidden would be a visual lie).
+const bottomTierRecipeFrameRadius = (row: TableCardCellRow, column: TableColumnPosition) => {
+  if (row !== 'last') return '';
+  if (column === 'first') return 'rounded-bl-[var(--radius-4)]';
+  if (column === 'last') return 'rounded-br-[var(--radius-4)]';
+  return '';
+};
+
+// Standalone bottom-tier wrapper — clips only the actual bottom corner
+// the atom can paint for the active row/column. Non-last rows and center
+// columns stay square so Controls do not show false rounded corners.
 const BottomTierRecipeFrame = ({
   children,
   width,
+  row,
+  column,
 }: {
   children: ReactNode;
   width: number;
+  row: TableCardCellRow;
+  column: TableColumnPosition;
 }) => (
-  <div className="overflow-hidden rounded-b-[var(--radius-4)] inline-block">
+  <div className={['overflow-hidden inline-block', bottomTierRecipeFrameRadius(row, column)].filter(Boolean).join(' ')}>
     <table className="border-collapse table-fixed" style={{ width }}>
       <tbody>
         <tr className="group/row">
@@ -950,7 +965,7 @@ const renderUnifiedBottomCell = ({
   // class override needed (was hardcoded in the legacy figma-matrix
   // renderer to compensate for fixed-height cells).
   const card = (
-    <BottomTierRecipeFrame width={cellWidth}>
+    <BottomTierRecipeFrame width={cellWidth} row={row} column={column}>
       <TableCardCell
         tier="bottom"
         row={row}
@@ -1371,7 +1386,7 @@ export const TopTierProductImage: StoryObj<TopTierFirstColArgs> = {
 
 /** Figma: Table Row - Card - Top Tier (1432:2527), Type=Action Icon Button. */
 export const TopTierAddButton: Story = {
-  render: ({ mode = 'default' }) => (
+  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => (
     <TopTierStoryTable width={93} column="last">
       <TableCardCell
         tier="top"
@@ -1424,7 +1439,7 @@ export const TopTierWithLeadingIcon: StoryObj<TopTierRowArgs> = {
 export const TopTierFigmaMatrix: Story = {
   tags: ['!autodocs', 'visual-qa'],
   parameters: { layout: 'fullscreen' },
-  render: ({ mode = 'default' }) => {
+  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => {
     const columns: Array<'first' | 'center' | 'last'> = ['first', 'center', 'last'];
     const defaultRows = [
       { label: 'Default', hovered: false },
@@ -1686,7 +1701,7 @@ export const BottomTierListingExpanded: StoryObj<UnifiedBottomArgs> = {
     const stackedCheckbox = withCheckbox && column === 'first';
     const cellWidth = stackedCheckbox ? 427 : 374;
     return (
-      <BottomTierRecipeFrame width={cellWidth}>
+      <BottomTierRecipeFrame width={cellWidth} row={row} column={column}>
         <TableCardCell
           tier="bottom"
           row={row}
@@ -1706,7 +1721,7 @@ export const BottomTierListingExpanded: StoryObj<UnifiedBottomArgs> = {
 export const BottomTierListingMatrix: Story = {
   tags: ['!autodocs', 'visual-qa'],
   parameters: { layout: 'fullscreen' },
-  render: ({ mode = 'default' }) => {
+  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => {
     const columns: Array<'first' | 'center'> = ['first', 'center'];
     const states = [
       { label: 'Default', hovered: false },
@@ -1739,7 +1754,7 @@ export const BottomTierListingMatrix: Story = {
                       {checkboxOptions.map((option) => (
                         <div key={option.label} className="flex flex-col gap-[var(--spacing-4)]">
                           <MatrixLabel>{option.label}</MatrixLabel>
-                          <BottomTierRecipeFrame width={option.withCheckbox ? 427 : 374}>
+                          <BottomTierRecipeFrame width={option.withCheckbox ? 427 : 374} row="last" column={column}>
                             <TableCardCell
                               tier="bottom"
                               row="last"
@@ -1823,7 +1838,7 @@ export const BottomTierQuantityField: StoryObj<UnifiedBottomArgs> = {
 export const BottomTierMatrix: Story = {
   tags: ['!autodocs', 'visual-qa'],
   parameters: { layout: 'fullscreen' },
-  render: ({ mode = 'default' }) => {
+  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => {
     const rows: Array<'first' | 'middle' | 'last'> = ['first', 'middle', 'last'];
     return (
       <div className={cardShell}>
@@ -1858,7 +1873,7 @@ export const BottomTierMatrix: Story = {
 /** Bottom Tier hosting form controls — `bottomVariant="form-field"`
  *  centres NumberInput / Toggle / Button vertically in the cell. */
 export const BottomTierFormControls: Story = {
-  render: ({ mode = 'default' }) => (
+  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => (
     <div className={cardShell}>
       <table className="border-collapse table-fixed w-[600px]">
         <tbody>
@@ -1902,7 +1917,7 @@ export const BottomTierFormControls: Story = {
 export const BottomTierFigmaMatrix: Story = {
   tags: ['!autodocs', 'visual-qa'],
   parameters: { layout: 'fullscreen' },
-  render: ({ mode = 'default' }) => {
+  render: ({ mode = 'default' }: { mode?: TableCardCellMode }) => {
     const columns: Array<'first' | 'center' | 'last'> = ['first', 'center', 'last'];
     const states = [
       { label: 'Default', hovered: false },
