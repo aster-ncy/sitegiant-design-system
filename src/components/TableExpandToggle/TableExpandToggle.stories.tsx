@@ -1,26 +1,60 @@
-import { useState } from 'react';
+import { useEffect, useState, type ComponentProps } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableExpandToggle } from './TableExpandToggle';
 import { TableCell } from '../TableCell';
 
+type ExpandToggleMode = 'collapse' | 'expand';
+type TableExpandToggleStoryArgs = ComponentProps<typeof TableExpandToggle> & {
+  mode: ExpandToggleMode;
+};
+
 const meta = {
   title: 'Tables/Table Atoms/Expand Toggle',
   component: TableExpandToggle,
-  parameters: { layout: 'centered' },
+  parameters: {
+    layout: 'centered',
+    docs: {
+      description: {
+        component: [
+          'A compact blue chevron button for expanding or collapsing an inset table row.',
+          '',
+          'Use it inside `TableCell`, usually in the trailing cell. For the full row composition, use the Body Cell expandable-row recipe.',
+          '',
+          'Typical usage: `<TableExpandToggle expanded={expanded} onToggle={setExpanded} ariaControls="order-subrows" />`',
+        ].join('\n'),
+      },
+    },
+  },
   tags: ['autodocs'],
-  args: { expanded: false },
-} satisfies Meta<typeof TableExpandToggle>;
+  argTypes: {
+    mode: {
+      control: { type: 'inline-radio' },
+      options: ['collapse', 'expand'] satisfies ReadonlyArray<ExpandToggleMode>,
+      description: 'Storybook control for the toggle state.',
+      table: { category: 'State', defaultValue: { summary: 'collapse' } },
+    },
+    expanded: { table: { disable: true } },
+    onToggle: { table: { disable: true } },
+    ariaControls: { table: { disable: true } },
+    className: { table: { disable: true } },
+  },
+  args: { expanded: false, mode: 'collapse' },
+  render: ({ mode, ...args }) => (
+    <TableExpandToggle {...args} expanded={mode === 'expand'} />
+  ),
+} satisfies Meta<TableExpandToggleStoryArgs>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Collapsed: Story = {};
-
-export const Expanded: Story = { args: { expanded: true } };
-
-export const Interactive: Story = {
+export const Playground: Story = {
   render: (args) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(args.mode === 'expand');
+
+    useEffect(() => {
+      setOpen(args.mode === 'expand');
+    }, [args.mode]);
+
     return (
       <TableExpandToggle {...args} expanded={open} onToggle={setOpen} />
     );
@@ -33,7 +67,10 @@ export const Interactive: Story = {
  * copy the TableCell + TableExpandToggle composition from TableCell's
  * InsetExpandable story instead.
  */
-export const InsetRowMatrix: Story = {
+export const Matrix: Story = {
+  parameters: {
+    controls: { disable: true },
+  },
   render: () => (
     <table className="border-collapse table-fixed w-[360px]">
       <thead>

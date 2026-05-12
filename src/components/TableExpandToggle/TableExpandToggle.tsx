@@ -11,19 +11,10 @@ export interface TableExpandToggleProps {
 }
 
 /**
- * TableExpandToggle — Figma: Inset Table Row - Expandable (756:377).
+ * Compact chevron control for expanding or collapsing an inset table row.
  *
- * Borderless 21px chevron-up / chevron-down toggle for expanding a
- * sub-row inside a `TableCell` (typically in the last column). Figma
- * makes the wrapping cell carry the p-12 padding (`Inset Table Row -
- * Expandable` outer is `flex items-center p-12`); the toggle itself
- * is just the 21px icon with no inner padding. Adding p-12 here
- * doubles up with the cell wrapper and inflates row height to 69px
- * instead of the Figma 45px.
- *
- * Always blue (`--color-sys-blue-DEFAULT`). Per product convention,
- * there is no disabled state — if a row is not expandable, omit the
- * toggle entirely rather than rendering a disabled chevron.
+ * Use it inside `TableCell`, usually in the trailing cell of an expandable
+ * inset row.
  */
 export const TableExpandToggle = ({
   expanded,
@@ -40,12 +31,12 @@ export const TableExpandToggle = ({
       aria-label={expanded ? 'Collapse row' : 'Expand row'}
       className={[
         'inline-flex items-center justify-center shrink-0',
-        // No inner padding — the wrapping TableCell provides p-12 per
+        // No inner padding: the wrapping TableCell owns row spacing per
         // Figma 756:377. min-w/h-24 keeps the click target WCAG 2.5.5
-        // compliant (24×24) without reintroducing the spacing-12
+        // compliant (24x24) without reintroducing the spacing-12
         // double-padding that inflated rows to 69px.
         'min-w-[24px] min-h-[24px] border-none bg-transparent cursor-pointer',
-        // Keyboard focus ring — outline:none drops the default browser
+        // Keyboard focus ring: outline-none drops the default browser
         // ring, so we paint our own visible focus indicator.
         'outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--color-sys-blue-DEFAULT)] rounded-[var(--radius-2)]',
         className,

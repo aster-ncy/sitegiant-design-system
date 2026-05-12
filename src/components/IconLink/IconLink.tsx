@@ -33,8 +33,8 @@ export interface IconLinkProps {
   className?: string;
 }
 
-// Variant → text-color chain. `text-[color:var(...)]` carries the explicit
-// `color:` type hint required by Tailwind v4 for ambiguous text-[var(...)] utilities.
+// Variant text-color chain. Tailwind v4 needs an explicit color type hint
+// for arbitrary CSS-variable text-color utilities.
 // `:disabled` arrives via the disabled attribute and the disabled:* utility on
 // the root class string, so per-variant chains do not need a disabled rule.
 const VARIANT_COLOR_CLASSES: Record<IconLinkVariant, string> = {
@@ -61,7 +61,7 @@ const ROOT_BASE_CLASSES =
   'disabled:cursor-not-allowed disabled:text-[color:var(--icon-link-disabled)]';
 
 /**
- * IconLink — Figma: Icon Button (363:307).
+ * IconLink - Figma: Icon Button (363:307).
  *
  * Single canonical icon-only press target. Tooltip-on-hover sourced from
  * `aria-label` (single source of truth for SR + visible label). `<button>`
@@ -82,7 +82,7 @@ export const IconLink = ({
 }: IconLinkProps) => {
   const resolvedSize = size ?? (variant === 'close' ? 21 : 17);
   // Disabled drops the variant hover/active chain entirely so the disabled
-  // text color always wins — `:hover` can still fire on a disabled <button>
+  // text color always wins: `:hover` can still fire on a disabled <button>
   // in some browsers, and class-string order isn't a reliable override
   // (see feedback_tailwind_class_order.md).
   const variantClasses = disabled ? '' : VARIANT_COLOR_CLASSES[variant];

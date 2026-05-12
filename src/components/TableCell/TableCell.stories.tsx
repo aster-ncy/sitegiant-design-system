@@ -26,7 +26,6 @@ import sitegiantDemoApp from '../../assets/method-images/sitegiant-demo-app.png'
 type TableMode = 'default' | 'inset' | 'subrow';
 type TableCellVariantOption =
   | 'text'
-  | 'checkbox'
   | 'number'
   | 'success'
   | 'danger'
@@ -42,7 +41,6 @@ type TableCellVariantOption =
   | 'status-toggle'
   | 'text-info'
   | 'listing'
-  | 'listing-center'
   | 'channel-icon'
   | 'payment-shipping-method'
   | 'form-field'
@@ -50,12 +48,10 @@ type TableCellVariantOption =
 type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
   mode?: TableMode;
   variant?: TableCellVariantOption;
-  withCheckbox?: boolean;
 };
 
 const tableCellVariantOptions = [
   'text',
-  'checkbox',
   'number',
   'success',
   'danger',
@@ -71,7 +67,6 @@ const tableCellVariantOptions = [
   'status-toggle',
   'text-info',
   'listing',
-  'listing-center',
   'channel-icon',
   'payment-shipping-method',
   'form-field',
@@ -86,7 +81,6 @@ const variantArgType = {
     'Body Cell atom variant for the Playground.',
     '',
     '- `text` / `number` / `success` / `danger` - simple text-value cells.',
-    '- `checkbox` - first-column text cell with row-selection checkbox.',
     '- `leading-icon` - generic leading glyph before text.',
     '- `info-icon` - inline info icon after text, 8px gap.',
     '- `small-channel-icon` - 21px channel icon with one-line text, 8px gap.',
@@ -96,7 +90,7 @@ const variantArgType = {
     '- `icon-status` - status label with matching icon column.',
     '- `status-toggle` - toggle cell.',
     '- `text-info` - body text plus secondary app info.',
-    '- `listing` / `listing-center` - product listing content block.',
+    '- `listing` - product listing content block.',
     '- `channel-icon` - large 48px channel icon plus store metadata.',
     '- `payment-shipping-method` - large method image plus store metadata.',
     '- `form-field` - quantity input cell.',
@@ -112,7 +106,7 @@ const meta = {
     layout: 'padded',
     controls: {
       sort: 'none',
-      exclude: ['inset', 'checkbox', 'leadingIcon', 'trailing', 'className', 'onClick'],
+      exclude: ['inset', 'leadingIcon', 'trailing', 'className', 'onClick'],
     },
   },
   tags: ['autodocs'],
@@ -124,6 +118,11 @@ const meta = {
       table: { category: 'Layout', defaultValue: { summary: 'default' } },
     },
     variant: variantArgType,
+    checkbox: {
+      control: { type: 'boolean' },
+      description: 'Storybook-only switch. Shows a row-selection checkbox slot without overriding the selected column padding.',
+      table: { category: 'Content', defaultValue: { summary: 'false' } },
+    },
     inset: { table: { disable: true } },
     column: {
       control: { type: 'inline-radio' },
@@ -155,21 +154,10 @@ const meta = {
     selected: { control: 'boolean', table: { category: 'State' } },
     subrow: { table: { disable: true } },
     boldOnRowHover: { control: 'boolean', table: { category: 'Typography' } },
-    checkbox: {
-      control: false,
-      if: { arg: 'column', eq: 'first' },
-      table: { disable: true },
-    },
     leadingIcon: { table: { disable: true } },
     trailing: { table: { disable: true } },
     className: { table: { disable: true } },
     onClick: { table: { disable: true } },
-    withCheckbox: {
-      control: 'boolean',
-      if: { arg: 'column', eq: 'first' },
-      description: 'Storybook-only control. Shows a row-selection checkbox in the first-column slot.',
-      table: { category: 'Content', defaultValue: { summary: 'false' } },
-    },
   },
   args: {
     mode: 'default',
@@ -183,32 +171,20 @@ const meta = {
     hovered: false,
     selected: false,
     boldOnRowHover: false,
-    withCheckbox: false,
+    checkbox: false,
   },
   render: ({
     mode = 'default',
     variant = 'text',
     inset,
     column,
-    withCheckbox,
+    checkbox,
     ...args
   }) => {
     const isSubrow = mode === 'subrow';
     const isInsetMode = mode === 'inset' || isSubrow || inset;
-    const showCheckbox = Boolean(withCheckbox && column === 'first');
-    if (variant === 'checkbox') {
-      return (
-        <RowHoverPreview>
-          <TableCell
-            {...args}
-            inset={isInsetMode}
-            subrow={isSubrow}
-            column="first"
-            checkbox={<Checkbox size="sm" />}
-          />
-        </RowHoverPreview>
-      );
-    }
+    const showCheckbox = Boolean(checkbox);
+    const columnWithCheckbox = column;
 
     if (variant === 'product-only') {
       return (
@@ -223,7 +199,7 @@ const meta = {
     if (variant === 'tag-after' || variant === 'tag-first') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={column}>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
             <TagPair order={variant === 'tag-after' ? 'after' : 'first'} />
           </TableCell>
         </RowHoverPreview>
@@ -243,7 +219,7 @@ const meta = {
     if (variant === 'icon-status' || variant === 'status-toggle') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={column}>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
             {variant === 'icon-status' ? <IconStatus count={3} /> : <StatusToggleCell />}
           </TableCell>
         </RowHoverPreview>
@@ -260,11 +236,11 @@ const meta = {
       );
     }
 
-    if (variant === 'listing' || variant === 'listing-center') {
+    if (variant === 'listing') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={variant === 'listing' ? 'first' : 'center'}>
-            <DefaultListingContent showCheckbox={variant === 'listing'} />
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox}>
+            <DefaultListingContent showCheckbox={showCheckbox} />
           </TableCell>
         </RowHoverPreview>
       );
@@ -277,8 +253,8 @@ const meta = {
             inset={isInsetMode}
             subrow={isSubrow}
             row={args.row}
-            column={variant === 'tag-with-channel' ? column : 'first'}
-            checkbox={variant === 'form-field' || variant === 'channel-icon' || variant === 'payment-shipping-method' ? (showCheckbox ? <Checkbox size="sm" /> : undefined) : undefined}
+            column={variant === 'tag-with-channel' ? columnWithCheckbox : 'first'}
+            checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
             className={variant === 'form-field' ? formFieldColumnClass('first') : undefined}
           >
             {variant === 'channel-icon' && <ChannelIconContent />}
@@ -322,7 +298,7 @@ const meta = {
     return (
       <TableCell
         {...args}
-        column={column}
+        column={columnWithCheckbox}
         align={variant === 'number' || variant === 'success' || variant === 'danger' ? 'right' : args.align}
         tone={variant === 'success' ? 'success' : variant === 'danger' ? 'danger' : args.tone}
         inset={isInsetMode}
@@ -380,7 +356,6 @@ const hiddenStoryTags = ['!dev', '!autodocs'];
 const typographyStatePlaygroundControls = {
   variant: hiddenControl,
   mode: hiddenControl,
-  withCheckbox: hiddenControl,
   children: hiddenControl,
   column: hiddenControl,
   align: hiddenControl,
@@ -396,7 +371,6 @@ const typographyStatePlaygroundControls = {
 const recipeOnlyControls = {
   mode: hiddenControl,
   variant: hiddenControl,
-  withCheckbox: hiddenControl,
   children: hiddenControl,
   inset: hiddenControl,
   column: hiddenControl,
@@ -695,7 +669,7 @@ export const Playground: Story = {
     hovered: false,
     selected: false,
     boldOnRowHover: false,
-    withCheckbox: false,
+    checkbox: false,
     children: 'Table Body Data',
   },
 };
