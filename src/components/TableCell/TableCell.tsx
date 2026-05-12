@@ -2,7 +2,7 @@ import type { MouseEventHandler, ReactNode } from 'react';
 import type { TableColumnPosition, TableTextAlignment } from '../TableHeaderCell';
 
 export type TableCellWeight = 'normal' | 'bold';
-export type TableRowPosition = 'first' | 'middle' | 'last';
+export type TableRowPosition = 'default' | 'last';
 /**
  * Per-cell semantic tone (Figma Table Row "Text State" axis: Default / Success
  * / Danger). Drives the value's text colour. Use for trend deltas, status
@@ -40,8 +40,8 @@ export interface TableCellProps {
    */
   boldOnRowHover?: boolean;
   /**
-   * Row position. 'last' uses a slightly heavier bottom border
-   * (matches Figma's --table-divider-last-border).
+   * Row position. 'default' is the regular row style; 'last' uses the
+   * final-row divider treatment.
    */
   row?: TableRowPosition;
   /**
@@ -109,7 +109,7 @@ const textAlignmentClass: Record<TableTextAlignment, string> = {
  * Single body-row cell. 14px/21px Roboto Regular by default; 'bold'
  * weight applies the highlight weight (Bold) for emphasized values.
  * Asymmetric column padding (first column pl-24, last column pr-24,
- * center px-12). Bottom divider via inset shadow on default-middle and
+ * center px-12). Bottom divider via inset shadow on default rows and
  * inset rows; default last row drops its inner shadow (Figma 955:864 —
  * the table's outer container owns the bottom edge).
  *
@@ -138,7 +138,7 @@ export const TableCell = ({
   column = 'center',
   align = 'left',
   weight = 'normal',
-  row = 'middle',
+  row = 'default',
   hovered = false,
   selected = false,
   subrow = false,
@@ -153,9 +153,9 @@ export const TableCell = ({
   // Subrow implies inset — sub-rows only exist within inset tables.
   const isInset = inset || subrow;
   // Bottom border:
-  // - Inset middle row: --table-divider-lighter-border (#F6F6F6) per 1298:1934.
+  // - Inset default row: --table-divider-lighter-border (#F6F6F6) per 1298:1934.
   // - Inset last row:   --table-divider-last-border (#D4D4D4) per 1298:1944.
-  // - Default middle row: --table-divider-border (#E5E5E5) per 955:825.
+  // - Default row: --table-divider-border (#E5E5E5) per 955:825.
   // - Default last row: NO inner shadow per 955:864 — the table's outer
   //   container owns the bottom edge (don't double-paint a divider).
   const bottomBorder = isInset
@@ -227,7 +227,7 @@ export const TableCell = ({
         //   Stories opt into top-anchoring per-cell via `!items-start`.
         // - Default mode: `items-start` per Figma 955:825 — the symbol
         //   itself uses `items-start` for body cells.
-        'relative flex gap-[var(--spacing-12)] w-full',
+        'relative flex gap-[var(--spacing-12)] w-full h-full',
         isInset ? 'items-center' : 'items-start',
         // Padding sources from Figma:
         //   - sub-row (767:299, 776:613, 776:677): column-aware

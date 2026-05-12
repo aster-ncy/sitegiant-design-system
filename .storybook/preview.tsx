@@ -4,6 +4,46 @@ import '../src/index.css';
 
 const preview: Preview = {
   parameters: {
+    options: {
+      storySort: (a, b) => {
+        const bodyCellStoryOrder = [
+          'docs',
+          'playground',
+          'default-body-row',
+          'inset-body-row',
+          'listing-body-row',
+          'subrow-body-row',
+          'default-text-matrix',
+          'default-number-matrix',
+          'inset-text-number-matrix',
+          'subrow-text-number-matrix',
+        ];
+        const bodyCellStoryPrefix = 'tables-table-atoms-body-cell--';
+        const aIsBodyCell = a.id.startsWith(bodyCellStoryPrefix);
+        const bIsBodyCell = b.id.startsWith(bodyCellStoryPrefix);
+
+        if (!aIsBodyCell || !bIsBodyCell) {
+          return 0;
+        }
+
+        const aIndex = bodyCellStoryOrder.indexOf(a.id.replace(bodyCellStoryPrefix, ''));
+        const bIndex = bodyCellStoryOrder.indexOf(b.id.replace(bodyCellStoryPrefix, ''));
+
+        if (aIndex === -1 && bIndex === -1) {
+          return 0;
+        }
+
+        if (aIndex === -1) {
+          return 1;
+        }
+
+        if (bIndex === -1) {
+          return -1;
+        }
+
+        return aIndex - bIndex;
+      },
+    },
     controls: {
       matchers: {
         color: /(background|color)$/i,

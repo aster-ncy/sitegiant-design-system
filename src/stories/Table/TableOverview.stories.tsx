@@ -218,19 +218,19 @@ const SelectionTableDemo = () => (
               <TableCell
                 column="first"
                 selected
-                row={index === 1 ? 'last' : 'middle'}
+                row={index === 1 ? 'last' : 'default'}
                 checkbox={<Checkbox size="sm" checked />}
               >
                 {name}
               </TableCell>
             </td>
             <td className={`w-[28%] p-0 ${selectedCellSurfaceClass}`}>
-              <TableCell selected row={index === 1 ? 'last' : 'middle'}>
+              <TableCell selected row={index === 1 ? 'last' : 'default'}>
                 Selected row
               </TableCell>
             </td>
             <td className={`w-[24%] p-0 ${selectedCellSurfaceClass}`}>
-              <TableCell selected column="last" row={index === 1 ? 'last' : 'middle'} align="right">
+              <TableCell selected column="last" row={index === 1 ? 'last' : 'default'} align="right">
                 Ready
               </TableCell>
             </td>
@@ -249,7 +249,7 @@ const ActionLinksDemo = () => (
         <tbody>
           {actionTextLinkRows.map((name, index) => {
             const isLastRow = index === actionTextLinkRows.length - 1;
-            const rowPosition = isLastRow ? 'last' : 'middle';
+            const rowPosition = isLastRow ? 'last' : 'default';
             const dividerClass = isLastRow ? '' : rowDividerCellClass;
 
             return (
@@ -282,7 +282,7 @@ const ActionLinksDemo = () => (
         <tbody>
           {actionIconRows.map((name, index) => {
             const isLastRow = index === actionIconRows.length - 1;
-            const rowPosition = isLastRow ? 'last' : 'middle';
+            const rowPosition = isLastRow ? 'last' : 'default';
             const dividerClass = isLastRow ? '' : rowDividerCellClass;
 
             return (

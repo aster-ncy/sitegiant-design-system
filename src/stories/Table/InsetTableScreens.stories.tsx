@@ -132,7 +132,7 @@ export const S1WalletRecord: Story = {
             // alignTop: this row mixes a 2-line MainSub (Description) with
             // single-line cells; the single-line cells should anchor to the
             // top of the row, not vertical-center against the MainSub stack.
-            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            const rowProp = index === all.length - 1 ? 'last' : 'default';
             return (
             <tr key={index}>
               <Cell alignTop inset column="first" row={rowProp}>
@@ -366,16 +366,16 @@ export const S3InventoryHold: Story = {
         <tbody>
           {Array.from({ length: 6 }).map((_, index, all) => (
             <tr key={index}>
-              <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'default'}>
                 mega-packaging-095939
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'default'}>
                 2
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'default'}>
                 2
               </Cell>
-              <Cell inset column="last" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="last" align="right" row={index === all.length - 1 ? 'last' : 'default'}>
                 <IconButton name="external-link" variant="basic" label="Open detail" />
               </Cell>
             </tr>
@@ -417,28 +417,28 @@ export const S4ImportedList: Story = {
             { state: 'done', completed: 10, total: 10 },
           ].map((row, index, all) => (
             <tr key={index}>
-              <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'default'}>
                 2025-11-06 13:56:56
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'default'}>
                 order
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'default'}>
                 1762321574_zh.xlsx
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'default'}>
                 1
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'default'}>
                 1
               </Cell>
-              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" align="right" row={index === all.length - 1 ? 'last' : 'default'}>
                 1
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'default'}>
                 Super Admin
               </Cell>
-              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="center" row={index === all.length - 1 ? 'last' : 'default'}>
                 <span className="inline-flex items-center gap-[var(--spacing-8)] w-full">
                   <span className="flex-1 min-w-0">
                     <ProgressBar completed={row.completed} total={row.total} showLabel={false} size="sm" />
@@ -448,7 +448,7 @@ export const S4ImportedList: Story = {
                   {row.state === 'done' && <Icon name="check-circle" size={17} className="text-[color:var(--color-sys-green-DEFAULT)]" />}
                 </span>
               </Cell>
-              <Cell inset column="last" row={index === all.length - 1 ? 'last' : 'middle'}>
+              <Cell inset column="last" row={index === all.length - 1 ? 'last' : 'default'}>
                 <TextLink
                   label="Download"
                   iconPosition="left"
@@ -541,7 +541,7 @@ export const S6SendToLalamove: Story = {
             // Dropdown, DatePicker) are single-line atoms — top-anchoring
             // them in a 62px-tall row reads as deliberate alignment with
             // the Trip ID.
-            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            const rowProp = index === all.length - 1 ? 'last' : 'default';
             return (
             <tr key={row.id}>
               <Cell alignTop inset column="first" checkbox={<Checkbox size="sm" />} row={rowProp}>
@@ -748,7 +748,7 @@ export const S8SelectPackage: Story = {
             {rows.map((row, index) => {
               const isSelected = selected === row.id;
               const isLast = index === rows.length - 1;
-              const rowProp = isLast ? 'last' : 'middle';
+              const rowProp = isLast ? 'last' : 'default';
               return (
                 // alignTop: rows mix the 3-line tracking stack
                 // (bold tracking + Order ID + COID) with single-line
@@ -876,7 +876,7 @@ export const S9OrderReturn: Story = {
             // alignTop: each row's first cell renders a multi-line
             // TableCellListing (image + name + meta rows); the right-
             // aligned numeric cells should anchor at the top.
-            const rowProp = index === all.length - 1 ? 'last' : 'middle';
+            const rowProp = index === all.length - 1 ? 'last' : 'default';
             return (
             <tr key={index}>
               <Cell

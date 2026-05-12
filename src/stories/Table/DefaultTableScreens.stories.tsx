@@ -97,7 +97,7 @@ export const S4Vehicle: Story = {
           </thead>
           <tbody>
             {rows.map((r, i, arr) => {
-              const lastRow = i === arr.length - 1 ? 'last' : 'middle';
+              const lastRow = i === arr.length - 1 ? 'last' : 'default';
               return (
                 <tr key={r.reg} className={rowHoverFill}>
                   <Cell
@@ -183,7 +183,7 @@ export const S7WebstoreOrderReturn: Story = {
           </thead>
           <tbody>
             {rows.map((r, i, arr) => {
-              const lastRow = i === arr.length - 1 ? 'last' : 'middle';
+              const lastRow = i === arr.length - 1 ? 'last' : 'default';
               return (
                 <tr key={r.id} className={rowHoverFill}>
                   <Cell
@@ -276,7 +276,7 @@ export const S8StockCheck: Story = {
           </thead>
           <tbody>
             {rows.map((r, i, arr) => {
-              const lastRow = i === arr.length - 1 ? 'last' : 'middle';
+              const lastRow = i === arr.length - 1 ? 'last' : 'default';
               return (
                 <tr key={r.id} className={rowHoverFill}>
                   <Cell

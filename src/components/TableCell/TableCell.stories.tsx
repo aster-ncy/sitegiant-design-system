@@ -23,15 +23,91 @@ import shopeeMy from '../../assets/channel-icons/shopee-my.png';
 import { productImages } from '../../assets/product-images';
 import sitegiantDemoApp from '../../assets/method-images/sitegiant-demo-app.png';
 
-type TableMode = 'default' | 'inset';
+type TableMode = 'default' | 'inset' | 'subrow';
+type TableCellVariantOption =
+  | 'text'
+  | 'checkbox'
+  | 'number'
+  | 'success'
+  | 'danger'
+  | 'leading-icon'
+  | 'info-icon'
+  | 'small-channel-icon'
+  | 'product-only'
+  | 'tag-after'
+  | 'tag-first'
+  | 'action-text-links'
+  | 'action-icon-buttons'
+  | 'icon-status'
+  | 'status-toggle'
+  | 'text-info'
+  | 'listing'
+  | 'listing-center'
+  | 'channel-icon'
+  | 'payment-shipping-method'
+  | 'form-field'
+  | 'tag-with-channel';
 type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
   mode?: TableMode;
+  variant?: TableCellVariantOption;
+  withCheckbox?: boolean;
 };
+
+const tableCellVariantOptions = [
+  'text',
+  'checkbox',
+  'number',
+  'success',
+  'danger',
+  'leading-icon',
+  'info-icon',
+  'small-channel-icon',
+  'product-only',
+  'tag-after',
+  'tag-first',
+  'action-text-links',
+  'action-icon-buttons',
+  'icon-status',
+  'status-toggle',
+  'text-info',
+  'listing',
+  'listing-center',
+  'channel-icon',
+  'payment-shipping-method',
+  'form-field',
+  'tag-with-channel',
+] satisfies ReadonlyArray<TableCellVariantOption>;
+
+const variantArgType = {
+  control: { type: 'select' },
+  name: 'variant',
+  options: tableCellVariantOptions,
+  description: [
+    'Body Cell atom variant for the Playground.',
+    '',
+    '- `text` / `number` / `success` / `danger` - simple text-value cells.',
+    '- `checkbox` - first-column text cell with row-selection checkbox.',
+    '- `leading-icon` - generic leading glyph before text.',
+    '- `info-icon` - inline info icon after text, 8px gap.',
+    '- `small-channel-icon` - 21px channel icon with one-line text, 8px gap.',
+    '- `product-only` - product image stack.',
+    '- `tag-after` / `tag-first` - text with Pip tag placement.',
+    '- `action-text-links` / `action-icon-buttons` - action cell recipes.',
+    '- `icon-status` - status label with matching icon column.',
+    '- `status-toggle` - toggle cell.',
+    '- `text-info` - body text plus secondary app info.',
+    '- `listing` / `listing-center` - product listing content block.',
+    '- `channel-icon` - large 48px channel icon plus store metadata.',
+    '- `payment-shipping-method` - large method image plus store metadata.',
+    '- `form-field` - quantity input cell.',
+    '- `tag-with-channel` - tag stack plus channel metadata.',
+  ].join('\n'),
+  table: { category: 'TableCellVariant', defaultValue: { summary: 'text' } },
+} as const;
 
 const meta = {
   title: 'Tables/Table Atoms/Body Cell',
   component: TableCell,
-  subcomponents: { TableCellInfo, TableCellMainSub, TableCellListing },
   parameters: {
     layout: 'padded',
     controls: {
@@ -43,45 +119,220 @@ const meta = {
   argTypes: {
     mode: {
       control: { type: 'inline-radio' },
-      options: ['default', 'inset'] satisfies ReadonlyArray<TableMode>,
-      description: 'Storybook control for table density/fill. Maps to the component `inset` prop.',
-      table: { defaultValue: { summary: 'default' } },
+      options: ['default', 'inset', 'subrow'] satisfies ReadonlyArray<TableMode>,
+      description: 'Storybook control for table surface. `subrow` maps to the component `subrow` prop.',
+      table: { category: 'Layout', defaultValue: { summary: 'default' } },
     },
+    variant: variantArgType,
+    inset: { table: { disable: true } },
     column: {
       control: { type: 'inline-radio' },
       options: ['first', 'center', 'last'],
+      table: { category: 'Layout' },
     },
     align: {
       control: { type: 'inline-radio' },
       options: ['left', 'center', 'right'],
+      table: { category: 'Layout' },
     },
     weight: {
       control: { type: 'inline-radio' },
       options: ['normal', 'bold'],
+      table: { category: 'Typography' },
     },
     tone: {
       control: { type: 'inline-radio' },
       options: ['default', 'success', 'danger'],
+      table: { category: 'Typography' },
     },
     row: {
       control: { type: 'inline-radio' },
-      options: ['first', 'middle', 'last'],
+      options: ['default', 'last'],
+      description: 'Default row or final-row styling. Use `last` only for the final row in a table.',
+      table: { category: 'Layout' },
     },
-    hovered: { control: 'boolean' },
-    selected: { control: 'boolean' },
-    subrow: {
+    hovered: { control: 'boolean', table: { category: 'State' } },
+    selected: { control: 'boolean', table: { category: 'State' } },
+    subrow: { table: { disable: true } },
+    boldOnRowHover: { control: 'boolean', table: { category: 'Typography' } },
+    checkbox: {
+      control: false,
+      if: { arg: 'column', eq: 'first' },
+      table: { disable: true },
+    },
+    leadingIcon: { table: { disable: true } },
+    trailing: { table: { disable: true } },
+    className: { table: { disable: true } },
+    onClick: { table: { disable: true } },
+    withCheckbox: {
       control: 'boolean',
-      description: 'Nested sub-row state. Sub-row implies inset mode and uses the subrow fill/padding.',
+      if: { arg: 'column', eq: 'first' },
+      description: 'Storybook-only control. Shows a row-selection checkbox in the first-column slot.',
+      table: { category: 'Content', defaultValue: { summary: 'false' } },
     },
-    boldOnRowHover: { control: 'boolean' },
   },
   args: {
     mode: 'default',
+    variant: 'text',
     children: 'Table Body Data',
+    column: 'center',
+    align: 'left',
+    weight: 'normal',
+    tone: 'default',
+    row: 'default',
+    hovered: false,
+    selected: false,
+    boldOnRowHover: false,
+    withCheckbox: false,
   },
-  render: ({ mode = 'default', inset, ...args }) => (
-    <TableCell {...args} inset={mode === 'inset' || inset} />
-  ),
+  render: ({
+    mode = 'default',
+    variant = 'text',
+    inset,
+    column,
+    withCheckbox,
+    ...args
+  }) => {
+    const isSubrow = mode === 'subrow';
+    const isInsetMode = mode === 'inset' || isSubrow || inset;
+    const showCheckbox = Boolean(withCheckbox && column === 'first');
+    if (variant === 'checkbox') {
+      return (
+        <RowHoverPreview>
+          <TableCell
+            {...args}
+            inset={isInsetMode}
+            subrow={isSubrow}
+            column="first"
+            checkbox={<Checkbox size="sm" />}
+          />
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'product-only') {
+      return (
+        <RowHoverPreview>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="first" checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
+            <ProductOnlyContent count={4} />
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'tag-after' || variant === 'tag-first') {
+      return (
+        <RowHoverPreview>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={column}>
+            <TagPair order={variant === 'tag-after' ? 'after' : 'first'} />
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'action-text-links' || variant === 'action-icon-buttons') {
+      return (
+        <RowHoverPreview>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="last" className={variant === 'action-text-links' ? '!items-start' : ''}>
+            {variant === 'action-text-links' ? <ActionLinks count={2} /> : <ActionIcons count={3} />}
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'icon-status' || variant === 'status-toggle') {
+      return (
+        <RowHoverPreview>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={column}>
+            {variant === 'icon-status' ? <IconStatus count={3} /> : <StatusToggleCell />}
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'text-info') {
+      return (
+        <RowHoverPreview>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="first" checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
+            <TextInfoContent />
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'listing' || variant === 'listing-center') {
+      return (
+        <RowHoverPreview>
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={variant === 'listing' ? 'first' : 'center'}>
+            <DefaultListingContent showCheckbox={variant === 'listing'} />
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    if (variant === 'channel-icon' || variant === 'payment-shipping-method' || variant === 'form-field' || variant === 'tag-with-channel') {
+      return (
+        <RowHoverPreview>
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column={variant === 'tag-with-channel' ? column : 'first'}
+            checkbox={variant === 'form-field' || variant === 'channel-icon' || variant === 'payment-shipping-method' ? (showCheckbox ? <Checkbox size="sm" /> : undefined) : undefined}
+            className={variant === 'form-field' ? formFieldColumnClass('first') : undefined}
+          >
+            {variant === 'channel-icon' && <ChannelIconContent />}
+            {variant === 'payment-shipping-method' && <PaymentShippingMethodContent />}
+            {variant === 'form-field' && <FormFieldContent />}
+            {variant === 'tag-with-channel' && <TagWithChannelContent />}
+          </TableCell>
+        </RowHoverPreview>
+      );
+    }
+
+    const cellContent = variant === 'leading-icon'
+      ? (
+          <span className="inline-flex items-center gap-[var(--spacing-12)]">
+            <Icon name="check" size={17} className="text-[color:var(--color-icon-secondary)]" />
+            <span>{args.children}</span>
+          </span>
+        )
+      : variant === 'small-channel-icon'
+        ? (
+            <span className="inline-flex items-center gap-[var(--spacing-8)]">
+              <img src={shopeeMy} alt="" className="w-[21px] h-[21px] rounded-[var(--radius-2)] object-cover" />
+              <span>Awesome Store</span>
+            </span>
+          )
+        : variant === 'info-icon'
+          ? (
+              <span className="inline-flex items-center gap-[var(--spacing-8)]">
+                <span>{args.children}</span>
+                <Icon name="info" size={17} className="text-[color:var(--color-icon-secondary)]" />
+              </span>
+            )
+          : variant === 'number'
+            ? '123,456'
+            : variant === 'success'
+              ? '+24.5%'
+              : variant === 'danger'
+                ? '-12.8%'
+                : args.children;
+
+    return (
+      <TableCell
+        {...args}
+        column={column}
+        align={variant === 'number' || variant === 'success' || variant === 'danger' ? 'right' : args.align}
+        tone={variant === 'success' ? 'success' : variant === 'danger' ? 'danger' : args.tone}
+        inset={isInsetMode}
+        subrow={isSubrow}
+        checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+      >
+        {cellContent}
+      </TableCell>
+    );
+  },
 } satisfies Meta<TableCellStoryArgs>;
 
 export default meta;
@@ -92,29 +343,81 @@ type ActionTextLinkStory = StoryObj<React.ComponentProps<typeof TableCell> & { a
 type ActionIconButtonStory = StoryObj<React.ComponentProps<typeof TableCell> & { actionCount?: 1 | 2 | 3 }>;
 type IconStatusStory = StoryObj<React.ComponentProps<typeof TableCell> & { statusCount?: 1 | 2 | 3 }>;
 type TextInfoStory = StoryObj<React.ComponentProps<typeof TableCell> & { textWeight?: 'normal' | 'bold' }>;
+type MainSubStory = StoryObj<React.ComponentProps<typeof TableCell> & {
+  mainLabel?: string;
+  mainValue?: string;
+  subLabel?: string;
+  subValue?: string;
+  mainBold?: boolean;
+}>;
+type ListingStory = StoryObj<React.ComponentProps<typeof TableCell> & {
+  productName?: string;
+  withListingCheckbox?: boolean;
+  withTag?: boolean;
+  withInfoRows?: boolean;
+  withExtras?: boolean;
+}>;
+type ListingBodyRowStory = StoryObj<React.ComponentProps<typeof TableCell> & {
+  productName?: string;
+  iSku?: string;
+  sku?: string;
+  channelName?: string;
+  moreSkuCount?: number;
+  showCheckbox?: boolean;
+  showPip?: boolean;
+  showChannel?: boolean;
+  showMoreSkus?: boolean;
+}>;
 type DefaultInfoStory = StoryObj<React.ComponentProps<typeof TableCell> & {
   alignment?: 'horizontal' | 'vertical';
   statusCount?: 1 | 2 | 3;
   paragraphCount?: 1 | 2 | 3;
 }>;
 
-const recipeOnlyControls = {
-  children: { table: { disable: true } },
-  inset: { table: { disable: true } },
-  column: { table: { disable: true } },
-  align: { table: { disable: true } },
-  weight: { table: { disable: true } },
-  tone: { table: { disable: true } },
-  boldOnRowHover: { table: { disable: true } },
-  row: { table: { disable: true } },
-  hovered: { table: { disable: true } },
-  selected: { table: { disable: true } },
-  subrow: { table: { disable: true } },
-  checkbox: { table: { disable: true } },
-  leadingIcon: { table: { disable: true } },
-  trailing: { table: { disable: true } },
-  className: { table: { disable: true } },
+const hiddenControl = { control: false, table: { disable: true } } as const;
+const hiddenStoryTags = ['!dev', '!autodocs'];
+
+const typographyStatePlaygroundControls = {
+  variant: hiddenControl,
+  mode: hiddenControl,
+  withCheckbox: hiddenControl,
+  children: hiddenControl,
+  column: hiddenControl,
+  align: hiddenControl,
+  row: hiddenControl,
+  subrow: hiddenControl,
+  inset: hiddenControl,
+  checkbox: hiddenControl,
+  leadingIcon: hiddenControl,
+  trailing: hiddenControl,
+  className: hiddenControl,
 };
+
+const recipeOnlyControls = {
+  mode: hiddenControl,
+  variant: hiddenControl,
+  withCheckbox: hiddenControl,
+  children: hiddenControl,
+  inset: hiddenControl,
+  column: hiddenControl,
+  align: hiddenControl,
+  weight: hiddenControl,
+  tone: hiddenControl,
+  boldOnRowHover: hiddenControl,
+  row: hiddenControl,
+  hovered: hiddenControl,
+  selected: hiddenControl,
+  subrow: hiddenControl,
+  checkbox: hiddenControl,
+  leadingIcon: hiddenControl,
+  trailing: hiddenControl,
+  className: hiddenControl,
+};
+
+const visualReferenceParameters = {
+  controls: { disable: true },
+};
+
 
 const productOnlySource = (count: 1 | 2 | 3 | 4 | 6) => `<tr className="group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]">
   <td className="p-0">
@@ -376,29 +679,72 @@ const RowHoverPreview = ({
   </table>
 );
 
-export const Default: Story = {};
+const ShopeeIcon = () => (
+  <img src={shopeeMy} alt="" className="w-[21px] h-[21px] rounded-[var(--radius-2)] object-cover" />
+);
+
+export const Playground: Story = {
+  args: {
+    mode: 'default',
+    variant: 'text',
+    column: 'center',
+    align: 'left',
+    weight: 'normal',
+    tone: 'default',
+    row: 'default',
+    hovered: false,
+    selected: false,
+    boldOnRowHover: false,
+    withCheckbox: false,
+    children: 'Table Body Data',
+  },
+};
+
+export const TypographyStateControls: Story = {
+  tags: hiddenStoryTags,
+  argTypes: typographyStatePlaygroundControls,
+  args: {
+    mode: 'default',
+    variant: 'text',
+    column: 'center',
+    align: 'left',
+    weight: 'normal',
+    tone: 'default',
+    row: 'default',
+    hovered: false,
+    selected: false,
+    boldOnRowHover: false,
+    children: 'Table Body Data',
+  },
+};
 
 export const Bold: Story = {
+  tags: hiddenStoryTags,
   args: { weight: 'bold' },
 };
 
 export const Hovered: Story = {
+  tags: hiddenStoryTags,
   args: { hovered: true },
 };
 
 export const NumberRightAligned: Story = {
+  tags: hiddenStoryTags,
   args: { children: '123,456', align: 'right', column: 'center' },
 };
 
 export const SuccessValue: Story = {
+  tags: hiddenStoryTags,
   args: { children: '+24.5%', tone: 'success', align: 'right', column: 'last' },
 };
 
 export const DangerValue: Story = {
+  tags: hiddenStoryTags,
   args: { children: '-12.8%', tone: 'danger', align: 'right', column: 'last' },
 };
 
 export const FirstColumnWithCheckbox: Story = {
+  tags: hiddenStoryTags,
   args: {
     column: 'first',
     children: 'Product name',
@@ -407,28 +753,42 @@ export const FirstColumnWithCheckbox: Story = {
 };
 
 export const WithLeadingIcon: Story = {
+  tags: hiddenStoryTags,
   args: {
     children: 'Categorized item',
     leadingIcon: <Icon name="check" size={17} className="text-[color:var(--color-icon-secondary)]" />,
   },
 };
 
+export const WithSmallChannelIcon: Story = {
+  tags: hiddenStoryTags,
+  render: () => (
+    <TableCell column="center" className="!gap-[var(--spacing-8)]" leadingIcon={<ShopeeIcon />}>
+      Awesome Store
+    </TableCell>
+  ),
+};
+
 export const WithTrailingIcon: Story = {
-  args: {
-    children: '12.5 kg',
-    align: 'right',
-    column: 'last',
-    trailing: <Icon name="alert-triangle" size={17} className="text-[color:var(--color-sys-yellow-DEFAULT)]" />,
-  },
+  tags: hiddenStoryTags,
+  render: () => (
+    <TableCell column="last" align="right">
+      <span className="inline-flex items-center gap-[var(--spacing-8)]">
+        <span>12.5 kg</span>
+        <Icon name="info" size={17} className="text-[color:var(--color-icon-secondary)]" />
+      </span>
+    </TableCell>
+  ),
 };
 
 export const LastRow: Story = {
+  tags: hiddenStoryTags,
   args: { row: 'last' },
 };
 
 /* ── Composite: a small table ────────────────────────── */
 const Cell = ({ children, ...rest }: React.ComponentProps<typeof TableCell>) => (
-  <td className="p-0">
+  <td className="h-px p-0">
     <TableCell {...rest}>{children}</TableCell>
   </td>
 );
@@ -437,7 +797,7 @@ const fullTableShellClass = 'overflow-hidden rounded-[var(--radius-12)] bg-[var(
 const fullTableHeaderCellClass = '!min-h-[calc(var(--leading-21)+var(--spacing-40))]';
 
 const insetColumns = ['first', 'center', 'last'] as const;
-const insetRows = ['middle', 'last'] as const;
+const insetRows = ['default', 'last'] as const;
 const insetStates = [
   { label: 'Default', hovered: false },
   { label: 'Hover', hovered: true },
@@ -464,16 +824,12 @@ const MatrixNote = ({ children }: { children: ReactNode }) => (
 );
 
 const defaultColumns = ['first', 'center', 'last'] as const;
-const defaultRows = ['middle', 'last'] as const;
+const defaultRows = ['default', 'last'] as const;
 const defaultStates = [
   { label: 'Default', hovered: false },
   { label: 'Hover', hovered: true },
 ] as const;
 const defaultAlignments = ['left', 'center', 'right'] as const;
-
-const ShopeeIcon = () => (
-  <img src={shopeeMy} alt="" className="w-[21px] h-[21px] rounded-[var(--radius-2)] object-cover" />
-);
 
 const ActionLinks = ({ count }: { count: 1 | 2 | 3 | 4 }) => (
   <span className="inline-flex flex-col items-start gap-[var(--spacing-4)]">
@@ -737,11 +1093,11 @@ const TextListing = ({
 
 /**
  * Figma parity matrix: Table Row (973:1745), text data property.
- * Visual check only. Use Default, Bold, FirstColumnWithCheckbox, or the
- * args controls for copyable product code.
+ * Visual check only. Use Playground, Bold, FirstColumnWithCheckbox, or
+ * the args controls for copyable product code.
  */
 export const DefaultTextMatrix: Story = {
-  tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
 
@@ -754,7 +1110,7 @@ export const DefaultTextMatrix: Story = {
           <table className="border-collapse table-fixed">
             <thead>
               <tr>
-                <th className="p-0 w-[120px]" />
+                <th className="p-0 w-[160px]" />
                 {defaultColumns.map((column) => (
                   <th key={column} className="p-0" colSpan={weights.length}>
                     <div className="px-[var(--spacing-12)] py-[var(--spacing-6)] text-left">
@@ -782,7 +1138,7 @@ export const DefaultTextMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {defaultColumns.flatMap((column) =>
@@ -812,11 +1168,11 @@ export const DefaultTextMatrix: Story = {
 
 /**
  * Figma parity matrix: Table Row (973:1745), number data property.
- * Visual check only. Use NumberRightAligned, SuccessValue, DangerValue,
- * or the args controls for copyable product code.
+ * Visual check only. Use Playground, NumberRightAligned, SuccessValue,
+ * DangerValue, or the args controls for copyable product code.
  */
 export const DefaultNumberMatrix: Story = {
-  tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
     const tones = ['default', 'success', 'danger'] as const;
@@ -854,7 +1210,7 @@ export const DefaultNumberMatrix: Story = {
                           <tr key={`${tone}-${column}-${row}-${label}`}>
                             <td className="p-0 align-top">
                               <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                                <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                                <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                               </div>
                             </td>
                             {defaultAlignments.flatMap((align) =>
@@ -893,6 +1249,7 @@ export const DefaultNumberMatrix: Story = {
  * thumbnails. Figma: Table Row - Product only (1262:9694).
  */
 export const ProductOnly: ProductOnlyStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     productCount: { control: 'inline-radio', options: [1, 2, 3, 4, 6] },
@@ -924,6 +1281,7 @@ export const ProductOnly: ProductOnlyStory = {
  * warning pips. Figma: Table Row - Tag (1262:9699), Type=Tag after.
  */
 export const TagAfter: TagRecipeStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     tagCount: { control: 'inline-radio', options: [1, 2, 3] },
@@ -955,6 +1313,7 @@ export const TagAfter: TagRecipeStory = {
  * the label. Figma: Table Row - Tag (1262:9699), Type=Tag first.
  */
 export const TagFirst: TagRecipeStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     tagCount: { control: 'inline-radio', options: [1, 2, 3] },
@@ -986,6 +1345,7 @@ export const TagFirst: TagRecipeStory = {
  * Figma: Table Row - Action Button (1262:9930), Type=Text Link.
  */
 export const ActionTextLinks: ActionTextLinkStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     actionCount: { control: 'inline-radio', options: [1, 2, 3, 4] },
@@ -1017,6 +1377,7 @@ export const ActionTextLinks: ActionTextLinkStory = {
  * Figma: Table Row - Action Button (1262:9930), Type=Icon.
  */
 export const ActionIconButtons: ActionIconButtonStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     actionCount: { control: 'inline-radio', options: [1, 2, 3] },
@@ -1049,6 +1410,7 @@ export const ActionIconButtons: ActionIconButtonStory = {
  */
 export const IconStatusCell: IconStatusStory = {
   name: 'Icon Status',
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     statusCount: { control: 'inline-radio', options: [1, 2, 3] },
@@ -1080,6 +1442,7 @@ export const IconStatusCell: IconStatusStory = {
  * Figma: Table Row - Status Toggle (2071:5717).
  */
 export const StatusToggle: Story = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1107,6 +1470,7 @@ export const StatusToggle: Story = {
  * and secondary app info. Figma: Table Row - Text Info (3019:8701).
  */
 export const TextInfo: TextInfoStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     textWeight: { control: 'inline-radio', options: ['normal', 'bold'] },
@@ -1138,6 +1502,7 @@ export const TextInfo: TextInfoStory = {
  * Figma: Table Row - Listing (1262:9931), Column Sorting=First Column.
  */
 export const DefaultListing: Story = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1165,6 +1530,7 @@ export const DefaultListing: Story = {
  * Figma: Table Row - Listing (1262:9931), Column Sorting=Center Column.
  */
 export const DefaultListingCenter: Story = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1192,6 +1558,7 @@ export const DefaultListingCenter: Story = {
  * Figma: Table Row - Channel Icon (2670:17908).
  */
 export const ChannelIcon: Story = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1220,6 +1587,7 @@ export const ChannelIcon: Story = {
  */
 export const PaymentShippingMethod: Story = {
   name: 'Payment & Shipping Method',
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1247,6 +1615,7 @@ export const PaymentShippingMethod: Story = {
  * and compact quantity stepper. Figma: Table Row - Form field (3251:9609).
  */
 export const FormField: Story = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1274,6 +1643,7 @@ export const FormField: Story = {
  * Figma: Table Row - Tag with Channel (3789:7967).
  */
 export const TagWithChannel: Story = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
   },
@@ -1302,6 +1672,7 @@ export const TagWithChannel: Story = {
  */
 export const FormFieldMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
       <MatrixNote>
@@ -1327,7 +1698,7 @@ export const FormFieldMatrix: Story = {
                 <tr key={`${row}-${label}`}>
                   <td className="p-0 align-top">
                     <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                      <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                      <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                     </div>
                   </td>
                   {defaultColumns.map((column) => (
@@ -1358,6 +1729,7 @@ export const FormFieldMatrix: Story = {
  */
 export const TagWithChannelMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const columns = ['center', 'last'] as const;
 
@@ -1370,7 +1742,7 @@ export const TagWithChannelMatrix: Story = {
           <table className="border-collapse table-fixed">
             <thead>
               <tr>
-                <th className="p-0 w-[120px]" />
+                <th className="p-0 w-[160px]" />
                 {columns.map((column) => (
                   <th key={column} className="p-0 w-[170px]">
                     <div className="px-[var(--spacing-12)] py-[var(--spacing-6)] text-left">
@@ -1386,7 +1758,7 @@ export const TagWithChannelMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {columns.map((column) => (
@@ -1411,6 +1783,7 @@ export const TagWithChannelMatrix: Story = {
  */
 export const DefaultListingMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const columns = ['first', 'center'] as const;
 
@@ -1439,7 +1812,7 @@ export const DefaultListingMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {columns.map((column) => (
@@ -1464,6 +1837,7 @@ export const DefaultListingMatrix: Story = {
  */
 export const ChannelIconMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
       <MatrixNote>
@@ -1487,7 +1861,7 @@ export const ChannelIconMatrix: Story = {
                 <tr key={`${row}-${label}`}>
                   <td className="p-0 align-top">
                     <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                      <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                      <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                     </div>
                   </td>
                   <Cell row={row} column="first" hovered={hovered} checkbox={<Checkbox size="sm" />}>
@@ -1509,6 +1883,7 @@ export const ChannelIconMatrix: Story = {
  */
 export const PaymentShippingMethodMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => (
     <div className="flex flex-col gap-[var(--spacing-12)]">
       <MatrixNote>
@@ -1532,7 +1907,7 @@ export const PaymentShippingMethodMatrix: Story = {
                 <tr key={`${row}-${label}`}>
                   <td className="p-0 align-top">
                     <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                      <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                      <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                     </div>
                   </td>
                   <Cell row={row} column="first" hovered={hovered} checkbox={<Checkbox size="sm" />}>
@@ -1554,6 +1929,7 @@ export const PaymentShippingMethodMatrix: Story = {
  */
 export const ProductOnlyMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const productCounts = [
       { label: '4+ products', count: 6 },
@@ -1588,7 +1964,7 @@ export const ProductOnlyMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {productCounts.map(({ label: countLabel, count }) => (
@@ -1613,6 +1989,7 @@ export const ProductOnlyMatrix: Story = {
  */
 export const TagMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const orders = ['after', 'first'] as const;
     const counts = [1, 2, 3] as const;
@@ -1648,7 +2025,7 @@ export const TagMatrix: Story = {
                       <tr key={`${order}-${row}-${label}`}>
                         <td className="p-0 align-top">
                           <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                            <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                            <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                           </div>
                         </td>
                         {counts.flatMap((count) =>
@@ -1677,6 +2054,7 @@ export const TagMatrix: Story = {
  */
 export const IconStatusMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const counts = [1, 2, 3] as const;
     const columns = ['center', 'last'] as const;
@@ -1708,7 +2086,7 @@ export const IconStatusMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {counts.flatMap((count) =>
@@ -1735,6 +2113,7 @@ export const IconStatusMatrix: Story = {
  */
 export const StatusToggleMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const columns = ['center', 'last'] as const;
 
@@ -1763,7 +2142,7 @@ export const StatusToggleMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {columns.map((column) => (
@@ -1788,6 +2167,7 @@ export const StatusToggleMatrix: Story = {
  */
 export const TextInfoMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
 
@@ -1828,7 +2208,7 @@ export const TextInfoMatrix: Story = {
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
                       <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                        <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                        <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
                     {defaultColumns.flatMap((column) =>
@@ -1855,6 +2235,7 @@ export const TextInfoMatrix: Story = {
  */
 export const ActionButtonMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const linkCounts = [1, 2, 3, 4] as const;
     const iconCounts = [1, 2, 3] as const;
@@ -1886,7 +2267,7 @@ export const ActionButtonMatrix: Story = {
                     <tr key={`links-${row}-${label}`}>
                       <td className="p-0 align-top">
                         <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                          <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                          <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                         </div>
                       </td>
                       {linkCounts.map((count) => (
@@ -1923,7 +2304,7 @@ export const ActionButtonMatrix: Story = {
                     <tr key={`icons-${row}-${label}`}>
                       <td className="p-0 align-top">
                         <div className="px-[var(--spacing-6)] py-[var(--spacing-24)]">
-                          <MatrixLabel>{row === 'last' ? 'Last row' : 'First row'} / {label}</MatrixLabel>
+                          <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                         </div>
                       </td>
                       {iconCounts.map((count) => (
@@ -1943,14 +2324,17 @@ export const ActionButtonMatrix: Story = {
   },
 };
 export const Inset: Story = {
+  tags: hiddenStoryTags,
   args: { inset: true, children: 'Inset cell value' },
 };
 
 export const InsetBold: Story = {
+  tags: hiddenStoryTags,
   args: { inset: true, weight: 'bold', children: 'Inset bold' },
 };
 
 export const InsetHovered: Story = {
+  tags: hiddenStoryTags,
   args: { inset: true, hovered: true, children: 'Inset hover' },
 };
 
@@ -1959,6 +2343,7 @@ export const InsetHovered: Story = {
  * quantity stepper with a row checkbox.
  */
 export const InsetFormField: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="first" checkbox={<Checkbox size="sm" />}>
       <NumberInput type="stepper" value="1" onChange={() => undefined} />
@@ -1971,6 +2356,7 @@ export const InsetFormField: Story = {
  * value beside a row checkbox.
  */
 export const InsetIcon: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="first" checkbox={<Checkbox size="sm" />}>
       <Icon name="info" size={17} className="text-[color:var(--color-icon-secondary)]" />
@@ -1983,6 +2369,7 @@ export const InsetIcon: Story = {
  * one or more stacked text-link actions.
  */
 export const InsetActionLinks: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="last" className="!items-start !pr-[var(--spacing-12)]">
       <ActionLinks count={2} />
@@ -1995,6 +2382,7 @@ export const InsetActionLinks: Story = {
  * icon-only actions in a row.
  */
 export const InsetActionIcons: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="last" className="!items-start !pr-[var(--spacing-12)]">
       <ActionIcons count={3} />
@@ -2007,6 +2395,7 @@ export const InsetActionIcons: Story = {
  * inset table row.
  */
 export const InsetExpandable: Story = {
+  tags: hiddenStoryTags,
   render: () => {
     const [expanded, setExpanded] = useState(false);
 
@@ -2022,6 +2411,7 @@ export const InsetExpandable: Story = {
  * Copyable recipe: use this for a plain text value in an inset table row.
  */
 export const InsetTextValue: Story = {
+  tags: hiddenStoryTags,
   args: {
     inset: true,
     column: 'first',
@@ -2033,6 +2423,7 @@ export const InsetTextValue: Story = {
  * Copyable recipe: use this for a numeric value in an inset table row.
  */
 export const InsetNumberValue: Story = {
+  tags: hiddenStoryTags,
   args: {
     inset: true,
     column: 'last',
@@ -2046,6 +2437,7 @@ export const InsetNumberValue: Story = {
  * table row.
  */
 export const InsetSuccessValue: Story = {
+  tags: hiddenStoryTags,
   args: {
     inset: true,
     column: 'center',
@@ -2059,6 +2451,7 @@ export const InsetSuccessValue: Story = {
  * table row.
  */
 export const InsetDangerValue: Story = {
+  tags: hiddenStoryTags,
   args: {
     inset: true,
     column: 'center',
@@ -2072,6 +2465,7 @@ export const InsetDangerValue: Story = {
  * a status pip after the label.
  */
 export const InsetTagAfter: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="center">
       <TagPair order="after" />
@@ -2083,6 +2477,7 @@ export const InsetTagAfter: Story = {
  * Copyable recipe: use this when the pip should lead the tag label.
  */
 export const InsetTagFirst: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="center">
       <TagPair order="first" />
@@ -2094,6 +2489,7 @@ export const InsetTagFirst: Story = {
  * Copyable recipe: use this for the status toggle cell in an inset row.
  */
 export const InsetStatusToggle: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="center">
       <Toggle checked />
@@ -2105,6 +2501,7 @@ export const InsetStatusToggle: Story = {
  * Copyable recipe: use this for compact row progress with a status icon.
  */
 export const InsetProgressStatus: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="center">
       <InsetProgress status="success" />
@@ -2118,7 +2515,8 @@ export const InsetProgressStatus: Story = {
  * Do not copy this full story into product code.
  */
 export const InsetTextNumberMatrix: Story = {
-  tags: ['!dev', '!autodocs', 'visual-qa'],
+  name: 'Inset Matrix',
+  parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
     const tones = ['default', 'success', 'danger'] as const;
@@ -2198,6 +2596,36 @@ export const InsetTextNumberMatrix: Story = {
   },
 };
 
+export const InsetBodyRow: Story = {
+  parameters: visualReferenceParameters,
+  render: () => (
+    <table className="border-collapse w-full table-fixed">
+      <tbody>
+        <tr>
+          <Cell inset column="first" align="left" checkbox={<Checkbox size="sm" />}>
+            Shopee MY
+          </Cell>
+          <Cell inset column="center" align="left">SKU-1042</Cell>
+          <Cell inset column="center" align="right">128</Cell>
+          <Cell inset column="last" align="right">
+            <ActionIcons count={3} />
+          </Cell>
+        </tr>
+        <tr>
+          <Cell inset row="last" column="first" align="left" checkbox={<Checkbox size="sm" />}>
+            Webstore
+          </Cell>
+          <Cell inset row="last" column="center" align="left">SKU-2103</Cell>
+          <Cell inset row="last" column="center" align="right">42</Cell>
+          <Cell inset row="last" column="last" align="right">
+            <ActionIcons count={3} />
+          </Cell>
+        </tr>
+      </tbody>
+    </table>
+  ),
+};
+
 /**
  * Figma parity matrix: use this to check form-field cells across column
  * position, row position, and hover state. Do not copy this full story
@@ -2205,6 +2633,7 @@ export const InsetTextNumberMatrix: Story = {
  */
 export const InsetFormFieldMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => (
     <InsetStoryFrame>
       <table className="border-collapse table-fixed w-[720px]">
@@ -2250,6 +2679,7 @@ export const InsetFormFieldMatrix: Story = {
  */
 export const InsetIconMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => (
     <InsetStoryFrame>
       <table className="border-collapse table-fixed w-[480px]">
@@ -2295,6 +2725,7 @@ export const InsetIconMatrix: Story = {
  */
 export const InsetActionButtonMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const linkCounts = [1, 2, 3, 4] as const;
     const iconCounts = [1, 2, 3] as const;
@@ -2396,6 +2827,7 @@ export const InsetActionButtonMatrix: Story = {
  */
 export const InsetExpandableMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => (
     <InsetStoryFrame>
       <table className="border-collapse table-fixed w-[360px]">
@@ -2420,13 +2852,13 @@ export const InsetExpandableMatrix: Story = {
         </thead>
         <tbody>
           <tr>
-            <Cell inset row="middle" column="center" align="center">
+            <Cell inset row="default" column="center" align="center">
               <TableExpandToggle expanded={false} />
             </Cell>
             <Cell inset row="last" column="center" align="center">
               <TableExpandToggle expanded={false} />
             </Cell>
-            <Cell inset row="middle" column="center" align="center">
+            <Cell inset row="default" column="center" align="center">
               <TableExpandToggle expanded />
             </Cell>
           </tr>
@@ -2443,6 +2875,7 @@ export const InsetExpandableMatrix: Story = {
  */
 export const InsetTagMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const orders = ['after', 'first'] as const;
     const counts = [1, 2] as const;
@@ -2506,6 +2939,7 @@ export const InsetTagMatrix: Story = {
  */
 export const InsetStatusToggleMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const columns = ['center', 'last'] as const;
 
@@ -2533,7 +2967,7 @@ export const InsetStatusToggleMatrix: Story = {
                 insetStates.map(({ label, hovered }) => (
                   <tr key={`${row}-${label}`}>
                     <td className="p-0 align-top">
-                      <div className="px-[var(--spacing-6)] py-[var(--spacing-6)]">
+                      <div className="whitespace-nowrap px-[var(--spacing-6)] py-[var(--spacing-6)]">
                         <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
@@ -2560,6 +2994,7 @@ export const InsetStatusToggleMatrix: Story = {
  */
 export const InsetProgressStatusMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const statuses: Array<{ label: string; status: InsetProgressStatus }> = [
       { label: 'None', status: 'default' },
@@ -2619,16 +3054,19 @@ export const InsetProgressStatusMatrix: Story = {
 };
 
 export const Selected: Story = {
+  tags: hiddenStoryTags,
   args: { selected: true, children: 'Selected row cell' },
 };
 
 /* ── Sub-row variant (Sales Channel "Today Sales" pattern) ── */
 
 export const Subrow: Story = {
+  tags: hiddenStoryTags,
   args: { subrow: true, column: 'first', children: 'Awesome Store 1899' },
 };
 
 export const SubrowHovered: Story = {
+  tags: hiddenStoryTags,
   args: { subrow: true, hovered: true, column: 'first', children: 'Awesome Store 1899' },
 };
 
@@ -2638,14 +3076,17 @@ export const SubrowHovered: Story = {
  * where content sits inside that padded zone.
  */
 export const SubrowCenter: Story = {
+  tags: hiddenStoryTags,
   args: { subrow: true, column: 'center', align: 'center', children: '25' },
 };
 
 export const SubrowLast: Story = {
+  tags: hiddenStoryTags,
   args: { subrow: true, column: 'last', align: 'right', children: '10,000.00' },
 };
 
 export const SubrowSelected: Story = {
+  tags: hiddenStoryTags,
   args: {
     subrow: true,
     selected: true,
@@ -2659,6 +3100,7 @@ export const SubrowSelected: Story = {
  * channel/app icon.
  */
 export const SubrowTextWithChannel: Story = {
+  tags: hiddenStoryTags,
   args: {
     subrow: true,
     column: 'first',
@@ -2673,6 +3115,7 @@ export const SubrowTextWithChannel: Story = {
  * channel/app icon, semantic tone, and a trend glyph.
  */
 export const SubrowNumberWithTrend: Story = {
+  tags: hiddenStoryTags,
   args: {
     subrow: true,
     column: 'last',
@@ -2689,6 +3132,7 @@ export const SubrowNumberWithTrend: Story = {
  * Copyable recipe: use this for a sub-row quantity field.
  */
 export const SubrowQuantityField: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell subrow column="first" className="!items-start">
       <Quantity
@@ -2705,6 +3149,7 @@ export const SubrowQuantityField: Story = {
  * Copyable recipe: use this for a sub-row quantity field with validation.
  */
 export const SubrowQuantityFieldError: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <TableCell subrow column="first" className="!items-start">
       <Quantity
@@ -2724,7 +3169,8 @@ export const SubrowQuantityFieldError: Story = {
  * semantic tone. Do not copy this full story into product code.
  */
 export const SubrowTextNumberMatrix: Story = {
-  tags: ['!dev', '!autodocs', 'visual-qa'],
+  name: 'Subrow Matrix',
+  parameters: visualReferenceParameters,
   render: () => {
     const tones = ['default', 'success', 'danger'] as const;
     const alignments = ['left', 'center', 'right'] as const;
@@ -2753,7 +3199,7 @@ export const SubrowTextNumberMatrix: Story = {
                 insetStates.map(({ label, hovered }) => (
                   <tr key={`text-${row}-${label}`}>
                     <td className="p-0 align-top">
-                      <div className="px-[var(--spacing-6)] py-[var(--spacing-6)]">
+                      <div className="whitespace-nowrap px-[var(--spacing-6)] py-[var(--spacing-6)]">
                         <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                       </div>
                     </td>
@@ -2788,9 +3234,9 @@ export const SubrowTextNumberMatrix: Story = {
                     <table className="border-collapse table-fixed">
                       <thead>
                         <tr>
-                          <th className="p-0 w-[120px]" />
+                          <th className="p-0 w-[160px]" />
                           {alignments.map((align) => (
-                            <th key={align} className="p-0 w-[116px]">
+                            <th key={align} className="p-0 w-[230px]">
                               <div className="px-[var(--spacing-6)] py-[var(--spacing-6)] text-left">
                                 <MatrixLabel>{align}</MatrixLabel>
                               </div>
@@ -2803,7 +3249,7 @@ export const SubrowTextNumberMatrix: Story = {
                           insetStates.map(({ label, hovered }) => (
                             <tr key={`${tone}-${column}-${row}-${label}`}>
                               <td className="p-0 align-top">
-                                <div className="px-[var(--spacing-6)] py-[var(--spacing-6)]">
+                                <div className="whitespace-nowrap px-[var(--spacing-6)] py-[var(--spacing-6)]">
                                   <MatrixLabel>{row === 'last' ? 'Last row' : 'Default row'} / {label}</MatrixLabel>
                                 </div>
                               </td>
@@ -2851,6 +3297,153 @@ export const SubrowTextNumberMatrix: Story = {
   },
 };
 
+export const DefaultBodyRow: Story = {
+  parameters: visualReferenceParameters,
+  render: () => (
+    <table className="border-collapse w-full table-fixed">
+      <tbody>
+        <tr>
+          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />} className="!items-center">
+            Wireless mouse
+          </Cell>
+          <Cell column="center" align="left" className="!items-center">SKU-1042</Cell>
+          <Cell column="center" align="right" className="!items-center">128</Cell>
+          <Cell column="center" align="right" className="!items-center">RM 89.00</Cell>
+          <Cell column="last" align="right" className="!items-center">
+            <ActionIcons count={3} />
+          </Cell>
+        </tr>
+        <tr>
+          <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox size="sm" />} className="!items-center">
+            USB-C Hub
+          </Cell>
+          <Cell column="center" align="left" row="last" className="!items-center">SKU-2103</Cell>
+          <Cell column="center" align="right" row="last" className="!items-center">42</Cell>
+          <Cell column="center" align="right" row="last" className="!items-center">RM 159.00</Cell>
+          <Cell column="last" align="right" row="last" className="!items-center">
+            <ActionIcons count={3} />
+          </Cell>
+        </tr>
+      </tbody>
+    </table>
+  ),
+};
+
+export const ListingBodyRow: ListingBodyRowStory = {
+  argTypes: {
+    ...recipeOnlyControls,
+    productName: { control: 'text' },
+    iSku: { control: 'text' },
+    sku: { control: 'text' },
+    channelName: { control: 'text' },
+    moreSkuCount: { control: { type: 'number', min: 0, step: 1 } },
+    showCheckbox: { control: 'boolean' },
+    showPip: { control: 'boolean' },
+    showChannel: { control: 'boolean' },
+    showMoreSkus: { control: 'boolean' },
+  },
+  args: {
+    productName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
+    iSku: 'ISKU-LDC-240321-MY-0001',
+    sku: 'DYN-4IN1-FRESH-10ML52',
+    channelName: 'Webstore',
+    moreSkuCount: 5,
+    showCheckbox: true,
+    showPip: true,
+    showChannel: true,
+    showMoreSkus: true,
+  },
+  render: ({
+    productName = 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
+    iSku = 'ISKU-LDC-240321-MY-0001',
+    sku = 'DYN-4IN1-FRESH-10ML52',
+    channelName = 'Webstore',
+    moreSkuCount = 5,
+    showCheckbox = true,
+    showPip = true,
+    showChannel = true,
+    showMoreSkus = true,
+  }) => (
+    <table className="border-collapse w-full table-fixed">
+      <tbody>
+        <tr>
+          <Cell column="first" className="!items-start">
+            <TableCellListing
+              checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+              image={<ProductImage size="lg" src={productImages[0].src} alt={productImages[0].alt} />}
+              tag={showPip ? <Pip type="success" pipStyle="default" label="Published" /> : undefined}
+              productName={productName}
+              infoRows={[
+                { label: 'iSKU', value: iSku },
+                { label: 'SKU', value: sku },
+              ]}
+              extras={(showChannel || showMoreSkus) ? (
+                <>
+                  {showChannel && (
+                    <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
+                      <img
+                        src={sitegiantWebstore}
+                        alt=""
+                        aria-hidden="true"
+                        width={15}
+                        height={15}
+                        className="shrink-0 rounded-[var(--radius-4)]"
+                      />
+                      {channelName}
+                    </span>
+                  )}
+                  {showMoreSkus && moreSkuCount > 0 && (
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)] cursor-pointer"
+                    >
+                      <Icon name="plus-square" size={15} />
+                      {moreSkuCount} more SKUs
+                    </button>
+                  )}
+                </>
+              ) : undefined}
+            />
+          </Cell>
+        </tr>
+      </tbody>
+    </table>
+  ),
+};
+
+export const SubrowBodyRow: Story = {
+  parameters: visualReferenceParameters,
+  render: () => (
+    <table className="border-collapse w-full table-fixed">
+      <thead>
+        <tr>
+          <th className="p-0">
+            <TableHeaderCell inset subheader column="first" align="left" label="Store" />
+          </th>
+          <th className="p-0">
+            <TableHeaderCell inset subheader column="center" align="left" label="Order" />
+          </th>
+          <th className="p-0">
+            <TableHeaderCell inset subheader column="last" align="right" label="Total (RM)" />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <Cell subrow column="first">Awesome Store 1899</Cell>
+          <Cell subrow column="center" align="left">25</Cell>
+          <Cell subrow column="last" align="right">10,000.00</Cell>
+        </tr>
+        <tr>
+          <Cell subrow row="last" column="first">Super Hype</Cell>
+          <Cell subrow row="last" column="center" align="left">5</Cell>
+          <Cell subrow row="last" column="last" align="right">10,000.00</Cell>
+        </tr>
+      </tbody>
+    </table>
+  ),
+};
+
 /**
  * Figma parity matrix: use this to check sub-row quantity fields across
  * row position, column position, field state, and validation. Do not copy
@@ -2858,6 +3451,7 @@ export const SubrowTextNumberMatrix: Story = {
  */
 export const SubrowQuantityFieldMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const quantityStates: Array<{ label: string; state: QuantityState; focus?: boolean; hovered?: boolean }> = [
       { label: 'Default', state: 'default' },
@@ -2947,6 +3541,7 @@ export const SubrowQuantityFieldMatrix: Story = {
  * that piece, and SubheaderWithSubrows below for the full s2 stack.
  */
 export const SubrowComposite: Story = {
+  tags: hiddenStoryTags,
   render: () => (
     <table className="border-collapse w-full">
       <tbody>
@@ -2973,6 +3568,8 @@ export const SubrowComposite: Story = {
  * extra gap between the header band and the first sub-row.
  */
 export const SubheaderWithSubrows: Story = {
+  tags: hiddenStoryTags,
+  name: 'Subrow Body Row',
   render: () => (
     <table className="border-collapse w-full">
       <thead>
@@ -3028,14 +3625,14 @@ const DefaultInfoCell = ({
   statusCount = 1,
   paragraphCount = 1,
   column = 'center',
-  row = 'middle',
+  row = 'default',
   hovered = false,
 }: {
   alignment?: 'horizontal' | 'vertical';
   statusCount?: 1 | 2 | 3;
   paragraphCount?: 1 | 2 | 3;
   column?: 'center' | 'last';
-  row?: 'middle' | 'last';
+  row?: 'default' | 'last';
   hovered?: boolean;
 }) => (
   <TableCell
@@ -3056,6 +3653,7 @@ const DefaultInfoCell = ({
  * Table Row - Info (1270:2216), Type=Horizontal.
  */
 export const DefaultInfoHorizontal: DefaultInfoStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     alignment: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
@@ -3090,6 +3688,7 @@ export const DefaultInfoHorizontal: DefaultInfoStory = {
  * Table Row - Info (1270:2216), Type=Vertical.
  */
 export const DefaultInfoVertical: DefaultInfoStory = {
+  tags: hiddenStoryTags,
   argTypes: {
     ...recipeOnlyControls,
     alignment: { control: 'inline-radio', options: ['horizontal', 'vertical'] },
@@ -3126,12 +3725,13 @@ export const DefaultInfoVertical: DefaultInfoStory = {
  */
 export const DefaultInfoMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const alignments = ['horizontal', 'vertical'] as const;
     const statusCounts = [1, 2, 3] as const;
     const paragraphCounts = [1, 2, 3] as const;
     const columns = ['center', 'last'] as const;
-    const rows = ['middle', 'last'] as const;
+    const rows = ['default', 'last'] as const;
 
     return (
       <div className="flex flex-col gap-[var(--spacing-24)]">
@@ -3197,6 +3797,8 @@ export const DefaultInfoMatrix: Story = {
 };
 
 export const InfoSingleLine: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3213,6 +3815,8 @@ export const InfoSingleLine: Story = {
  * statusCount=2, paragraphCount=1. Labels stretch to match each body row.
  */
 export const InfoMultiStatus: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3232,6 +3836,8 @@ export const InfoMultiStatus: Story = {
  * statusCount=1, paragraphCount=1.
  */
 export const InfoVertical: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3250,6 +3856,8 @@ export const InfoVertical: Story = {
  * holds when label height (1 line) is shorter than body height (N lines).
  */
 export const InfoMultiStatusMultiParagraph: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3275,6 +3883,8 @@ export const InfoMultiStatusMultiParagraph: Story = {
  * paragraphCount=1. Each (label above body) block stacks with gap-4 between.
  */
 export const InfoVerticalMultiStatus: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3295,6 +3905,8 @@ export const InfoVerticalMultiStatus: Story = {
  * statusCount=1, paragraphCount=3.
  */
 export const InfoVerticalMultiParagraph: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3318,10 +3930,12 @@ export const InfoVerticalMultiParagraph: Story = {
 
 /**
  * Multi-paragraph body — Figma: paragraphCount=3. Each paragraph is a wrapped
- * line; the label stays vertically centred against the first row in horizontal
+ * line; the label stays vertically centred against the Default row in horizontal
  * alignment.
  */
 export const InfoMultiParagraph: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3350,6 +3964,7 @@ export const InfoMultiParagraph: Story = {
  */
 export const InfoMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const alignments = ['horizontal', 'vertical'] as const;
     const statusCounts = [1, 2, 3] as const;
@@ -3435,19 +4050,40 @@ export const InfoMatrix: Story = {
  * Default MainSub: caption label + 14/17 main value above caption label +
  * 12/17 secondary sub value. Figma: Type=Default.
  */
-export const MainSub: Story = {
-  args: {
-    inset: true,
-    column: 'first',
-    children: (
-      <TableCellMainSub
-        mainLabel="Total"
-        mainValue="RM 10,250.00"
-        subLabel="Tax"
-        subValue="RM 615.00"
-      />
-    ),
+export const MainSub: MainSubStory = {
+  tags: hiddenStoryTags,
+  argTypes: {
+    ...recipeOnlyControls,
+    mainLabel: { control: 'text' },
+    mainValue: { control: 'text' },
+    subLabel: { control: 'text' },
+    subValue: { control: 'text' },
+    mainBold: { control: 'boolean' },
   },
+  args: {
+    mainLabel: 'Total',
+    mainValue: 'RM 10,250.00',
+    subLabel: 'Tax',
+    subValue: 'RM 615.00',
+    mainBold: false,
+  },
+  render: ({
+    mainLabel = 'Total',
+    mainValue = 'RM 10,250.00',
+    subLabel = 'Tax',
+    subValue = 'RM 615.00',
+    mainBold = false,
+  }) => (
+    <TableCell inset column="first">
+      <TableCellMainSub
+        mainLabel={mainLabel}
+        mainValue={mainValue}
+        subLabel={subLabel}
+        subValue={subValue}
+        mainBold={mainBold}
+      />
+    </TableCell>
+  ),
 };
 
 /**
@@ -3456,6 +4092,8 @@ export const MainSub: Story = {
  * tracking-number-with-meta pattern.
  */
 export const MainSubBold: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3476,6 +4114,8 @@ export const MainSubBold: Story = {
  * header already names the field.
  */
 export const MainSubLabelless: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'first',
@@ -3496,6 +4136,7 @@ export const MainSubLabelless: Story = {
  */
 export const MainSubMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const types = ['default', 'mainBold'] as const;
     const columns = ['center', 'last'] as const;
@@ -3562,6 +4203,8 @@ export const MainSubMatrix: Story = {
  * one secondary paragraph.
  */
 export const TextListingBold: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   render: () => (
     <TableCell inset column="first" className="!items-start">
       <TextListing titleWeight="bold" paragraphCount={1} />
@@ -3573,6 +4216,8 @@ export const TextListingBold: Story = {
  * Copyable recipe: use this for text listing content with regular title.
  */
 export const TextListingRegular: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   render: () => (
     <TableCell inset column="first" className="!items-start">
       <TextListing titleWeight="regular" paragraphCount={2} />
@@ -3587,6 +4232,7 @@ export const TextListingRegular: Story = {
  */
 export const TextListingMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const titleWeights = ['bold', 'regular'] as const;
     const paragraphCounts = [1, 2, 3] as const;
@@ -3650,46 +4296,46 @@ export const TextListingMatrix: Story = {
  * `column='first'` with the s9 padding override (`!pl-12`) per Figma
  * 1248:8395; center-column listings drop the override.
  */
-export const Listing: Story = {
-  args: {
-    inset: true,
-    column: 'first',
-    className: '!pl-[var(--spacing-12)]',
-    children: (
-      <TableCellListing
-        checkbox={<Checkbox size="sm" />}
-        image={<ProductImage size="lg" src={productImages[0].src} alt={productImages[0].alt} />}
-        tag={<Pip type="success" pipStyle="default" label="Published" />}
-        productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
-        infoRows={[
-          { label: 'iSKU', value: 'ISKU-LDC-240321-MY-0001' },
-          { label: 'SKU', value: 'DYN-4IN1-FRESH-10ML52' },
-        ]}
-        extras={
-          <>
-            <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
-              <img
-                src={sitegiantWebstore}
-                alt=""
-                aria-hidden="true"
-                width={15}
-                height={15}
-                className="shrink-0 block rounded-[var(--radius-4)]"
-              />
-              Webstore
-            </span>
-            <button
-              type="button"
-              className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)] cursor-pointer"
-            >
-              <Icon name="plus-square" size={15} />
-              5 more SKUs
-            </button>
-          </>
-        }
-      />
-    ),
+export const Listing: ListingStory = {
+  tags: hiddenStoryTags,
+  argTypes: {
+    ...recipeOnlyControls,
+    productName: { control: 'text' },
+    withListingCheckbox: { control: 'boolean' },
+    withTag: { control: 'boolean' },
+    withInfoRows: { control: 'boolean' },
+    withExtras: { control: 'boolean' },
   },
+  args: {
+    productName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
+    withListingCheckbox: true,
+    withTag: true,
+    withInfoRows: true,
+    withExtras: true,
+  },
+  render: ({
+    productName = 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
+    withListingCheckbox = true,
+    withTag = true,
+    withInfoRows = true,
+    withExtras = true,
+  }) => (
+    <TableCell inset column="first" className="!pl-[var(--spacing-12)]">
+      <TableCellListing
+        checkbox={withListingCheckbox ? <Checkbox size="sm" /> : undefined}
+        image={<ProductImage size="lg" src={productImages[0].src} alt={productImages[0].alt} />}
+        tag={withTag ? <Pip type="success" pipStyle="default" label="Published" /> : undefined}
+        productName={productName}
+        infoRows={withInfoRows
+          ? [
+              { label: 'iSKU', value: 'ISKU-LDC-240321-MY-0001' },
+              { label: 'SKU', value: 'DYN-4IN1-FRESH-10ML52' },
+            ]
+          : undefined}
+        extras={withExtras ? <ListingExtras /> : undefined}
+      />
+    </TableCell>
+  ),
 };
 
 /**
@@ -3697,6 +4343,8 @@ export const Listing: Story = {
  * since the cell already has center-column padding.
  */
 export const ListingCenter: Story = {
+  tags: hiddenStoryTags,
+  parameters: visualReferenceParameters,
   args: {
     inset: true,
     column: 'center',
@@ -3721,6 +4369,7 @@ export const ListingCenter: Story = {
  */
 export const ListingMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
+  parameters: visualReferenceParameters,
   render: () => {
     const columns = ['first', 'center'] as const;
 
@@ -3809,6 +4458,7 @@ export const ListingMatrix: Story = {
 /* ── Content composition variants (Inset Table Row family) ── */
 
 export const WithTagContent: Story = {
+  tags: hiddenStoryTags,
   args: {
     children: (
       <span className="inline-flex items-center gap-[var(--spacing-4)]">
@@ -3820,6 +4470,7 @@ export const WithTagContent: Story = {
 };
 
 export const WithExpandToggle: Story = {
+  tags: hiddenStoryTags,
   args: { column: 'last', align: 'right' },
   render: (args) => {
     const [expanded, setExpanded] = useState(false);
@@ -3839,6 +4490,8 @@ export const WithExpandToggle: Story = {
 /* ── Full table example ─────────────────────────────── */
 
 export const FullTable: Story = {
+  tags: hiddenStoryTags,
+  name: 'Default Body Row',
   render: () => (
     <div className={fullTableShellClass}>
       <table className="w-full table-fixed border-separate border-spacing-0">
