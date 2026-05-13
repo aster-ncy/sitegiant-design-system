@@ -51,6 +51,8 @@ type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
   variant?: TableCellVariantOption;
   previewIcon?: IconName;
   infoIcon?: IconName;
+  smallChannelIconChannel?: ListingChannelOption;
+  smallChannelIconLabel?: string;
   productCount?: 1 | 2 | 3 | 4 | 6;
   listingProduct?: ProductPreviewOption;
   listingTag?: ListingTagOption;
@@ -63,8 +65,49 @@ type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
   listingTagControlVisible?: boolean;
   listingChannelControlVisible?: boolean;
   listingMoreSkuCountControlVisible?: boolean;
+  childrenControlVisible?: boolean;
+  typographyControlsVisible?: boolean;
+  columnControlVisible?: boolean;
+  checkboxControlVisible?: boolean;
+  actionTextLinkCount?: 1 | 2 | 3 | 4;
+  actionIconCount?: 1 | 2 | 3;
+  iconStatusCount?: 1 | 2 | 3;
+  actionTextLinkCount?: 1 | 2 | 3 | 4;
+  actionIconCount?: 1 | 2 | 3;
+  iconStatusCount?: 1 | 2 | 3;
+  tagCount?: 1 | 2 | 3;
+  tagLabel1?: string;
+  tagPipType1?: PipType;
+  tagPipLabel1?: string;
+  tagLabel2?: string;
+  tagPipType2?: PipType;
+  tagPipLabel2?: string;
+  tagLabel3?: string;
+  tagPipType3?: PipType;
+  tagPipLabel3?: string;
+  tagVariantControlsVisible?: boolean;
+  tagRow2Visible?: boolean;
+  tagRow3Visible?: boolean;
   statusToggleChecked?: boolean;
-  formFieldValue?: string;
+  formFieldValue?: number;
+  textInfoBody?: string;
+  textInfoWeight?: 'normal' | 'bold';
+  textInfoChannel?: ListingChannelOption;
+  textInfoLabel?: string;
+  tagWithChannelCount?: 1 | 2 | 3;
+  tagWithChannelTagLabel1?: string;
+  tagWithChannelPipType1?: PipType;
+  tagWithChannelPipLabel1?: string;
+  tagWithChannelTagLabel2?: string;
+  tagWithChannelPipType2?: PipType;
+  tagWithChannelPipLabel2?: string;
+  tagWithChannelTagLabel3?: string;
+  tagWithChannelPipType3?: PipType;
+  tagWithChannelPipLabel3?: string;
+  tagWithChannelRow2Visible?: boolean;
+  tagWithChannelRow3Visible?: boolean;
+  tagWithChannelChannel?: ListingChannelOption;
+  tagWithChannelLabel?: string;
 };
 
 const tableCellVariantOptions = [
@@ -260,7 +303,7 @@ const variantArgType = {
     '- `form-field` - quantity input cell.',
     '- `tag-with-channel` - tag stack plus channel metadata.',
   ].join('\n'),
-  table: { category: 'TableCellVariant', defaultValue: { summary: 'text' } },
+  table: { category: '1. Variant', defaultValue: { summary: 'text' } },
 } as const;
 
 const meta = {
@@ -275,127 +318,170 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
+    // ── 1. Variant (variant selector + per-variant preview controls) ─────────
     variant: variantArgType,
-    mode: {
-      control: { type: 'inline-radio' },
-      options: ['default', 'inset', 'subrow'] satisfies ReadonlyArray<TableMode>,
-      description: 'Storybook control for table surface. `subrow` maps to the component `subrow` prop.',
-      table: { category: 'Layout', defaultValue: { summary: 'default' } },
-    },
-    checkbox: {
-      control: { type: 'boolean' },
-      description: 'Storybook-only switch. Shows a row-selection checkbox slot without overriding the selected column padding.',
-      table: { category: 'Content', defaultValue: { summary: 'false' } },
-    },
-    inset: { table: { disable: true } },
-    column: {
-      control: { type: 'inline-radio' },
-      options: ['first', 'center', 'last'],
-      table: { category: 'Layout' },
-    },
-    align: {
-      control: { type: 'inline-radio' },
-      options: ['left', 'center', 'right'],
-      if: { arg: 'variant', neq: 'listing' },
-      table: { category: 'Layout' },
-    },
-    weight: {
-      control: { type: 'inline-radio' },
-      options: ['normal', 'bold'],
-      description: 'Text weight for simple cell content. When `variant` is `listing`, this controls only the product name.',
-      table: { category: 'Typography' },
-    },
-    tone: {
-      control: { type: 'inline-radio' },
-      options: ['default', 'success', 'danger'],
-      if: { arg: 'variant', neq: 'listing' },
-      table: { category: 'Typography' },
-    },
-    row: {
-      control: { type: 'inline-radio' },
-      options: ['default', 'last'],
-      description: 'Default row or final-row styling. Use `last` only for the final row in a table.',
-      table: { category: 'Layout' },
-    },
-    hovered: { control: 'boolean', table: { category: 'State' } },
-    selected: { control: 'boolean', table: { category: 'State' } },
-    subrow: { table: { disable: true } },
-    boldOnRowHover: {
-      control: 'boolean',
-      if: { arg: 'variant', neq: 'listing' },
-      table: { category: 'Typography' },
-    },
+
     previewIcon: {
       control: { type: 'select' },
       options: previewIconOptions,
       description: 'Playground-only icon used by the Leading Icon variant.',
       if: { arg: 'variant', eq: 'leading-icon' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'check' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'check' } },
     },
     infoIcon: {
       control: { type: 'select' },
       options: previewIconOptions,
       description: 'Playground-only icon used by the Info Icon variant.',
       if: { arg: 'variant', eq: 'info-icon' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'info' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'info' } },
+    },
+    children: {
+      control: 'text',
+      description: 'Cell text content. Used by `text`, `leading-icon`, and `info-icon` variants.',
+      if: { arg: 'childrenControlVisible', truthy: true },
+      table: { category: '1. Variant' },
+    },
+    childrenControlVisible: { table: { disable: true } },
+    smallChannelIconChannel: {
+      control: { type: 'select', labels: listingChannelLabels },
+      options: listingChannelOptions,
+      description: 'Playground-only channel icon for the Small Channel Icon variant.',
+      if: { arg: 'variant', eq: 'small-channel-icon' },
+      table: { category: '1. Variant', defaultValue: { summary: 'SHOPEE_MY' } },
+    },
+    smallChannelIconLabel: {
+      control: 'text',
+      description: 'Playground-only store name label for the Small Channel Icon variant.',
+      if: { arg: 'variant', eq: 'small-channel-icon' },
+      table: { category: '1. Variant', defaultValue: { summary: 'Awesome Store' } },
     },
     productCount: {
       control: { type: 'inline-radio' },
       options: [1, 2, 3, 4, 6],
       description: 'Playground-only product image count.',
       if: { arg: 'variant', eq: 'product-only' },
-      table: { category: 'Variant Preview', defaultValue: { summary: '4' } },
+      table: { category: '1. Variant', defaultValue: { summary: '4' } },
     },
+    tagCount: {
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3] satisfies ReadonlyArray<1 | 2 | 3>,
+      description: 'Playground-only number of tag rows for the Tag After / Tag First variants.',
+      if: { arg: 'tagVariantControlsVisible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: '1' } },
+    },
+    // Row 1 — always visible when variant is tag-after / tag-first
+    tagLabel1: {
+      control: 'text',
+      description: 'Row 1 tag label.',
+      if: { arg: 'tagVariantControlsVisible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Tag Label' } },
+    },
+    tagPipType1: {
+      control: { type: 'select' },
+      options: ['success', 'info', 'warning', 'alert', 'danger', 'muted', 'highlight', 'blocked'] satisfies ReadonlyArray<PipType>,
+      description: 'Row 1 Pip type.',
+      if: { arg: 'tagVariantControlsVisible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'warning' } },
+    },
+    tagPipLabel1: {
+      control: 'text',
+      description: 'Row 1 Pip label.',
+      if: { arg: 'tagVariantControlsVisible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Pip Text' } },
+    },
+    // Row 2 — visible when tagCount >= 2
+    tagLabel2: {
+      control: 'text',
+      description: 'Row 2 tag label.',
+      if: { arg: 'tagRow2Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Tag Label' } },
+    },
+    tagPipType2: {
+      control: { type: 'select' },
+      options: ['success', 'info', 'warning', 'alert', 'danger', 'muted', 'highlight', 'blocked'] satisfies ReadonlyArray<PipType>,
+      description: 'Row 2 Pip type.',
+      if: { arg: 'tagRow2Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'warning' } },
+    },
+    tagPipLabel2: {
+      control: 'text',
+      description: 'Row 2 Pip label.',
+      if: { arg: 'tagRow2Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Pip Text' } },
+    },
+    // Row 3 — visible when tagCount >= 3
+    tagLabel3: {
+      control: 'text',
+      description: 'Row 3 tag label.',
+      if: { arg: 'tagRow3Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Tag Label' } },
+    },
+    tagPipType3: {
+      control: { type: 'select' },
+      options: ['success', 'info', 'warning', 'alert', 'danger', 'muted', 'highlight', 'blocked'] satisfies ReadonlyArray<PipType>,
+      description: 'Row 3 Pip type.',
+      if: { arg: 'tagRow3Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'warning' } },
+    },
+    tagPipLabel3: {
+      control: 'text',
+      description: 'Row 3 Pip label.',
+      if: { arg: 'tagRow3Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Pip Text' } },
+    },
+    tagVariantControlsVisible: { table: { disable: true } },
+    tagRow2Visible: { table: { disable: true } },
+    tagRow3Visible: { table: { disable: true } },
     listingProduct: {
       control: { type: 'select', labels: productPreviewLabels },
       options: productPreviewOptions,
       description: 'Playground-only product record for the Listing variant. Image, product name, iSKU, and SKU change together.',
       if: { arg: 'variant', eq: 'listing' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'Product 2' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'Product 2' } },
     },
     showListingTag: {
       control: 'boolean',
       description: 'Playground-only switch for the listing status tag.',
       if: { arg: 'variant', eq: 'listing' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     listingTag: {
       control: { type: 'select', labels: listingTagLabels },
       options: listingTagOptions,
       description: 'Playground-only status tag for the Listing variant.',
       if: { arg: 'listingTagControlVisible', truthy: true },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'Published' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'Published' } },
     },
     showListingInfoRows: {
       control: 'boolean',
       description: 'Playground-only switch for the listing iSKU/SKU rows.',
       if: { arg: 'variant', eq: 'listing' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     showListingChannel: {
       control: 'boolean',
       description: 'Playground-only switch for the listing channel label.',
       if: { arg: 'variant', eq: 'listing' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     listingChannel: {
       control: { type: 'select', labels: listingChannelLabels },
       options: listingChannelOptions,
       description: 'Playground-only channel icon for the Listing variant.',
       if: { arg: 'listingChannelControlVisible', truthy: true },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'WEBSTORE' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'WEBSTORE' } },
     },
     showListingMoreSkus: {
       control: 'boolean',
       description: 'Playground-only switch for the listing more-SKUs link.',
       if: { arg: 'variant', eq: 'listing' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     listingMoreSkuCount: {
       control: { type: 'number', min: 0, step: 1 },
       description: 'Playground-only count shown in the listing more-SKUs link.',
       if: { arg: 'listingMoreSkuCountControlVisible', truthy: true },
-      table: { category: 'Variant Preview', defaultValue: { summary: '5' } },
+      table: { category: '1. Variant', defaultValue: { summary: '5' } },
     },
     listingTagControlVisible: { table: { disable: true } },
     listingChannelControlVisible: { table: { disable: true } },
@@ -404,14 +490,209 @@ const meta = {
       control: 'boolean',
       description: 'Playground-only checked state for the Status Toggle variant.',
       if: { arg: 'variant', eq: 'status-toggle' },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
+    },
+    iconStatusCount: {
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3] satisfies ReadonlyArray<1 | 2 | 3>,
+      description: 'Playground-only number of status rows for the Icon Status variant.',
+      if: { arg: 'variant', eq: 'icon-status' },
+      table: { category: '1. Variant', defaultValue: { summary: '3' } },
+    },
+    actionTextLinkCount: {
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3, 4] satisfies ReadonlyArray<1 | 2 | 3 | 4>,
+      description: 'Playground-only number of action links for the Action Text Links variant.',
+      if: { arg: 'variant', eq: 'action-text-links' },
+      table: { category: '1. Variant', defaultValue: { summary: '2' } },
+    },
+    actionIconCount: {
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3] satisfies ReadonlyArray<1 | 2 | 3>,
+      description: 'Playground-only number of action icon buttons for the Action Icon Buttons variant.',
+      if: { arg: 'variant', eq: 'action-icon-buttons' },
+      table: { category: '1. Variant', defaultValue: { summary: '3' } },
     },
     formFieldValue: {
-      control: 'text',
-      description: 'Playground-only value for the Form Field variant.',
+      control: { type: 'number', min: 0, step: 1 },
+      description: 'Playground-only quantity value for the Form Field variant.',
       if: { arg: 'variant', eq: 'form-field' },
-      table: { category: 'Variant Preview', defaultValue: { summary: '1' } },
+      table: { category: '1. Variant', defaultValue: { summary: '1' } },
     },
+    textInfoBody: {
+      control: 'text',
+      description: 'Playground-only body text for the Text Info variant.',
+      if: { arg: 'variant', eq: 'text-info' },
+      table: { category: '1. Variant', defaultValue: { summary: 'Table Body Data' } },
+    },
+    textInfoWeight: {
+      control: { type: 'inline-radio' },
+      options: ['normal', 'bold'] satisfies ReadonlyArray<'normal' | 'bold'>,
+      description: 'Playground-only body text weight for the Text Info variant.',
+      if: { arg: 'variant', eq: 'text-info' },
+      table: { category: '1. Variant', defaultValue: { summary: 'normal' } },
+    },
+    textInfoChannel: {
+      control: { type: 'select', labels: listingChannelLabels },
+      options: listingChannelOptions,
+      description: 'Playground-only channel icon for the Text Info variant.',
+      if: { arg: 'variant', eq: 'text-info' },
+      table: { category: '1. Variant', defaultValue: { summary: 'SHOPEE_MY' } },
+    },
+    textInfoLabel: {
+      control: 'text',
+      description: 'Playground-only info label for the Text Info variant.',
+      if: { arg: 'variant', eq: 'text-info' },
+      table: { category: '1. Variant', defaultValue: { summary: 'Info' } },
+    },
+    tagWithChannelCount: {
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3] satisfies ReadonlyArray<1 | 2 | 3>,
+      description: 'Playground-only number of tag rows for the Tag With Channel variant.',
+      if: { arg: 'variant', eq: 'tag-with-channel' },
+      table: { category: '1. Variant', defaultValue: { summary: '2' } },
+    },
+    // Row 1 (always visible when variant=tag-with-channel)
+    tagWithChannelTagLabel1: {
+      control: 'text',
+      description: 'Row 1 tag label.',
+      if: { arg: 'variant', eq: 'tag-with-channel' },
+      table: { category: '1. Variant', defaultValue: { summary: 'Tag Label 1' } },
+    },
+    tagWithChannelPipType1: {
+      control: { type: 'select' },
+      options: ['success', 'info', 'warning', 'alert', 'danger', 'muted', 'highlight', 'blocked'] satisfies ReadonlyArray<PipType>,
+      description: 'Row 1 Pip type.',
+      if: { arg: 'variant', eq: 'tag-with-channel' },
+      table: { category: '1. Variant', defaultValue: { summary: 'warning' } },
+    },
+    tagWithChannelPipLabel1: {
+      control: 'text',
+      description: 'Row 1 Pip label.',
+      if: { arg: 'variant', eq: 'tag-with-channel' },
+      table: { category: '1. Variant', defaultValue: { summary: 'Pip Text' } },
+    },
+    // Row 2 (visible when count >= 2)
+    tagWithChannelTagLabel2: {
+      control: 'text',
+      description: 'Row 2 tag label.',
+      if: { arg: 'tagWithChannelRow2Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Tag Label 2' } },
+    },
+    tagWithChannelPipType2: {
+      control: { type: 'select' },
+      options: ['success', 'info', 'warning', 'alert', 'danger', 'muted', 'highlight', 'blocked'] satisfies ReadonlyArray<PipType>,
+      description: 'Row 2 Pip type.',
+      if: { arg: 'tagWithChannelRow2Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'warning' } },
+    },
+    tagWithChannelPipLabel2: {
+      control: 'text',
+      description: 'Row 2 Pip label.',
+      if: { arg: 'tagWithChannelRow2Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Pip Text' } },
+    },
+    // Row 3 (visible when count >= 3)
+    tagWithChannelTagLabel3: {
+      control: 'text',
+      description: 'Row 3 tag label.',
+      if: { arg: 'tagWithChannelRow3Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Tag Label 3' } },
+    },
+    tagWithChannelPipType3: {
+      control: { type: 'select' },
+      options: ['success', 'info', 'warning', 'alert', 'danger', 'muted', 'highlight', 'blocked'] satisfies ReadonlyArray<PipType>,
+      description: 'Row 3 Pip type.',
+      if: { arg: 'tagWithChannelRow3Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'warning' } },
+    },
+    tagWithChannelPipLabel3: {
+      control: 'text',
+      description: 'Row 3 Pip label.',
+      if: { arg: 'tagWithChannelRow3Visible', truthy: true },
+      table: { category: '1. Variant', defaultValue: { summary: 'Pip Text' } },
+    },
+    tagWithChannelRow2Visible: { table: { disable: true } },
+    tagWithChannelRow3Visible: { table: { disable: true } },
+    // Channel (always visible)
+    tagWithChannelChannel: {
+      control: { type: 'select', labels: listingChannelLabels },
+      options: listingChannelOptions,
+      description: 'Playground-only channel icon for the Tag With Channel variant.',
+      if: { arg: 'variant', eq: 'tag-with-channel' },
+      table: { category: '1. Variant', defaultValue: { summary: 'WEBSTORE' } },
+    },
+    tagWithChannelLabel: {
+      control: 'text',
+      description: 'Playground-only channel name label for the Tag With Channel variant.',
+      if: { arg: 'variant', eq: 'tag-with-channel' },
+      table: { category: '1. Variant', defaultValue: { summary: 'Company Name' } },
+    },
+
+    // ── 2. Layout ────────────────────────────────────────────────────────────
+    mode: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'inset', 'subrow'] satisfies ReadonlyArray<TableMode>,
+      description: 'Storybook control for table surface. `subrow` maps to the component `subrow` prop.',
+      table: { category: '2. Layout', defaultValue: { summary: 'default' } },
+    },
+    column: {
+      control: { type: 'inline-radio' },
+      options: ['first', 'center', 'last'],
+      if: { arg: 'columnControlVisible', truthy: true },
+      table: { category: '2. Layout' },
+    },
+    columnControlVisible: { table: { disable: true } },
+    align: {
+      control: { type: 'inline-radio' },
+      options: ['left', 'center', 'right'],
+      if: { arg: 'typographyControlsVisible', truthy: true },
+      table: { category: '2. Layout' },
+    },
+    row: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'last'],
+      description: 'Default row or final-row styling. Use `last` only for the final row in a table.',
+      table: { category: '2. Layout' },
+    },
+
+    // ── 3. Content ───────────────────────────────────────────────────────────
+    checkbox: {
+      control: { type: 'boolean' },
+      description: 'Storybook-only switch. Shows a row-selection checkbox slot without overriding the selected column padding.',
+      if: { arg: 'checkboxControlVisible', truthy: true },
+      table: { category: '3. Content', defaultValue: { summary: 'false' } },
+    },
+    checkboxControlVisible: { table: { disable: true } },
+
+    // ── 5. State (follows Typography due to Storybook component-inference order) ──
+    hovered: { control: 'boolean', table: { category: '5. State' } },
+    selected: { control: 'boolean', table: { category: '5. State' } },
+
+    // ── 4. Typography ────────────────────────────────────────────────────────
+    weight: {
+      control: { type: 'inline-radio' },
+      options: ['normal', 'bold'],
+      description: 'Text weight for simple cell content. When `variant` is `listing`, this controls only the product name.',
+      if: { arg: 'typographyControlsVisible', truthy: true },
+      table: { category: '4. Typography' },
+    },
+    tone: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'success', 'danger'],
+      if: { arg: 'typographyControlsVisible', truthy: true },
+      table: { category: '4. Typography' },
+    },
+    boldOnRowHover: {
+      control: 'boolean',
+      if: { arg: 'typographyControlsVisible', truthy: true },
+      table: { category: '4. Typography' },
+    },
+    typographyControlsVisible: { table: { disable: true } },
+
+    // ── hidden ───────────────────────────────────────────────────────────────
+    inset: { table: { disable: true } },
+    subrow: { table: { disable: true } },
     leadingIcon: { table: { disable: true } },
     trailing: { table: { disable: true } },
     className: { table: { disable: true } },
@@ -432,6 +713,8 @@ const meta = {
     checkbox: false,
     previewIcon: 'check',
     infoIcon: 'info',
+    smallChannelIconChannel: 'SHOPEE_MY',
+    smallChannelIconLabel: 'Awesome Store',
     productCount: 4,
     listingProduct: 'product-2',
     showListingTag: true,
@@ -444,8 +727,46 @@ const meta = {
     listingTagControlVisible: false,
     listingChannelControlVisible: false,
     listingMoreSkuCountControlVisible: false,
+    childrenControlVisible: true,
+    typographyControlsVisible: true,
+    columnControlVisible: true,
+    checkboxControlVisible: true,
+    tagCount: 1,
+    tagLabel1: 'Tag Label',
+    tagPipType1: 'warning',
+    tagPipLabel1: 'Pip Text',
+    tagLabel2: 'Tag Label',
+    tagPipType2: 'warning',
+    tagPipLabel2: 'Pip Text',
+    tagLabel3: 'Tag Label',
+    tagPipType3: 'warning',
+    tagPipLabel3: 'Pip Text',
+    tagVariantControlsVisible: false,
+    tagRow2Visible: false,
+    tagRow3Visible: false,
     statusToggleChecked: true,
-    formFieldValue: '1',
+    iconStatusCount: 3,
+    actionTextLinkCount: 2,
+    actionIconCount: 3,
+    formFieldValue: 1,
+    textInfoBody: 'Table Body Data',
+    textInfoWeight: 'normal',
+    textInfoChannel: 'SHOPEE_MY',
+    textInfoLabel: 'Info',
+    tagWithChannelCount: 2,
+    tagWithChannelTagLabel1: 'Tag Label 1',
+    tagWithChannelPipType1: 'warning',
+    tagWithChannelPipLabel1: 'Pip Text',
+    tagWithChannelTagLabel2: 'Tag Label 2',
+    tagWithChannelPipType2: 'warning',
+    tagWithChannelPipLabel2: 'Pip Text',
+    tagWithChannelTagLabel3: 'Tag Label 3',
+    tagWithChannelPipType3: 'warning',
+    tagWithChannelPipLabel3: 'Pip Text',
+    tagWithChannelRow2Visible: true,
+    tagWithChannelRow3Visible: false,
+    tagWithChannelChannel: 'WEBSTORE',
+    tagWithChannelLabel: 'Company Name',
   },
   render: ({
     mode = 'default',
@@ -455,6 +776,8 @@ const meta = {
     checkbox,
     previewIcon = 'check',
     infoIcon = 'info',
+    smallChannelIconChannel = 'SHOPEE_MY',
+    smallChannelIconLabel = 'Awesome Store',
     productCount = 4,
     listingProduct = 'product-2',
     showListingTag = true,
@@ -467,8 +790,46 @@ const meta = {
     listingTagControlVisible = false,
     listingChannelControlVisible = false,
     listingMoreSkuCountControlVisible = false,
+    childrenControlVisible = true,
+    typographyControlsVisible = true,
+    columnControlVisible = true,
+    checkboxControlVisible = true,
+    tagCount = 1,
+    tagLabel1 = 'Tag Label',
+    tagPipType1 = 'warning' as PipType,
+    tagPipLabel1 = 'Pip Text',
+    tagLabel2 = 'Tag Label',
+    tagPipType2 = 'warning' as PipType,
+    tagPipLabel2 = 'Pip Text',
+    tagLabel3 = 'Tag Label',
+    tagPipType3 = 'warning' as PipType,
+    tagPipLabel3 = 'Pip Text',
+    tagVariantControlsVisible = false,
+    tagRow2Visible = false,
+    tagRow3Visible = false,
     statusToggleChecked = true,
-    formFieldValue = '1',
+    iconStatusCount = 3,
+    actionTextLinkCount = 2,
+    actionIconCount = 3,
+    formFieldValue = 1,
+    tagWithChannelCount = 2,
+    tagWithChannelTagLabel1 = 'Tag Label 1',
+    tagWithChannelPipType1 = 'warning',
+    tagWithChannelPipLabel1 = 'Pip Text',
+    tagWithChannelTagLabel2 = 'Tag Label 2',
+    tagWithChannelPipType2 = 'warning',
+    tagWithChannelPipLabel2 = 'Pip Text',
+    tagWithChannelTagLabel3 = 'Tag Label 3',
+    tagWithChannelPipType3 = 'warning',
+    tagWithChannelPipLabel3 = 'Pip Text',
+    tagWithChannelRow2Visible = true,
+    tagWithChannelRow3Visible = false,
+    tagWithChannelChannel = 'WEBSTORE',
+    tagWithChannelLabel = 'Company Name',
+    textInfoBody = 'Table Body Data',
+    textInfoWeight = 'normal' as const,
+    textInfoChannel = 'SHOPEE_MY' as ListingChannelOption,
+    textInfoLabel = 'Info',
     ...args
   }) => {
     const [, updateArgs] = useArgs<TableCellStoryArgs>();
@@ -476,12 +837,61 @@ const meta = {
     const isInsetMode = mode === 'inset' || isSubrow || inset;
     const showCheckbox = Boolean(checkbox);
     const columnWithCheckbox = column;
+    const variantsWithChildren: TableCellVariantOption[] = ['text', 'leading-icon', 'info-icon'];
+    const nextChildrenControlVisible = variantsWithChildren.includes(variant);
+    const variantsWithoutTypography: TableCellVariantOption[] = ['listing', 'tag-with-channel', 'form-field', 'payment-shipping-method', 'channel-icon', 'text-info', 'status-toggle', 'product-only', 'tag-after', 'tag-first', 'action-text-links', 'action-icon-buttons', 'icon-status'];
+    const actionVariants: TableCellVariantOption[] = ['action-text-links', 'action-icon-buttons'];
+    const nextColumnControlVisible = !actionVariants.includes(variant);
+    const nextCheckboxControlVisible = !actionVariants.includes(variant);
+    const tagVariants: TableCellVariantOption[] = ['tag-after', 'tag-first'];
+    const nextTagVariantControlsVisible = tagVariants.includes(variant);
+    const nextTagRow2Visible = tagVariants.includes(variant) && tagCount >= 2;
+    const nextTagRow3Visible = tagVariants.includes(variant) && tagCount >= 3;
+    const nextTypographyControlsVisible = !variantsWithoutTypography.includes(variant);
+    const nextTagWithChannelRow2Visible = variant === 'tag-with-channel' && tagWithChannelCount >= 2;
+    const nextTagWithChannelRow3Visible = variant === 'tag-with-channel' && tagWithChannelCount >= 3;
     const nextListingTagControlVisible = variant === 'listing' && showListingTag;
     const nextListingChannelControlVisible = variant === 'listing' && showListingChannel;
     const nextListingMoreSkuCountControlVisible = variant === 'listing' && showListingMoreSkus;
 
     useEffect(() => {
       const nextControlVisibility: Partial<TableCellStoryArgs> = {};
+
+      if (childrenControlVisible !== nextChildrenControlVisible) {
+        nextControlVisibility.childrenControlVisible = nextChildrenControlVisible;
+      }
+
+      if (typographyControlsVisible !== nextTypographyControlsVisible) {
+        nextControlVisibility.typographyControlsVisible = nextTypographyControlsVisible;
+      }
+
+      if (columnControlVisible !== nextColumnControlVisible) {
+        nextControlVisibility.columnControlVisible = nextColumnControlVisible;
+      }
+
+      if (checkboxControlVisible !== nextCheckboxControlVisible) {
+        nextControlVisibility.checkboxControlVisible = nextCheckboxControlVisible;
+      }
+
+      if (tagVariantControlsVisible !== nextTagVariantControlsVisible) {
+        nextControlVisibility.tagVariantControlsVisible = nextTagVariantControlsVisible;
+      }
+
+      if (tagRow2Visible !== nextTagRow2Visible) {
+        nextControlVisibility.tagRow2Visible = nextTagRow2Visible;
+      }
+
+      if (tagRow3Visible !== nextTagRow3Visible) {
+        nextControlVisibility.tagRow3Visible = nextTagRow3Visible;
+      }
+
+      if (tagWithChannelRow2Visible !== nextTagWithChannelRow2Visible) {
+        nextControlVisibility.tagWithChannelRow2Visible = nextTagWithChannelRow2Visible;
+      }
+
+      if (tagWithChannelRow3Visible !== nextTagWithChannelRow3Visible) {
+        nextControlVisibility.tagWithChannelRow3Visible = nextTagWithChannelRow3Visible;
+      }
 
       if (listingTagControlVisible !== nextListingTagControlVisible) {
         nextControlVisibility.listingTagControlVisible = nextListingTagControlVisible;
@@ -499,6 +909,24 @@ const meta = {
         updateArgs(nextControlVisibility);
       }
     }, [
+      childrenControlVisible,
+      nextChildrenControlVisible,
+      typographyControlsVisible,
+      nextTypographyControlsVisible,
+      columnControlVisible,
+      nextColumnControlVisible,
+      checkboxControlVisible,
+      nextCheckboxControlVisible,
+      tagVariantControlsVisible,
+      nextTagVariantControlsVisible,
+      tagRow2Visible,
+      nextTagRow2Visible,
+      tagRow3Visible,
+      nextTagRow3Visible,
+      tagWithChannelRow2Visible,
+      nextTagWithChannelRow2Visible,
+      tagWithChannelRow3Visible,
+      nextTagWithChannelRow3Visible,
       listingChannelControlVisible,
       listingMoreSkuCountControlVisible,
       listingTagControlVisible,
@@ -511,7 +939,16 @@ const meta = {
     if (variant === 'product-only') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="first" checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column={columnWithCheckbox}
+            checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+            hovered={args.hovered}
+            selected={args.selected}
+            className={isInsetMode ? '!items-start' : undefined}
+          >
             <ProductOnlyContent count={productCount} />
           </TableCell>
         </RowHoverPreview>
@@ -521,8 +958,24 @@ const meta = {
     if (variant === 'tag-after' || variant === 'tag-first') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
-            <TagPair order={variant === 'tag-after' ? 'after' : 'first'} />
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column={columnWithCheckbox}
+            checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+            hovered={args.hovered}
+            selected={args.selected}
+            className={isInsetMode ? '!items-start' : undefined}
+          >
+            <TagPair
+              order={variant === 'tag-after' ? 'after' : 'first'}
+              rows={[
+                { label: tagLabel1, pipType: tagPipType1, pipLabel: tagPipLabel1 },
+                ...(tagCount >= 2 ? [{ label: tagLabel2, pipType: tagPipType2, pipLabel: tagPipLabel2 }] : []),
+                ...(tagCount >= 3 ? [{ label: tagLabel3, pipType: tagPipType3, pipLabel: tagPipLabel3 }] : []),
+              ]}
+            />
           </TableCell>
         </RowHoverPreview>
       );
@@ -531,8 +984,16 @@ const meta = {
     if (variant === 'action-text-links' || variant === 'action-icon-buttons') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="last" className={variant === 'action-text-links' ? '!items-start' : ''}>
-            {variant === 'action-text-links' ? <ActionLinks count={2} /> : <ActionIcons count={3} />}
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column="last"
+            hovered={args.hovered}
+            selected={args.selected}
+            className={variant === 'action-text-links' ? '!items-start' : undefined}
+          >
+            {variant === 'action-text-links' ? <ActionLinks count={actionTextLinkCount} /> : <ActionIcons count={actionIconCount} />}
           </TableCell>
         </RowHoverPreview>
       );
@@ -541,8 +1002,23 @@ const meta = {
     if (variant === 'icon-status' || variant === 'status-toggle') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
-            {variant === 'icon-status' ? <IconStatus count={3} /> : <StatusToggleCell checked={statusToggleChecked} />}
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column={columnWithCheckbox}
+            checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+            hovered={args.hovered}
+            selected={args.selected}
+            className={
+              variant === 'status-toggle' && !isInsetMode
+                ? '!items-center'
+                : variant === 'icon-status' && isInsetMode
+                  ? '!items-start'
+                  : undefined
+            }
+          >
+            {variant === 'icon-status' ? <IconStatus count={iconStatusCount} /> : <StatusToggleCell checked={statusToggleChecked} />}
           </TableCell>
         </RowHoverPreview>
       );
@@ -551,8 +1027,22 @@ const meta = {
     if (variant === 'text-info') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="first" checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
-            <TextInfoContent />
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column={columnWithCheckbox}
+            checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+            hovered={args.hovered}
+            selected={args.selected}
+            className={isInsetMode ? '!items-start' : undefined}
+          >
+            <TextInfoContent
+              body={textInfoBody}
+              textWeight={textInfoWeight}
+              channel={textInfoChannel}
+              label={textInfoLabel}
+            />
           </TableCell>
         </RowHoverPreview>
       );
@@ -561,7 +1051,16 @@ const meta = {
     if (variant === 'listing') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} weight="normal">
+          <TableCell
+            inset={isInsetMode}
+            subrow={isSubrow}
+            row={args.row}
+            column={columnWithCheckbox}
+            weight="normal"
+            hovered={args.hovered}
+            selected={args.selected}
+            className={isInsetMode ? '!items-start' : undefined}
+          >
             <DefaultListingContent
               showCheckbox={showCheckbox}
               product={listingProduct}
@@ -580,20 +1079,42 @@ const meta = {
     }
 
     if (variant === 'channel-icon' || variant === 'payment-shipping-method' || variant === 'form-field' || variant === 'tag-with-channel') {
+      const isFormField = variant === 'form-field';
+      const isTagWithChannel = variant === 'tag-with-channel';
+      const isPaymentShipping = variant === 'payment-shipping-method';
+      const isChannelIcon = variant === 'channel-icon';
       return (
         <RowHoverPreview>
           <TableCell
             inset={isInsetMode}
             subrow={isSubrow}
             row={args.row}
-            column={variant === 'tag-with-channel' ? columnWithCheckbox : 'first'}
+            column={columnWithCheckbox}
             checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
-            className={variant === 'form-field' ? formFieldColumnClass('first') : undefined}
+            className={
+              isFormField
+                ? ['!items-center', formFieldColumnClass(columnWithCheckbox)].filter(Boolean).join(' ')
+                : (isPaymentShipping || isChannelIcon || isTagWithChannel) && isInsetMode
+                  ? '!items-start'
+                  : undefined
+            }
+            hovered={args.hovered}
+            selected={args.selected}
           >
             {variant === 'channel-icon' && <ChannelIconContent />}
             {variant === 'payment-shipping-method' && <PaymentShippingMethodContent />}
-            {variant === 'form-field' && <FormFieldContent value={formFieldValue} />}
-            {variant === 'tag-with-channel' && <TagWithChannelContent />}
+            {variant === 'form-field' && <FormFieldContent value={String(formFieldValue)} />}
+            {variant === 'tag-with-channel' && (
+              <TagWithChannelContent
+                rows={[
+                  { tagLabel: tagWithChannelTagLabel1, pipType: tagWithChannelPipType1, pipLabel: tagWithChannelPipLabel1 },
+                  ...(tagWithChannelCount >= 2 ? [{ tagLabel: tagWithChannelTagLabel2, pipType: tagWithChannelPipType2, pipLabel: tagWithChannelPipLabel2 }] : []),
+                  ...(tagWithChannelCount >= 3 ? [{ tagLabel: tagWithChannelTagLabel3, pipType: tagWithChannelPipType3, pipLabel: tagWithChannelPipLabel3 }] : []),
+                ]}
+                channel={tagWithChannelChannel}
+                label={tagWithChannelLabel}
+              />
+            )}
           </TableCell>
         </RowHoverPreview>
       );
@@ -609,8 +1130,8 @@ const meta = {
       : variant === 'small-channel-icon'
         ? (
             <span className="inline-flex items-center gap-[var(--spacing-8)]">
-              <img src={shopeeMy} alt="" className="w-[21px] h-[21px] rounded-[var(--radius-2)] object-cover" />
-              <span>Awesome Store</span>
+              <img src={listingChannels[normalizeListingChannel(smallChannelIconChannel)].image} alt="" className="w-[21px] h-[21px] rounded-[var(--radius-2)] object-cover" />
+              <span>{smallChannelIconLabel}</span>
             </span>
           )
         : variant === 'info-icon'
@@ -623,17 +1144,19 @@ const meta = {
           : args.children;
 
     return (
-      <TableCell
-        {...args}
-        column={columnWithCheckbox}
-        align={args.align}
-        tone={args.tone}
-        inset={isInsetMode}
-        subrow={isSubrow}
-        checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
-      >
-        {cellContent}
-      </TableCell>
+      <RowHoverPreview>
+        <TableCell
+          {...args}
+          column={columnWithCheckbox}
+          align={args.align}
+          tone={args.tone}
+          inset={isInsetMode}
+          subrow={isSubrow}
+          checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+        >
+          {cellContent}
+        </TableCell>
+      </RowHoverPreview>
     );
   },
 } satisfies Meta<TableCellStoryArgs>;
@@ -1162,15 +1685,21 @@ const ActionIcons = ({ count }: { count: 1 | 2 | 3 }) => (
   </span>
 );
 
-const TagPair = ({ order = 'after', count = 1 }: { order?: 'first' | 'after'; count?: 1 | 2 | 3 }) => (
+const TagPair = ({
+  order = 'after',
+  rows = [{ label: 'Tag Label', pipType: 'warning' as PipType, pipLabel: 'Pip Text' }],
+}: {
+  order?: 'first' | 'after';
+  rows?: Array<{ label: string; pipType: PipType; pipLabel: string }>;
+}) => (
   <span className="inline-flex flex-col items-start gap-[var(--spacing-4)]">
-    {Array.from({ length: count }).map((_, index) => (
+    {rows.map((row, index) => (
       <span key={index} className="inline-flex items-center gap-[var(--spacing-8)]">
-        {order === 'first' && <Pip type="warning" pipStyle="default" label="Pip Text" />}
+        {order === 'first' && <Pip type={row.pipType} pipStyle="default" label={row.pipLabel} />}
         <span className="font-[family-name:var(--general-font-family)] text-[length:var(--table-body-size)] font-[var(--font-weight-regular)] leading-[var(--table-body-lineheight)] text-[color:var(--color-text-primary)]">
-          Tag Label{count > 1 ? ` ${index + 1}` : ''}
+          {row.label}{rows.length > 1 ? ` ${index + 1}` : ''}
         </span>
-        {order === 'after' && <Pip type="warning" pipStyle="default" label="Pip Text" />}
+        {order === 'after' && <Pip type={row.pipType} pipStyle="default" label={row.pipLabel} />}
       </span>
     ))}
   </span>
@@ -1183,6 +1712,13 @@ const ProductOnlyContent = ({ count }: { count: 1 | 2 | 3 | 4 | 6 }) => (
     maxVisible={count > 4 ? 4 : undefined}
   />
 );
+
+const makeTagRows = (count: 1 | 2 | 3): Array<{ label: string; pipType: PipType; pipLabel: string }> =>
+  Array.from({ length: count }, (_, i) => ({
+    label: count > 1 ? `Tag Label ${i + 1}` : 'Tag Label',
+    pipType: 'warning' as PipType,
+    pipLabel: 'Pip Text',
+  }));
 
 const IconStatus = ({ count }: { count: 1 | 2 | 3 }) => (
   <span className="inline-flex items-start gap-[var(--spacing-4)]">
@@ -1208,7 +1744,17 @@ const IconStatus = ({ count }: { count: 1 | 2 | 3 }) => (
 
 const StatusToggleCell = ({ checked = true }: { checked?: boolean }) => <Toggle checked={checked} />;
 
-const TextInfoContent = ({ textWeight = 'normal' }: { textWeight?: 'normal' | 'bold' }) => (
+const TextInfoContent = ({
+  body = 'Table Body Data',
+  textWeight = 'normal',
+  channel = 'SHOPEE_MY' as ListingChannelOption,
+  label = 'Info',
+}: {
+  body?: string;
+  textWeight?: 'normal' | 'bold';
+  channel?: ListingChannelOption;
+  label?: string;
+}) => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
     <span
       className={[
@@ -1216,12 +1762,12 @@ const TextInfoContent = ({ textWeight = 'normal' }: { textWeight?: 'normal' | 'b
         textWeight === 'bold' ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
       ].join(' ')}
     >
-      Table Body Data
+      {body}
     </span>
     <span className="inline-flex items-center gap-[var(--spacing-4)]">
-      <img src={shopeeMy} alt="" className="size-[17px] rounded-[var(--radius-2)] object-cover" />
+      <img src={listingChannels[normalizeListingChannel(channel)].image} alt="" className="size-[17px] rounded-[var(--radius-2)] object-cover" />
       <span className="whitespace-nowrap text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)] text-[color:var(--color-text-info)]">
-        Info
+        {label}
       </span>
     </span>
   </span>
@@ -1367,37 +1913,44 @@ const FormFieldContent = ({ value = '1' }: { value?: string }) => (
   <NumberInput type="stepper" value={value} onChange={() => undefined} />
 );
 
-const TagWithChannelContent = () => (
+const TagWithChannelContent = ({
+  rows,
+  channel = 'WEBSTORE',
+  label = 'Company Name',
+}: {
+  rows: Array<{ tagLabel: string; pipType: PipType; pipLabel: string }>;
+  channel?: ListingChannelOption;
+  label?: string;
+}) => (
   <span className="inline-flex flex-col items-start gap-[var(--spacing-8)]">
-    <span className="inline-flex flex-col items-start">
-      <span className="whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--color-text-info)]">
-        Tag Label
+    {rows.map((row, i) => (
+      <span key={i} className="inline-flex flex-col items-start">
+        <span className="whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--color-text-info)]">
+          {row.tagLabel}
+        </span>
+        <span className="py-[var(--spacing-2)]">
+          <Pip type={row.pipType} pipStyle="default" label={row.pipLabel} />
+        </span>
       </span>
-      <span className="py-[var(--spacing-2)]">
-        <Pip type="warning" pipStyle="default" label="Pip Text" />
-      </span>
-    </span>
-    <span className="inline-flex flex-col items-start">
-      <span className="whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--color-text-info)]">
-        Tag Label 2
-      </span>
-      <span className="py-[var(--spacing-2)]">
-        <Pip type="warning" pipStyle="default" label="Pip Text" />
-      </span>
-    </span>
+    ))}
     <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
       <img
-        src={sitegiantWebstore}
+        src={listingChannels[normalizeListingChannel(channel)].image}
         alt=""
         aria-hidden="true"
         width={15}
         height={15}
         className="shrink-0 rounded-[var(--radius-4)]"
       />
-      Company Name
+      {label}
     </span>
   </span>
 );
+
+const defaultTagWithChannelRows: Array<{ tagLabel: string; pipType: PipType; pipLabel: string }> = [
+  { tagLabel: 'Tag Label 1', pipType: 'warning', pipLabel: 'Pip Text' },
+  { tagLabel: 'Tag Label 2', pipType: 'warning', pipLabel: 'Pip Text' },
+];
 
 type InsetProgressStatus = 'default' | 'progress' | 'error' | 'success';
 
@@ -1669,7 +2222,7 @@ export const TagAfter: TagRecipeStory = {
   render: ({ tagCount = 1 }) => (
     <RowHoverPreview>
       <TableCell column="center">
-        <TagPair order="after" count={tagCount} />
+        <TagPair order="after" rows={makeTagRows(tagCount)} />
       </TableCell>
     </RowHoverPreview>
   ),
@@ -1701,7 +2254,7 @@ export const TagFirst: TagRecipeStory = {
   render: ({ tagCount = 1 }) => (
     <RowHoverPreview>
       <TableCell column="center">
-        <TagPair order="first" count={tagCount} />
+        <TagPair order="first" rows={makeTagRows(tagCount)} />
       </TableCell>
     </RowHoverPreview>
   ),
@@ -2027,7 +2580,7 @@ export const TagWithChannel: Story = {
   render: () => (
     <RowHoverPreview>
       <TableCell column="center">
-        <TagWithChannelContent />
+        <TagWithChannelContent rows={defaultTagWithChannelRows} />
       </TableCell>
     </RowHoverPreview>
   ),
@@ -2130,7 +2683,7 @@ export const TagWithChannelMatrix: Story = {
                     </td>
                     {columns.map((column) => (
                       <Cell key={column} row={row} column={column} hovered={hovered}>
-                        <TagWithChannelContent />
+                        <TagWithChannelContent rows={defaultTagWithChannelRows} />
                       </Cell>
                     ))}
                   </tr>
@@ -2398,7 +2951,7 @@ export const TagMatrix: Story = {
                         {counts.flatMap((count) =>
                           columns.map((column) => (
                             <Cell key={`${count}-${column}`} row={row} column={column} hovered={hovered}>
-                              <TagPair order={order} count={count} />
+                              <TagPair order={order} rows={makeTagRows(count)} />
                             </Cell>
                           )),
                         )}
@@ -2835,7 +3388,7 @@ export const InsetTagAfter: Story = {
   tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="center">
-      <TagPair order="after" />
+      <TagPair order="after" rows={makeTagRows(1)} />
     </TableCell>
   ),
 };
@@ -2847,7 +3400,7 @@ export const InsetTagFirst: Story = {
   tags: hiddenStoryTags,
   render: () => (
     <TableCell inset column="center">
-      <TagPair order="first" />
+      <TagPair order="first" rows={makeTagRows(1)} />
     </TableCell>
   ),
 };
@@ -3282,7 +3835,7 @@ export const InsetTagMatrix: Story = {
                           </td>
                           {columns.map((column) => (
                             <Cell key={column} inset row={row} column={column} hovered={hovered}>
-                              <TagPair order={order} count={count} />
+                              <TagPair order={order} rows={makeTagRows(count)} />
                             </Cell>
                           ))}
                         </tr>
@@ -3703,85 +4256,85 @@ export const ListingBodyRow: ListingBodyRowStory = {
       control: { type: 'inline-radio' },
       options: ['default', 'inset', 'subrow'],
       description: 'Table surface mode for the listing row wrapper.',
-      table: { category: 'Layout', defaultValue: { summary: 'default' } },
+      table: { category: '2. Layout', defaultValue: { summary: 'default' } },
     },
     column: {
       control: { type: 'inline-radio' },
       options: ['first', 'center', 'last'],
       description: 'Column position. Controls left and right table-cell padding.',
-      table: { category: 'Layout', defaultValue: { summary: 'first' } },
+      table: { category: '2. Layout', defaultValue: { summary: 'first' } },
     },
     row: {
       control: { type: 'inline-radio' },
       options: ['default', 'last'],
       description: 'Default row or final-row styling.',
-      table: { category: 'Layout', defaultValue: { summary: 'default' } },
+      table: { category: '2. Layout', defaultValue: { summary: 'default' } },
     },
     weight: {
       control: { type: 'inline-radio' },
       options: ['normal', 'bold'],
       description: 'Product name weight inside the listing content.',
-      table: { category: 'Typography', defaultValue: { summary: 'bold' } },
+      table: { category: '4. Typography', defaultValue: { summary: 'bold' } },
     },
     hovered: {
       control: 'boolean',
       description: 'Preview hover state on the listing row wrapper.',
-      table: { category: 'State', defaultValue: { summary: 'false' } },
+      table: { category: '5. State', defaultValue: { summary: 'false' } },
     },
     selected: {
       control: 'boolean',
       description: 'Preview selected state on the listing row wrapper.',
-      table: { category: 'State', defaultValue: { summary: 'false' } },
+      table: { category: '5. State', defaultValue: { summary: 'false' } },
     },
     listingProduct: {
       control: { type: 'select', labels: productPreviewLabels },
       options: productPreviewOptions,
       description: 'Product record for the listing row. Image, product name, iSKU, and SKU change together.',
-      table: { category: 'Variant Preview', defaultValue: { summary: 'Product 2' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'Product 2' } },
     },
     showListingTag: {
       control: 'boolean',
       description: 'Switch for the listing status tag.',
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     listingTag: {
       control: { type: 'select', labels: listingTagLabels },
       options: listingTagOptions,
       description: 'Status tag for the listing row.',
       if: { arg: 'showListingTag', truthy: true },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'Published' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'Published' } },
     },
     showListingInfoRows: {
       control: 'boolean',
       description: 'Switch for the listing iSKU/SKU rows.',
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     showListingChannel: {
       control: 'boolean',
       description: 'Switch for the listing channel label.',
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     listingChannel: {
       control: { type: 'select', labels: listingChannelLabels },
       options: listingChannelOptions,
       description: 'Channel icon for the listing row.',
       if: { arg: 'showListingChannel', truthy: true },
-      table: { category: 'Variant Preview', defaultValue: { summary: 'WEBSTORE' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'WEBSTORE' } },
     },
     showListingMoreSkus: {
       control: 'boolean',
       description: 'Switch for the listing more-SKUs link.',
-      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+      table: { category: '1. Variant', defaultValue: { summary: 'true' } },
     },
     listingMoreSkuCount: {
       control: { type: 'number', min: 0, step: 1 },
       description: 'Count shown in the listing more-SKUs link.',
       if: { arg: 'showListingMoreSkus', truthy: true },
-      table: { category: 'Variant Preview', defaultValue: { summary: '5' } },
+      table: { category: '1. Variant', defaultValue: { summary: '5' } },
     },
     showCheckbox: {
       control: 'boolean',
-      table: { category: 'Content', defaultValue: { summary: 'true' } },
+      table: { category: '3. Content', defaultValue: { summary: 'true' } },
     },
   },
   args: {
