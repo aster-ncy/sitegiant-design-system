@@ -100,7 +100,7 @@ export const RecordTableListingCell = ({
             <div className="flex items-start gap-[var(--spacing-20)]">
               <span className="inline-flex items-center gap-[var(--spacing-4)]">
                 <img src={sitegiantWebstore} alt="" aria-hidden="true" className="size-[15px] shrink-0" />
-                <span className={`${captionBase} text-[color:var(--color-text-primary)]`}>Webstore</span>
+                <span className={`${captionBase} text-[color:var(--color-text-primary)]`}>WEBSTORE</span>
               </span>
               <SmallTextLink
                 icon={<Icon name="plus-square" size={15} />}

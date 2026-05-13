@@ -145,7 +145,7 @@ const BasicTableDemo = () => (
             </TableCell>
           </td>
           <td className={`p-0 ${bodyCellSurfaceClass} ${rowDividerCellClass}`}>
-            <TableCell leadingIcon={<ChannelIcon />} className="shadow-none">Shopee MY</TableCell>
+            <TableCell leadingIcon={<ChannelIcon />} className="shadow-none">SHOPEE MY</TableCell>
           </td>
           <td className={`p-0 ${bodyCellSurfaceClass} ${rowDividerCellClass}`}>
             <TableCell align="center" tone="success" className="shadow-none">
@@ -169,7 +169,7 @@ const BasicTableDemo = () => (
             </TableCell>
           </td>
           <td className={`p-0 ${bodyCellSurfaceClass}`}>
-            <TableCell row="last" leadingIcon={<ChannelIcon />}>Shopee MY</TableCell>
+            <TableCell row="last" leadingIcon={<ChannelIcon />}>SHOPEE MY</TableCell>
           </td>
           <td className={`p-0 ${bodyCellSurfaceClass}`}>
             <TableCell row="last" align="center" tone="danger">
@@ -313,7 +313,7 @@ const ExpandableRowsDemo = () => {
           <tr>
             <td className={`w-[48%] p-0 ${insetBodyCellSurfaceClass} ${expanded ? '' : rowDividerCellClass}`}>
               <TableCell inset column="first" weight="bold" className="shadow-none">
-                Shopee MY
+                SHOPEE MY
               </TableCell>
             </td>
             <td className={`w-[34%] p-0 ${insetBodyCellSurfaceClass} ${expanded ? '' : rowDividerCellClass}`}>
@@ -473,7 +473,7 @@ const RatingsCardTableDemo = () => (
         <TableCardCell tier="top" column="last" mode="default" className={`${cardCenterNoBorderClass} !items-center !rounded-none !border-0 col-span-2`}>
           <span className="inline-flex items-center gap-[var(--spacing-8)]">
             <ChannelIcon />
-            <span>Shopee MY</span>
+            <span>SHOPEE MY</span>
           </span>
         </TableCardCell>
       </div>
@@ -596,8 +596,8 @@ const OrderProcessingCardTableDemo = () => (
           <div className="w-[34%]">
             <TableCardCell tier="top" column="last" mode="default" className="!pl-[var(--spacing-12)] !pr-[var(--spacing-24)]">
               <span className="ml-auto inline-flex w-fit items-center gap-[var(--spacing-8)]">
-                <img src={webstoreIcon} alt="Webstore" className="size-[21px] shrink-0 rounded-[var(--radius-4)] object-cover" />
-                <span>Webstore</span>
+                <img src={webstoreIcon} alt="WEBSTORE" className="size-[21px] shrink-0 rounded-[var(--radius-4)] object-cover" />
+                <span>WEBSTORE</span>
               </span>
             </TableCardCell>
           </div>

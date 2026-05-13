@@ -4,11 +4,12 @@ import { TableCellInfo } from './TableCellInfo';
 import { TableCellMainSub } from './TableCellMainSub';
 import { TableCellListing } from './TableCellListing';
 import { useState, type ReactNode } from 'react';
+import { useArgs, useEffect } from 'storybook/preview-api';
 import { TableHeaderCell, sortDirectionToAria } from '../TableHeaderCell';
 import { Checkbox } from '../Checkbox';
-import { Icon } from '../Icon';
+import { Icon, type IconName } from '../Icon';
 import { Tag } from '../Tag';
-import { Pip } from '../Pip';
+import { Pip, type PipType } from '../Pip';
 import { TableExpandToggle } from '../TableExpandToggle';
 import { NumberInput } from '../NumberInput';
 import { Quantity, type QuantityState, type QuantityValidation } from '../Quantity';
@@ -18,17 +19,17 @@ import { Toggle } from '../Toggle';
 import { ProductImage } from '../ProductImageList/ProductImage';
 import { ProductImageList } from '../ProductImageList';
 import sitegiantWebstore from '../../assets/channel-icons/sitegiant-webstore.png';
+import lazadaMy from '../../assets/channel-icons/lazada-my.png';
 import shopee from '../../assets/channel-icons/shopee.png';
 import shopeeMy from '../../assets/channel-icons/shopee-my.png';
+import shopeeSg from '../../assets/channel-icons/shopee-sg.png';
+import tiktokMy from '../../assets/channel-icons/tiktok-my.png';
 import { productImages } from '../../assets/product-images';
 import sitegiantDemoApp from '../../assets/method-images/sitegiant-demo-app.png';
 
 type TableMode = 'default' | 'inset' | 'subrow';
 type TableCellVariantOption =
   | 'text'
-  | 'number'
-  | 'success'
-  | 'danger'
   | 'leading-icon'
   | 'info-icon'
   | 'small-channel-icon'
@@ -48,13 +49,26 @@ type TableCellVariantOption =
 type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
   mode?: TableMode;
   variant?: TableCellVariantOption;
+  previewIcon?: IconName;
+  infoIcon?: IconName;
+  productCount?: 1 | 2 | 3 | 4 | 6;
+  listingProduct?: ProductPreviewOption;
+  listingTag?: ListingTagOption;
+  listingChannel?: ListingChannelOption;
+  showListingTag?: boolean;
+  showListingInfoRows?: boolean;
+  showListingChannel?: boolean;
+  showListingMoreSkus?: boolean;
+  listingMoreSkuCount?: number;
+  listingTagControlVisible?: boolean;
+  listingChannelControlVisible?: boolean;
+  listingMoreSkuCountControlVisible?: boolean;
+  statusToggleChecked?: boolean;
+  formFieldValue?: string;
 };
 
 const tableCellVariantOptions = [
   'text',
-  'number',
-  'success',
-  'danger',
   'leading-icon',
   'info-icon',
   'small-channel-icon',
@@ -73,14 +87,164 @@ const tableCellVariantOptions = [
   'tag-with-channel',
 ] satisfies ReadonlyArray<TableCellVariantOption>;
 
+const tableCellVariantLabels = {
+  text: 'Text',
+  'leading-icon': 'Leading Icon',
+  'info-icon': 'Info Icon',
+  'small-channel-icon': 'Small Channel Icon',
+  'product-only': 'Product Only',
+  'tag-after': 'Tag After',
+  'tag-first': 'Tag First',
+  'action-text-links': 'Action Text Links',
+  'action-icon-buttons': 'Action Icon Buttons',
+  'icon-status': 'Icon Status',
+  'status-toggle': 'Status Toggle',
+  'text-info': 'Text Info',
+  listing: 'Listing',
+  'channel-icon': 'Channel Icon',
+  'payment-shipping-method': 'Payment / Shipping Method',
+  'form-field': 'Form Field',
+  'tag-with-channel': 'Tag With Channel',
+} satisfies Record<TableCellVariantOption, string>;
+
+const previewIconOptions = [
+  'check',
+  'info',
+  'plus',
+  'minus',
+  'alert-circle',
+  'refresh-cw',
+] satisfies ReadonlyArray<IconName>;
+
+const productPreviewOptions = [
+  'product-1',
+  'product-2',
+  'product-3',
+  'product-4',
+  'product-5',
+] as const;
+type ProductPreviewOption = typeof productPreviewOptions[number];
+
+const productPreviewLabels = {
+  'product-1': 'Product 1',
+  'product-2': 'Product 2',
+  'product-3': 'Product 3',
+  'product-4': 'Product 4',
+  'product-5': 'Product 5',
+} satisfies Record<ProductPreviewOption, string>;
+
+const listingProducts = {
+  'product-1': {
+    image: productImages[0],
+    productName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
+    iSku: 'ISKU-LDC-240321-MY-0001',
+    sku: 'DYN-4IN1-FRESH-10ML52',
+  },
+  'product-2': {
+    image: productImages[1],
+    productName: 'Premium Wireless Barcode Scanner USB-C Set',
+    iSku: 'ISKU-BAR-240422-MY-0002',
+    sku: 'SCAN-USB-C-PRO-BLK',
+  },
+  'product-3': {
+    image: productImages[2],
+    productName: 'Thermal Shipping Label Roll 100mm x 150mm',
+    iSku: 'ISKU-LBL-240515-MY-0003',
+    sku: 'LBL-100X150-500PCS',
+  },
+  'product-4': {
+    image: productImages[3],
+    productName: 'Eco Kraft Mailer Box Medium 30 Pieces',
+    iSku: 'ISKU-PKG-240603-MY-0004',
+    sku: 'BOX-KRAFT-M-30',
+  },
+  'product-5': {
+    image: productImages[4],
+    productName: 'Mini Desktop Receipt Printer Bluetooth',
+    iSku: 'ISKU-PRT-240711-MY-0005',
+    sku: 'PRT-BT-MINI-WHT',
+  },
+} satisfies Record<ProductPreviewOption, {
+  image: typeof productImages[number];
+  productName: string;
+  iSku: string;
+  sku: string;
+}>;
+
+const listingTagOptions = [
+  'published',
+  'draft',
+  'syncing',
+  'out-of-stock',
+  'blocked',
+] as const;
+type ListingTagOption = typeof listingTagOptions[number];
+
+const listingTags = {
+  published: { label: 'Published', type: 'success' },
+  draft: { label: 'Draft', type: 'muted' },
+  syncing: { label: 'Syncing', type: 'info' },
+  'out-of-stock': { label: 'Out of stock', type: 'warning' },
+  blocked: { label: 'Blocked', type: 'blocked' },
+} satisfies Record<ListingTagOption, { label: string; type: PipType }>;
+
+const listingTagLabels = {
+  published: 'Published',
+  draft: 'Draft',
+  syncing: 'Syncing',
+  'out-of-stock': 'Out of stock',
+  blocked: 'Blocked',
+} satisfies Record<ListingTagOption, string>;
+
+const listingChannelOptions = [
+  'WEBSTORE',
+  'SHOPEE_MY',
+  'SHOPEE_SG',
+  'LAZADA_MY',
+  'TIKTOK_MY',
+] as const;
+type ListingChannelOption = typeof listingChannelOptions[number];
+
+const listingChannels = {
+  WEBSTORE: { label: 'WEBSTORE', image: sitegiantWebstore },
+  SHOPEE_MY: { label: 'SHOPEE MY', image: shopeeMy },
+  SHOPEE_SG: { label: 'SHOPEE SG', image: shopeeSg },
+  LAZADA_MY: { label: 'LAZADA MY', image: lazadaMy },
+  TIKTOK_MY: { label: 'TIKTOK MY', image: tiktokMy },
+} satisfies Record<ListingChannelOption, { label: string; image: string }>;
+
+const listingChannelLabels = {
+  WEBSTORE: 'WEBSTORE',
+  SHOPEE_MY: 'SHOPEE MY',
+  SHOPEE_SG: 'SHOPEE SG',
+  LAZADA_MY: 'LAZADA MY',
+  TIKTOK_MY: 'TIKTOK MY',
+} satisfies Record<ListingChannelOption, string>;
+
+const legacyListingChannelMap: Record<string, ListingChannelOption> = {
+  webstore: 'WEBSTORE',
+  'shopee-my': 'SHOPEE_MY',
+  'shopee-sg': 'SHOPEE_SG',
+  'lazada-my': 'LAZADA_MY',
+  'tiktok-my': 'TIKTOK_MY',
+};
+
+const normalizeListingChannel = (channel: ListingChannelOption | string): ListingChannelOption => {
+  if (channel in listingChannels) {
+    return channel as ListingChannelOption;
+  }
+
+  return legacyListingChannelMap[channel] ?? 'WEBSTORE';
+};
+
 const variantArgType = {
-  control: { type: 'select' },
+  control: { type: 'select', labels: tableCellVariantLabels },
   name: 'variant',
   options: tableCellVariantOptions,
   description: [
     'Body Cell atom variant for the Playground.',
     '',
-    '- `text` / `number` / `success` / `danger` - simple text-value cells.',
+    '- `text` - simple text-value cell. Use `align` for number alignment and `tone` for success/danger values.',
     '- `leading-icon` - generic leading glyph before text.',
     '- `info-icon` - inline info icon after text, 8px gap.',
     '- `small-channel-icon` - 21px channel icon with one-line text, 8px gap.',
@@ -111,13 +275,13 @@ const meta = {
   },
   tags: ['autodocs'],
   argTypes: {
+    variant: variantArgType,
     mode: {
       control: { type: 'inline-radio' },
       options: ['default', 'inset', 'subrow'] satisfies ReadonlyArray<TableMode>,
       description: 'Storybook control for table surface. `subrow` maps to the component `subrow` prop.',
       table: { category: 'Layout', defaultValue: { summary: 'default' } },
     },
-    variant: variantArgType,
     checkbox: {
       control: { type: 'boolean' },
       description: 'Storybook-only switch. Shows a row-selection checkbox slot without overriding the selected column padding.',
@@ -132,16 +296,19 @@ const meta = {
     align: {
       control: { type: 'inline-radio' },
       options: ['left', 'center', 'right'],
+      if: { arg: 'variant', neq: 'listing' },
       table: { category: 'Layout' },
     },
     weight: {
       control: { type: 'inline-radio' },
       options: ['normal', 'bold'],
+      description: 'Text weight for simple cell content. When `variant` is `listing`, this controls only the product name.',
       table: { category: 'Typography' },
     },
     tone: {
       control: { type: 'inline-radio' },
       options: ['default', 'success', 'danger'],
+      if: { arg: 'variant', neq: 'listing' },
       table: { category: 'Typography' },
     },
     row: {
@@ -153,15 +320,106 @@ const meta = {
     hovered: { control: 'boolean', table: { category: 'State' } },
     selected: { control: 'boolean', table: { category: 'State' } },
     subrow: { table: { disable: true } },
-    boldOnRowHover: { control: 'boolean', table: { category: 'Typography' } },
+    boldOnRowHover: {
+      control: 'boolean',
+      if: { arg: 'variant', neq: 'listing' },
+      table: { category: 'Typography' },
+    },
+    previewIcon: {
+      control: { type: 'select' },
+      options: previewIconOptions,
+      description: 'Playground-only icon used by the Leading Icon variant.',
+      if: { arg: 'variant', eq: 'leading-icon' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'check' } },
+    },
+    infoIcon: {
+      control: { type: 'select' },
+      options: previewIconOptions,
+      description: 'Playground-only icon used by the Info Icon variant.',
+      if: { arg: 'variant', eq: 'info-icon' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'info' } },
+    },
+    productCount: {
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3, 4, 6],
+      description: 'Playground-only product image count.',
+      if: { arg: 'variant', eq: 'product-only' },
+      table: { category: 'Variant Preview', defaultValue: { summary: '4' } },
+    },
+    listingProduct: {
+      control: { type: 'select', labels: productPreviewLabels },
+      options: productPreviewOptions,
+      description: 'Playground-only product record for the Listing variant. Image, product name, iSKU, and SKU change together.',
+      if: { arg: 'variant', eq: 'listing' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'Product 2' } },
+    },
+    showListingTag: {
+      control: 'boolean',
+      description: 'Playground-only switch for the listing status tag.',
+      if: { arg: 'variant', eq: 'listing' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    listingTag: {
+      control: { type: 'select', labels: listingTagLabels },
+      options: listingTagOptions,
+      description: 'Playground-only status tag for the Listing variant.',
+      if: { arg: 'listingTagControlVisible', truthy: true },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'Published' } },
+    },
+    showListingInfoRows: {
+      control: 'boolean',
+      description: 'Playground-only switch for the listing iSKU/SKU rows.',
+      if: { arg: 'variant', eq: 'listing' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    showListingChannel: {
+      control: 'boolean',
+      description: 'Playground-only switch for the listing channel label.',
+      if: { arg: 'variant', eq: 'listing' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    listingChannel: {
+      control: { type: 'select', labels: listingChannelLabels },
+      options: listingChannelOptions,
+      description: 'Playground-only channel icon for the Listing variant.',
+      if: { arg: 'listingChannelControlVisible', truthy: true },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'WEBSTORE' } },
+    },
+    showListingMoreSkus: {
+      control: 'boolean',
+      description: 'Playground-only switch for the listing more-SKUs link.',
+      if: { arg: 'variant', eq: 'listing' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    listingMoreSkuCount: {
+      control: { type: 'number', min: 0, step: 1 },
+      description: 'Playground-only count shown in the listing more-SKUs link.',
+      if: { arg: 'listingMoreSkuCountControlVisible', truthy: true },
+      table: { category: 'Variant Preview', defaultValue: { summary: '5' } },
+    },
+    listingTagControlVisible: { table: { disable: true } },
+    listingChannelControlVisible: { table: { disable: true } },
+    listingMoreSkuCountControlVisible: { table: { disable: true } },
+    statusToggleChecked: {
+      control: 'boolean',
+      description: 'Playground-only checked state for the Status Toggle variant.',
+      if: { arg: 'variant', eq: 'status-toggle' },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    formFieldValue: {
+      control: 'text',
+      description: 'Playground-only value for the Form Field variant.',
+      if: { arg: 'variant', eq: 'form-field' },
+      table: { category: 'Variant Preview', defaultValue: { summary: '1' } },
+    },
     leadingIcon: { table: { disable: true } },
     trailing: { table: { disable: true } },
     className: { table: { disable: true } },
     onClick: { table: { disable: true } },
   },
   args: {
-    mode: 'default',
     variant: 'text',
+    mode: 'default',
     children: 'Table Body Data',
     column: 'center',
     align: 'left',
@@ -172,6 +430,22 @@ const meta = {
     selected: false,
     boldOnRowHover: false,
     checkbox: false,
+    previewIcon: 'check',
+    infoIcon: 'info',
+    productCount: 4,
+    listingProduct: 'product-2',
+    showListingTag: true,
+    listingTag: 'published',
+    showListingInfoRows: true,
+    showListingChannel: true,
+    listingChannel: 'WEBSTORE',
+    showListingMoreSkus: true,
+    listingMoreSkuCount: 5,
+    listingTagControlVisible: false,
+    listingChannelControlVisible: false,
+    listingMoreSkuCountControlVisible: false,
+    statusToggleChecked: true,
+    formFieldValue: '1',
   },
   render: ({
     mode = 'default',
@@ -179,18 +453,66 @@ const meta = {
     inset,
     column,
     checkbox,
+    previewIcon = 'check',
+    infoIcon = 'info',
+    productCount = 4,
+    listingProduct = 'product-2',
+    showListingTag = true,
+    listingTag = 'published',
+    showListingInfoRows = true,
+    showListingChannel = true,
+    listingChannel = 'WEBSTORE',
+    showListingMoreSkus = true,
+    listingMoreSkuCount = 5,
+    listingTagControlVisible = false,
+    listingChannelControlVisible = false,
+    listingMoreSkuCountControlVisible = false,
+    statusToggleChecked = true,
+    formFieldValue = '1',
     ...args
   }) => {
+    const [, updateArgs] = useArgs<TableCellStoryArgs>();
     const isSubrow = mode === 'subrow';
     const isInsetMode = mode === 'inset' || isSubrow || inset;
     const showCheckbox = Boolean(checkbox);
     const columnWithCheckbox = column;
+    const nextListingTagControlVisible = variant === 'listing' && showListingTag;
+    const nextListingChannelControlVisible = variant === 'listing' && showListingChannel;
+    const nextListingMoreSkuCountControlVisible = variant === 'listing' && showListingMoreSkus;
+
+    useEffect(() => {
+      const nextControlVisibility: Partial<TableCellStoryArgs> = {};
+
+      if (listingTagControlVisible !== nextListingTagControlVisible) {
+        nextControlVisibility.listingTagControlVisible = nextListingTagControlVisible;
+      }
+
+      if (listingChannelControlVisible !== nextListingChannelControlVisible) {
+        nextControlVisibility.listingChannelControlVisible = nextListingChannelControlVisible;
+      }
+
+      if (listingMoreSkuCountControlVisible !== nextListingMoreSkuCountControlVisible) {
+        nextControlVisibility.listingMoreSkuCountControlVisible = nextListingMoreSkuCountControlVisible;
+      }
+
+      if (Object.keys(nextControlVisibility).length > 0) {
+        updateArgs(nextControlVisibility);
+      }
+    }, [
+      listingChannelControlVisible,
+      listingMoreSkuCountControlVisible,
+      listingTagControlVisible,
+      nextListingChannelControlVisible,
+      nextListingMoreSkuCountControlVisible,
+      nextListingTagControlVisible,
+      updateArgs,
+    ]);
 
     if (variant === 'product-only') {
       return (
         <RowHoverPreview>
           <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column="first" checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
-            <ProductOnlyContent count={4} />
+            <ProductOnlyContent count={productCount} />
           </TableCell>
         </RowHoverPreview>
       );
@@ -220,7 +542,7 @@ const meta = {
       return (
         <RowHoverPreview>
           <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}>
-            {variant === 'icon-status' ? <IconStatus count={3} /> : <StatusToggleCell />}
+            {variant === 'icon-status' ? <IconStatus count={3} /> : <StatusToggleCell checked={statusToggleChecked} />}
           </TableCell>
         </RowHoverPreview>
       );
@@ -239,8 +561,19 @@ const meta = {
     if (variant === 'listing') {
       return (
         <RowHoverPreview>
-          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox}>
-            <DefaultListingContent showCheckbox={showCheckbox} />
+          <TableCell inset={isInsetMode} subrow={isSubrow} row={args.row} column={columnWithCheckbox} weight="normal">
+            <DefaultListingContent
+              showCheckbox={showCheckbox}
+              product={listingProduct}
+              listingTag={listingTag}
+              listingChannel={listingChannel}
+              showTag={showListingTag}
+              showInfoRows={showListingInfoRows}
+              showChannel={showListingChannel}
+              showMoreSkus={showListingMoreSkus}
+              moreSkuCount={listingMoreSkuCount}
+              productNameWeight={args.weight}
+            />
           </TableCell>
         </RowHoverPreview>
       );
@@ -259,7 +592,7 @@ const meta = {
           >
             {variant === 'channel-icon' && <ChannelIconContent />}
             {variant === 'payment-shipping-method' && <PaymentShippingMethodContent />}
-            {variant === 'form-field' && <FormFieldContent />}
+            {variant === 'form-field' && <FormFieldContent value={formFieldValue} />}
             {variant === 'tag-with-channel' && <TagWithChannelContent />}
           </TableCell>
         </RowHoverPreview>
@@ -269,7 +602,7 @@ const meta = {
     const cellContent = variant === 'leading-icon'
       ? (
           <span className="inline-flex items-center gap-[var(--spacing-12)]">
-            <Icon name="check" size={17} className="text-[color:var(--color-icon-secondary)]" />
+            <Icon name={previewIcon} size={17} className="text-[color:var(--color-icon-secondary)]" />
             <span>{args.children}</span>
           </span>
         )
@@ -284,23 +617,17 @@ const meta = {
           ? (
               <span className="inline-flex items-center gap-[var(--spacing-8)]">
                 <span>{args.children}</span>
-                <Icon name="info" size={17} className="text-[color:var(--color-icon-secondary)]" />
+                <Icon name={infoIcon} size={17} className="text-[color:var(--color-icon-secondary)]" />
               </span>
             )
-          : variant === 'number'
-            ? '123,456'
-            : variant === 'success'
-              ? '+24.5%'
-              : variant === 'danger'
-                ? '-12.8%'
-                : args.children;
+          : args.children;
 
     return (
       <TableCell
         {...args}
         column={columnWithCheckbox}
-        align={variant === 'number' || variant === 'success' || variant === 'danger' ? 'right' : args.align}
-        tone={variant === 'success' ? 'success' : variant === 'danger' ? 'danger' : args.tone}
+        align={args.align}
+        tone={args.tone}
         inset={isInsetMode}
         subrow={isSubrow}
         checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
@@ -334,15 +661,17 @@ type ListingStory = StoryObj<React.ComponentProps<typeof TableCell> & {
   withExtras?: boolean;
 }>;
 type ListingBodyRowStory = StoryObj<React.ComponentProps<typeof TableCell> & {
-  productName?: string;
-  iSku?: string;
-  sku?: string;
-  channelName?: string;
-  moreSkuCount?: number;
+  mode?: TableMode;
+  variant?: 'listing';
+  listingProduct?: ProductPreviewOption;
+  showListingTag?: boolean;
+  listingTag?: ListingTagOption;
+  showListingInfoRows?: boolean;
+  showListingChannel?: boolean;
+  listingChannel?: ListingChannelOption;
+  showListingMoreSkus?: boolean;
+  listingMoreSkuCount?: number;
   showCheckbox?: boolean;
-  showPip?: boolean;
-  showChannel?: boolean;
-  showMoreSkus?: boolean;
 }>;
 type DefaultInfoStory = StoryObj<React.ComponentProps<typeof TableCell> & {
   alignment?: 'horizontal' | 'vertical';
@@ -541,7 +870,7 @@ const defaultListingSource = (column: 'first' | 'center') => `<tr className="gro
       <>
         <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
           <img src={sitegiantWebstore} alt="" aria-hidden="true" width={15} height={15} className="shrink-0 rounded-[var(--radius-4)]" />
-          Webstore
+          WEBSTORE
         </span>
         <button type="button" className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)]">
           <Icon name="plus-square" size={15} />
@@ -877,7 +1206,7 @@ const IconStatus = ({ count }: { count: 1 | 2 | 3 }) => (
   </span>
 );
 
-const StatusToggleCell = () => <Toggle checked />;
+const StatusToggleCell = ({ checked = true }: { checked?: boolean }) => <Toggle checked={checked} />;
 
 const TextInfoContent = ({ textWeight = 'normal' }: { textWeight?: 'normal' | 'bold' }) => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
@@ -898,42 +1227,106 @@ const TextInfoContent = ({ textWeight = 'normal' }: { textWeight?: 'normal' | 'b
   </span>
 );
 
-const ListingExtras = () => (
-  <>
-    <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
-      <img
-        src={sitegiantWebstore}
-        alt=""
-        aria-hidden="true"
-        width={15}
-        height={15}
-        className="shrink-0 block rounded-[var(--radius-4)]"
-      />
-      Webstore
-    </span>
-    <button
-      type="button"
-      className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)] cursor-pointer"
-    >
-      <Icon name="plus-square" size={15} />
-      5 more SKUs
-    </button>
-  </>
-);
+const ListingExtras = ({
+  channel = 'WEBSTORE',
+  showChannel = true,
+  showMoreSkus = true,
+  moreSkuCount = 5,
+}: {
+  channel?: ListingChannelOption;
+  showChannel?: boolean;
+  showMoreSkus?: boolean;
+  moreSkuCount?: number;
+}) => {
+  const channelData = listingChannels[normalizeListingChannel(channel)];
+  const safeMoreSkuCount = Math.max(0, Math.floor(moreSkuCount));
+  const moreSkuLabel = `${safeMoreSkuCount} more SKU${safeMoreSkuCount === 1 ? '' : 's'}`;
 
-const DefaultListingContent = ({ showCheckbox = true }: { showCheckbox?: boolean }) => (
-  <TableCellListing
-    checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
-    image={<ProductImage size="lg" src={productImages[1].src} alt={productImages[1].alt} />}
-    tag={<Pip type="success" pipStyle="default" label="Published" />}
-    productName="DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs"
-    infoRows={[
-      { label: 'iSKU', value: 'ISKU-LDC-240321-MY-0001' },
-      { label: 'SKU', value: 'DYN-4IN1-FRESH-10ML52' },
-    ]}
-    extras={<ListingExtras />}
-  />
-);
+  return (
+    <>
+      {showChannel && (
+        <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
+          <img
+            src={channelData.image}
+            alt=""
+            aria-hidden="true"
+            width={15}
+            height={15}
+            className="shrink-0 block rounded-[var(--radius-4)]"
+          />
+          {channelData.label}
+        </span>
+      )}
+      {showMoreSkus && (
+        <button
+          type="button"
+          className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)] cursor-pointer"
+        >
+          <Icon name="plus-square" size={15} />
+          {moreSkuLabel}
+        </button>
+      )}
+    </>
+  );
+};
+
+const DefaultListingContent = ({
+  showCheckbox = true,
+  product = 'product-2',
+  listingTag = 'published',
+  listingChannel = 'WEBSTORE',
+  showTag = true,
+  showInfoRows = true,
+  showChannel = true,
+  showMoreSkus = true,
+  moreSkuCount = 5,
+  productNameWeight = 'bold',
+}: {
+  showCheckbox?: boolean;
+  product?: ProductPreviewOption;
+  listingTag?: ListingTagOption;
+  listingChannel?: ListingChannelOption;
+  showTag?: boolean;
+  showInfoRows?: boolean;
+  showChannel?: boolean;
+  showMoreSkus?: boolean;
+  moreSkuCount?: number;
+  productNameWeight?: 'normal' | 'bold';
+}) => {
+  const productRecord = listingProducts[product];
+  const tag = listingTags[listingTag];
+  const hasExtras = showChannel || showMoreSkus;
+  const productName = (
+    <span className={productNameWeight === 'bold' ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]'}>
+      {productRecord.productName}
+    </span>
+  );
+
+  return (
+    <TableCellListing
+      checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+      image={<ProductImage size="lg" src={productRecord.image.src} alt={productRecord.image.alt} />}
+      tag={showTag ? <Pip type={tag.type} pipStyle="default" label={tag.label} /> : undefined}
+      productName={productName}
+      infoRows={showInfoRows
+        ? [
+            { label: 'iSKU', value: productRecord.iSku },
+            { label: 'SKU', value: productRecord.sku },
+          ]
+        : undefined}
+      extras={hasExtras
+        ? (
+            <ListingExtras
+              channel={listingChannel}
+              showChannel={showChannel}
+              showMoreSkus={showMoreSkus}
+              moreSkuCount={moreSkuCount}
+            />
+          )
+        : undefined}
+    />
+  );
+};
 
 const StoreMeta = () => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
@@ -970,8 +1363,8 @@ const formFieldColumnClass = (column: 'first' | 'center' | 'last') =>
       ? '!pl-[var(--spacing-6)] !pr-[var(--spacing-24)]'
       : '';
 
-const FormFieldContent = () => (
-  <NumberInput type="stepper" value="1" onChange={() => undefined} />
+const FormFieldContent = ({ value = '1' }: { value?: string }) => (
+  <NumberInput type="stepper" value={value} onChange={() => undefined} />
 );
 
 const TagWithChannelContent = () => (
@@ -2577,7 +2970,7 @@ export const InsetBodyRow: Story = {
       <tbody>
         <tr>
           <Cell inset column="first" align="left" checkbox={<Checkbox size="sm" />}>
-            Shopee MY
+            SHOPEE MY
           </Cell>
           <Cell inset column="center" align="left">SKU-1042</Cell>
           <Cell inset column="center" align="right">128</Cell>
@@ -2587,7 +2980,7 @@ export const InsetBodyRow: Story = {
         </tr>
         <tr>
           <Cell inset row="last" column="first" align="left" checkbox={<Checkbox size="sm" />}>
-            Webstore
+            WEBSTORE
           </Cell>
           <Cell inset row="last" column="center" align="left">SKU-2103</Cell>
           <Cell inset row="last" column="center" align="right">42</Cell>
@@ -3306,83 +3699,164 @@ export const DefaultBodyRow: Story = {
 export const ListingBodyRow: ListingBodyRowStory = {
   argTypes: {
     ...recipeOnlyControls,
-    productName: { control: 'text' },
-    iSku: { control: 'text' },
-    sku: { control: 'text' },
-    channelName: { control: 'text' },
-    moreSkuCount: { control: { type: 'number', min: 0, step: 1 } },
-    showCheckbox: { control: 'boolean' },
-    showPip: { control: 'boolean' },
-    showChannel: { control: 'boolean' },
-    showMoreSkus: { control: 'boolean' },
+    mode: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'inset', 'subrow'],
+      description: 'Table surface mode for the listing row wrapper.',
+      table: { category: 'Layout', defaultValue: { summary: 'default' } },
+    },
+    column: {
+      control: { type: 'inline-radio' },
+      options: ['first', 'center', 'last'],
+      description: 'Column position. Controls left and right table-cell padding.',
+      table: { category: 'Layout', defaultValue: { summary: 'first' } },
+    },
+    row: {
+      control: { type: 'inline-radio' },
+      options: ['default', 'last'],
+      description: 'Default row or final-row styling.',
+      table: { category: 'Layout', defaultValue: { summary: 'default' } },
+    },
+    weight: {
+      control: { type: 'inline-radio' },
+      options: ['normal', 'bold'],
+      description: 'Product name weight inside the listing content.',
+      table: { category: 'Typography', defaultValue: { summary: 'bold' } },
+    },
+    hovered: {
+      control: 'boolean',
+      description: 'Preview hover state on the listing row wrapper.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    selected: {
+      control: 'boolean',
+      description: 'Preview selected state on the listing row wrapper.',
+      table: { category: 'State', defaultValue: { summary: 'false' } },
+    },
+    listingProduct: {
+      control: { type: 'select', labels: productPreviewLabels },
+      options: productPreviewOptions,
+      description: 'Product record for the listing row. Image, product name, iSKU, and SKU change together.',
+      table: { category: 'Variant Preview', defaultValue: { summary: 'Product 2' } },
+    },
+    showListingTag: {
+      control: 'boolean',
+      description: 'Switch for the listing status tag.',
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    listingTag: {
+      control: { type: 'select', labels: listingTagLabels },
+      options: listingTagOptions,
+      description: 'Status tag for the listing row.',
+      if: { arg: 'showListingTag', truthy: true },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'Published' } },
+    },
+    showListingInfoRows: {
+      control: 'boolean',
+      description: 'Switch for the listing iSKU/SKU rows.',
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    showListingChannel: {
+      control: 'boolean',
+      description: 'Switch for the listing channel label.',
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    listingChannel: {
+      control: { type: 'select', labels: listingChannelLabels },
+      options: listingChannelOptions,
+      description: 'Channel icon for the listing row.',
+      if: { arg: 'showListingChannel', truthy: true },
+      table: { category: 'Variant Preview', defaultValue: { summary: 'WEBSTORE' } },
+    },
+    showListingMoreSkus: {
+      control: 'boolean',
+      description: 'Switch for the listing more-SKUs link.',
+      table: { category: 'Variant Preview', defaultValue: { summary: 'true' } },
+    },
+    listingMoreSkuCount: {
+      control: { type: 'number', min: 0, step: 1 },
+      description: 'Count shown in the listing more-SKUs link.',
+      if: { arg: 'showListingMoreSkus', truthy: true },
+      table: { category: 'Variant Preview', defaultValue: { summary: '5' } },
+    },
+    showCheckbox: {
+      control: 'boolean',
+      table: { category: 'Content', defaultValue: { summary: 'true' } },
+    },
   },
   args: {
-    productName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
-    iSku: 'ISKU-LDC-240321-MY-0001',
-    sku: 'DYN-4IN1-FRESH-10ML52',
-    channelName: 'Webstore',
-    moreSkuCount: 5,
+    mode: 'default',
+    variant: 'listing',
+    column: 'first',
+    row: 'default',
+    weight: 'bold',
+    hovered: false,
+    selected: false,
+    listingProduct: 'product-2',
+    showListingTag: true,
+    listingTag: 'published',
+    showListingInfoRows: true,
+    showListingChannel: true,
+    listingChannel: 'WEBSTORE',
+    showListingMoreSkus: true,
+    listingMoreSkuCount: 5,
     showCheckbox: true,
-    showPip: true,
-    showChannel: true,
-    showMoreSkus: true,
   },
   render: ({
-    productName = 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
-    iSku = 'ISKU-LDC-240321-MY-0001',
-    sku = 'DYN-4IN1-FRESH-10ML52',
-    channelName = 'Webstore',
-    moreSkuCount = 5,
+    mode = 'default',
+    column = 'first',
+    row = 'default',
+    weight = 'bold',
+    hovered = false,
+    selected = false,
+    listingProduct = 'product-2',
+    showListingTag = true,
+    listingTag = 'published',
+    showListingInfoRows = true,
+    showListingChannel = true,
+    listingChannel = 'WEBSTORE',
+    showListingMoreSkus = true,
+    listingMoreSkuCount = 5,
     showCheckbox = true,
-    showPip = true,
-    showChannel = true,
-    showMoreSkus = true,
-  }) => (
-    <table className="border-collapse w-full table-fixed">
-      <tbody>
-        <tr>
-          <Cell column="first" className="!items-start">
-            <TableCellListing
-              checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
-              image={<ProductImage size="lg" src={productImages[0].src} alt={productImages[0].alt} />}
-              tag={showPip ? <Pip type="success" pipStyle="default" label="Published" /> : undefined}
-              productName={productName}
-              infoRows={[
-                { label: 'iSKU', value: iSku },
-                { label: 'SKU', value: sku },
-              ]}
-              extras={(showChannel || showMoreSkus) ? (
-                <>
-                  {showChannel && (
-                    <span className="inline-flex items-center gap-[var(--spacing-4)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--color-text-primary)]">
-                      <img
-                        src={sitegiantWebstore}
-                        alt=""
-                        aria-hidden="true"
-                        width={15}
-                        height={15}
-                        className="shrink-0 rounded-[var(--radius-4)]"
-                      />
-                      {channelName}
-                    </span>
-                  )}
-                  {showMoreSkus && moreSkuCount > 0 && (
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)] text-[color:var(--text-link-basic-default)] cursor-pointer"
-                    >
-                      <Icon name="plus-square" size={15} />
-                      {moreSkuCount} more SKUs
-                    </button>
-                  )}
-                </>
-              ) : undefined}
-            />
-          </Cell>
-        </tr>
-      </tbody>
-    </table>
-  ),
+  }) => {
+    const isSubrow = mode === 'subrow';
+    const isInsetMode = mode === 'inset' || isSubrow;
+
+    return (
+      <table className="border-collapse w-full table-fixed">
+        <tbody>
+          <tr>
+            <Cell
+              inset={isInsetMode}
+              subrow={isSubrow}
+              column={column}
+              align="left"
+              row={row}
+              weight="normal"
+              tone="default"
+              boldOnRowHover={false}
+              hovered={hovered}
+              selected={selected}
+              className="!items-start"
+            >
+              <DefaultListingContent
+                showCheckbox={showCheckbox}
+                product={listingProduct}
+                showTag={showListingTag}
+                listingTag={listingTag}
+                showInfoRows={showListingInfoRows}
+                showChannel={showListingChannel}
+                listingChannel={listingChannel}
+                showMoreSkus={showListingMoreSkus}
+                moreSkuCount={listingMoreSkuCount}
+                productNameWeight={weight}
+              />
+            </Cell>
+          </tr>
+        </tbody>
+      </table>
+    );
+  },
 };
 
 export const SubrowBodyRow: Story = {
@@ -4404,7 +4878,7 @@ export const ListingMatrix: Story = {
                                   height={15}
                                   className="shrink-0 block rounded-[var(--radius-4)]"
                                 />
-                                Webstore
+                                WEBSTORE
                               </span>
                               <button
                                 type="button"

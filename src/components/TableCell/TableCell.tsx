@@ -188,19 +188,15 @@ export const TableCell = ({
           : 'bg-[var(--table-body-fill)]';
 
   // tone wins over the default body-text token. Success/danger are
-  // per-value emphasis (Figma "Text State" axis); they apply at all hover
-  // states because the semantic colour shouldn't desaturate under hover.
+  // per-value emphasis (Figma "Text State" axis). Hover changes the row fill,
+  // but default-tone text stays on the normal body text colour.
   const textColorClass = tone === 'success'
     ? 'text-[color:var(--color-sys-green-DEFAULT)]'
     : tone === 'danger'
       ? 'text-[color:var(--color-sys-red-DEFAULT)]'
       : isInset
-        ? hovered
-          ? 'text-[color:var(--table-inset-body-hover-text)]'
-          : 'text-[color:var(--table-inset-body-text)]'
-        : hovered
-          ? 'text-[color:var(--table-body-hover-text)]'
-          : 'text-[color:var(--table-body-text)]';
+        ? 'text-[color:var(--table-inset-body-text)]'
+        : 'text-[color:var(--table-body-text)]';
 
   // weight=bold is the always-on bold (e.g. tracking ID in s8). The
   // boldOnRowHover variant fires only when the parent <tr> has

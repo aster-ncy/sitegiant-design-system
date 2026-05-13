@@ -245,7 +245,7 @@ export const S2SalesChannel: Story = {
           <tbody>
             <tr>
               <Cell inset column="first">
-                <ChannelLabel name="Shopee MY" channel="shopee-my" />
+                <ChannelLabel name="SHOPEE MY" channel="shopee-my" />
               </Cell>
               <Cell inset column="center" align="right">30</Cell>
               <Cell inset column="center" align="right">
@@ -294,7 +294,7 @@ export const S2SalesChannel: Story = {
             )}
             <tr>
               <Cell inset column="first">
-                <ChannelLabel name="Shopee SG" channel="shopee-sg" />
+                <ChannelLabel name="SHOPEE SG" channel="shopee-sg" />
               </Cell>
               <Cell inset column="center" align="right">2</Cell>
               <Cell inset column="center" align="right">
@@ -309,7 +309,7 @@ export const S2SalesChannel: Story = {
             </tr>
             <tr>
               <Cell inset column="first">
-                <ChannelLabel name="TikTok MY" channel="tiktok-my" />
+                <ChannelLabel name="TIKTOK MY" channel="tiktok-my" />
               </Cell>
               <Cell inset column="center" align="right">1233</Cell>
               <Cell inset column="center" align="right">
@@ -324,7 +324,7 @@ export const S2SalesChannel: Story = {
             </tr>
             <tr>
               <Cell inset column="first" row="last">
-                <ChannelLabel name="Lazada MY" channel="lazada-my" />
+                <ChannelLabel name="LAZADA MY" channel="lazada-my" />
               </Cell>
               <Cell inset column="center" align="right" row="last">234</Cell>
               <Cell inset column="center" align="right" row="last">
