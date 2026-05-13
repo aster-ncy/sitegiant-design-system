@@ -2017,6 +2017,7 @@ const TextListing = ({
  * the args controls for copyable product code.
  */
 export const DefaultTextMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
@@ -2092,6 +2093,7 @@ export const DefaultTextMatrix: Story = {
  * DangerValue, or the args controls for copyable product code.
  */
 export const DefaultNumberMatrix: Story = {
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
@@ -3436,6 +3438,7 @@ export const InsetProgressStatus: Story = {
  */
 export const InsetTextNumberMatrix: Story = {
   name: 'Inset Matrix',
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   parameters: visualReferenceParameters,
   render: () => {
     const weights = ['normal', 'bold'] as const;
@@ -4090,6 +4093,7 @@ export const SubrowQuantityFieldError: Story = {
  */
 export const SubrowTextNumberMatrix: Story = {
   name: 'Subrow Matrix',
+  tags: ['!dev', '!autodocs', 'visual-qa'],
   parameters: visualReferenceParameters,
   render: () => {
     const tones = ['default', 'success', 'danger'] as const;
