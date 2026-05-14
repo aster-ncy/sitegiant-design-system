@@ -5352,11 +5352,9 @@ export const SubrowBodyRow: RowBuilderStory = {
       : 'center';
 
     const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
-    const shellClasses = 'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-subrow-fill)] shadow-[var(--shadow-sm)] pt-[var(--spacing-24)] px-[var(--spacing-24)] pb-[var(--spacing-40)]';
 
     return (
-      <div className={shellClasses}>
-        <table className={tableClass}>
+      <table className={tableClass}>
           {showHeader && (
             <thead>
               <tr>
@@ -5400,7 +5398,6 @@ export const SubrowBodyRow: RowBuilderStory = {
             ))}
           </tbody>
         </table>
-      </div>
     );
   },
 };
