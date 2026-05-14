@@ -73,7 +73,7 @@ const meta = {
     },
     subheaderMargin: {
       control: { type: 'inline-radio' },
-      if: { arg: 'mode', neq: 'default' },
+      if: { arg: 'subheader', truthy: true },
       options: ['top', 'topBottom'],
     },
     hint: { table: { disable: true } },
@@ -96,7 +96,7 @@ const meta = {
   render: ({ mode = 'default', inset, withCheckbox, withHint, column, type, subheader, ...args }) => {
     const isInsetMode = mode === 'inset' || mode === 'subrow' || inset;
     const isSubheader = mode === 'subrow' || Boolean(isInsetMode && subheader);
-    const showCheckbox = Boolean(withCheckbox && type !== 'icon');
+    const showCheckbox = Boolean(withCheckbox && column === 'first' && type !== 'icon');
     const showHint = Boolean(withHint && type !== 'icon');
 
     return (
@@ -446,7 +446,8 @@ export const InsetHeaderRow: Story = {
 
 /**
  * Copyable inset-table sub-header row recipe.
- * Subheader rows are only for inset tables and suppress sort affordances.
+ * Subheader rows are only for inset tables. Sort is supported — pass
+ * `sortable` on columns that need a sort affordance.
  */
 export const SubheaderRow: Story = {
   argTypes: {
@@ -460,6 +461,7 @@ export const SubheaderRow: Story = {
   },
   args: {
     mode: 'subrow' as HeaderMode,
+    subheader: true,
     subheaderMargin: 'top',
   },
   parameters: {
