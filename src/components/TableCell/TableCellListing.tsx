@@ -37,10 +37,22 @@ export interface TableCellListingProps {
    */
   tag?: ReactNode;
   /**
-   * Product display name. Renders body-slim 14/17 bold; wraps to two
-   * lines (clamped at max-h-[34px] for 2 × 17 per Figma 1248:8402).
+   * Product display name. Wraps to two lines (clamped at max-h-[34px]
+   * for 2 × 17 per Figma 1248:8402). Weight controlled by `productNameWeight`.
    */
   productName: ReactNode;
+  /**
+   * Weight mode for the product name.
+   * - `'bold'` (default): always bold.
+   * - `'hover'`: regular at rest, bold on `group-hover/row` (parent `<tr class="group/row">`).
+   * - `'normal'`: always regular.
+   */
+  productNameWeight?: 'bold' | 'hover' | 'normal';
+  /**
+   * When true, applies green text on `group-hover/row` to the product name only.
+   * Pair with `productNameWeight="hover"` for the full hover-bold-green effect.
+   */
+  productNameGreenHover?: boolean;
   /**
    * Caption-slim label/value rows beneath the name (e.g. iSKU, SKU).
    * Each row is `flex gap-4 items-start`; rows separated by gap-4 in the
@@ -55,11 +67,18 @@ export interface TableCellListingProps {
   extras?: ReactNode;
 }
 
-const productNameClasses = [
+const productNameWeightClass: Record<'bold' | 'hover' | 'normal', string> = {
+  bold:   'font-[var(--font-weight-bold)]',
+  hover:  'font-[var(--font-weight-regular)] group-hover/row:font-[var(--font-weight-bold)]',
+  normal: 'font-[var(--font-weight-regular)]',
+};
+
+const productNameGreenHoverClass = 'group-hover/row:!text-[color:var(--table-body-hover-text)]';
+
+const productNameBaseClasses = [
   'block w-full max-h-[34px] overflow-hidden',
   'font-[family-name:var(--font-sans)]',
   'text-[length:var(--table-body-size)] leading-[var(--leading-17)]',
-  'font-[var(--font-weight-bold)]',
   'text-[color:var(--color-text-primary)]',
 ].join(' ');
 
@@ -100,7 +119,7 @@ const captionSlimValueClasses = [
  * Tokens authoritative from Figma:
  * - outer flex: gap-12 items-start
  * - product info column: flex-col gap-4 items-start, flex-1 min-w-0
- * - product name: body-slim 14/17 bold (max-h 34px to clamp at two lines)
+ * - product name: body-slim 14/17, weight via productNameWeight (max-h 34px to clamp at two lines)
  * - info row label/value: caption-slim 12/15 (info / primary). Labels
  *   are shrink-0 + nowrap; values flex to fill row width and truncate
  *   with ellipsis when they exceed available width — long values get
@@ -113,9 +132,16 @@ export const TableCellListing = ({
   image,
   tag,
   productName,
+  productNameWeight = 'bold',
+  productNameGreenHover = false,
   infoRows,
   extras,
 }: TableCellListingProps) => {
+  const productNameClasses = [
+    productNameBaseClasses,
+    productNameWeightClass[productNameWeight],
+    productNameGreenHover ? productNameGreenHoverClass : '',
+  ].filter(Boolean).join(' ');
   return (
     <div className="flex w-full gap-[var(--spacing-12)] items-start">
       {checkbox && (

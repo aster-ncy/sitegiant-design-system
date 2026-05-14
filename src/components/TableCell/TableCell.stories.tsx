@@ -72,9 +72,19 @@ type TableCellStoryArgs = React.ComponentProps<typeof TableCell> & {
   actionTextLinkCount?: 1 | 2 | 3 | 4;
   actionIconCount?: 1 | 2 | 3;
   iconStatusCount?: 1 | 2 | 3;
-  actionTextLinkCount?: 1 | 2 | 3 | 4;
-  actionIconCount?: 1 | 2 | 3;
-  iconStatusCount?: 1 | 2 | 3;
+  // Row Builder
+  columnCount?: 1 | 2 | 3 | 4 | 5 | 6;
+  showHeader?: boolean;
+  col1Variant?: TableCellVariantOption; col1Width?: 'auto' | 'fixed'; col1WidthPx?: number; col1Label?: string; col1Sortable?: boolean; col1Align?: 'left' | 'center' | 'right'; col1Checkbox?: boolean; col1HoverStyle?: 'off' | 'green-bold';
+  col2Variant?: TableCellVariantOption; col2Width?: 'auto' | 'fixed'; col2WidthPx?: number; col2Label?: string; col2Sortable?: boolean; col2Align?: 'left' | 'center' | 'right';
+  col3Variant?: TableCellVariantOption; col3Width?: 'auto' | 'fixed'; col3WidthPx?: number; col3Label?: string; col3Sortable?: boolean; col3Align?: 'left' | 'center' | 'right';
+  col4Variant?: TableCellVariantOption; col4Width?: 'auto' | 'fixed'; col4WidthPx?: number; col4Label?: string; col4Sortable?: boolean; col4Align?: 'left' | 'center' | 'right';
+  col5Variant?: TableCellVariantOption; col5Width?: 'auto' | 'fixed'; col5WidthPx?: number; col5Label?: string; col5Sortable?: boolean; col5Align?: 'left' | 'center' | 'right';
+  col6Variant?: TableCellVariantOption; col6Width?: 'auto' | 'fixed'; col6WidthPx?: number; col6Label?: string; col6Sortable?: boolean; col6Align?: 'left' | 'center' | 'right';
+  col2Visible?: boolean; col3Visible?: boolean; col4Visible?: boolean;
+  col5Visible?: boolean; col6Visible?: boolean;
+  col1WidthPxVisible?: boolean; col2WidthPxVisible?: boolean; col3WidthPxVisible?: boolean;
+  col4WidthPxVisible?: boolean; col5WidthPxVisible?: boolean; col6WidthPxVisible?: boolean;
   tagCount?: 1 | 2 | 3;
   tagLabel1?: string;
   tagPipType1?: PipType;
@@ -1220,6 +1230,41 @@ const typographyStatePlaygroundControls = {
   className: hiddenControl,
 };
 
+const playgroundOnlyControls = {
+  previewIcon: hiddenControl, infoIcon: hiddenControl,
+  smallChannelIconChannel: hiddenControl, smallChannelIconLabel: hiddenControl,
+  productCount: hiddenControl,
+  tagCount: hiddenControl,
+  tagLabel1: hiddenControl, tagPipType1: hiddenControl, tagPipLabel1: hiddenControl,
+  tagLabel2: hiddenControl, tagPipType2: hiddenControl, tagPipLabel2: hiddenControl,
+  tagLabel3: hiddenControl, tagPipType3: hiddenControl, tagPipLabel3: hiddenControl,
+  tagVariantControlsVisible: hiddenControl, tagRow2Visible: hiddenControl, tagRow3Visible: hiddenControl,
+  listingProduct: hiddenControl, showListingTag: hiddenControl, listingTag: hiddenControl,
+  showListingInfoRows: hiddenControl, showListingChannel: hiddenControl, listingChannel: hiddenControl,
+  showListingMoreSkus: hiddenControl, listingMoreSkuCount: hiddenControl,
+  listingTagControlVisible: hiddenControl, listingChannelControlVisible: hiddenControl, listingMoreSkuCountControlVisible: hiddenControl,
+  statusToggleChecked: hiddenControl, iconStatusCount: hiddenControl,
+  actionTextLinkCount: hiddenControl, actionIconCount: hiddenControl,
+  formFieldValue: hiddenControl,
+  textInfoBody: hiddenControl, textInfoWeight: hiddenControl, textInfoChannel: hiddenControl, textInfoLabel: hiddenControl,
+  tagWithChannelCount: hiddenControl,
+  tagWithChannelTagLabel1: hiddenControl, tagWithChannelPipType1: hiddenControl, tagWithChannelPipLabel1: hiddenControl,
+  tagWithChannelTagLabel2: hiddenControl, tagWithChannelPipType2: hiddenControl, tagWithChannelPipLabel2: hiddenControl,
+  tagWithChannelTagLabel3: hiddenControl, tagWithChannelPipType3: hiddenControl, tagWithChannelPipLabel3: hiddenControl,
+  tagWithChannelRow2Visible: hiddenControl, tagWithChannelRow3Visible: hiddenControl,
+  tagWithChannelChannel: hiddenControl, tagWithChannelLabel: hiddenControl,
+  childrenControlVisible: hiddenControl, typographyControlsVisible: hiddenControl,
+  columnControlVisible: hiddenControl, checkboxControlVisible: hiddenControl,
+  showHeader: hiddenControl,
+  col1Label: hiddenControl, col2Label: hiddenControl, col3Label: hiddenControl,
+  col4Label: hiddenControl, col5Label: hiddenControl, col6Label: hiddenControl,
+  col1Sortable: hiddenControl, col2Sortable: hiddenControl, col3Sortable: hiddenControl,
+  col4Sortable: hiddenControl, col5Sortable: hiddenControl, col6Sortable: hiddenControl,
+  col1Align: hiddenControl, col2Align: hiddenControl, col3Align: hiddenControl,
+  col4Align: hiddenControl, col5Align: hiddenControl, col6Align: hiddenControl,
+  col1HoverStyle: hiddenControl,
+};
+
 const recipeOnlyControls = {
   mode: hiddenControl,
   variant: hiddenControl,
@@ -1671,15 +1716,30 @@ const ActionLinks = ({ count }: { count: 1 | 2 | 3 | 4 }) => (
   </span>
 );
 
-const ActionIcons = ({ count }: { count: 1 | 2 | 3 }) => (
+type ActionIconDef = { icon: IconName; variant: 'basic' | 'danger-subtle' };
+
+const actionIconClass: Record<'basic' | 'danger-subtle', string> = {
+  'basic':
+    'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+  'danger-subtle':
+    'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)] text-[color:var(--icon-link-danger-subtle-default)] hover:text-[color:var(--icon-link-danger-subtle-hover)] active:text-[color:var(--icon-link-danger-subtle-clicked)] cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+};
+
+const ActionIcons = ({
+  count,
+  icons,
+}: {
+  count: 1 | 2 | 3;
+  icons?: ActionIconDef[];
+}) => (
   <span className="inline-flex items-center gap-[var(--spacing-6)]">
-    {Array.from({ length: count }).map((_, index) => (
+    {(icons ?? Array.from({ length: count }, () => ({ icon: 'plus' as IconName, variant: 'basic' as const }))).map((def, index) => (
       <IconLink
         key={index}
-        icon="plus"
+        icon={def.icon}
         aria-label={`Action ${index + 1}`}
         showTooltip={false}
-        className="inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
+        className={actionIconClass[def.variant]}
       />
     ))}
   </span>
@@ -1749,17 +1809,20 @@ const TextInfoContent = ({
   textWeight = 'normal',
   channel = 'SHOPEE_MY' as ListingChannelOption,
   label = 'Info',
+  greenHover = false,
 }: {
   body?: string;
   textWeight?: 'normal' | 'bold';
   channel?: ListingChannelOption;
   label?: string;
+  greenHover?: boolean;
 }) => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
     <span
       className={[
         'max-w-full truncate text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--table-body-text)]',
         textWeight === 'bold' ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+        greenHover ? 'group-hover/row:font-[var(--font-weight-bold)] group-hover/row:!text-[color:var(--table-body-hover-text)]' : '',
       ].join(' ')}
     >
       {body}
@@ -1827,6 +1890,7 @@ const DefaultListingContent = ({
   showMoreSkus = true,
   moreSkuCount = 5,
   productNameWeight = 'bold',
+  productNameGreenHover = false,
 }: {
   showCheckbox?: boolean;
   product?: ProductPreviewOption;
@@ -1837,23 +1901,21 @@ const DefaultListingContent = ({
   showChannel?: boolean;
   showMoreSkus?: boolean;
   moreSkuCount?: number;
-  productNameWeight?: 'normal' | 'bold';
+  productNameWeight?: 'normal' | 'bold' | 'hover';
+  productNameGreenHover?: boolean;
 }) => {
   const productRecord = listingProducts[product];
   const tag = listingTags[listingTag];
   const hasExtras = showChannel || showMoreSkus;
-  const productName = (
-    <span className={productNameWeight === 'bold' ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]'}>
-      {productRecord.productName}
-    </span>
-  );
 
   return (
     <TableCellListing
       checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
       image={<ProductImage size="lg" src={productRecord.image.src} alt={productRecord.image.alt} />}
       tag={showTag ? <Pip type={tag.type} pipStyle="default" label={tag.label} /> : undefined}
-      productName={productName}
+      productName={productRecord.productName}
+      productNameWeight={productNameWeight}
+      productNameGreenHover={productNameGreenHover}
       infoRows={showInfoRows
         ? [
             { label: 'iSKU', value: productRecord.iSku },
@@ -1874,9 +1936,13 @@ const DefaultListingContent = ({
   );
 };
 
-const StoreMeta = () => (
+const StoreMeta = ({ bold = false, greenHover = false }: { bold?: boolean; greenHover?: boolean }) => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
-    <span className="max-w-full truncate font-[var(--font-weight-bold)] text-[length:var(--table-body-size)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]">
+    <span className={[
+      'max-w-full truncate text-[length:var(--table-body-size)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]',
+      bold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
+      greenHover ? 'group-hover/row:!text-[color:var(--table-body-hover-text)]' : '',
+    ].join(' ')}>
       Awesome Store
     </span>
     <span className="inline-flex flex-col gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)]">
@@ -1886,19 +1952,19 @@ const StoreMeta = () => (
   </span>
 );
 
-const ChannelIconContent = () => (
+const ChannelIconContent = ({ bold = false, greenHover = false }: { bold?: boolean; greenHover?: boolean }) => (
   <span className="inline-flex items-start gap-[var(--spacing-12)]">
     <img src={shopee} alt="" className="size-[48px] shrink-0 rounded-[var(--radius-12)] object-cover" />
-    <StoreMeta />
+    <StoreMeta bold={bold} greenHover={greenHover} />
   </span>
 );
 
-const PaymentShippingMethodContent = () => (
+const PaymentShippingMethodContent = ({ bold = false, greenHover = false }: { bold?: boolean; greenHover?: boolean }) => (
   <span className="inline-flex items-start gap-[var(--spacing-12)]">
     <span className="inline-flex h-[48px] w-[120px] shrink-0 overflow-hidden rounded-[var(--radius-4)] border border-[color:var(--product-image-border)]">
       <img src={sitegiantDemoApp} alt="" className="h-full w-full object-cover" />
     </span>
-    <StoreMeta />
+    <StoreMeta bold={bold} greenHover={greenHover} />
   </span>
 );
 
@@ -1917,15 +1983,23 @@ const TagWithChannelContent = ({
   rows,
   channel = 'WEBSTORE',
   label = 'Company Name',
+  bold = false,
+  greenHover = false,
 }: {
   rows: Array<{ tagLabel: string; pipType: PipType; pipLabel: string }>;
   channel?: ListingChannelOption;
   label?: string;
+  bold?: boolean;
+  greenHover?: boolean;
 }) => (
   <span className="inline-flex flex-col items-start gap-[var(--spacing-8)]">
     {rows.map((row, i) => (
       <span key={i} className="inline-flex flex-col items-start">
-        <span className="whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--color-text-info)]">
+        <span className={[
+          'whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
+          bold ? 'font-[var(--font-weight-bold)] text-[color:var(--table-body-text)]' : 'font-[var(--font-weight-regular)] text-[color:var(--color-text-info)]',
+          greenHover ? 'group-hover/row:font-[var(--font-weight-bold)] group-hover/row:!text-[color:var(--table-body-hover-text)]' : '',
+        ].join(' ')}>
           {row.tagLabel}
         </span>
         <span className="py-[var(--spacing-2)]">
@@ -4221,36 +4295,505 @@ export const SubrowTextNumberMatrix: Story = {
   },
 };
 
-export const DefaultBodyRow: Story = {
-  parameters: visualReferenceParameters,
-  render: () => (
-    <table className="border-collapse w-full table-fixed">
-      <tbody>
-        <tr>
-          <Cell column="first" align="left" weight="bold" checkbox={<Checkbox size="sm" />} className="!items-center">
-            Wireless mouse
-          </Cell>
-          <Cell column="center" align="left" className="!items-center">SKU-1042</Cell>
-          <Cell column="center" align="right" className="!items-center">128</Cell>
-          <Cell column="center" align="right" className="!items-center">RM 89.00</Cell>
-          <Cell column="last" align="right" className="!items-center">
-            <ActionIcons count={3} />
-          </Cell>
-        </tr>
-        <tr>
-          <Cell column="first" align="left" weight="bold" row="last" checkbox={<Checkbox size="sm" />} className="!items-center">
-            USB-C Hub
-          </Cell>
-          <Cell column="center" align="left" row="last" className="!items-center">SKU-2103</Cell>
-          <Cell column="center" align="right" row="last" className="!items-center">42</Cell>
-          <Cell column="center" align="right" row="last" className="!items-center">RM 159.00</Cell>
-          <Cell column="last" align="right" row="last" className="!items-center">
-            <ActionIcons count={3} />
-          </Cell>
-        </tr>
-      </tbody>
-    </table>
-  ),
+// ── Row Builder helpers ────────────────────────────────────────────────────
+
+const ROW_BUILDER_DATA = [
+  { text: 'Wireless Mouse', sku: 'SKU-1042', number: '128', price: 'RM 89.00', store: 'SHOPEE_MY', pipType: 'success', pipLabel: 'Active',        product: 'product-1', listingTag: 'published' },
+  { text: 'USB-C Hub',      sku: 'SKU-2103', number: '42',  price: 'RM 159.00', store: 'WEBSTORE',  pipType: 'warning', pipLabel: 'Low Stock',     product: 'product-2', listingTag: 'out-of-stock' },
+  { text: 'Laptop Stand',   sku: 'SKU-3301', number: '76',  price: 'RM 45.00', store: 'LAZADA_MY', pipType: 'success', pipLabel: 'Active',         product: 'product-3', listingTag: 'published' },
+  { text: 'Keyboard Cover', sku: 'SKU-4487', number: '5',   price: 'RM 29.90', store: 'TIKTOK_MY', pipType: 'danger',  pipLabel: 'Out of Stock',   product: 'product-4', listingTag: 'draft' },
+  { text: 'HDMI Cable',     sku: 'SKU-5610', number: '213', price: 'RM 19.90', store: 'SHOPEE_SG', pipType: 'info',    pipLabel: 'Syncing',        product: 'product-5', listingTag: 'syncing' },
+] satisfies ReadonlyArray<{ text: string; sku: string; number: string; price: string; store: ListingChannelOption; pipType: PipType; pipLabel: string; product: ProductPreviewOption; listingTag: ListingTagOption }>;
+
+type RowBuilderDatum = typeof ROW_BUILDER_DATA[number];
+
+// Variants that render tall/multi-line content in the Row Builder — causes the
+// whole row to align to the top (items-start) so short cells don't float-center.
+// tag-after/tag-first render only 1 row here (single line), icon-status renders
+// count=1 (single icon) — those stay center-aligned like simple text cells.
+const multiRowVariants: TableCellVariantOption[] = [
+  'listing', 'tag-with-channel', 'text-info', 'channel-icon',
+  'payment-shipping-method', 'product-only', 'action-text-links',
+];
+
+const RowBuilderCell = ({
+  variant,
+  datum,
+  column,
+  row,
+  rowAlignment,
+  align,
+  showCheckbox = false,
+  hoverStyle = 'off',
+  widthStyle,
+  hovered,
+  selected,
+}: {
+  variant: TableCellVariantOption;
+  datum: RowBuilderDatum;
+  column: 'first' | 'center' | 'last';
+  row: 'default' | 'last';
+  rowAlignment: 'start' | 'center';
+  align?: 'left' | 'center' | 'right';
+  showCheckbox?: boolean;
+  hoverStyle?: 'off' | 'green-bold';
+  widthStyle?: React.CSSProperties;
+  hovered?: boolean;
+  selected?: boolean;
+}) => {
+  const alignResolved = align ?? 'left';
+  // Variants that support the col-1 hover style.
+  // boldVariants: TableCell atom bolds cell text on row hover.
+  //   - text-info, channel-icon, payment-shipping-method, tag-with-channel:
+  //     excluded from bold (they have mixed content — bold on the whole cell
+  //     would affect caption/pip rows too). Green is scoped internally instead.
+  //   - listing: always-bold title, green scoped internally.
+  // greenWrapperVariants: outer green span wraps the whole content.
+  //   leading/info-icon green is on inner text span to avoid greening the icon.
+  //   text-info/channel-icon/payment-shipping-method/tag-with-channel/listing
+  //   all handle green internally.
+  const boldVariants: TableCellVariantOption[] = [
+    'text', 'leading-icon', 'info-icon', 'small-channel-icon',
+  ];
+  const greenWrapperVariants: TableCellVariantOption[] = ['text', 'small-channel-icon'];
+  const boldOnRowHover = hoverStyle !== 'off' && boldVariants.includes(variant);
+  const className = rowAlignment === 'start' ? '!items-start' : '!items-center';
+
+  const content = (() => {
+    switch (variant) {
+      case 'text':
+        return datum.text;
+      case 'leading-icon':
+        return (
+          <span className="inline-flex items-center gap-[var(--spacing-12)]">
+            <Icon name="check" size={17} className="text-[color:var(--color-icon-secondary)]" />
+            <span className={hoverStyle === 'green-bold' ? 'group-hover/row:!text-[color:var(--table-body-hover-text)]' : ''}>{datum.text}</span>
+          </span>
+        );
+      case 'info-icon':
+        return (
+          <span className="inline-flex items-center gap-[var(--spacing-8)]">
+            <span className={hoverStyle === 'green-bold' ? 'group-hover/row:!text-[color:var(--table-body-hover-text)]' : ''}>{datum.text}</span>
+            <Icon name="info" size={17} className="text-[color:var(--color-icon-secondary)]" />
+          </span>
+        );
+      case 'small-channel-icon':
+        return (
+          <span className="inline-flex items-center gap-[var(--spacing-8)]">
+            <img src={listingChannels[datum.store].image} alt="" className="w-[21px] h-[21px] rounded-[var(--radius-2)] object-cover" />
+            <span>{listingChannels[datum.store].label}</span>
+          </span>
+        );
+      case 'product-only':
+        return <ProductOnlyContent count={4} />;
+      case 'tag-after':
+        return <TagPair order="after" rows={[{ label: datum.text, pipType: datum.pipType, pipLabel: datum.pipLabel }]} />;
+      case 'tag-first':
+        return <TagPair order="first" rows={[{ label: datum.text, pipType: datum.pipType, pipLabel: datum.pipLabel }]} />;
+      case 'action-text-links':
+        return (
+          <span className="inline-flex flex-col items-start gap-[var(--spacing-4)]">
+            <span className="inline-flex items-start py-[var(--spacing-2)]">
+              <TextLink
+                label="View Order"
+                variant="basic"
+                iconPosition="left"
+                icon={<Icon name="file-text" size={17} />}
+              />
+            </span>
+            <span className="inline-flex items-start py-[var(--spacing-2)]">
+              <TextLink
+                label="Void"
+                variant="basic"
+                iconPosition="left"
+                icon={<Icon name="close" size={17} />}
+                className="!text-[color:var(--color-sys-red-DEFAULT)] hover:!text-[color:var(--color-sys-red-dark)] active:!text-[color:var(--color-sys-red-darker)]"
+              />
+            </span>
+          </span>
+        );
+      case 'action-icon-buttons':
+        return (
+          <ActionIcons
+            count={2}
+            icons={[
+              { icon: 'printer', variant: 'basic' },
+              { icon: 'trash', variant: 'danger-subtle' },
+            ]}
+          />
+        );
+      case 'icon-status':
+        return <IconStatus count={1} />;
+      case 'status-toggle':
+        return <StatusToggleCell checked />;
+      case 'text-info':
+        return (
+          <TextInfoContent
+            body={datum.text}
+            textWeight={column === 'first' ? 'bold' : 'normal'}
+            channel={datum.store}
+            label={listingChannels[datum.store].label}
+            greenHover={hoverStyle === 'green-bold'}
+          />
+        );
+      case 'listing':
+        return (
+          <DefaultListingContent
+            showCheckbox={false}
+            product={datum.product}
+            listingTag={datum.listingTag}
+            listingChannel={datum.store}
+            showTag
+            showInfoRows
+            showChannel
+            showMoreSkus={false}
+            moreSkuCount={0}
+            productNameWeight={column === 'first' ? 'bold' : 'normal'}
+            productNameGreenHover={hoverStyle === 'green-bold'}
+          />
+        );
+      case 'channel-icon':
+        return <ChannelIconContent bold={column === 'first'} greenHover={hoverStyle === 'green-bold'} />;
+      case 'payment-shipping-method':
+        return <PaymentShippingMethodContent bold={column === 'first'} greenHover={hoverStyle === 'green-bold'} />;
+      case 'form-field':
+        return <FormFieldContent value="1" />;
+      case 'tag-with-channel':
+        return (
+          <TagWithChannelContent
+            rows={[{ tagLabel: datum.text, pipType: datum.pipType, pipLabel: datum.pipLabel }]}
+            channel={datum.store}
+            label={listingChannels[datum.store].label}
+            bold={column === 'first'}
+            greenHover={hoverStyle === 'green-bold'}
+          />
+        );
+      default:
+        return datum.text;
+    }
+  })();
+
+  // For listing, green hover is scoped to the product title inside TableCellListing.
+  // For leading-icon/info-icon, green is on the inner text span (not the outer wrapper).
+  // For text/small-channel-icon, wrap the whole content in a green-hover span.
+  const wrappedContent = hoverStyle === 'green-bold' && greenWrapperVariants.includes(variant)
+    ? (
+        <span className="group-hover/row:!text-[color:var(--table-body-hover-text)]">
+          {content}
+        </span>
+      )
+    : content;
+
+  return (
+    <td className="h-px p-0" style={widthStyle}>
+      <TableCell
+        column={column}
+        row={row}
+        hovered={hovered}
+        selected={selected}
+        checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
+        className={className}
+        align={alignResolved}
+        boldOnRowHover={boldOnRowHover}
+      >
+        {wrappedContent}
+      </TableCell>
+    </td>
+  );
+};
+
+type RowBuilderStory = StoryObj<TableCellStoryArgs & {
+  columnCount?: 1 | 2 | 3 | 4 | 5 | 6;
+  showHeader?: boolean;
+  col1Variant?: TableCellVariantOption; col1Width?: 'auto' | 'fixed'; col1WidthPx?: number; col1Label?: string; col1Sortable?: boolean; col1Align?: 'left' | 'center' | 'right'; col1Checkbox?: boolean; col1HoverStyle?: 'off' | 'green-bold';
+  col2Variant?: TableCellVariantOption; col2Width?: 'auto' | 'fixed'; col2WidthPx?: number; col2Label?: string; col2Sortable?: boolean; col2Align?: 'left' | 'center' | 'right';
+  col3Variant?: TableCellVariantOption; col3Width?: 'auto' | 'fixed'; col3WidthPx?: number; col3Label?: string; col3Sortable?: boolean; col3Align?: 'left' | 'center' | 'right';
+  col4Variant?: TableCellVariantOption; col4Width?: 'auto' | 'fixed'; col4WidthPx?: number; col4Label?: string; col4Sortable?: boolean; col4Align?: 'left' | 'center' | 'right';
+  col5Variant?: TableCellVariantOption; col5Width?: 'auto' | 'fixed'; col5WidthPx?: number; col5Label?: string; col5Sortable?: boolean; col5Align?: 'left' | 'center' | 'right';
+  col6Variant?: TableCellVariantOption; col6Width?: 'auto' | 'fixed'; col6WidthPx?: number; col6Label?: string; col6Sortable?: boolean; col6Align?: 'left' | 'center' | 'right';
+  col2Visible?: boolean; col3Visible?: boolean; col4Visible?: boolean;
+  col5Visible?: boolean; col6Visible?: boolean;
+  col1WidthPxVisible?: boolean; col2WidthPxVisible?: boolean; col3WidthPxVisible?: boolean;
+  col4WidthPxVisible?: boolean; col5WidthPxVisible?: boolean; col6WidthPxVisible?: boolean;
+  col1HoverVisible?: boolean;
+}>;
+
+const colArgTypes = (n: 1 | 2 | 3 | 4 | 5 | 6, visibleArg: string) => ({
+  [`col${n}Variant`]: {
+    name: `Col ${n} — Variant`,
+    control: { type: 'select', labels: tableCellVariantLabels },
+    options: tableCellVariantOptions,
+    if: { arg: visibleArg, truthy: true },
+    table: { category: `Column ${n}`, defaultValue: { summary: 'text' } },
+  },
+  [`col${n}Label`]: {
+    name: `Col ${n} — Header label`,
+    control: 'text',
+    if: { arg: visibleArg, truthy: true },
+    table: { category: `Column ${n}`, defaultValue: { summary: `Column ${n}` } },
+  },
+  [`col${n}Sortable`]: {
+    name: `Col ${n} — Sortable`,
+    control: 'boolean',
+    if: { arg: visibleArg, truthy: true },
+    table: { category: `Column ${n}`, defaultValue: { summary: 'false' } },
+  },
+  [`col${n}Align`]: {
+    name: `Col ${n} — Align`,
+    control: { type: 'inline-radio' },
+    options: ['left', 'center', 'right'] satisfies ReadonlyArray<'left' | 'center' | 'right'>,
+    if: { arg: visibleArg, truthy: true },
+    table: { category: `Column ${n}`, defaultValue: { summary: 'left' } },
+  },
+  [`col${n}Width`]: {
+    name: `Col ${n} — Width`,
+    control: { type: 'inline-radio' },
+    options: ['auto', 'fixed'],
+    if: { arg: visibleArg, truthy: true },
+    table: { category: `Column ${n}`, defaultValue: { summary: 'auto' } },
+  },
+  [`col${n}WidthPx`]: {
+    name: `Col ${n} — Width (px)`,
+    control: { type: 'number', min: 40, step: 10 },
+    if: { arg: `col${n}WidthPxVisible`, truthy: true },
+    table: { category: `Column ${n}`, defaultValue: { summary: '160' } },
+  },
+});
+
+export const DefaultBodyRow: RowBuilderStory = {
+  name: 'Row Builder',
+  argTypes: {
+    ...recipeOnlyControls,
+    ...playgroundOnlyControls,
+    hovered: { control: 'boolean', table: { category: '1. State' } },
+    selected: { control: 'boolean', table: { category: '1. State' } },
+    showHeader: {
+      name: 'Show header',
+      control: 'boolean',
+      table: { category: '2. Columns', defaultValue: { summary: 'true' } },
+    },
+    columnCount: {
+      name: 'Column count',
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3, 4, 5, 6] satisfies ReadonlyArray<1 | 2 | 3 | 4 | 5 | 6>,
+      table: { category: '2. Columns', defaultValue: { summary: '5' } },
+    },
+    // Col 1 controls — explicit order: Variant → Checkbox → Label → Sortable → Align → Hover style → Width → Width (px)
+    col1Variant: {
+      name: 'Col 1 — Variant',
+      control: { type: 'select', labels: tableCellVariantLabels },
+      options: tableCellVariantOptions,
+      table: { category: 'Column 1', defaultValue: { summary: 'text' } },
+    },
+    col1Checkbox: {
+      name: 'Col 1 — Checkbox',
+      control: 'boolean',
+      table: { category: 'Column 1', defaultValue: { summary: 'false' } },
+    },
+    col1Label: {
+      name: 'Col 1 — Header label',
+      control: 'text',
+      table: { category: 'Column 1', defaultValue: { summary: 'Product' } },
+    },
+    col1Sortable: {
+      name: 'Col 1 — Sortable',
+      control: 'boolean',
+      table: { category: 'Column 1', defaultValue: { summary: 'false' } },
+    },
+    col1Align: {
+      name: 'Col 1 — Align',
+      control: { type: 'inline-radio' },
+      options: ['left', 'center', 'right'] satisfies ReadonlyArray<'left' | 'center' | 'right'>,
+      table: { category: 'Column 1', defaultValue: { summary: 'left' } },
+    },
+    col1HoverStyle: {
+      name: 'Col 1 — Hover style',
+      control: { type: 'inline-radio' },
+      options: ['off', 'green-bold'] satisfies ReadonlyArray<'off' | 'green-bold'>,
+      table: { category: 'Column 1', defaultValue: { summary: 'off' } },
+      if: { arg: 'col1HoverVisible', truthy: true },
+    },
+    col1HoverVisible: { table: { disable: true } },
+    col1Width: {
+      name: 'Col 1 — Width',
+      control: { type: 'inline-radio' },
+      options: ['auto', 'fixed'],
+      table: { category: 'Column 1', defaultValue: { summary: 'auto' } },
+    },
+    col1WidthPx: {
+      name: 'Col 1 — Width (px)',
+      control: { type: 'number', min: 40, step: 10 },
+      if: { arg: 'col1WidthPxVisible', truthy: true },
+      table: { category: 'Column 1', defaultValue: { summary: '160' } },
+    },
+    ...colArgTypes(2, 'col2Visible'),
+    ...colArgTypes(3, 'col3Visible'),
+    ...colArgTypes(4, 'col4Visible'),
+    ...colArgTypes(5, 'col5Visible'),
+    ...colArgTypes(6, 'col6Visible'),
+    col2Visible: { table: { disable: true } },
+    col3Visible: { table: { disable: true } },
+    col4Visible: { table: { disable: true } },
+    col5Visible: { table: { disable: true } },
+    col6Visible: { table: { disable: true } },
+    col1WidthPxVisible: { table: { disable: true } },
+    col2WidthPxVisible: { table: { disable: true } },
+    col3WidthPxVisible: { table: { disable: true } },
+    col4WidthPxVisible: { table: { disable: true } },
+    col5WidthPxVisible: { table: { disable: true } },
+    col6WidthPxVisible: { table: { disable: true } },
+  },
+  args: {
+    hovered: false,
+    selected: false,
+    showHeader: true,
+    columnCount: 5,
+    col1Variant: 'text', col1Width: 'auto', col1WidthPx: 160, col1Label: 'Product', col1Sortable: false, col1Align: 'left', col1Checkbox: false, col1HoverStyle: 'off',
+    col2Variant: 'text', col2Width: 'auto', col2WidthPx: 160, col2Label: 'SKU', col2Sortable: false, col2Align: 'left',
+    col3Variant: 'text', col3Width: 'auto', col3WidthPx: 160, col3Label: 'Stock', col3Sortable: false, col3Align: 'left',
+    col4Variant: 'text', col4Width: 'auto', col4WidthPx: 160, col4Label: 'Price', col4Sortable: false, col4Align: 'left',
+    col5Variant: 'action-icon-buttons', col5Width: 'auto', col5WidthPx: 160, col5Label: 'Action', col5Sortable: false, col5Align: 'right',
+    col6Variant: 'text', col6Width: 'auto', col6WidthPx: 160, col6Label: 'Column 6', col6Sortable: false, col6Align: 'left',
+    col2Visible: false, col3Visible: false, col4Visible: false,
+    col5Visible: false, col6Visible: false,
+    col1WidthPxVisible: false, col2WidthPxVisible: false, col3WidthPxVisible: false,
+    col4WidthPxVisible: false, col5WidthPxVisible: false, col6WidthPxVisible: false,
+    col1HoverVisible: true,
+  },
+  render: ({
+    hovered = false,
+    selected = false,
+    showHeader = true,
+    columnCount = 5,
+    col1Variant = 'text', col1Width = 'auto', col1WidthPx = 160, col1Label = 'Product', col1Sortable = false, col1Align = 'left' as const, col1Checkbox = false, col1HoverStyle = 'off' as const,
+    col2Variant = 'text', col2Width = 'auto', col2WidthPx = 160, col2Label = 'SKU', col2Sortable = false, col2Align = 'left' as const,
+    col3Variant = 'text', col3Width = 'auto', col3WidthPx = 160, col3Label = 'Stock', col3Sortable = false, col3Align = 'left' as const,
+    col4Variant = 'text', col4Width = 'auto', col4WidthPx = 160, col4Label = 'Price', col4Sortable = false, col4Align = 'left' as const,
+    col5Variant = 'action-icon-buttons', col5Width = 'auto', col5WidthPx = 160, col5Label = 'Action', col5Sortable = false, col5Align = 'right' as const,
+    col6Variant = 'text', col6Width = 'auto', col6WidthPx = 160, col6Label = 'Column 6', col6Sortable = false, col6Align = 'left' as const,
+    col2Visible, col3Visible, col4Visible, col5Visible, col6Visible,
+    col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible,
+    col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible,
+    col1HoverVisible,
+  }) => {
+    const [, updateArgs] = useArgs();
+
+    const colDefs = [
+      { variant: col1Variant, width: col1Width, widthPx: col1WidthPx, label: col1Label, sortable: col1Sortable, align: col1Align, showCheckbox: col1Checkbox, hoverStyle: col1HoverStyle },
+      { variant: col2Variant, width: col2Width, widthPx: col2WidthPx, label: col2Label, sortable: col2Sortable, align: col2Align },
+      { variant: col3Variant, width: col3Width, widthPx: col3WidthPx, label: col3Label, sortable: col3Sortable, align: col3Align },
+      { variant: col4Variant, width: col4Width, widthPx: col4WidthPx, label: col4Label, sortable: col4Sortable, align: col4Align },
+      { variant: col5Variant, width: col5Width, widthPx: col5WidthPx, label: col5Label, sortable: col5Sortable, align: col5Align },
+      { variant: col6Variant, width: col6Width, widthPx: col6WidthPx, label: col6Label, sortable: col6Sortable, align: col6Align },
+    ].slice(0, columnCount);
+
+    // Sync visibility helpers
+    useEffect(() => {
+      const hoverSupportedVariants: TableCellVariantOption[] = [
+        'text', 'leading-icon', 'info-icon', 'small-channel-icon',
+        'listing', 'text-info', 'channel-icon', 'payment-shipping-method', 'tag-with-channel',
+      ];
+      const nextColVisible = [true, columnCount >= 2, columnCount >= 3, columnCount >= 4, columnCount >= 5, columnCount >= 6];
+      const nextWidthPxVisible = [
+        col1Width === 'fixed',
+        col2Width === 'fixed' && columnCount >= 2,
+        col3Width === 'fixed' && columnCount >= 3,
+        col4Width === 'fixed' && columnCount >= 4,
+        col5Width === 'fixed' && columnCount >= 5,
+        col6Width === 'fixed' && columnCount >= 6,
+      ];
+      const nextCol1HoverVisible = hoverSupportedVariants.includes(col1Variant);
+      const updates: Record<string, boolean> = {};
+      const visibleKeys = ['col2Visible', 'col3Visible', 'col4Visible', 'col5Visible', 'col6Visible'] as const;
+      const currentVisible = [col2Visible, col3Visible, col4Visible, col5Visible, col6Visible];
+      visibleKeys.forEach((key, i) => {
+        if (currentVisible[i] !== nextColVisible[i + 1]) updates[key] = nextColVisible[i + 1];
+      });
+      const widthPxKeys = ['col1WidthPxVisible', 'col2WidthPxVisible', 'col3WidthPxVisible', 'col4WidthPxVisible', 'col5WidthPxVisible', 'col6WidthPxVisible'] as const;
+      const currentWidthPx = [col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible, col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible];
+      widthPxKeys.forEach((key, i) => {
+        if (currentWidthPx[i] !== nextWidthPxVisible[i]) updates[key] = nextWidthPxVisible[i];
+      });
+      if (col1HoverVisible !== nextCol1HoverVisible) updates['col1HoverVisible'] = nextCol1HoverVisible;
+      if (Object.keys(updates).length > 0) updateArgs(updates);
+    }, [
+      columnCount, col1Variant, col2Visible, col3Visible, col4Visible, col5Visible, col6Visible,
+      col1Width, col2Width, col3Width, col4Width, col5Width, col6Width,
+      col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible, col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible,
+      col1HoverVisible, updateArgs,
+    ]);
+
+    const getColumn = (idx: number): 'first' | 'center' | 'last' =>
+      idx === 0 ? 'first' : idx === colDefs.length - 1 ? 'last' : 'center';
+
+    const getWidthStyle = (def: typeof colDefs[number]): React.CSSProperties | undefined =>
+      def.width === 'fixed' && Number.isFinite(def.widthPx) && (def.widthPx ?? 0) >= 40
+        ? { width: `${def.widthPx}px` }
+        : undefined;
+
+    // Header align follows the column's cell align setting
+    const getHeaderAlign = (def: typeof colDefs[number]): 'left' | 'center' | 'right' => def.align ?? 'left';
+
+    // Row alignment: if any column is multi-row, the whole row aligns to start
+    const rowAlignment: 'start' | 'center' = colDefs.some(d => multiRowVariants.includes(d.variant))
+      ? 'start'
+      : 'center';
+
+    const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
+    const shellClasses = 'rounded-[var(--radius-12)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-body-fill)] overflow-hidden';
+
+    return (
+      <div className={shellClasses}>
+        <table className={tableClass}>
+          {showHeader && (
+            <thead>
+              <tr>
+                {colDefs.map((def, colIdx) => (
+                  <th key={colIdx} className="p-0" style={getWidthStyle(def)} aria-sort={def.sortable ? 'none' : undefined}>
+                    <TableHeaderCell
+                      column={getColumn(colIdx)}
+                      align={getHeaderAlign(def)}
+                      label={def.label}
+                      sortable={def.sortable}
+                      checkbox={colIdx === 0 && (colDefs[0] as typeof colDefs[0]).showCheckbox ? <Checkbox size="sm" /> : undefined}
+                    />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {ROW_BUILDER_DATA.map((datum, rowIdx) => (
+              <tr key={rowIdx} className={defaultHoverRowClass}>
+                {colDefs.map((def, colIdx) => (
+                  <RowBuilderCell
+                    key={colIdx}
+                    variant={def.variant}
+                    datum={datum}
+                    column={getColumn(colIdx)}
+                    row={rowIdx === ROW_BUILDER_DATA.length - 1 ? 'last' : 'default'}
+                    rowAlignment={rowAlignment}
+                    align={def.align}
+                    showCheckbox={colIdx === 0 ? (def as typeof colDefs[0]).showCheckbox ?? false : false}
+                    hoverStyle={colIdx === 0 ? (def as typeof colDefs[0]).hoverStyle ?? 'off' : 'off'}
+                    widthStyle={getWidthStyle(def)}
+                    hovered={hovered}
+                    selected={selected}
+                  />
+                ))}
+              </tr>
+            ))}
+            {/* 20px bottom spacer — matches default table bottom padding */}
+            <tr>
+              {colDefs.map((_, colIdx) => (
+                <td key={colIdx} className="h-[20px] p-0" />
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  },
 };
 
 export const ListingBodyRow: ListingBodyRowStory = {
