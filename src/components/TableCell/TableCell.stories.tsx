@@ -1533,6 +1533,7 @@ const tagWithChannelSource = (column: 'center' | 'last') => `<tr className="grou
 </tr>`;
 
 const defaultHoverRowClass = 'group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]';
+const insetHoverRowClass   = 'group/row hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]';
 
 const RowHoverPreview = ({
   children,
@@ -1809,20 +1810,20 @@ const TextInfoContent = ({
   textWeight = 'normal',
   channel = 'SHOPEE_MY' as ListingChannelOption,
   label = 'Info',
-  greenHover = false,
+  greenHoverClass = '',
 }: {
   body?: string;
   textWeight?: 'normal' | 'bold';
   channel?: ListingChannelOption;
   label?: string;
-  greenHover?: boolean;
+  greenHoverClass?: string;
 }) => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
     <span
       className={[
         'max-w-full truncate text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)] text-[color:var(--table-body-text)]',
         textWeight === 'bold' ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
-        greenHover ? 'group-hover/row:font-[var(--font-weight-bold)] group-hover/row:!text-[color:var(--table-body-hover-text)]' : '',
+        greenHoverClass ? `group-hover/row:font-[var(--font-weight-bold)] ${greenHoverClass}` : '',
       ].join(' ')}
     >
       {body}
@@ -1890,7 +1891,7 @@ const DefaultListingContent = ({
   showMoreSkus = true,
   moreSkuCount = 5,
   productNameWeight = 'bold',
-  productNameGreenHover = false,
+  productNameGreenHoverClass = '',
 }: {
   showCheckbox?: boolean;
   product?: ProductPreviewOption;
@@ -1902,7 +1903,7 @@ const DefaultListingContent = ({
   showMoreSkus?: boolean;
   moreSkuCount?: number;
   productNameWeight?: 'normal' | 'bold' | 'hover';
-  productNameGreenHover?: boolean;
+  productNameGreenHoverClass?: string;
 }) => {
   const productRecord = listingProducts[product];
   const tag = listingTags[listingTag];
@@ -1915,7 +1916,7 @@ const DefaultListingContent = ({
       tag={showTag ? <Pip type={tag.type} pipStyle="default" label={tag.label} /> : undefined}
       productName={productRecord.productName}
       productNameWeight={productNameWeight}
-      productNameGreenHover={productNameGreenHover}
+      productNameGreenHoverClass={productNameGreenHoverClass}
       infoRows={showInfoRows
         ? [
             { label: 'iSKU', value: productRecord.iSku },
@@ -1936,13 +1937,13 @@ const DefaultListingContent = ({
   );
 };
 
-const StoreMeta = ({ bold = false, greenHover = false }: { bold?: boolean; greenHover?: boolean }) => (
+const StoreMeta = ({ bold = false, greenHoverClass = '' }: { bold?: boolean; greenHoverClass?: string }) => (
   <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
     <span className={[
       'max-w-full truncate text-[length:var(--table-body-size)] leading-[var(--leading-17)] text-[color:var(--color-text-primary)]',
       bold ? 'font-[var(--font-weight-bold)]' : 'font-[var(--font-weight-regular)]',
-      greenHover ? 'group-hover/row:!text-[color:var(--table-body-hover-text)]' : '',
-    ].join(' ')}>
+      greenHoverClass,
+    ].filter(Boolean).join(' ')}>
       Awesome Store
     </span>
     <span className="inline-flex flex-col gap-[var(--spacing-2)] text-[length:var(--general-caption-size)] leading-[var(--leading-15)]">
@@ -1952,19 +1953,19 @@ const StoreMeta = ({ bold = false, greenHover = false }: { bold?: boolean; green
   </span>
 );
 
-const ChannelIconContent = ({ bold = false, greenHover = false }: { bold?: boolean; greenHover?: boolean }) => (
+const ChannelIconContent = ({ bold = false, greenHoverClass = '' }: { bold?: boolean; greenHoverClass?: string }) => (
   <span className="inline-flex items-start gap-[var(--spacing-12)]">
     <img src={shopee} alt="" className="size-[48px] shrink-0 rounded-[var(--radius-12)] object-cover" />
-    <StoreMeta bold={bold} greenHover={greenHover} />
+    <StoreMeta bold={bold} greenHoverClass={greenHoverClass} />
   </span>
 );
 
-const PaymentShippingMethodContent = ({ bold = false, greenHover = false }: { bold?: boolean; greenHover?: boolean }) => (
+const PaymentShippingMethodContent = ({ bold = false, greenHoverClass = '' }: { bold?: boolean; greenHoverClass?: string }) => (
   <span className="inline-flex items-start gap-[var(--spacing-12)]">
     <span className="inline-flex h-[48px] w-[120px] shrink-0 overflow-hidden rounded-[var(--radius-4)] border border-[color:var(--product-image-border)]">
       <img src={sitegiantDemoApp} alt="" className="h-full w-full object-cover" />
     </span>
-    <StoreMeta bold={bold} greenHover={greenHover} />
+    <StoreMeta bold={bold} greenHoverClass={greenHoverClass} />
   </span>
 );
 
@@ -1984,13 +1985,13 @@ const TagWithChannelContent = ({
   channel = 'WEBSTORE',
   label = 'Company Name',
   bold = false,
-  greenHover = false,
+  greenHoverClass = '',
 }: {
   rows: Array<{ tagLabel: string; pipType: PipType; pipLabel: string }>;
   channel?: ListingChannelOption;
   label?: string;
   bold?: boolean;
-  greenHover?: boolean;
+  greenHoverClass?: string;
 }) => (
   <span className="inline-flex flex-col items-start gap-[var(--spacing-8)]">
     {rows.map((row, i) => (
@@ -1998,7 +1999,7 @@ const TagWithChannelContent = ({
         <span className={[
           'whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
           bold ? 'font-[var(--font-weight-bold)] text-[color:var(--table-body-text)]' : 'font-[var(--font-weight-regular)] text-[color:var(--color-text-info)]',
-          greenHover ? 'group-hover/row:font-[var(--font-weight-bold)] group-hover/row:!text-[color:var(--table-body-hover-text)]' : '',
+          greenHoverClass ? `group-hover/row:font-[var(--font-weight-bold)] ${greenHoverClass}` : '',
         ].join(' ')}>
           {row.tagLabel}
         </span>
@@ -3593,34 +3594,238 @@ export const InsetTextNumberMatrix: Story = {
   },
 };
 
-export const InsetBodyRow: Story = {
-  parameters: visualReferenceParameters,
-  render: () => (
-    <table className="border-collapse w-full table-fixed">
-      <tbody>
-        <tr>
-          <Cell inset column="first" align="left" checkbox={<Checkbox size="sm" />}>
-            SHOPEE MY
-          </Cell>
-          <Cell inset column="center" align="left">SKU-1042</Cell>
-          <Cell inset column="center" align="right">128</Cell>
-          <Cell inset column="last" align="right">
-            <ActionIcons count={3} />
-          </Cell>
-        </tr>
-        <tr>
-          <Cell inset row="last" column="first" align="left" checkbox={<Checkbox size="sm" />}>
-            WEBSTORE
-          </Cell>
-          <Cell inset row="last" column="center" align="left">SKU-2103</Cell>
-          <Cell inset row="last" column="center" align="right">42</Cell>
-          <Cell inset row="last" column="last" align="right">
-            <ActionIcons count={3} />
-          </Cell>
-        </tr>
-      </tbody>
-    </table>
-  ),
+export const InsetBodyRow: RowBuilderStory = {
+  name: 'Inset Row Builder',
+  argTypes: {
+    ...recipeOnlyControls,
+    ...playgroundOnlyControls,
+    hovered: { control: 'boolean', table: { category: '1. State' } },
+    selected: { control: 'boolean', table: { category: '1. State' } },
+    showHeader: {
+      name: 'Show header',
+      control: 'boolean',
+      table: { category: '2. Columns', defaultValue: { summary: 'true' } },
+    },
+    columnCount: {
+      name: 'Column count',
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3, 4, 5, 6] satisfies ReadonlyArray<1 | 2 | 3 | 4 | 5 | 6>,
+      table: { category: '2. Columns', defaultValue: { summary: '5' } },
+    },
+    // Col 1 controls — explicit order: Variant → Checkbox → Label → Sortable → Align → Hover style → Width → Width (px)
+    col1Variant: {
+      name: 'Col 1 — Variant',
+      control: { type: 'select', labels: tableCellVariantLabels },
+      options: tableCellVariantOptions,
+      table: { category: 'Column 1', defaultValue: { summary: 'text' } },
+    },
+    col1Checkbox: {
+      name: 'Col 1 — Checkbox',
+      control: 'boolean',
+      table: { category: 'Column 1', defaultValue: { summary: 'false' } },
+    },
+    col1Label: {
+      name: 'Col 1 — Header label',
+      control: 'text',
+      table: { category: 'Column 1', defaultValue: { summary: 'Product' } },
+    },
+    col1Sortable: {
+      name: 'Col 1 — Sortable',
+      control: 'boolean',
+      table: { category: 'Column 1', defaultValue: { summary: 'false' } },
+    },
+    col1Align: {
+      name: 'Col 1 — Align',
+      control: { type: 'inline-radio' },
+      options: ['left', 'center', 'right'] satisfies ReadonlyArray<'left' | 'center' | 'right'>,
+      table: { category: 'Column 1', defaultValue: { summary: 'left' } },
+    },
+    col1HoverStyle: {
+      name: 'Col 1 — Hover style',
+      control: { type: 'inline-radio' },
+      options: ['off', 'green-bold'] satisfies ReadonlyArray<'off' | 'green-bold'>,
+      table: { category: 'Column 1', defaultValue: { summary: 'off' } },
+      if: { arg: 'col1HoverVisible', truthy: true },
+    },
+    col1HoverVisible: { table: { disable: true } },
+    col1Width: {
+      name: 'Col 1 — Width',
+      control: { type: 'inline-radio' },
+      options: ['auto', 'fixed'],
+      table: { category: 'Column 1', defaultValue: { summary: 'auto' } },
+    },
+    col1WidthPx: {
+      name: 'Col 1 — Width (px)',
+      control: { type: 'number', min: 40, step: 10 },
+      if: { arg: 'col1WidthPxVisible', truthy: true },
+      table: { category: 'Column 1', defaultValue: { summary: '160' } },
+    },
+    ...colArgTypes(2, 'col2Visible'),
+    ...colArgTypes(3, 'col3Visible'),
+    ...colArgTypes(4, 'col4Visible'),
+    ...colArgTypes(5, 'col5Visible'),
+    ...colArgTypes(6, 'col6Visible'),
+    col2Visible: { table: { disable: true } },
+    col3Visible: { table: { disable: true } },
+    col4Visible: { table: { disable: true } },
+    col5Visible: { table: { disable: true } },
+    col6Visible: { table: { disable: true } },
+    col1WidthPxVisible: { table: { disable: true } },
+    col2WidthPxVisible: { table: { disable: true } },
+    col3WidthPxVisible: { table: { disable: true } },
+    col4WidthPxVisible: { table: { disable: true } },
+    col5WidthPxVisible: { table: { disable: true } },
+    col6WidthPxVisible: { table: { disable: true } },
+  },
+  args: {
+    hovered: false,
+    selected: false,
+    showHeader: true,
+    columnCount: 5,
+    col1Variant: 'text', col1Width: 'auto', col1WidthPx: 160, col1Label: 'Product', col1Sortable: false, col1Align: 'left', col1Checkbox: false, col1HoverStyle: 'off',
+    col2Variant: 'text', col2Width: 'auto', col2WidthPx: 160, col2Label: 'SKU', col2Sortable: false, col2Align: 'left',
+    col3Variant: 'text', col3Width: 'auto', col3WidthPx: 160, col3Label: 'Stock', col3Sortable: false, col3Align: 'left',
+    col4Variant: 'text', col4Width: 'auto', col4WidthPx: 160, col4Label: 'Price', col4Sortable: false, col4Align: 'left',
+    col5Variant: 'action-icon-buttons', col5Width: 'auto', col5WidthPx: 160, col5Label: 'Action', col5Sortable: false, col5Align: 'right',
+    col6Variant: 'text', col6Width: 'auto', col6WidthPx: 160, col6Label: 'Column 6', col6Sortable: false, col6Align: 'left',
+    col2Visible: false, col3Visible: false, col4Visible: false,
+    col5Visible: false, col6Visible: false,
+    col1WidthPxVisible: false, col2WidthPxVisible: false, col3WidthPxVisible: false,
+    col4WidthPxVisible: false, col5WidthPxVisible: false, col6WidthPxVisible: false,
+    col1HoverVisible: true,
+  },
+  render: ({
+    hovered = false,
+    selected = false,
+    showHeader = true,
+    columnCount = 5,
+    col1Variant = 'text', col1Width = 'auto', col1WidthPx = 160, col1Label = 'Product', col1Sortable = false, col1Align = 'left' as const, col1Checkbox = false, col1HoverStyle = 'off' as const,
+    col2Variant = 'text', col2Width = 'auto', col2WidthPx = 160, col2Label = 'SKU', col2Sortable = false, col2Align = 'left' as const,
+    col3Variant = 'text', col3Width = 'auto', col3WidthPx = 160, col3Label = 'Stock', col3Sortable = false, col3Align = 'left' as const,
+    col4Variant = 'text', col4Width = 'auto', col4WidthPx = 160, col4Label = 'Price', col4Sortable = false, col4Align = 'left' as const,
+    col5Variant = 'action-icon-buttons', col5Width = 'auto', col5WidthPx = 160, col5Label = 'Action', col5Sortable = false, col5Align = 'right' as const,
+    col6Variant = 'text', col6Width = 'auto', col6WidthPx = 160, col6Label = 'Column 6', col6Sortable = false, col6Align = 'left' as const,
+    col2Visible, col3Visible, col4Visible, col5Visible, col6Visible,
+    col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible,
+    col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible,
+    col1HoverVisible,
+  }) => {
+    const [, updateArgs] = useArgs();
+
+    const colDefs = [
+      { variant: col1Variant, width: col1Width, widthPx: col1WidthPx, label: col1Label, sortable: col1Sortable, align: col1Align, showCheckbox: col1Checkbox, hoverStyle: col1HoverStyle },
+      { variant: col2Variant, width: col2Width, widthPx: col2WidthPx, label: col2Label, sortable: col2Sortable, align: col2Align },
+      { variant: col3Variant, width: col3Width, widthPx: col3WidthPx, label: col3Label, sortable: col3Sortable, align: col3Align },
+      { variant: col4Variant, width: col4Width, widthPx: col4WidthPx, label: col4Label, sortable: col4Sortable, align: col4Align },
+      { variant: col5Variant, width: col5Width, widthPx: col5WidthPx, label: col5Label, sortable: col5Sortable, align: col5Align },
+      { variant: col6Variant, width: col6Width, widthPx: col6WidthPx, label: col6Label, sortable: col6Sortable, align: col6Align },
+    ].slice(0, columnCount);
+
+    // Sync visibility helpers
+    useEffect(() => {
+      const hoverSupportedVariants: TableCellVariantOption[] = [
+        'text', 'leading-icon', 'info-icon', 'small-channel-icon',
+        'listing', 'text-info', 'channel-icon', 'payment-shipping-method', 'tag-with-channel',
+      ];
+      const nextColVisible = [true, columnCount >= 2, columnCount >= 3, columnCount >= 4, columnCount >= 5, columnCount >= 6];
+      const nextWidthPxVisible = [
+        col1Width === 'fixed',
+        col2Width === 'fixed' && columnCount >= 2,
+        col3Width === 'fixed' && columnCount >= 3,
+        col4Width === 'fixed' && columnCount >= 4,
+        col5Width === 'fixed' && columnCount >= 5,
+        col6Width === 'fixed' && columnCount >= 6,
+      ];
+      const nextCol1HoverVisible = hoverSupportedVariants.includes(col1Variant);
+      const updates: Record<string, boolean> = {};
+      const visibleKeys = ['col2Visible', 'col3Visible', 'col4Visible', 'col5Visible', 'col6Visible'] as const;
+      const currentVisible = [col2Visible, col3Visible, col4Visible, col5Visible, col6Visible];
+      visibleKeys.forEach((key, i) => {
+        if (currentVisible[i] !== nextColVisible[i + 1]) updates[key] = nextColVisible[i + 1];
+      });
+      const widthPxKeys = ['col1WidthPxVisible', 'col2WidthPxVisible', 'col3WidthPxVisible', 'col4WidthPxVisible', 'col5WidthPxVisible', 'col6WidthPxVisible'] as const;
+      const currentWidthPx = [col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible, col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible];
+      widthPxKeys.forEach((key, i) => {
+        if (currentWidthPx[i] !== nextWidthPxVisible[i]) updates[key] = nextWidthPxVisible[i];
+      });
+      if (col1HoverVisible !== nextCol1HoverVisible) updates['col1HoverVisible'] = nextCol1HoverVisible;
+      if (Object.keys(updates).length > 0) updateArgs(updates);
+    }, [
+      columnCount, col1Variant, col2Visible, col3Visible, col4Visible, col5Visible, col6Visible,
+      col1Width, col2Width, col3Width, col4Width, col5Width, col6Width,
+      col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible, col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible,
+      col1HoverVisible, updateArgs,
+    ]);
+
+    const getColumn = (idx: number): 'first' | 'center' | 'last' =>
+      idx === 0 ? 'first' : idx === colDefs.length - 1 ? 'last' : 'center';
+
+    const getWidthStyle = (def: typeof colDefs[number]): React.CSSProperties | undefined =>
+      def.width === 'fixed' && Number.isFinite(def.widthPx) && (def.widthPx ?? 0) >= 40
+        ? { width: `${def.widthPx}px` }
+        : undefined;
+
+    const getHeaderAlign = (def: typeof colDefs[number]): 'left' | 'center' | 'right' => def.align ?? 'left';
+
+    const rowAlignment: 'start' | 'center' = colDefs.some(d => multiRowVariants.includes(d.variant))
+      ? 'start'
+      : 'center';
+
+    const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
+
+    return (
+      <InsetStoryFrame>
+        <table className={tableClass}>
+          {showHeader && (
+            <thead>
+              <tr>
+                {colDefs.map((def, colIdx) => (
+                  <th key={colIdx} className="p-0" style={getWidthStyle(def)} aria-sort={def.sortable ? 'none' : undefined}>
+                    <TableHeaderCell
+                      column={getColumn(colIdx)}
+                      align={getHeaderAlign(def)}
+                      label={def.label}
+                      sortable={def.sortable}
+                      checkbox={colIdx === 0 && (colDefs[0] as typeof colDefs[0]).showCheckbox ? <Checkbox size="sm" /> : undefined}
+                    />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {ROW_BUILDER_DATA.map((datum, rowIdx) => (
+              <tr key={rowIdx} className={insetHoverRowClass}>
+                {colDefs.map((def, colIdx) => (
+                  <RowBuilderCell
+                    key={colIdx}
+                    variant={def.variant}
+                    datum={datum}
+                    column={getColumn(colIdx)}
+                    row={rowIdx === ROW_BUILDER_DATA.length - 1 ? 'last' : 'default'}
+                    rowAlignment={rowAlignment}
+                    align={def.align}
+                    inset
+                    showCheckbox={colIdx === 0 ? (def as typeof colDefs[0]).showCheckbox ?? false : false}
+                    hoverStyle={colIdx === 0 ? (def as typeof colDefs[0]).hoverStyle ?? 'off' : 'off'}
+                    widthStyle={getWidthStyle(def)}
+                    hovered={hovered}
+                    selected={selected}
+                  />
+                ))}
+              </tr>
+            ))}
+            {/* 20px bottom spacer — matches default table bottom padding */}
+            <tr>
+              {colDefs.map((_, colIdx) => (
+                <td key={colIdx} className="h-[20px] p-0" />
+              ))}
+            </tr>
+          </tbody>
+        </table>
+      </InsetStoryFrame>
+    );
+  },
 };
 
 /**
@@ -4325,6 +4530,7 @@ const RowBuilderCell = ({
   align,
   showCheckbox = false,
   hoverStyle = 'off',
+  inset = false,
   widthStyle,
   hovered,
   selected,
@@ -4337,6 +4543,7 @@ const RowBuilderCell = ({
   align?: 'left' | 'center' | 'right';
   showCheckbox?: boolean;
   hoverStyle?: 'off' | 'green-bold';
+  inset?: boolean;
   widthStyle?: React.CSSProperties;
   hovered?: boolean;
   selected?: boolean;
@@ -4358,6 +4565,11 @@ const RowBuilderCell = ({
   const greenWrapperVariants: TableCellVariantOption[] = ['text', 'small-channel-icon'];
   const boldOnRowHover = hoverStyle !== 'off' && boldVariants.includes(variant);
   const className = rowAlignment === 'start' ? '!items-start' : '!items-center';
+  // Correct hover-text token per table mode — both are literal strings for JIT
+  const greenHoverClass = inset
+    ? 'group-hover/row:!text-[color:var(--table-inset-body-hover-text)]'
+    : 'group-hover/row:!text-[color:var(--table-body-hover-text)]';
+  const isGreenBold = hoverStyle === 'green-bold';
 
   const content = (() => {
     switch (variant) {
@@ -4367,13 +4579,13 @@ const RowBuilderCell = ({
         return (
           <span className="inline-flex items-center gap-[var(--spacing-12)]">
             <Icon name="check" size={17} className="text-[color:var(--color-icon-secondary)]" />
-            <span className={hoverStyle === 'green-bold' ? 'group-hover/row:!text-[color:var(--table-body-hover-text)]' : ''}>{datum.text}</span>
+            <span className={isGreenBold ? greenHoverClass : ''}>{datum.text}</span>
           </span>
         );
       case 'info-icon':
         return (
           <span className="inline-flex items-center gap-[var(--spacing-8)]">
-            <span className={hoverStyle === 'green-bold' ? 'group-hover/row:!text-[color:var(--table-body-hover-text)]' : ''}>{datum.text}</span>
+            <span className={isGreenBold ? greenHoverClass : ''}>{datum.text}</span>
             <Icon name="info" size={17} className="text-[color:var(--color-icon-secondary)]" />
           </span>
         );
@@ -4433,7 +4645,7 @@ const RowBuilderCell = ({
             textWeight={column === 'first' ? 'bold' : 'normal'}
             channel={datum.store}
             label={listingChannels[datum.store].label}
-            greenHover={hoverStyle === 'green-bold'}
+            greenHoverClass={isGreenBold ? greenHoverClass : ''}
           />
         );
       case 'listing':
@@ -4449,13 +4661,13 @@ const RowBuilderCell = ({
             showMoreSkus={false}
             moreSkuCount={0}
             productNameWeight={column === 'first' ? 'bold' : 'normal'}
-            productNameGreenHover={hoverStyle === 'green-bold'}
+            productNameGreenHoverClass={isGreenBold ? greenHoverClass : ''}
           />
         );
       case 'channel-icon':
-        return <ChannelIconContent bold={column === 'first'} greenHover={hoverStyle === 'green-bold'} />;
+        return <ChannelIconContent bold={column === 'first'} greenHoverClass={isGreenBold ? greenHoverClass : ''} />;
       case 'payment-shipping-method':
-        return <PaymentShippingMethodContent bold={column === 'first'} greenHover={hoverStyle === 'green-bold'} />;
+        return <PaymentShippingMethodContent bold={column === 'first'} greenHoverClass={isGreenBold ? greenHoverClass : ''} />;
       case 'form-field':
         return <FormFieldContent value="1" />;
       case 'tag-with-channel':
@@ -4465,7 +4677,7 @@ const RowBuilderCell = ({
             channel={datum.store}
             label={listingChannels[datum.store].label}
             bold={column === 'first'}
-            greenHover={hoverStyle === 'green-bold'}
+            greenHoverClass={isGreenBold ? greenHoverClass : ''}
           />
         );
       default:
@@ -4476,9 +4688,9 @@ const RowBuilderCell = ({
   // For listing, green hover is scoped to the product title inside TableCellListing.
   // For leading-icon/info-icon, green is on the inner text span (not the outer wrapper).
   // For text/small-channel-icon, wrap the whole content in a green-hover span.
-  const wrappedContent = hoverStyle === 'green-bold' && greenWrapperVariants.includes(variant)
+  const wrappedContent = isGreenBold && greenWrapperVariants.includes(variant)
     ? (
-        <span className="group-hover/row:!text-[color:var(--table-body-hover-text)]">
+        <span className={greenHoverClass}>
           {content}
         </span>
       )
@@ -4491,6 +4703,7 @@ const RowBuilderCell = ({
         row={row}
         hovered={hovered}
         selected={selected}
+        inset={inset}
         checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
         className={className}
         align={alignResolved}

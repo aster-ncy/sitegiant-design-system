@@ -49,10 +49,12 @@ export interface TableCellListingProps {
    */
   productNameWeight?: 'bold' | 'hover' | 'normal';
   /**
-   * When true, applies green text on `group-hover/row` to the product name only.
-   * Pair with `productNameWeight="hover"` for the full hover-bold-green effect.
+   * Tailwind class string applied to the product name on `group-hover/row`.
+   * Pass `'group-hover/row:!text-[color:var(--table-body-hover-text)]'` for default tables
+   * or `'group-hover/row:!text-[color:var(--table-inset-body-hover-text)]'` for inset tables.
+   * Leave empty (default) for no green hover effect.
    */
-  productNameGreenHover?: boolean;
+  productNameGreenHoverClass?: string;
   /**
    * Caption-slim label/value rows beneath the name (e.g. iSKU, SKU).
    * Each row is `flex gap-4 items-start`; rows separated by gap-4 in the
@@ -73,7 +75,6 @@ const productNameWeightClass: Record<'bold' | 'hover' | 'normal', string> = {
   normal: 'font-[var(--font-weight-regular)]',
 };
 
-const productNameGreenHoverClass = 'group-hover/row:!text-[color:var(--table-body-hover-text)]';
 
 const productNameBaseClasses = [
   'block w-full max-h-[34px] overflow-hidden',
@@ -133,14 +134,14 @@ export const TableCellListing = ({
   tag,
   productName,
   productNameWeight = 'bold',
-  productNameGreenHover = false,
+  productNameGreenHoverClass = '',
   infoRows,
   extras,
 }: TableCellListingProps) => {
   const productNameClasses = [
     productNameBaseClasses,
     productNameWeightClass[productNameWeight],
-    productNameGreenHover ? productNameGreenHoverClass : '',
+    productNameGreenHoverClass,
   ].filter(Boolean).join(' ');
   return (
     <div className="flex w-full gap-[var(--spacing-12)] items-start">
