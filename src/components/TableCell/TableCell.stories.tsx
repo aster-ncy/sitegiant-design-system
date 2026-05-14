@@ -4719,7 +4719,7 @@ export const DefaultBodyRow: RowBuilderStory = {
       : 'center';
 
     const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
-    const shellClasses = 'rounded-[var(--radius-12)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-body-fill)] shadow-[var(--shadow-sm)] overflow-hidden';
+    const shellClasses = 'rounded-[var(--radius-card-inset)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-body-fill)] shadow-[var(--shadow-sm)] overflow-hidden';
 
     return (
       <div className={shellClasses}>
@@ -4954,7 +4954,7 @@ export const InsetBodyRow: RowBuilderStory = {
 
     const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
 
-    const shellClasses = 'rounded-[var(--radius-12)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-body-fill)] shadow-[var(--shadow-sm)] pt-[var(--spacing-24)] px-[var(--spacing-24)] pb-[var(--spacing-40)]';
+    const shellClasses = 'rounded-[var(--radius-card-inset)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-body-fill)] shadow-[var(--shadow-sm)] pt-[var(--spacing-24)] px-[var(--spacing-24)] pb-[var(--spacing-40)]';
 
     return (
       <div className={shellClasses}>
