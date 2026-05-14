@@ -4,6 +4,8 @@ import { Checkbox } from '../Checkbox';
 
 type SelectionBarStoryArgs = React.ComponentProps<typeof TableSelectionBar> & {
   actionCount?: 0 | 1 | 2;
+  action1Label?: string;
+  action2Label?: string;
   withMoreAction?: boolean;
   withDelete?: boolean;
 };
@@ -18,10 +20,15 @@ const moreActionMenu = {
   ],
 };
 
-const buildActions = (count: 0 | 1 | 2, withMore: boolean) => {
+const buildActions = (
+  count: 0 | 1 | 2,
+  withMore: boolean,
+  label1: string,
+  label2: string,
+) => {
   const base = [
-    { key: 'a1', label: 'Action 1' },
-    { key: 'a2', label: 'Action 2' },
+    { key: 'a1', label: label1 },
+    { key: 'a2', label: label2 },
   ].slice(0, count);
   return withMore ? [...base, moreActionMenu] : base.length > 0 ? base : undefined;
 };
@@ -33,9 +40,10 @@ const meta = {
   tags: ['autodocs'],
   args: {
     selectedCount: 1,
-    selectedLabel: 'Selected',
     checkbox: <Checkbox size="sm" checked indeterminate />,
     actionCount: 0,
+    action1Label: 'Action 1',
+    action2Label: 'Action 2',
     withMoreAction: false,
     withDelete: false,
     deleteDisabled: false,
@@ -47,17 +55,24 @@ const meta = {
       description: 'Number of selected rows shown in the count chip.',
       table: { category: '1. Content', defaultValue: { summary: '1' } },
     },
-    selectedLabel: {
-      control: 'text',
-      description: 'Suffix after the count. Default `\'Selected\'`.',
-      table: { category: '1. Content', defaultValue: { summary: 'Selected' } },
-    },
     // ── 2. Actions ────────────────────────────────────────────────────────
     actionCount: {
       control: { type: 'inline-radio' },
       options: [0, 1, 2] satisfies ReadonlyArray<0 | 1 | 2>,
-      description: 'Number of plain action buttons to show.',
+      description: 'Number of plain action buttons.',
       table: { category: '2. Actions', defaultValue: { summary: '0' } },
+    },
+    action1Label: {
+      control: 'text',
+      description: 'Label for action button 1.',
+      table: { category: '2. Actions', defaultValue: { summary: 'Action 1' } },
+      if: { arg: 'actionCount', neq: 0 },
+    },
+    action2Label: {
+      control: 'text',
+      description: 'Label for action button 2.',
+      table: { category: '2. Actions', defaultValue: { summary: 'Action 2' } },
+      if: { arg: 'actionCount', eq: 2 },
     },
     withMoreAction: {
       control: 'boolean',
@@ -76,6 +91,7 @@ const meta = {
       if: { arg: 'withDelete', truthy: true },
     },
     // ── Hidden / forwarded props ──────────────────────────────────────────
+    selectedLabel: { table: { disable: true } },
     actions: { table: { disable: true } },
     onDelete: { table: { disable: true } },
     checkbox: { table: { disable: true } },
@@ -83,17 +99,17 @@ const meta = {
   },
   render: ({
     actionCount = 0,
+    action1Label = 'Action 1',
+    action2Label = 'Action 2',
     withMoreAction = false,
     withDelete = false,
     deleteDisabled = false,
     selectedCount = 1,
-    selectedLabel = 'Selected',
   }: SelectionBarStoryArgs) => (
     <TableSelectionBar
       checkbox={<Checkbox size="sm" checked indeterminate />}
       selectedCount={selectedCount}
-      selectedLabel={selectedLabel}
-      actions={buildActions(actionCount, withMoreAction)}
+      actions={buildActions(actionCount, withMoreAction, action1Label, action2Label)}
       onDelete={withDelete ? () => {} : undefined}
       deleteDisabled={deleteDisabled}
     />
