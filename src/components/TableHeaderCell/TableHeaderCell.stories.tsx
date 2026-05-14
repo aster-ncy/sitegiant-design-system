@@ -450,6 +450,7 @@ export const InsetHeaderRow: Story = {
  */
 export const SubheaderRow: Story = {
   argTypes: {
+    // Override meta-level to remove the `if` gate — always show in this story
     subheaderMargin: {
       control: { type: 'inline-radio' },
       options: ['top', 'topBottom'] satisfies ReadonlyArray<'top' | 'topBottom'>,
@@ -458,6 +459,7 @@ export const SubheaderRow: Story = {
     },
   },
   args: {
+    mode: 'subrow' as HeaderMode,
     subheaderMargin: 'top',
   },
   parameters: {
