@@ -449,21 +449,32 @@ export const InsetHeaderRow: Story = {
  * Subheader rows are only for inset tables and suppress sort affordances.
  */
 export const SubheaderRow: Story = {
-  parameters: {
-    controls: { disable: true },
+  argTypes: {
+    subheaderMargin: {
+      control: { type: 'inline-radio' },
+      options: ['top', 'topBottom'] satisfies ReadonlyArray<'top' | 'topBottom'>,
+      description: 'Vertical spacing above (and optionally below) the subheader band.',
+      table: { defaultValue: { summary: 'top' } },
+    },
   },
-  render: () => (
+  args: {
+    subheaderMargin: 'top',
+  },
+  parameters: {
+    controls: { include: ['subheaderMargin'] },
+  },
+  render: ({ subheaderMargin = 'top' }) => (
     <table className="border-collapse w-full">
       <thead>
         <tr>
           <th aria-sort={sortDirectionToAria(null, true)}>
-            <TableHeaderCell inset subheader column="first" align="left" label="Store" sortable />
+            <TableHeaderCell inset subheader subheaderMargin={subheaderMargin} column="first" align="left" label="Store" sortable />
           </th>
           <th>
-            <TableHeaderCell inset subheader column="center" align="left" label="Order" />
+            <TableHeaderCell inset subheader subheaderMargin={subheaderMargin} column="center" align="left" label="Order" />
           </th>
           <th>
-            <TableHeaderCell inset subheader column="last" align="right" label="Total (RM)" />
+            <TableHeaderCell inset subheader subheaderMargin={subheaderMargin} column="last" align="right" label="Total (RM)" />
           </th>
         </tr>
       </thead>
