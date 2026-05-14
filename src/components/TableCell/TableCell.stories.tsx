@@ -1534,6 +1534,7 @@ const tagWithChannelSource = (column: 'center' | 'last') => `<tr className="grou
 
 const defaultHoverRowClass = 'group/row hover:[&_td>div]:bg-[var(--table-body-hover-fill)]';
 const insetHoverRowClass   = 'group/row hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]';
+const subrowHoverRowClass  = 'group/row hover:[&_td>div]:bg-[var(--table-inset-subrow-hover-fill)]';
 
 const RowHoverPreview = ({
   children,
@@ -4297,6 +4298,7 @@ const RowBuilderCell = ({
   showCheckbox = false,
   hoverStyle = 'off',
   inset = false,
+  subrow = false,
   widthStyle,
   hovered,
   selected,
@@ -4310,6 +4312,7 @@ const RowBuilderCell = ({
   showCheckbox?: boolean;
   hoverStyle?: 'off' | 'green-bold';
   inset?: boolean;
+  subrow?: boolean;
   widthStyle?: React.CSSProperties;
   hovered?: boolean;
   selected?: boolean;
@@ -4331,8 +4334,10 @@ const RowBuilderCell = ({
   const greenWrapperVariants: TableCellVariantOption[] = ['text', 'small-channel-icon'];
   const boldOnRowHover = hoverStyle !== 'off' && boldVariants.includes(variant);
   const className = rowAlignment === 'start' ? '!items-start' : '!items-center';
+  // subrow implies inset for green hover token selection
+  const isInsetMode = inset || subrow;
   // Correct hover-text token per table mode — both are literal strings for JIT
-  const greenHoverClass = inset
+  const greenHoverClass = isInsetMode
     ? 'group-hover/row:!text-[color:var(--table-inset-body-hover-text)]'
     : 'group-hover/row:!text-[color:var(--table-body-hover-text)]';
   const isGreenBold = hoverStyle === 'green-bold';
@@ -4470,6 +4475,7 @@ const RowBuilderCell = ({
         hovered={hovered}
         selected={selected}
         inset={inset}
+        subrow={subrow}
         checkbox={showCheckbox ? <Checkbox size="sm" /> : undefined}
         className={className}
         align={alignResolved}
@@ -5169,37 +5175,234 @@ export const ListingBodyRow: ListingBodyRowStory = {
   },
 };
 
-export const SubrowBodyRow: Story = {
-  parameters: visualReferenceParameters,
-  render: () => (
-    <table className="border-collapse w-full table-fixed">
-      <thead>
-        <tr>
-          <th className="p-0">
-            <TableHeaderCell inset subheader column="first" align="left" label="Store" />
-          </th>
-          <th className="p-0">
-            <TableHeaderCell inset subheader column="center" align="left" label="Order" />
-          </th>
-          <th className="p-0">
-            <TableHeaderCell inset subheader column="last" align="right" label="Total (RM)" />
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <Cell subrow column="first">Awesome Store 1899</Cell>
-          <Cell subrow column="center" align="left">25</Cell>
-          <Cell subrow column="last" align="right">10,000.00</Cell>
-        </tr>
-        <tr>
-          <Cell subrow row="last" column="first">Super Hype</Cell>
-          <Cell subrow row="last" column="center" align="left">5</Cell>
-          <Cell subrow row="last" column="last" align="right">10,000.00</Cell>
-        </tr>
-      </tbody>
-    </table>
-  ),
+export const SubrowBodyRow: RowBuilderStory = {
+  name: 'Subrow Builder',
+  argTypes: {
+    ...recipeOnlyControls,
+    ...playgroundOnlyControls,
+    hovered: { control: 'boolean', table: { category: '1. State' } },
+    selected: { control: 'boolean', table: { category: '1. State' } },
+    showHeader: {
+      name: 'Show header',
+      control: 'boolean',
+      table: { category: '2. Columns', defaultValue: { summary: 'true' } },
+    },
+    columnCount: {
+      name: 'Column count',
+      control: { type: 'inline-radio' },
+      options: [1, 2, 3, 4, 5, 6] satisfies ReadonlyArray<1 | 2 | 3 | 4 | 5 | 6>,
+      table: { category: '2. Columns', defaultValue: { summary: '5' } },
+    },
+    // Col 1 controls — explicit order: Variant → Checkbox → Label → Sortable → Align → Hover style → Width → Width (px)
+    col1Variant: {
+      name: 'Col 1 — Variant',
+      control: { type: 'select', labels: tableCellVariantLabels },
+      options: tableCellVariantOptions,
+      table: { category: 'Column 1', defaultValue: { summary: 'text' } },
+    },
+    col1Checkbox: {
+      name: 'Col 1 — Checkbox',
+      control: 'boolean',
+      table: { category: 'Column 1', defaultValue: { summary: 'false' } },
+    },
+    col1Label: {
+      name: 'Col 1 — Header label',
+      control: 'text',
+      table: { category: 'Column 1', defaultValue: { summary: 'Product' } },
+    },
+    col1Sortable: {
+      name: 'Col 1 — Sortable',
+      control: 'boolean',
+      table: { category: 'Column 1', defaultValue: { summary: 'false' } },
+    },
+    col1Align: {
+      name: 'Col 1 — Align',
+      control: { type: 'inline-radio' },
+      options: ['left', 'center', 'right'] satisfies ReadonlyArray<'left' | 'center' | 'right'>,
+      table: { category: 'Column 1', defaultValue: { summary: 'left' } },
+    },
+    col1HoverStyle: {
+      name: 'Col 1 — Hover style',
+      control: { type: 'inline-radio' },
+      options: ['off', 'green-bold'] satisfies ReadonlyArray<'off' | 'green-bold'>,
+      table: { category: 'Column 1', defaultValue: { summary: 'off' } },
+      if: { arg: 'col1HoverVisible', truthy: true },
+    },
+    col1HoverVisible: { table: { disable: true } },
+    col1Width: {
+      name: 'Col 1 — Width',
+      control: { type: 'inline-radio' },
+      options: ['auto', 'fixed'],
+      table: { category: 'Column 1', defaultValue: { summary: 'auto' } },
+    },
+    col1WidthPx: {
+      name: 'Col 1 — Width (px)',
+      control: { type: 'number', min: 40, step: 10 },
+      if: { arg: 'col1WidthPxVisible', truthy: true },
+      table: { category: 'Column 1', defaultValue: { summary: '160' } },
+    },
+    ...colArgTypes(2, 'col2Visible'),
+    ...colArgTypes(3, 'col3Visible'),
+    ...colArgTypes(4, 'col4Visible'),
+    ...colArgTypes(5, 'col5Visible'),
+    ...colArgTypes(6, 'col6Visible'),
+    col2Visible: { table: { disable: true } },
+    col3Visible: { table: { disable: true } },
+    col4Visible: { table: { disable: true } },
+    col5Visible: { table: { disable: true } },
+    col6Visible: { table: { disable: true } },
+    col1WidthPxVisible: { table: { disable: true } },
+    col2WidthPxVisible: { table: { disable: true } },
+    col3WidthPxVisible: { table: { disable: true } },
+    col4WidthPxVisible: { table: { disable: true } },
+    col5WidthPxVisible: { table: { disable: true } },
+    col6WidthPxVisible: { table: { disable: true } },
+  },
+  args: {
+    hovered: false,
+    selected: false,
+    showHeader: true,
+    columnCount: 5,
+    col1Variant: 'text', col1Width: 'auto', col1WidthPx: 160, col1Label: 'Store', col1Sortable: false, col1Align: 'left', col1Checkbox: false, col1HoverStyle: 'off',
+    col2Variant: 'text', col2Width: 'auto', col2WidthPx: 160, col2Label: 'Order', col2Sortable: false, col2Align: 'left',
+    col3Variant: 'text', col3Width: 'auto', col3WidthPx: 160, col3Label: 'Total (RM)', col3Sortable: false, col3Align: 'right',
+    col4Variant: 'text', col4Width: 'auto', col4WidthPx: 160, col4Label: 'Column 4', col4Sortable: false, col4Align: 'left',
+    col5Variant: 'action-icon-buttons', col5Width: 'auto', col5WidthPx: 160, col5Label: 'Action', col5Sortable: false, col5Align: 'right',
+    col6Variant: 'text', col6Width: 'auto', col6WidthPx: 160, col6Label: 'Column 6', col6Sortable: false, col6Align: 'left',
+    col2Visible: false, col3Visible: false, col4Visible: false,
+    col5Visible: false, col6Visible: false,
+    col1WidthPxVisible: false, col2WidthPxVisible: false, col3WidthPxVisible: false,
+    col4WidthPxVisible: false, col5WidthPxVisible: false, col6WidthPxVisible: false,
+    col1HoverVisible: true,
+  },
+  render: ({
+    hovered = false,
+    selected = false,
+    showHeader = true,
+    columnCount = 5,
+    col1Variant = 'text', col1Width = 'auto', col1WidthPx = 160, col1Label = 'Store', col1Sortable = false, col1Align = 'left' as const, col1Checkbox = false, col1HoverStyle = 'off' as const,
+    col2Variant = 'text', col2Width = 'auto', col2WidthPx = 160, col2Label = 'Order', col2Sortable = false, col2Align = 'left' as const,
+    col3Variant = 'text', col3Width = 'auto', col3WidthPx = 160, col3Label = 'Total (RM)', col3Sortable = false, col3Align = 'right' as const,
+    col4Variant = 'text', col4Width = 'auto', col4WidthPx = 160, col4Label = 'Column 4', col4Sortable = false, col4Align = 'left' as const,
+    col5Variant = 'action-icon-buttons', col5Width = 'auto', col5WidthPx = 160, col5Label = 'Action', col5Sortable = false, col5Align = 'right' as const,
+    col6Variant = 'text', col6Width = 'auto', col6WidthPx = 160, col6Label = 'Column 6', col6Sortable = false, col6Align = 'left' as const,
+    col2Visible, col3Visible, col4Visible, col5Visible, col6Visible,
+    col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible,
+    col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible,
+    col1HoverVisible,
+  }) => {
+    const [, updateArgs] = useArgs();
+
+    const colDefs = [
+      { variant: col1Variant, width: col1Width, widthPx: col1WidthPx, label: col1Label, sortable: col1Sortable, align: col1Align, showCheckbox: col1Checkbox, hoverStyle: col1HoverStyle },
+      { variant: col2Variant, width: col2Width, widthPx: col2WidthPx, label: col2Label, sortable: col2Sortable, align: col2Align },
+      { variant: col3Variant, width: col3Width, widthPx: col3WidthPx, label: col3Label, sortable: col3Sortable, align: col3Align },
+      { variant: col4Variant, width: col4Width, widthPx: col4WidthPx, label: col4Label, sortable: col4Sortable, align: col4Align },
+      { variant: col5Variant, width: col5Width, widthPx: col5WidthPx, label: col5Label, sortable: col5Sortable, align: col5Align },
+      { variant: col6Variant, width: col6Width, widthPx: col6WidthPx, label: col6Label, sortable: col6Sortable, align: col6Align },
+    ].slice(0, columnCount);
+
+    useEffect(() => {
+      const hoverSupportedVariants: TableCellVariantOption[] = [
+        'text', 'leading-icon', 'info-icon', 'small-channel-icon',
+        'listing', 'text-info', 'channel-icon', 'payment-shipping-method', 'tag-with-channel',
+      ];
+      const nextColVisible = [true, columnCount >= 2, columnCount >= 3, columnCount >= 4, columnCount >= 5, columnCount >= 6];
+      const nextWidthPxVisible = [
+        col1Width === 'fixed',
+        col2Width === 'fixed' && columnCount >= 2,
+        col3Width === 'fixed' && columnCount >= 3,
+        col4Width === 'fixed' && columnCount >= 4,
+        col5Width === 'fixed' && columnCount >= 5,
+        col6Width === 'fixed' && columnCount >= 6,
+      ];
+      const nextCol1HoverVisible = hoverSupportedVariants.includes(col1Variant);
+      const updates: Record<string, boolean> = {};
+      const visibleKeys = ['col2Visible', 'col3Visible', 'col4Visible', 'col5Visible', 'col6Visible'] as const;
+      const currentVisible = [col2Visible, col3Visible, col4Visible, col5Visible, col6Visible];
+      visibleKeys.forEach((key, i) => {
+        if (currentVisible[i] !== nextColVisible[i + 1]) updates[key] = nextColVisible[i + 1];
+      });
+      const widthPxKeys = ['col1WidthPxVisible', 'col2WidthPxVisible', 'col3WidthPxVisible', 'col4WidthPxVisible', 'col5WidthPxVisible', 'col6WidthPxVisible'] as const;
+      const currentWidthPx = [col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible, col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible];
+      widthPxKeys.forEach((key, i) => {
+        if (currentWidthPx[i] !== nextWidthPxVisible[i]) updates[key] = nextWidthPxVisible[i];
+      });
+      if (col1HoverVisible !== nextCol1HoverVisible) updates['col1HoverVisible'] = nextCol1HoverVisible;
+      if (Object.keys(updates).length > 0) updateArgs(updates);
+    }, [
+      columnCount, col1Variant, col2Visible, col3Visible, col4Visible, col5Visible, col6Visible,
+      col1Width, col2Width, col3Width, col4Width, col5Width, col6Width,
+      col1WidthPxVisible, col2WidthPxVisible, col3WidthPxVisible, col4WidthPxVisible, col5WidthPxVisible, col6WidthPxVisible,
+      col1HoverVisible, updateArgs,
+    ]);
+
+    const getColumn = (idx: number): 'first' | 'center' | 'last' =>
+      idx === 0 ? 'first' : idx === colDefs.length - 1 ? 'last' : 'center';
+
+    const getWidthStyle = (def: typeof colDefs[number]): React.CSSProperties | undefined =>
+      def.width === 'fixed' && Number.isFinite(def.widthPx) && (def.widthPx ?? 0) >= 40
+        ? { width: `${def.widthPx}px` }
+        : undefined;
+
+    const getHeaderAlign = (def: typeof colDefs[number]): 'left' | 'center' | 'right' => def.align ?? 'left';
+
+    const rowAlignment: 'start' | 'center' = colDefs.some(d => multiRowVariants.includes(d.variant))
+      ? 'start'
+      : 'center';
+
+    const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
+    const shellClasses = 'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-subrow-fill)] shadow-[var(--shadow-sm)] pt-[var(--spacing-24)] px-[var(--spacing-24)] pb-[var(--spacing-40)]';
+
+    return (
+      <div className={shellClasses}>
+        <table className={tableClass}>
+          {showHeader && (
+            <thead>
+              <tr>
+                {colDefs.map((def, colIdx) => (
+                  <th key={colIdx} className="p-0" style={getWidthStyle(def)} aria-sort={def.sortable ? 'none' : undefined}>
+                    <TableHeaderCell
+                      inset
+                      subheader
+                      column={getColumn(colIdx)}
+                      align={getHeaderAlign(def)}
+                      label={def.label}
+                      sortable={def.sortable}
+                      checkbox={colIdx === 0 && (colDefs[0] as typeof colDefs[0]).showCheckbox ? <Checkbox size="sm" /> : undefined}
+                    />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          )}
+          <tbody>
+            {ROW_BUILDER_DATA.map((datum, rowIdx) => (
+              <tr key={rowIdx} className={subrowHoverRowClass}>
+                {colDefs.map((def, colIdx) => (
+                  <RowBuilderCell
+                    key={colIdx}
+                    variant={def.variant}
+                    datum={datum}
+                    column={getColumn(colIdx)}
+                    row={rowIdx === ROW_BUILDER_DATA.length - 1 ? 'last' : 'default'}
+                    rowAlignment={rowAlignment}
+                    align={def.align}
+                    subrow
+                    showCheckbox={colIdx === 0 ? (def as typeof colDefs[0]).showCheckbox ?? false : false}
+                    hoverStyle={colIdx === 0 ? (def as typeof colDefs[0]).hoverStyle ?? 'off' : 'off'}
+                    widthStyle={getWidthStyle(def)}
+                    hovered={hovered}
+                    selected={selected}
+                  />
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  },
 };
 
 /**
