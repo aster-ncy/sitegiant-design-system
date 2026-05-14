@@ -20,8 +20,8 @@ export interface TableHeaderCellProps {
    * store-level sub-rows). Implies `inset`. Same horizontal padding as
    * inset header (pl-12 pr-6) but uses the subrow grey fill, drops the
    * leading/trailing corner radii (sub-headers sit between rows, not
-   * at table edges), and suppresses the sort affordance. Vertical
-   * padding follows `subheaderMargin`.
+   * at table edges). Vertical padding follows `subheaderMargin`.
+   * Sort is still available — pass `sortable` to show the sort indicator.
    */
   subheader?: boolean;
   /**
@@ -279,15 +279,11 @@ export const TableHeaderCell = ({
 
   // Default text variant.
   // Sort affordance suppression rules:
-  //   1. Sub-headers are label bands above sub-rows, never sortable in
-  //      product (verified against s2 Sales Channel reference) — force-
-  //      suppress so misuse can't put a chevron in a band that has no
-  //      meaningful sort target.
-  //   2. No icon when there's no label — the chevron has nothing to
+  //   1. No icon when there's no label — the chevron has nothing to
   //      anchor to and visually floats. If a column genuinely has no
   //      header text, use `type='icon'` instead.
   const hasLabel = label !== undefined && label !== null && label !== '';
-  const showSortIndicator = sortable && !subheader && hasLabel;
+  const showSortIndicator = sortable && hasLabel;
 
   return (
     <div className={cellClasses}>
@@ -309,8 +305,8 @@ export const TableHeaderCell = ({
       >
         <button
           type="button"
-          onClick={sortable && !subheader && !disabled ? onSort : undefined}
-          disabled={disabled || !sortable || subheader}
+          onClick={sortable && !disabled ? onSort : undefined}
+          disabled={disabled || !sortable}
           // Note: `aria-sort` is intentionally NOT set here. ARIA exposes
           // sort state on the columnheader (the surrounding <th>), not
           // on the click target. Callers should set it on the <th>:
@@ -320,7 +316,7 @@ export const TableHeaderCell = ({
           className={[
             titleClasses,
             'border-none outline-none bg-transparent p-0',
-            sortable && !subheader && !disabled ? 'cursor-pointer' : 'cursor-default',
+            sortable && !disabled ? 'cursor-pointer' : 'cursor-default',
             // Sort icon always sits to the right of the label, regardless
             // of text alignment — the chevron is a fixed-position
             // affordance, not part of the text flow.
