@@ -4963,6 +4963,7 @@ export const InsetBodyRow: RowBuilderStory = {
                 {colDefs.map((def, colIdx) => (
                   <th key={colIdx} className="p-0" style={getWidthStyle(def)} aria-sort={def.sortable ? 'none' : undefined}>
                     <TableHeaderCell
+                      inset
                       column={getColumn(colIdx)}
                       align={getHeaderAlign(def)}
                       label={def.label}
