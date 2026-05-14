@@ -1474,7 +1474,7 @@ const paymentShippingMethodSource = `<tr className="group/row hover:[&_td>div]:b
   <td className="p-0">
     <TableCell column="first" checkbox={<Checkbox size="sm" />}>
   <span className="inline-flex items-start gap-[var(--spacing-12)]">
-    <span className="inline-flex h-[48px] w-[120px] shrink-0 overflow-hidden rounded-[var(--radius-4)] border border-[color:var(--product-image-border)]">
+    <span className="inline-flex h-[48px] w-[120px] shrink-0 overflow-hidden rounded-[var(--radius-4)] border border-[color:var(--color-product-image-border)]">
       <img src={sitegiantDemoApp} alt="" className="h-full w-full object-cover" />
     </span>
     <span className="inline-flex min-w-0 flex-col items-start gap-[var(--spacing-4)]">
@@ -1962,7 +1962,7 @@ const ChannelIconContent = ({ bold = false, greenHoverClass = '' }: { bold?: boo
 
 const PaymentShippingMethodContent = ({ bold = false, greenHoverClass = '' }: { bold?: boolean; greenHoverClass?: string }) => (
   <span className="inline-flex items-start gap-[var(--spacing-12)]">
-    <span className="inline-flex h-[48px] w-[120px] shrink-0 overflow-hidden rounded-[var(--radius-4)] border border-[color:var(--product-image-border)]">
+    <span className="inline-flex h-[48px] w-[120px] shrink-0 overflow-hidden rounded-[var(--radius-4)] border border-[color:var(--color-product-image-border)]">
       <img src={sitegiantDemoApp} alt="" className="h-full w-full object-cover" />
     </span>
     <StoreMeta bold={bold} greenHoverClass={greenHoverClass} />
