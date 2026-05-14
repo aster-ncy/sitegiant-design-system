@@ -14,6 +14,13 @@ type HeaderCellStoryArgs = React.ComponentProps<typeof TableHeaderCell> & {
 const meta = {
   title: 'Tables/Table Atoms/Header Cell',
   component: TableHeaderCell,
+  decorators: [
+    (Story: () => ReactNode) => (
+      <div className="flex items-center w-full min-h-[80px]">
+        <div className="w-full"><Story /></div>
+      </div>
+    ),
+  ],
   parameters: {
     layout: 'padded',
     controls: {
