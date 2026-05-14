@@ -2,55 +2,10 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableSelectionBar } from './TableSelectionBar';
 import { Checkbox } from '../Checkbox';
 
-const meta = {
-  title: 'Tables/Table Atoms/Selection Bar',
-  component: TableSelectionBar,
-  parameters: { layout: 'padded' },
-  tags: ['autodocs'],
-  args: {
-    selectedCount: 1,
-    checkbox: <Checkbox size="sm" checked indeterminate />,
-  },
-  decorators: [
-    (Story) => (
-      <div className="w-[600px]">
-        <Story />
-      </div>
-    ),
-  ],
-} satisfies Meta<typeof TableSelectionBar>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-export const CountOnly: Story = {};
-
-export const SingleAction: Story = {
-  args: {
-    actions: [{ key: 'a1', label: 'Action 1' }],
-  },
-};
-
-export const MoreAction: Story = {
-  args: {
-    actions: [
-      {
-        key: 'more',
-        label: 'More Action',
-        menuItems: [
-          { key: 'archive', label: 'Archive' },
-          { key: 'duplicate', label: 'Duplicate' },
-          { key: 'export', label: 'Export to CSV' },
-        ],
-      },
-    ],
-  },
-};
-
-export const DeleteOnly: Story = {
-  args: {
-    onDelete: () => {},
-  },
+type SelectionBarStoryArgs = React.ComponentProps<typeof TableSelectionBar> & {
+  actionCount?: 0 | 1 | 2;
+  withMoreAction?: boolean;
+  withDelete?: boolean;
 };
 
 const moreActionMenu = {
@@ -63,114 +18,147 @@ const moreActionMenu = {
   ],
 };
 
-const matrixVariants = [
-  {
-    label: 'No action',
-    props: {},
-  },
-  {
-    label: 'Action 1',
-    props: {
-      actions: [{ key: 'a1', label: 'Action 1' }],
-    },
-  },
-  {
-    label: 'More action',
-    props: {
-      actions: [moreActionMenu],
-    },
-  },
-  {
-    label: 'Trash action',
-    props: {
-      onDelete: () => {},
-    },
-  },
-  {
-    label: 'Action + more',
-    props: {
-      actions: [{ key: 'a1', label: 'Action 1' }, moreActionMenu],
-    },
-  },
-  {
-    label: 'Action + more + trash',
-    props: {
-      actions: [{ key: 'a1', label: 'Action 1' }, moreActionMenu],
-      onDelete: () => {},
-    },
-  },
-  {
-    label: '2 actions + more + trash',
-    props: {
-      actions: [
-        { key: 'a1', label: 'Action 1' },
-        { key: 'a2', label: 'Action 2' },
-        moreActionMenu,
-      ],
-      onDelete: () => {},
-    },
-  },
-];
-
-export const ActionPlusMore: Story = {
-  args: {
-    actions: [{ key: 'a1', label: 'Action 1' }, moreActionMenu],
-  },
+const buildActions = (count: 0 | 1 | 2, withMore: boolean) => {
+  const base = [
+    { key: 'a1', label: 'Action 1' },
+    { key: 'a2', label: 'Action 2' },
+  ].slice(0, count);
+  return withMore ? [...base, moreActionMenu] : base.length > 0 ? base : undefined;
 };
 
-export const ActionMoreDelete: Story = {
+const meta = {
+  title: 'Tables/Table Atoms/Selection Bar',
+  component: TableSelectionBar,
+  parameters: { layout: 'padded' },
+  tags: ['autodocs'],
   args: {
-    actions: [{ key: 'a1', label: 'Action 1' }, moreActionMenu],
-    onDelete: () => {},
+    selectedCount: 1,
+    selectedLabel: 'Selected',
+    checkbox: <Checkbox size="sm" checked indeterminate />,
+    actionCount: 0,
+    withMoreAction: false,
+    withDelete: false,
+    deleteDisabled: false,
   },
+  argTypes: {
+    // ── 1. Content ────────────────────────────────────────────────────────
+    selectedCount: {
+      control: { type: 'number', min: 1, step: 1 },
+      description: 'Number of selected rows shown in the count chip.',
+      table: { category: '1. Content', defaultValue: { summary: '1' } },
+    },
+    selectedLabel: {
+      control: 'text',
+      description: 'Suffix after the count. Default `\'Selected\'`.',
+      table: { category: '1. Content', defaultValue: { summary: 'Selected' } },
+    },
+    // ── 2. Actions ────────────────────────────────────────────────────────
+    actionCount: {
+      control: { type: 'inline-radio' },
+      options: [0, 1, 2] satisfies ReadonlyArray<0 | 1 | 2>,
+      description: 'Number of plain action buttons to show.',
+      table: { category: '2. Actions', defaultValue: { summary: '0' } },
+    },
+    withMoreAction: {
+      control: 'boolean',
+      description: 'Add a "More Action" dropdown after the plain action buttons.',
+      table: { category: '2. Actions', defaultValue: { summary: 'false' } },
+    },
+    withDelete: {
+      control: 'boolean',
+      description: 'Show the trash-icon delete button as the last segment.',
+      table: { category: '2. Actions', defaultValue: { summary: 'false' } },
+    },
+    deleteDisabled: {
+      control: 'boolean',
+      description: 'Disable the delete button.',
+      table: { category: '2. Actions', defaultValue: { summary: 'false' } },
+      if: { arg: 'withDelete', truthy: true },
+    },
+    // ── Hidden / forwarded props ──────────────────────────────────────────
+    actions: { table: { disable: true } },
+    onDelete: { table: { disable: true } },
+    checkbox: { table: { disable: true } },
+    className: { table: { disable: true } },
+  },
+  render: ({
+    actionCount = 0,
+    withMoreAction = false,
+    withDelete = false,
+    deleteDisabled = false,
+    selectedCount = 1,
+    selectedLabel = 'Selected',
+  }: SelectionBarStoryArgs) => (
+    <TableSelectionBar
+      checkbox={<Checkbox size="sm" checked indeterminate />}
+      selectedCount={selectedCount}
+      selectedLabel={selectedLabel}
+      actions={buildActions(actionCount, withMoreAction)}
+      onDelete={withDelete ? () => {} : undefined}
+      deleteDisabled={deleteDisabled}
+    />
+  ),
+} satisfies Meta<SelectionBarStoryArgs>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+// ── Playground ─────────────────────────────────────────────────────────────
+
+export const Playground: Story = {};
+
+// ── Recipe stories ──────────────────────────────────────────────────────────
+
+export const CountOnly: Story = {
+  args: { actionCount: 0, withMoreAction: false, withDelete: false },
+};
+
+export const SingleAction: Story = {
+  args: { actionCount: 1, withMoreAction: false, withDelete: false },
+};
+
+export const MoreAction: Story = {
+  args: { actionCount: 0, withMoreAction: true, withDelete: false },
+};
+
+export const DeleteOnly: Story = {
+  args: { actionCount: 0, withMoreAction: false, withDelete: true },
+};
+
+export const TwoActions: Story = {
+  args: { actionCount: 2, withMoreAction: false, withDelete: false },
+};
+
+export const ActionAndMore: Story = {
+  args: { actionCount: 1, withMoreAction: true, withDelete: false },
+};
+
+export const TwoActionsAndDelete: Story = {
+  args: { actionCount: 2, withMoreAction: false, withDelete: true },
+};
+
+export const ActionMoreAndDelete: Story = {
+  args: { actionCount: 1, withMoreAction: true, withDelete: true },
 };
 
 export const FullToolbar: Story = {
-  args: {
-    actions: [
-      { key: 'a1', label: 'Action 1' },
-      { key: 'a2', label: 'Action 2' },
-      moreActionMenu,
-    ],
-    onDelete: () => {},
-  },
+  args: { actionCount: 2, withMoreAction: true, withDelete: true },
 };
 
 export const MultipleSelected: Story = {
   args: {
     selectedCount: 12,
-    actions: [
-      { key: 'a1', label: 'Edit' },
-      { key: 'a2', label: 'Export' },
-      moreActionMenu,
-    ],
-    onDelete: () => {},
+    actionCount: 2,
+    withMoreAction: true,
+    withDelete: true,
   },
 };
 
-/**
- * Figma parity matrix for Table Header - Selected (1920:5138 / 1920:5155).
- * This node was already represented by the smaller stories above; keep
- * those smaller stories for copyable product code.
- */
-export const FigmaMatrix: Story = {
-  render: () => (
-    <div className="flex w-[560px] flex-col gap-[var(--spacing-16)]">
-      <p className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">
-        Visual check only. Use CountOnly, SingleAction, MoreAction, DeleteOnly, or the action-combo stories for copyable product code.
-      </p>
-      {matrixVariants.map(({ label, props }) => (
-        <div key={label} className="flex flex-col gap-[var(--spacing-4)]">
-          <span className="text-[length:var(--text-12)] leading-[var(--leading-15)] text-[color:var(--color-text-info)]">
-            {label}
-          </span>
-          <TableSelectionBar
-            selectedCount={label.startsWith('2 actions') ? 2 : 1}
-            checkbox={<Checkbox size="sm" checked indeterminate />}
-            {...props}
-          />
-        </div>
-      ))}
-    </div>
-  ),
+export const DeleteDisabled: Story = {
+  args: {
+    actionCount: 1,
+    withMoreAction: false,
+    withDelete: true,
+    deleteDisabled: true,
+  },
 };
