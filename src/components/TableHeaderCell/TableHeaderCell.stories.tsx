@@ -4,7 +4,7 @@ import { TableHeaderCell } from './TableHeaderCell';
 import { sortDirectionToAria } from './sortDirectionToAria';
 import { Checkbox } from '../Checkbox';
 
-type HeaderMode = 'default' | 'inset';
+type HeaderMode = 'default' | 'inset' | 'subrow';
 type HeaderCellStoryArgs = React.ComponentProps<typeof TableHeaderCell> & {
   mode?: HeaderMode;
   withCheckbox?: boolean;
@@ -25,8 +25,8 @@ const meta = {
   argTypes: {
     mode: {
       control: { type: 'inline-radio' },
-      options: ['default', 'inset'] satisfies ReadonlyArray<HeaderMode>,
-      description: 'Storybook control for header sizing/fill. Maps to the component `inset` prop.',
+      options: ['default', 'inset', 'subrow'] satisfies ReadonlyArray<HeaderMode>,
+      description: 'Storybook control for header mode. `inset` sets the inset prop; `subrow` sets inset + subheader.',
       table: { defaultValue: { summary: 'default' } },
     },
     type: { table: { disable: true } },
@@ -60,7 +60,7 @@ const meta = {
     subheader: {
       control: 'boolean',
       if: { arg: 'mode', eq: 'inset' },
-      description: 'Sub-row header band. Use only inside an inset table.',
+      description: 'Sub-row header band (inset mode only). For subrow mode this is always on.',
     },
     label: {
       if: { arg: 'type', eq: 'default' },
@@ -88,8 +88,8 @@ const meta = {
     withHint: false,
   },
   render: ({ mode = 'default', inset, withCheckbox, withHint, column, type, subheader, ...args }) => {
-    const isInsetMode = mode === 'inset' || inset;
-    const isSubheader = Boolean(isInsetMode && subheader);
+    const isInsetMode = mode === 'inset' || mode === 'subrow' || inset;
+    const isSubheader = mode === 'subrow' || Boolean(isInsetMode && subheader);
     const showCheckbox = Boolean(withCheckbox && column === 'first' && type !== 'icon' && !isSubheader);
     const showHint = Boolean(withHint && type !== 'icon' && !isSubheader);
 
