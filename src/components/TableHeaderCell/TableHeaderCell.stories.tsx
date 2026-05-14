@@ -25,7 +25,7 @@ const meta = {
     layout: 'padded',
     controls: {
       sort: 'none',
-      exclude: ['inset', 'type', 'checkbox', 'hint', 'className', 'onSort', 'icon', 'iconAriaLabel', 'disabled'],
+      exclude: ['inset', 'type', 'checkbox', 'className', 'onSort', 'icon', 'iconAriaLabel', 'disabled'],
     },
   },
   tags: ['autodocs'],
@@ -50,11 +50,9 @@ const meta = {
     },
     checkbox: {
       control: false,
-      if: { arg: 'column', eq: 'first' },
     },
     withCheckbox: {
       control: 'boolean',
-      if: { arg: 'column', eq: 'first' },
       description: 'Storybook-only control. Shows the select-all checkbox in the first-column slot.',
       table: { defaultValue: { summary: 'false' } },
     },
@@ -75,9 +73,10 @@ const meta = {
     },
     subheaderMargin: {
       control: { type: 'inline-radio' },
-      if: { arg: 'subheader', truthy: true },
+      if: { arg: 'mode', neq: 'default' },
       options: ['top', 'topBottom'],
     },
+    hint: { table: { disable: true } },
     icon: { table: { disable: true } },
     iconAriaLabel: { table: { disable: true } },
     disabled: { table: { disable: true } },
@@ -97,8 +96,8 @@ const meta = {
   render: ({ mode = 'default', inset, withCheckbox, withHint, column, type, subheader, ...args }) => {
     const isInsetMode = mode === 'inset' || mode === 'subrow' || inset;
     const isSubheader = mode === 'subrow' || Boolean(isInsetMode && subheader);
-    const showCheckbox = Boolean(withCheckbox && column === 'first' && type !== 'icon' && !isSubheader);
-    const showHint = Boolean(withHint && type !== 'icon' && !isSubheader);
+    const showCheckbox = Boolean(withCheckbox && type !== 'icon');
+    const showHint = Boolean(withHint && type !== 'icon');
 
     return (
       <TableHeaderCell
