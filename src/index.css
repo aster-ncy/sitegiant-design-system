@@ -772,6 +772,8 @@
   /* Semantic radii (Number-Token) */
   --radius-card: 20px;
   --radius-card-inset: 12px;
+  --inset-card-radii: 12px;  /* Figma: inset-card-radii */
+  --card-radii: 20px;         /* Figma: card-radii */
 
   /* ========================================
      BORDER WIDTH / STROKE (Core Primitives)
