@@ -4954,7 +4954,7 @@ export const InsetBodyRow: RowBuilderStory = {
 
     const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
 
-    const shellClasses = 'rounded-[var(--radius-12)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-body-fill)] shadow-[var(--shadow-sm)] overflow-hidden';
+    const shellClasses = 'rounded-[var(--radius-12)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-body-fill)] shadow-[var(--shadow-sm)] pt-[var(--spacing-24)] px-[var(--spacing-24)] pb-[var(--spacing-40)]';
 
     return (
       <div className={shellClasses}>
@@ -4999,12 +4999,6 @@ export const InsetBodyRow: RowBuilderStory = {
                 ))}
               </tr>
             ))}
-            {/* 20px bottom spacer — matches inset table bottom padding */}
-            <tr>
-              {colDefs.map((_, colIdx) => (
-                <td key={colIdx} className="h-[20px] p-0" />
-              ))}
-            </tr>
           </tbody>
         </table>
       </div>
