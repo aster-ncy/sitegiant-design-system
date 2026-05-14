@@ -4954,8 +4954,10 @@ export const InsetBodyRow: RowBuilderStory = {
 
     const tableClass = colDefs.some(d => d.width === 'fixed') ? 'border-collapse w-full' : 'border-collapse w-full table-fixed';
 
+    const shellClasses = 'rounded-[var(--radius-12)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-inset-body-fill)] overflow-hidden';
+
     return (
-      <InsetStoryFrame>
+      <div className={shellClasses}>
         <table className={tableClass}>
           {showHeader && (
             <thead>
@@ -5005,7 +5007,7 @@ export const InsetBodyRow: RowBuilderStory = {
             </tr>
           </tbody>
         </table>
-      </InsetStoryFrame>
+      </div>
     );
   },
 };
