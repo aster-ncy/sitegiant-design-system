@@ -40,7 +40,6 @@ const meta = {
   tags: ['autodocs'],
   args: {
     selectedCount: 1,
-    checkbox: <Checkbox size="sm" checked indeterminate />,
     actionCount: 0,
     action1Label: 'Action 1',
     action2Label: 'Action 2',
@@ -94,7 +93,7 @@ const meta = {
     selectedLabel: { table: { disable: true } },
     actions: { table: { disable: true } },
     onDelete: { table: { disable: true } },
-    checkbox: { table: { disable: true } },
+    checkbox: { table: { disable: true } },  // rendered directly in render fn
     className: { table: { disable: true } },
   },
   render: ({
