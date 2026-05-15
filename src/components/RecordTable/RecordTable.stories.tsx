@@ -7,6 +7,27 @@ import { RecordTableListingCell } from './RecordTableListingCell';
 import { RecordTableMoreInfoCell } from './RecordTableMoreInfoCell';
 import { RecordTableRowCell } from './RecordTableRowCell';
 import type { TableColumnPosition } from '../TableHeaderCell';
+import { productImages } from '../../assets/product-images';
+
+// ── Product data (mirrors TableCell stories listing products) ────────────────
+
+type ProductKey = 'product-1' | 'product-2' | 'product-3' | 'product-4' | 'product-5';
+
+const listingProducts: Record<ProductKey, { image: { src: string; alt: string }; productName: string; iSku: string; sku: string }> = {
+  'product-1': { image: productImages[0], productName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs', iSku: 'ISKU-LDC-240321-MY-0001', sku: 'DYN-4IN1-FRESH-10ML52' },
+  'product-2': { image: productImages[1], productName: 'Premium Wireless Barcode Scanner USB-C Set', iSku: 'ISKU-BAR-240422-MY-0002', sku: 'SCAN-USB-C-PRO-BLK' },
+  'product-3': { image: productImages[2], productName: 'Thermal Shipping Label Roll 100mm x 150mm', iSku: 'ISKU-LBL-240515-MY-0003', sku: 'LBL-100X150-500PCS' },
+  'product-4': { image: productImages[3], productName: 'Eco Kraft Mailer Box Medium 30 Pieces', iSku: 'ISKU-PKG-240603-MY-0004', sku: 'BOX-KRAFT-M-30' },
+  'product-5': { image: productImages[4], productName: 'Mini Desktop Receipt Printer Bluetooth', iSku: 'ISKU-PRT-240711-MY-0005', sku: 'PRT-BT-MINI-WHT' },
+};
+
+const productKeyLabels: Record<ProductKey, string> = {
+  'product-1': 'Product 1 — DYNAMO',
+  'product-2': 'Product 2 — Barcode Scanner',
+  'product-3': 'Product 3 — Shipping Label',
+  'product-4': 'Product 4 — Mailer Box',
+  'product-5': 'Product 5 — Receipt Printer',
+};
 
 // ── Shared types ────────────────────────────────────────────────────────────
 
@@ -39,7 +60,7 @@ type PlaygroundArgs = {
   // Listing
   listingColumn: 'first' | 'center';
   listingHovered: boolean;
-  listingProductName: string;
+  listingProduct: ProductKey;
   // More info
   moreInfoColumn: 'first' | 'center';
   moreInfoHovered: boolean;
@@ -209,10 +230,11 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       table: { category: '6. Listing', defaultValue: { summary: 'false' } },
       if: { arg: 'cellType', eq: 'listing' },
     },
-    listingProductName: {
-      control: 'text',
-      description: 'Product name text.',
-      table: { category: '6. Listing', defaultValue: { summary: 'DYNAMO 4in1 Laundry Capsules…' } },
+    listingProduct: {
+      control: { type: 'select', labels: productKeyLabels },
+      options: ['product-1', 'product-2', 'product-3', 'product-4', 'product-5'] satisfies ReadonlyArray<ProductKey>,
+      description: 'Product record — changes name, image, iSKU and SKU together.',
+      table: { category: '6. Listing', defaultValue: { summary: 'product-1' } },
       if: { arg: 'cellType', eq: 'listing' },
     },
     // ── More info controls ────────────────────────────────────────────────
@@ -279,7 +301,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     // Listing
     listingColumn: 'first',
     listingHovered: false,
-    listingProductName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
+    listingProduct: 'product-1',
     // More info
     moreInfoColumn: 'first',
     moreInfoHovered: false,
@@ -294,7 +316,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     rowColumn, rowHovered, rowValue, rowHint, rowShowActionIcon,
     formColumn, formHovered, formPrefix, formValue, formPlaceholder,
     actionType, actionCount, actionHovered, actionLabel,
-    listingColumn, listingHovered, listingProductName,
+    listingColumn, listingHovered, listingProduct,
     moreInfoColumn, moreInfoHovered, moreInfoLabel, moreInfoValue, moreInfoShowExtra, moreInfoShowLink,
   }: PlaygroundArgs) => {
     if (cellType === 'header') {
@@ -349,12 +371,17 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       );
     }
     if (cellType === 'listing') {
+      const product = listingProducts[listingProduct ?? 'product-1'];
       return (
         <div className="w-[409px]">
           <RecordTableListingCell
             column={listingColumn}
             hovered={listingHovered}
-            productName={listingProductName}
+            productName={product.productName}
+            imageSrc={product.image.src}
+            imageAlt={product.image.alt}
+            iSku={product.iSku}
+            sku={product.sku}
           />
         </div>
       );
@@ -496,25 +523,35 @@ export const ActionButtonRow: StoryObj<ActionArgs> = {
 type ListingArgs = {
   column: 'first' | 'center';
   hovered: boolean;
-  productName: string;
+  product: ProductKey;
 };
 
 export const ListingRow: StoryObj<ListingArgs> = {
   argTypes: {
     column: { control: { type: 'inline-radio' }, options: ['first', 'center'] },
     hovered: { control: 'boolean' },
-    productName: { control: 'text', description: 'Product name text.' },
+    product: {
+      control: { type: 'select', labels: productKeyLabels },
+      options: ['product-1', 'product-2', 'product-3', 'product-4', 'product-5'] satisfies ReadonlyArray<ProductKey>,
+      description: 'Product record — changes name, image, iSKU and SKU together.',
+    },
   },
-  args: { column: 'first', hovered: false, productName: 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs' },
-  render: ({ column, hovered, productName }: ListingArgs) => (
-    <div className="w-[409px]">
-      <RecordTableListingCell
-        column={column}
-        hovered={hovered}
-        productName={productName}
-      />
-    </div>
-  ),
+  args: { column: 'first', hovered: false, product: 'product-1' },
+  render: ({ column, hovered, product }: ListingArgs) => {
+    const p = listingProducts[product];
+    return (
+      <div className="w-[409px]">
+        <RecordTableListingCell
+          column={column}
+          hovered={hovered}
+          productName={p.productName}
+          imageSrc={p.image.src}
+          iSku={p.iSku}
+          sku={p.sku}
+        />
+      </div>
+    );
+  },
 };
 
 type MoreInfoArgs = {

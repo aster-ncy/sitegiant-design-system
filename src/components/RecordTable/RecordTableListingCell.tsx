@@ -14,6 +14,9 @@ export interface RecordTableListingCellProps {
   checkbox?: ReactNode;
   productName?: ReactNode;
   imageSrc?: string;
+  imageAlt?: string;
+  iSku?: string;
+  sku?: string;
   className?: string;
 }
 
@@ -60,6 +63,9 @@ export const RecordTableListingCell = ({
   checkbox,
   productName = 'DYNAMO 4in1 Laundry Capsules Fresh 10ml 52pcs',
   imageSrc = productImage,
+  imageAlt = '',
+  iSku = 'ISKU-LDC-240321-MY-0001',
+  sku = 'DYN-4IN1-FRESH-10ML52',
   className = '',
 }: RecordTableListingCellProps) => {
   const resolvedCheckbox = checkbox ?? <Checkbox size="sm" />;
@@ -81,7 +87,7 @@ export const RecordTableListingCell = ({
 
       <div className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-8)]">
         <div className="flex w-full items-start gap-[var(--spacing-12)]">
-          <ProductImage src={imageSrc} alt="" size="lg" />
+          <ProductImage src={imageSrc} alt={imageAlt} size="lg" />
 
           <div className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-4)]">
             <Pip type="success" label="Published" />
@@ -95,8 +101,8 @@ export const RecordTableListingCell = ({
             >
               {productName}
             </span>
-            <InfoRow label="iSKU" value="ISKU-LDC-240321-MY-0001" />
-            <InfoRow label="SKU" value="DYN-4IN1-FRESH-10ML52" />
+            <InfoRow label="iSKU" value={iSku} />
+            <InfoRow label="SKU" value={sku} />
             <div className="flex items-start gap-[var(--spacing-20)]">
               <span className="inline-flex items-center gap-[var(--spacing-4)]">
                 <img src={sitegiantWebstore} alt="" aria-hidden="true" className="size-[15px] shrink-0" />
