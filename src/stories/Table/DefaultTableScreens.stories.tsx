@@ -48,7 +48,7 @@ const Cell = ({ children, alignTop = false, ...rest }: CellProps) => (
 // inner shadow per Figma 955:864), so a plain border around the table
 // closes the box.
 const tableShellClasses =
-  'rounded-[var(--radius-12)] border border-[var(--surface-divider-light-border)] bg-[var(--table-body-fill)] overflow-hidden';
+  'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-body-fill)] overflow-hidden';
 
 // Tailwind selector that lights every cell in a hovered row.
 // Pair with `boldOnRowHover` on the first cell to wire the live ERP

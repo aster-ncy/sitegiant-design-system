@@ -91,10 +91,15 @@ const TH = (props: React.ComponentProps<typeof TableHeaderCell>) => (
   </th>
 );
 
+// Row hover fill for inset table rows — lights every cell in the row on hover.
+const insetRowHover = 'group/row hover:[&>td>div]:bg-[var(--table-inset-body-hover-fill)]';
+// Subrow hover fill
+const subrowHover = 'group/row hover:[&>td>div]:bg-[var(--table-inset-subrow-hover-fill)]';
+
 const cardClasses = [
   'bg-[var(--color-surface-card)]',
   'border border-solid border-[color:var(--color-surface-card-border)]',
-  'rounded-[var(--radius-8)]',
+  'rounded-[var(--inset-card-radii)]',
   'p-[var(--spacing-24)]',
 ].join(' ');
 
@@ -134,7 +139,7 @@ export const S1WalletRecord: Story = {
             // top of the row, not vertical-center against the MainSub stack.
             const rowProp = index === all.length - 1 ? 'last' : 'default';
             return (
-            <tr key={index}>
+            <tr key={index} className={insetRowHover}>
               <Cell alignTop inset column="first" row={rowProp}>
                 22-10-2020 9:54
               </Cell>
@@ -243,7 +248,7 @@ export const S2SalesChannel: Story = {
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr className={insetRowHover}>
               <Cell inset column="first">
                 <ChannelLabel name="SHOPEE MY" channel="shopee-my" />
               </Cell>
@@ -262,19 +267,19 @@ export const S2SalesChannel: Story = {
               <>
                 <tr>
                   <th className="p-0">
-                    <TableHeaderCell subheader subheaderMargin="top" column="first" align="left" label="Store" />
+                    <TableHeaderCell inset subheader subheaderMargin="top" column="first" align="left" label="Store" />
                   </th>
                   <th className="p-0">
-                    <TableHeaderCell subheader subheaderMargin="top" column="center" align="right" label="Order" />
+                    <TableHeaderCell inset subheader subheaderMargin="top" column="center" align="right" label="Order" />
                   </th>
                   <th className="p-0">
-                    <TableHeaderCell subheader subheaderMargin="top" column="center" align="right" label="Total (RM)" />
+                    <TableHeaderCell inset subheader subheaderMargin="top" column="center" align="right" label="Total (RM)" />
                   </th>
                   <th className="p-0">
-                    <TableHeaderCell subheader subheaderMargin="top" column="last" align="right" label="" />
+                    <TableHeaderCell inset subheader subheaderMargin="top" column="last" align="right" label="" />
                   </th>
                 </tr>
-                <tr>
+                <tr className={subrowHover}>
                   <Cell subrow column="first">Awesome Store 1899</Cell>
                   <Cell subrow column="center" align="right">25</Cell>
                   <Cell subrow column="center" align="right">
@@ -282,7 +287,7 @@ export const S2SalesChannel: Story = {
                   </Cell>
                   <Cell subrow column="last" align="right" />
                 </tr>
-                <tr>
+                <tr className={subrowHover}>
                   <Cell subrow column="first">Super Hype</Cell>
                   <Cell subrow column="center" align="right">5</Cell>
                   <Cell subrow column="center" align="right">
@@ -292,7 +297,7 @@ export const S2SalesChannel: Story = {
                 </tr>
               </>
             )}
-            <tr>
+            <tr className={insetRowHover}>
               <Cell inset column="first">
                 <ChannelLabel name="SHOPEE SG" channel="shopee-sg" />
               </Cell>
@@ -307,7 +312,7 @@ export const S2SalesChannel: Story = {
                 />
               </Cell>
             </tr>
-            <tr>
+            <tr className={insetRowHover}>
               <Cell inset column="first">
                 <ChannelLabel name="TIKTOK MY" channel="tiktok-my" />
               </Cell>
@@ -322,7 +327,7 @@ export const S2SalesChannel: Story = {
                 />
               </Cell>
             </tr>
-            <tr>
+            <tr className={insetRowHover}>
               <Cell inset column="first" row="last">
                 <ChannelLabel name="LAZADA MY" channel="lazada-my" />
               </Cell>
@@ -365,7 +370,7 @@ export const S3InventoryHold: Story = {
         </thead>
         <tbody>
           {Array.from({ length: 6 }).map((_, index, all) => (
-            <tr key={index}>
+            <tr key={index} className={insetRowHover}>
               <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'default'}>
                 mega-packaging-095939
               </Cell>
@@ -416,7 +421,7 @@ export const S4ImportedList: Story = {
             { state: 'failed', completed: 2, total: 10 },
             { state: 'done', completed: 10, total: 10 },
           ].map((row, index, all) => (
-            <tr key={index}>
+            <tr key={index} className={insetRowHover}>
               <Cell inset column="first" row={index === all.length - 1 ? 'last' : 'default'}>
                 2025-11-06 13:56:56
               </Cell>
@@ -480,13 +485,13 @@ export const S5CourierService: Story = {
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <tr className={insetRowHover}>
             <Cell inset column="first" weight="bold">Shopee Express (West Malaysia)</Cell>
             <Cell inset column="last">
               <IconButton name="edit" variant="basic" label="Edit courier service" />
             </Cell>
           </tr>
-          <tr>
+          <tr className={insetRowHover}>
             <Cell inset column="first" weight="bold" row="last">Black Cat</Cell>
             <Cell inset column="last" row="last">
               <IconButton name="edit" variant="basic" label="Edit courier service" />
@@ -543,7 +548,7 @@ export const S6SendToLalamove: Story = {
             // the Trip ID.
             const rowProp = index === all.length - 1 ? 'last' : 'default';
             return (
-            <tr key={row.id}>
+            <tr key={row.id} className={insetRowHover}>
               <Cell alignTop inset column="first" checkbox={<Checkbox size="sm" />} row={rowProp}>
                 <TableCellMainSub mainBold mainValue={row.id} subValue={row.code} />
               </Cell>
@@ -753,7 +758,7 @@ export const S8SelectPackage: Story = {
                 // alignTop: rows mix the 3-line tracking stack
                 // (bold tracking + Order ID + COID) with single-line
                 // Order Date / Shipment Due Date / Store cells.
-                <tr key={row.id}>
+                <tr key={row.id} className={insetRowHover}>
                   <Cell
                     alignTop
                     inset
@@ -878,7 +883,7 @@ export const S9OrderReturn: Story = {
             // aligned numeric cells should anchor at the top.
             const rowProp = index === all.length - 1 ? 'last' : 'default';
             return (
-            <tr key={index}>
+            <tr key={index} className={insetRowHover}>
               <Cell
                 alignTop
                 inset
