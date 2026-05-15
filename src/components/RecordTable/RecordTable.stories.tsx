@@ -568,7 +568,6 @@ export const HeaderMatrix: Story = {
           <Fragment key={align}>
             <MatrixLabel key={`${align}-label`}>{align}</MatrixLabel>
             {columns.map((column) => (
-              {/* checkbox omitted — auto-inserts for column='first', none for center/last */}
               <RecordTableHeaderCell
                 key={`${column}-${align}`}
                 column={column}
