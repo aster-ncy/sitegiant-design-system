@@ -46,14 +46,14 @@ const sectionShell = 'flex flex-col gap-[var(--spacing-12)]';
 const headingClass = 'text-[length:var(--text-16)] leading-[var(--leading-24)] font-[var(--font-weight-bold)] text-[color:var(--color-text-primary)]';
 const bodyClass = 'text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-info)]';
 const noteClass = 'text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]';
-const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[var(--table-divider-border)] bg-[var(--table-body-fill)]';
-const guidanceShell = 'rounded-[var(--radius-4)] border border-solid border-[var(--table-divider-border)] bg-[var(--table-body-fill)] px-[var(--spacing-16)]';
+const tableShell = 'overflow-hidden rounded-[var(--radius-12)] border border-solid border-[color:var(--table-divider-border)] bg-[var(--table-body-fill)]';
+const guidanceShell = 'rounded-[var(--radius-4)] border border-solid border-[color:var(--table-divider-border)] bg-[var(--table-body-fill)] px-[var(--spacing-16)]';
 const bodyCellSurfaceClass = 'bg-[var(--table-body-fill)]';
 const insetBodyCellSurfaceClass = 'bg-[var(--table-inset-body-fill)]';
 const insetSubrowCellSurfaceClass = 'bg-[var(--table-inset-subrow-fill)]';
 const selectedCellSurfaceClass = 'bg-[var(--color-sys-blue-lighter)]';
-const rowDividerCellClass = 'border-b border-solid border-[var(--table-divider-border)]';
-const insetRowDividerCellClass = 'border-b border-solid border-[var(--table-divider-lighter-border)]';
+const rowDividerCellClass = 'border-b border-solid border-[color:var(--table-divider-border)]';
+const insetRowDividerCellClass = 'border-b border-solid border-[color:var(--table-divider-lighter-border)]';
 const recordHeaderBorderClass = '[border-width:1px_1px_1px_0]';
 const recordBodyBorderClass = '[border-width:0_1px_1px_0]';
 const recordFirstColumnBorderClass = '[border-left-width:1px]';
@@ -67,7 +67,7 @@ const GuidanceRow = ({
   label: string;
   children: React.ReactNode;
 }) => (
-  <div className="grid grid-cols-[160px_1fr] gap-[var(--spacing-16)] border-b border-solid border-[var(--table-divider-border)] py-[var(--spacing-8)] last:border-b-0">
+  <div className="grid grid-cols-[160px_1fr] gap-[var(--spacing-16)] border-b border-solid border-[color:var(--table-divider-border)] py-[var(--spacing-8)] last:border-b-0">
     <span className="font-[var(--font-weight-bold)] text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-primary)]">
       {label}
     </span>
@@ -98,7 +98,7 @@ const ActionIconLinks = () => (
       className={[
         'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
         'text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)]',
-        'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+        'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--button-primary-default-fill)]',
       ].join(' ')}
     />
     <IconLink
@@ -109,7 +109,7 @@ const ActionIconLinks = () => (
       className={[
         'inline-flex h-[33px] w-[33px] shrink-0 items-center justify-center rounded-[var(--radius-120)] p-[var(--spacing-8)]',
         'text-[color:var(--icon-link-danger-default)] hover:text-[color:var(--icon-link-danger-hover)] active:text-[color:var(--icon-link-danger-clicked)]',
-        'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]',
+        'cursor-pointer transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--button-primary-default-fill)]',
       ].join(' ')}
     />
   </div>
@@ -335,13 +335,13 @@ const ExpandableRowsDemo = () => {
             <>
               <tr>
                 <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
-                  <TableHeaderCell subheader column="first" label="Store" />
+                  <TableHeaderCell inset subheader column="first" label="Store" />
                 </td>
                 <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
-                  <TableHeaderCell subheader align="right" label="Sales" />
+                  <TableHeaderCell inset subheader align="right" label="Sales" />
                 </td>
                 <td className={`p-0 ${insetSubrowCellSurfaceClass}`}>
-                  <TableHeaderCell subheader column="last" align="right" label="Orders" />
+                  <TableHeaderCell inset subheader column="last" align="right" label="Orders" />
                 </td>
               </tr>
               <tr>
@@ -393,7 +393,7 @@ const InsetTableDemo = () => (
       <tbody>
         {insetTableRows.map((row, index) => {
           const isLastRow = index === insetTableRows.length - 1;
-          const dividerClass = isLastRow ? 'border-b border-solid border-[var(--table-divider-last-border)]' : insetRowDividerCellClass;
+          const dividerClass = isLastRow ? 'border-b border-solid border-[color:var(--table-divider-last-border)]' : insetRowDividerCellClass;
 
           return (
             <tr key={row.trackingNo} className="group/row hover:[&_td]:bg-[var(--table-inset-body-hover-fill)] hover:[&_td>div]:bg-[var(--table-inset-body-hover-fill)]">
@@ -427,16 +427,16 @@ const RecordTableDemo = () => {
     <div className="inline-block">
       <div className="grid w-[900px] grid-cols-[409px_190px_190px_111px]">
         <RecordTableHeaderCell column="first" label="Listing" className={`${recordHeaderBorderClass} ${recordFirstColumnBorderClass}`} />
-        <RecordTableHeaderCell label="Price" checkbox={null} className={recordHeaderBorderClass} />
-        <RecordTableHeaderCell label="Stock" checkbox={null} className={recordHeaderBorderClass} />
-        <RecordTableHeaderCell column="last" align="left" label="Action" checkbox={null} sortable={false} className={recordHeaderBorderClass} />
+        <RecordTableHeaderCell label="Price" className={recordHeaderBorderClass} />
+        <RecordTableHeaderCell label="Stock" className={recordHeaderBorderClass} />
+        <RecordTableHeaderCell column="last" align="left" label="Action" sortable={false} className={recordHeaderBorderClass} />
         <RecordTableListingCell column="first" className={`${recordBodyBorderClass} ${recordFirstColumnBorderClass}`} />
-        <TableCell inset className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass}`}>
+        <TableCell inset className={`h-full !items-start border border-solid border-[color:var(--table-divider-border)] ${recordBodyBorderClass}`}>
           <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
         </TableCell>
         <TableCell
           inset
-          className={`h-full !items-start border border-solid border-[var(--table-divider-border)] ${recordBodyBorderClass} ${editingStock ? '' : 'cursor-pointer'}`}
+          className={`h-full !items-start border border-solid border-[color:var(--table-divider-border)] ${recordBodyBorderClass} ${editingStock ? '' : 'cursor-pointer'}`}
           onClick={() => setEditingStock(true)}
         >
           {editingStock ? (
