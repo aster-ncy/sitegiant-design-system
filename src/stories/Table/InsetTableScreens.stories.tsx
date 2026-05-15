@@ -967,12 +967,16 @@ export const S10ShockingSale: Story = {
         <div className="rounded-[var(--radius-4)] overflow-hidden">
           <table className="border-collapse w-full table-fixed">
             <tbody>
-              {/* Top Tier — product header */}
+              {/* Top Tier — product header spanning all columns.
+                  column="first" gives the top-left round + left border.
+                  !border-r + rounded-tr close the right edge since colSpan
+                  means no sibling cell paints the last-column right border. */}
               <tr className="group/row">
                 <td className="p-0" colSpan={7}>
                   <TableCardCell
                     tier="top"
                     column="first"
+                    mode="default"
                     checkbox={<Checkbox size="sm" />}
                     className="!border-r rounded-tr-[var(--radius-4)]"
                   >
@@ -988,38 +992,41 @@ export const S10ShockingSale: Story = {
                   </TableCardCell>
                 </td>
               </tr>
-              {/* Bottom Tier — variant rows */}
+              {/* Bottom Tier — variant rows.
+                  mode="default" gives consistent pl-24 pr-12 on first column
+                  and pl-12 pr-6 on center/last, matching the atom spec.
+                  status-toggle on column="last" auto-flips to pl-12 pr-24. */}
               {variants.map((v, i) => {
                 const row = i === variants.length - 1 ? 'last' : i === 0 ? 'first' : 'middle';
                 return (
                   <tr key={v.key} className="group/row">
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="first">
+                      <TableCardCell tier="bottom" row={row} column="first" mode="default">
                         {v.label}
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center">
+                      <TableCardCell tier="bottom" row={row} column="center" mode="default">
                         RM{v.price}
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center" bottomVariant="form-field">
+                      <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         <NumberInput value={v.price} onChange={() => undefined} />
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center" bottomVariant="form-field">
+                      <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         <NumberInput value={v.offPercent} onChange={() => undefined} />
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center" bottomVariant="form-field">
+                      <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         <NumberInput value={v.campaignStock} onChange={() => undefined} />
                       </TableCardCell>
                     </td>
                     <td className="p-0">
-                      <TableCardCell tier="bottom" row={row} column="center">
+                      <TableCardCell tier="bottom" row={row} column="center" mode="default">
                         {v.stock}
                       </TableCardCell>
                     </td>
@@ -1028,7 +1035,8 @@ export const S10ShockingSale: Story = {
                         tier="bottom"
                         row={row}
                         column="last"
-                        bottomVariant="form-field"
+                        mode="default"
+                        bottomVariant="status-toggle"
                         trailing={<Toggle checked={v.enabled} onChange={() => undefined} />}
                       >
                         {v.purchaseLimit || 'No limit'}
