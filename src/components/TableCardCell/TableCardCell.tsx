@@ -202,8 +202,10 @@ const topTierGapClass = (variant: TableCardCellTopVariant): string => {
 // 3453:8104 (Hover). Default fill white; hover flips to --table-body-
 // hover-fill via parent <tr className="group/row">.
 const bottomTierBaseClasses = [
-  // Outer flex layout per Figma.
-  'relative flex w-full',
+  // Outer flex layout per Figma. h-full ensures the cell fills the <td>
+  // height so items-center aligns content to the vertical midpoint of the
+  // tallest sibling cell in the same table row.
+  'relative flex w-full h-full',
   // Default fill — flips to hover-fill on parent-row hover.
   'bg-[var(--table-body-fill)]',
   'group-hover/row:bg-[var(--table-body-hover-fill)]',
