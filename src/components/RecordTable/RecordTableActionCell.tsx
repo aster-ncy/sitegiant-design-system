@@ -57,7 +57,9 @@ export const RecordTableActionCell = ({
         hovered ? 'bg-[var(--table-inset-body-hover-fill)]' : 'bg-[var(--table-inset-body-fill)]',
         type === 'icon'
           ? 'flex h-[57px] items-center gap-[var(--spacing-12)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]'
-          : 'flex flex-col items-start gap-[var(--spacing-4)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]',
+          : resolvedCount === 1
+            ? 'flex items-center gap-[var(--spacing-4)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]'
+            : 'flex flex-col items-start gap-[var(--spacing-4)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]',
         className,
       ].filter(Boolean).join(' ')}
     >

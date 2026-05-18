@@ -193,7 +193,8 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       if: { arg: 'cellType', eq: 'form-field' },
     },
     formPrefix: {
-      control: 'text',
+      control: { type: 'inline-radio' },
+      options: ['+', '-'],
       description: 'Prefix shown in the input.',
       table: { category: '4. Form Field', defaultValue: { summary: '+' } },
       if: { arg: 'cellType', eq: 'form-field' },
@@ -520,7 +521,7 @@ export const FormFieldRow: StoryObj<FormFieldArgs> = {
   argTypes: {
     column: { control: { type: 'inline-radio' }, options: ['first', 'center', 'last'] },
     hovered: { control: 'boolean' },
-    prefix: { control: 'text', description: 'Prefix shown in the input.' },
+    prefix: { control: { type: 'inline-radio' }, options: ['+', '-'], description: 'Prefix shown in the input.' },
     value: { control: 'text', description: 'Input value.' },
     placeholder: { control: 'text', description: 'Input placeholder.' },
     showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
@@ -658,7 +659,7 @@ export const HeaderMatrix: Story = {
       <p className="text-[length:var(--text-14)] leading-[var(--leading-21)] text-[color:var(--color-text-primary)]">
         Visual check only. Use Header for copyable product code.
       </p>
-      <div className="grid grid-cols-[96px_repeat(3,220px)] gap-[var(--spacing-12)] items-start">
+      <div className="grid grid-cols-[var(--spacing-96)_repeat(3,220px)] gap-[var(--spacing-12)] items-start">
         <span />
         {columns.map((column) => (
           <MatrixLabel key={column}>{column}</MatrixLabel>
@@ -683,7 +684,7 @@ export const HeaderMatrix: Story = {
 export const ListingMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
-    <div className="grid grid-cols-[96px_repeat(2,409px)] gap-[var(--spacing-16)] items-start">
+    <div className="grid grid-cols-[var(--spacing-96)_repeat(2,409px)] gap-[var(--spacing-16)] items-start">
       <span />
       {listingColumns.map((column) => (
         <MatrixLabel key={column}>{column}</MatrixLabel>
@@ -707,7 +708,7 @@ export const ListingMatrix: Story = {
 export const FormFieldMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
-    <div className="grid grid-cols-[96px_repeat(3,190px)] gap-[var(--spacing-12)] items-start">
+    <div className="grid grid-cols-[var(--spacing-96)_repeat(3,190px)] gap-[var(--spacing-12)] items-start">
       <span />
       {columns.map((column) => (
         <MatrixLabel key={column}>{column}</MatrixLabel>
@@ -731,7 +732,7 @@ export const FormFieldMatrix: Story = {
 export const ActionButtonMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
-    <div className="grid grid-cols-[96px_repeat(7,max-content)] gap-[var(--spacing-16)] items-start">
+    <div className="grid grid-cols-[var(--spacing-96)_repeat(7,max-content)] gap-[var(--spacing-16)] items-start">
       <span />
       {([1, 2, 3, 4] as const).map((count) => (
         <MatrixLabel key={`text-${count}`}>{count} action{count > 1 ? 's' : ''}</MatrixLabel>
@@ -767,7 +768,7 @@ export const ActionButtonMatrix: Story = {
 export const DefaultRowMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
-    <div className="grid grid-cols-[96px_repeat(3,190px)] gap-[var(--spacing-12)] items-start">
+    <div className="grid grid-cols-[var(--spacing-96)_repeat(3,190px)] gap-[var(--spacing-12)] items-start">
       <span />
       {columns.map((column) => (
         <MatrixLabel key={column}>{column}</MatrixLabel>
@@ -791,7 +792,7 @@ export const DefaultRowMatrix: Story = {
 export const MoreInfoMatrix: Story = {
   tags: ['!dev', '!autodocs', 'visual-qa'],
   render: () => (
-    <div className="grid grid-cols-[96px_repeat(2,227px)] gap-[var(--spacing-16)] items-start">
+    <div className="grid grid-cols-[var(--spacing-96)_repeat(2,227px)] gap-[var(--spacing-16)] items-start">
       <span />
       {listingColumns.map((column) => (
         <MatrixLabel key={column}>{column}</MatrixLabel>
