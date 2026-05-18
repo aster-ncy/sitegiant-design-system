@@ -31,9 +31,15 @@ const TH = (props: React.ComponentProps<typeof TableHeaderCell>) => (
     <TableHeaderCell {...props} />
   </th>
 );
-const Cell = ({ children, ...rest }: React.ComponentProps<typeof TableCell>) => (
-  <td className="p-0 align-top">
-    <TableCell {...rest}>{children}</TableCell>
+// Cell wraps TableCell in a <td>. The row divider is placed on the <td> itself
+// (border-b) rather than relying on the TableCell div's inset box-shadow, because
+// h-full on the div doesn't resolve in a table cell with align-top — the div only
+// grows to content height, so the box-shadow paints partway up the row.
+// The TableCell shadow-based border is suppressed via className="shadow-none".
+type CellProps = React.ComponentProps<typeof TableCell>;
+const Cell = ({ children, row = 'default', ...rest }: CellProps) => (
+  <td className={`p-0 align-top ${row === 'last' ? '' : 'border-b border-[color:var(--table-divider-border)]'}`}>
+    <TableCell row={row} className="shadow-none" {...rest}>{children}</TableCell>
   </td>
 );
 
