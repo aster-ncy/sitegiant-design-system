@@ -36,12 +36,13 @@ type CellType = 'header' | 'row' | 'form-field' | 'action' | 'listing' | 'more-i
 
 type PlaygroundArgs = {
   cellType: CellType;
+  // Shared
+  showCheckbox: boolean;
   // Header
   headerColumn: TableColumnPosition;
   headerAlign: 'left' | 'center' | 'right';
   headerLabel: string;
   headerSortable: boolean;
-  headerShowCheckbox: boolean;
   // Row
   rowColumn: TableColumnPosition;
   rowHovered: boolean;
@@ -110,6 +111,13 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       description: 'Which Record Table cell to preview.',
       table: { category: '1. Cell Type', defaultValue: { summary: 'header' } },
     },
+    // ── Shared controls ──────────────────────────────────────────────────
+    showCheckbox: {
+      control: 'boolean',
+      description: 'Show checkbox in the cell. Hidden for "action" cells which have no checkbox slot.',
+      table: { category: '1. Cell Type', defaultValue: { summary: 'true' } },
+      if: { arg: 'cellType', neq: 'action' },
+    },
     // ── Header controls ──────────────────────────────────────────────────
     headerColumn: {
       control: { type: 'inline-radio' },
@@ -131,12 +139,6 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     },
     headerSortable: {
       control: 'boolean',
-      table: { category: '2. Header', defaultValue: { summary: 'true' } },
-      if: { arg: 'cellType', eq: 'header' },
-    },
-    headerShowCheckbox: {
-      control: 'boolean',
-      description: 'Show checkbox in the header cell. Only has a visual effect when column is "first" — the component auto-inserts a checkbox for first columns only.',
       table: { category: '2. Header', defaultValue: { summary: 'true' } },
       if: { arg: 'cellType', eq: 'header' },
     },
@@ -284,12 +286,13 @@ export const Playground: StoryObj<PlaygroundArgs> = {
   },
   args: {
     cellType: 'header',
+    // Shared
+    showCheckbox: true,
     // Header
     headerColumn: 'first',
     headerAlign: 'left',
     headerLabel: 'Table Header Title',
     headerSortable: true,
-    headerShowCheckbox: true,
     // Row
     rowColumn: 'first',
     rowHovered: false,
@@ -321,19 +324,19 @@ export const Playground: StoryObj<PlaygroundArgs> = {
   },
   render: ({
     cellType,
-    headerColumn, headerAlign, headerLabel, headerSortable, headerShowCheckbox,
+    showCheckbox,
+    headerColumn, headerAlign, headerLabel, headerSortable,
     rowColumn, rowHovered, rowValue, rowHint, rowShowActionIcon,
     formColumn, formHovered, formPrefix, formValue, formPlaceholder,
     actionType, actionCount, actionHovered, actionLabel,
     listingColumn, listingHovered, listingProduct,
     moreInfoColumn, moreInfoHovered, moreInfoLabel, moreInfoValue, moreInfoShowExtra, moreInfoShowLink,
   }: PlaygroundArgs) => {
+    // false is a valid ReactNode (boolean ∈ ReactNode). It is non-nullish so
+    // `checkbox ?? <Checkbox />` resolves to false, and `{false && ...}` renders nothing.
+    const checkboxProp: ReactNode = showCheckbox ? undefined : false;
+
     if (cellType === 'header') {
-      // Pass checkbox={false} to suppress the auto-inserted checkbox when toggled off.
-      // checkbox={false} is falsy but not nullish, so `checkbox ?? default` resolves to false → renders nothing.
-      // false is a valid ReactNode (boolean ∈ ReactNode) and is non-nullish, so
-// `checkbox ?? default` resolves to false → {false && ...} renders nothing.
-const checkboxProp: ReactNode = headerShowCheckbox ? undefined : false;
       return (
         <div className="w-[220px]">
           <RecordTableHeaderCell
@@ -355,6 +358,7 @@ const checkboxProp: ReactNode = headerShowCheckbox ? undefined : false;
             value={rowValue}
             hint={rowHint || undefined}
             showActionIcon={rowShowActionIcon}
+            checkbox={checkboxProp}
           />
         </div>
       );
@@ -368,6 +372,7 @@ const checkboxProp: ReactNode = headerShowCheckbox ? undefined : false;
             prefix={formPrefix}
             value={formValue}
             placeholder={formPlaceholder}
+            checkbox={checkboxProp}
           />
         </div>
       );
@@ -396,6 +401,7 @@ const checkboxProp: ReactNode = headerShowCheckbox ? undefined : false;
             imageAlt={product.image.alt}
             iSku={product.iSku}
             sku={product.sku}
+            checkbox={checkboxProp}
           />
         </div>
       );
@@ -410,6 +416,7 @@ const checkboxProp: ReactNode = headerShowCheckbox ? undefined : false;
           value={moreInfoValue}
           showExtraInfo={moreInfoShowExtra}
           showTextLink={moreInfoShowLink}
+          checkbox={checkboxProp}
         />
       </div>
     );
@@ -436,7 +443,7 @@ export const Header: StoryObj<HeaderArgs> = {
   },
   args: { column: 'first', align: 'left', label: 'Table Header Title', sortable: true, showCheckbox: true },
   render: ({ column, align, label, sortable, showCheckbox }: HeaderArgs) => {
-    const checkboxProp = showCheckbox ? undefined : (false as unknown as ReactNode);
+    const checkboxProp: ReactNode = showCheckbox ? undefined : false;
     return (
       <div className="w-[220px]">
         <RecordTableHeaderCell
@@ -457,6 +464,7 @@ type RowArgs = {
   value: string;
   hint: string;
   showActionIcon: boolean;
+  showCheckbox: boolean;
 };
 
 export const DefaultRow: StoryObj<RowArgs> = {
@@ -466,19 +474,24 @@ export const DefaultRow: StoryObj<RowArgs> = {
     value: { control: 'text', description: 'Primary cell value.' },
     hint: { control: 'text', description: 'Secondary caption below value.' },
     showActionIcon: { control: 'boolean', description: 'Show inline + icon link.' },
+    showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
   },
-  args: { column: 'first', hovered: false, value: 'Table Body Data', hint: '', showActionIcon: false },
-  render: ({ column, hovered, value, hint, showActionIcon }: RowArgs) => (
-    <div className="w-[220px]">
-      <RecordTableRowCell
-        column={column}
-        hovered={hovered}
-        value={value}
-        hint={hint || undefined}
-        showActionIcon={showActionIcon}
-      />
-    </div>
-  ),
+  args: { column: 'first', hovered: false, value: 'Table Body Data', hint: '', showActionIcon: false, showCheckbox: true },
+  render: ({ column, hovered, value, hint, showActionIcon, showCheckbox }: RowArgs) => {
+    const checkboxProp: ReactNode = showCheckbox ? undefined : false;
+    return (
+      <div className="w-[220px]">
+        <RecordTableRowCell
+          column={column}
+          hovered={hovered}
+          value={value}
+          hint={hint || undefined}
+          showActionIcon={showActionIcon}
+          checkbox={checkboxProp}
+        />
+      </div>
+    );
+  },
 };
 
 type FormFieldArgs = {
@@ -487,6 +500,7 @@ type FormFieldArgs = {
   prefix: string;
   value: string;
   placeholder: string;
+  showCheckbox: boolean;
 };
 
 export const FormFieldRow: StoryObj<FormFieldArgs> = {
@@ -496,19 +510,24 @@ export const FormFieldRow: StoryObj<FormFieldArgs> = {
     prefix: { control: 'text', description: 'Prefix shown in the input.' },
     value: { control: 'text', description: 'Input value.' },
     placeholder: { control: 'text', description: 'Input placeholder.' },
+    showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
   },
-  args: { column: 'first', hovered: false, prefix: '+', value: '', placeholder: '0' },
-  render: ({ column, hovered, prefix, value, placeholder }: FormFieldArgs) => (
-    <div className="w-[190px]">
-      <RecordTableFormFieldCell
-        column={column}
-        hovered={hovered}
-        prefix={prefix}
-        value={value}
-        placeholder={placeholder}
-      />
-    </div>
-  ),
+  args: { column: 'first', hovered: false, prefix: '+', value: '', placeholder: '0', showCheckbox: true },
+  render: ({ column, hovered, prefix, value, placeholder, showCheckbox }: FormFieldArgs) => {
+    const checkboxProp: ReactNode = showCheckbox ? undefined : false;
+    return (
+      <div className="w-[190px]">
+        <RecordTableFormFieldCell
+          column={column}
+          hovered={hovered}
+          prefix={prefix}
+          value={value}
+          placeholder={placeholder}
+          checkbox={checkboxProp}
+        />
+      </div>
+    );
+  },
 };
 
 type ActionArgs = {
@@ -543,6 +562,7 @@ type ListingArgs = {
   column: 'first' | 'center';
   hovered: boolean;
   product: ProductKey;
+  showCheckbox: boolean;
 };
 
 export const ListingRow: StoryObj<ListingArgs> = {
@@ -554,10 +574,12 @@ export const ListingRow: StoryObj<ListingArgs> = {
       options: ['product-1', 'product-2', 'product-3', 'product-4', 'product-5'] satisfies ReadonlyArray<ProductKey>,
       description: 'Product record — changes name, image, iSKU and SKU together.',
     },
+    showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
   },
-  args: { column: 'first', hovered: false, product: 'product-1' },
-  render: ({ column, hovered, product }: ListingArgs) => {
+  args: { column: 'first', hovered: false, product: 'product-1', showCheckbox: true },
+  render: ({ column, hovered, product, showCheckbox }: ListingArgs) => {
     const p = listingProducts[product];
+    const checkboxProp: ReactNode = showCheckbox ? undefined : false;
     return (
       <div className="w-[409px]">
         <RecordTableListingCell
@@ -567,6 +589,7 @@ export const ListingRow: StoryObj<ListingArgs> = {
           imageSrc={p.image.src}
           iSku={p.iSku}
           sku={p.sku}
+          checkbox={checkboxProp}
         />
       </div>
     );
@@ -580,6 +603,7 @@ type MoreInfoArgs = {
   value: string;
   showExtraInfo: boolean;
   showTextLink: boolean;
+  showCheckbox: boolean;
 };
 
 export const MoreInfoRow: StoryObj<MoreInfoArgs> = {
@@ -590,20 +614,25 @@ export const MoreInfoRow: StoryObj<MoreInfoArgs> = {
     value: { control: 'text', description: 'Info value (right side).' },
     showExtraInfo: { control: 'boolean', description: 'Show secondary Info 1 / Info 2 rows.' },
     showTextLink: { control: 'boolean', description: 'Show Edit TextLink below the info block.' },
+    showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
   },
-  args: { column: 'first', hovered: false, label: 'Label:', value: 'Value', showExtraInfo: true, showTextLink: true },
-  render: ({ column, hovered, label, value, showExtraInfo, showTextLink }: MoreInfoArgs) => (
-    <div className="w-[227px]">
-      <RecordTableMoreInfoCell
-        column={column}
-        hovered={hovered}
-        label={label}
-        value={value}
-        showExtraInfo={showExtraInfo}
-        showTextLink={showTextLink}
-      />
-    </div>
-  ),
+  args: { column: 'first', hovered: false, label: 'Label:', value: 'Value', showExtraInfo: true, showTextLink: true, showCheckbox: true },
+  render: ({ column, hovered, label, value, showExtraInfo, showTextLink, showCheckbox }: MoreInfoArgs) => {
+    const checkboxProp: ReactNode = showCheckbox ? undefined : false;
+    return (
+      <div className="w-[227px]">
+        <RecordTableMoreInfoCell
+          column={column}
+          hovered={hovered}
+          label={label}
+          value={value}
+          showExtraInfo={showExtraInfo}
+          showTextLink={showTextLink}
+          checkbox={checkboxProp}
+        />
+      </div>
+    );
+  },
 };
 
 // ── Visual QA matrix stories (hidden from sidebar) ───────────────────────────
