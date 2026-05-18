@@ -87,12 +87,16 @@ export const RecordTableMoreInfoCell = ({
         </div>
 
         {showTextLink && (
-          <TextLink
-            label="Edit"
-            iconPosition="left"
-            icon={<Icon name="edit-pen" size={17} />}
-            className="h-[17px]"
-          />
+          // Indent to align with the content column when checkbox is visible:
+          // checkbox(17px, no token) + gap(8px) = 25px. No indent when checkbox is hidden.
+          <div className={resolvedCheckbox ? 'pl-[calc(17px+var(--spacing-8))]' : ''}>
+            <TextLink
+              label="Edit"
+              iconPosition="left"
+              icon={<Icon name="edit-pen" size={17} />}
+              className="h-[17px]"
+            />
+          </div>
         )}
       </div>
     </div>
