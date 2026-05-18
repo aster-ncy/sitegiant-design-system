@@ -37,11 +37,12 @@ const TH = (props: React.ComponentProps<typeof TableHeaderCell>) => (
 // (border-b) rather than relying on the TableCell div's inset box-shadow, because
 // h-full on the div doesn't resolve in a table cell with align-top — the div only
 // grows to content height, so the box-shadow paints partway up the row.
-// The TableCell shadow-based border is suppressed via className="shadow-none".
+// TableCell background is made transparent so the <td> background (including hover)
+// shows through the full cell height without any double-paint glitch.
 type CellProps = React.ComponentProps<typeof TableCell>;
 const Cell = ({ children, row = 'default', ...rest }: CellProps) => (
   <td className={`p-0 align-top ${row === 'last' ? '' : 'border-b border-[color:var(--table-divider-border)]'}`}>
-    <TableCell row={row} className="shadow-none" {...rest}>{children}</TableCell>
+    <TableCell row={row} className="shadow-none !bg-transparent" {...rest}>{children}</TableCell>
   </td>
 );
 
@@ -53,11 +54,17 @@ const tableShellClasses =
   'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-body-fill)] overflow-hidden';
 
 // Tailwind selector that lights every cell in a hovered row.
-// Targets <td> directly (not <td>div) so the hover fill covers the full
-// cell height — the TableCell div is only content-height tall, not full row height.
-// Also keeps the div fill in sync so the TableCell's own bg token is overridden.
+// Only targets <td> — TableCell div is transparent so the full cell height fills.
 const rowHoverFill =
-  'group/row hover:[&>td]:bg-[var(--table-body-hover-fill)] hover:[&>td>div]:bg-[var(--table-body-hover-fill)]';
+  'group/row hover:[&>td]:bg-[var(--table-body-hover-fill)]';
+
+// Default table rule: add a 20px spacer row after the last data row.
+// The spacer row is aria-hidden so it's invisible to screen readers.
+const BottomGap = ({ colSpan }: { colSpan: number }) => (
+  <tr aria-hidden="true">
+    <td colSpan={colSpan} className={`h-[var(--spacing-20)] p-0 bg-[var(--table-body-fill)]`} />
+  </tr>
+);
 
 /* ── s4 Vehicle ───────────────────────────────────────── */
 
@@ -143,6 +150,7 @@ export const S4Vehicle: Story = {
                 </tr>
               );
             })}
+            <BottomGap colSpan={6} />
           </tbody>
         </table>
       </div>
@@ -232,6 +240,7 @@ export const S7WebstoreOrderReturn: Story = {
                 </tr>
               );
             })}
+            <BottomGap colSpan={5} />
           </tbody>
         </table>
       </div>
@@ -322,6 +331,7 @@ export const S8StockCheck: Story = {
                 </tr>
               );
             })}
+            <BottomGap colSpan={8} />
           </tbody>
         </table>
       </div>
