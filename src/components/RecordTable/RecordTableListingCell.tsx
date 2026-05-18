@@ -81,9 +81,11 @@ export const RecordTableListingCell = ({
         className,
       ].filter(Boolean).join(' ')}
     >
-      <span className="shrink-0 inline-flex items-start py-[var(--spacing-2)] leading-none">
-        {resolvedCheckbox}
-      </span>
+      {resolvedCheckbox && (
+        <span className="shrink-0 inline-flex items-start py-[var(--spacing-2)] leading-none">
+          {resolvedCheckbox}
+        </span>
+      )}
 
       <div className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-8)]">
         <div className="flex w-full items-start gap-[var(--spacing-12)]">

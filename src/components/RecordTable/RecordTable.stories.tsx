@@ -390,7 +390,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       );
     }
     if (cellType === 'listing') {
-      const product = listingProducts[listingProduct ?? 'product-1'];
+      const product = listingProducts[listingProduct];
       return (
         <div className="w-[409px]">
           <RecordTableListingCell
@@ -587,6 +587,7 @@ export const ListingRow: StoryObj<ListingArgs> = {
           hovered={hovered}
           productName={p.productName}
           imageSrc={p.image.src}
+          imageAlt={p.image.alt}
           iSku={p.iSku}
           sku={p.sku}
           checkbox={checkboxProp}

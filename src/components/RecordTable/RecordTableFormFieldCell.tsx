@@ -44,9 +44,11 @@ export const RecordTableFormFieldCell = ({
         className,
       ].filter(Boolean).join(' ')}
     >
-      <span className="shrink-0 inline-flex items-center py-[var(--spacing-2)] leading-none">
-        {resolvedCheckbox}
-      </span>
+      {resolvedCheckbox && (
+        <span className="shrink-0 inline-flex items-center py-[var(--spacing-2)] leading-none">
+          {resolvedCheckbox}
+        </span>
+      )}
       <PrefixInput
         prefix={prefix}
         value={value}
