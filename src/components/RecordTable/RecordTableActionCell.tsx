@@ -45,7 +45,7 @@ export const RecordTableActionCell = ({
   hovered = false,
   label = 'Button',
   className = '',
-}: RecordTableActionCellProps) => {
+}: RecordTableActionCellProps): JSX.Element => {
   const maxCount = type === 'icon' ? 3 : 4;
   const resolvedCount = Math.min(actionCount, maxCount) as RecordTableActionCount;
   const actions = actionCountsByType[type].slice(0, resolvedCount);

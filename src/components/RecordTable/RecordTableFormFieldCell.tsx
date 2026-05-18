@@ -30,7 +30,7 @@ export const RecordTableFormFieldCell = ({
   value = '',
   placeholder = '0',
   className = '',
-}: RecordTableFormFieldCellProps) => {
+}: RecordTableFormFieldCellProps): JSX.Element => {
   const resolvedCheckbox = checkbox ?? <Checkbox size="sm" />;
 
   return (

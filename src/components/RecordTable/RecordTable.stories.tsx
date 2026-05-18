@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Fragment } from 'react';
 import type { ReactNode } from 'react';
 import { RecordTableActionCell } from './RecordTableActionCell';
+import type { RecordTableActionCount } from './RecordTableActionCell';
 import { RecordTableFormFieldCell } from './RecordTableFormFieldCell';
 import { RecordTableHeaderCell } from './RecordTableHeaderCell';
 import { RecordTableListingCell } from './RecordTableListingCell';
@@ -48,6 +49,7 @@ type PlaygroundArgs = {
   rowHovered: boolean;
   rowValue: string;
   rowShowHint: boolean;
+  rowShowIcon: boolean;
   rowShowActionIcon: boolean;
   // Form field
   formColumn: TableColumnPosition;
@@ -164,6 +166,12 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       control: 'boolean',
       description: 'Show secondary caption below value.',
       table: { category: '3. Row', defaultValue: { summary: 'false' } },
+      if: { arg: 'cellType', eq: 'row' },
+    },
+    rowShowIcon: {
+      control: 'boolean',
+      description: 'Show the leading channel icon.',
+      table: { category: '3. Row', defaultValue: { summary: 'true' } },
       if: { arg: 'cellType', eq: 'row' },
     },
     rowShowActionIcon: {
@@ -298,6 +306,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     rowHovered: false,
     rowValue: 'Table Body Data',
     rowShowHint: false,
+    rowShowIcon: true,
     rowShowActionIcon: false,
     // Form field
     formColumn: 'first',
@@ -326,7 +335,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     cellType,
     showCheckbox,
     headerColumn, headerAlign, headerLabel, headerSortable,
-    rowColumn, rowHovered, rowValue, rowShowHint, rowShowActionIcon,
+    rowColumn, rowHovered, rowValue, rowShowHint, rowShowIcon, rowShowActionIcon,
     formColumn, formHovered, formPrefix, formValue, formPlaceholder,
     actionType, actionCount, actionHovered, actionLabel,
     listingColumn, listingHovered, listingProduct,
@@ -357,6 +366,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
             hovered={rowHovered}
             value={rowValue}
             hint={rowShowHint ? 'Hint caption' : undefined}
+            icon={rowShowIcon ? undefined : false}
             showActionIcon={rowShowActionIcon}
             checkbox={checkboxProp}
           />
@@ -379,7 +389,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     }
     if (cellType === 'action') {
       // Clamp actionCount to max 3 for icon type
-      const clampedCount = (actionType === 'icon' ? Math.min(actionCount, 3) : actionCount) as 1 | 2 | 3 | 4;
+      const clampedCount: RecordTableActionCount = actionType === 'icon' && actionCount > 3 ? 3 : actionCount;
       return (
         <RecordTableActionCell
           type={actionType}
@@ -463,6 +473,7 @@ type RowArgs = {
   hovered: boolean;
   value: string;
   showHint: boolean;
+  showIcon: boolean;
   showActionIcon: boolean;
   showCheckbox: boolean;
 };
@@ -473,11 +484,12 @@ export const DefaultRow: StoryObj<RowArgs> = {
     hovered: { control: 'boolean' },
     value: { control: 'text', description: 'Primary cell value.' },
     showHint: { control: 'boolean', description: 'Show secondary caption below value.' },
+    showIcon: { control: 'boolean', description: 'Show the leading channel icon.' },
     showActionIcon: { control: 'boolean', description: 'Show inline + icon link.' },
     showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
   },
-  args: { column: 'first', hovered: false, value: 'Table Body Data', showHint: false, showActionIcon: false, showCheckbox: true },
-  render: ({ column, hovered, value, showHint, showActionIcon, showCheckbox }: RowArgs) => {
+  args: { column: 'first', hovered: false, value: 'Table Body Data', showHint: false, showIcon: true, showActionIcon: false, showCheckbox: true },
+  render: ({ column, hovered, value, showHint, showIcon, showActionIcon, showCheckbox }: RowArgs) => {
     const checkboxProp: ReactNode = showCheckbox ? undefined : false;
     return (
       <div className="w-[220px]">
@@ -486,6 +498,7 @@ export const DefaultRow: StoryObj<RowArgs> = {
           hovered={hovered}
           value={value}
           hint={showHint ? 'Hint caption' : undefined}
+          icon={showIcon ? undefined : false}
           showActionIcon={showActionIcon}
           checkbox={checkboxProp}
         />
@@ -720,28 +733,28 @@ export const ActionButtonMatrix: Story = {
   render: () => (
     <div className="grid grid-cols-[96px_repeat(7,max-content)] gap-[var(--spacing-16)] items-start">
       <span />
-      {[1, 2, 3, 4].map((count) => (
+      {([1, 2, 3, 4] as const).map((count) => (
         <MatrixLabel key={`text-${count}`}>{count} action{count > 1 ? 's' : ''}</MatrixLabel>
       ))}
-      {[1, 2, 3].map((count) => (
+      {([1, 2, 3] as const).map((count) => (
         <MatrixLabel key={`icon-${count}`}>{count} icon</MatrixLabel>
       ))}
       {[false, true].map((hovered) => (
         <Fragment key={hovered ? 'hover' : 'default'}>
           <MatrixLabel>{hovered ? 'hover' : 'default'}</MatrixLabel>
-          {[1, 2, 3, 4].map((count) => (
+          {([1, 2, 3, 4] as const).map((count) => (
             <RecordTableActionCell
               key={`text-${count}-${hovered}`}
               type="text"
-              actionCount={count as 1 | 2 | 3 | 4}
+              actionCount={count}
               hovered={hovered}
             />
           ))}
-          {[1, 2, 3].map((count) => (
+          {([1, 2, 3] as const).map((count) => (
             <RecordTableActionCell
               key={`icon-${count}-${hovered}`}
               type="icon"
-              actionCount={count as 1 | 2 | 3}
+              actionCount={count}
               hovered={hovered}
             />
           ))}

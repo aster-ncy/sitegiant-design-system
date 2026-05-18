@@ -33,7 +33,7 @@ export const RecordTableRowCell = ({
   hint,
   showActionIcon = false,
   className = '',
-}: RecordTableRowCellProps) => {
+}: RecordTableRowCellProps): JSX.Element => {
   const resolvedCheckbox = checkbox ?? <Checkbox size="sm" />;
   const resolvedIcon = icon ?? (
     <img src={shopeeIcon} alt="" aria-hidden="true" className="size-[21px] shrink-0 rounded-[var(--radius-2)] object-cover" />

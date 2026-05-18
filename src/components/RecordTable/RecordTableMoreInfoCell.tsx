@@ -49,7 +49,7 @@ export const RecordTableMoreInfoCell = ({
   showExtraInfo = true,
   showTextLink = true,
   className = '',
-}: RecordTableMoreInfoCellProps) => {
+}: RecordTableMoreInfoCellProps): JSX.Element => {
   const resolvedCheckbox = checkbox ?? <Checkbox size="sm" />;
 
   return (

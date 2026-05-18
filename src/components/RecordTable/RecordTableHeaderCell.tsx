@@ -39,7 +39,7 @@ export const RecordTableHeaderCell = ({
   checkbox,
   hint,
   className = '',
-}: RecordTableHeaderCellProps) => {
+}: RecordTableHeaderCellProps): JSX.Element => {
   const resolvedCheckbox = checkbox ?? (column === 'first' ? <Checkbox size="sm" /> : null);
 
   return (

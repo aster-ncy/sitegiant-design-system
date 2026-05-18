@@ -67,7 +67,7 @@ export const RecordTableListingCell = ({
   iSku = 'ISKU-LDC-240321-MY-0001',
   sku = 'DYN-4IN1-FRESH-10ML52',
   className = '',
-}: RecordTableListingCellProps) => {
+}: RecordTableListingCellProps): JSX.Element => {
   const resolvedCheckbox = checkbox ?? <Checkbox size="sm" />;
 
   return (
