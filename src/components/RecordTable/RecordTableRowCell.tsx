@@ -80,15 +80,15 @@ export const RecordTableRowCell = ({
             />
           )}
         </div>
-        {/* Hint caption — indented to align with the value text:
-            checkbox(17px) + gap(8px) + icon(21px) + gap(8px) = 54px */}
+        {/* Hint caption — indented to align with the channel icon:
+            checkbox(17px) + gap(8px) = 25px */}
         {hint && (
           <span
             className={[
               'whitespace-nowrap text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
               'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
               'text-[color:var(--color-text-info)]',
-              'pl-[calc(17px+var(--spacing-8)+21px+var(--spacing-8))]',
+              'pl-[calc(17px+var(--spacing-8))]',
             ].join(' ')}
           >
             {hint}
