@@ -117,7 +117,7 @@ export const S4Vehicle: Story = {
                     row={lastRow}
                     weight="bold"
                     boldOnRowHover
-                    greenOnRowHover={!r.active}
+                    greenOnRowHover
                     checkbox={<Checkbox size="sm" />}
                   >
                     {r.reg}
