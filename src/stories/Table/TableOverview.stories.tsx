@@ -85,7 +85,7 @@ const ChannelIcon = () => (
 
 const DefaultTableBottomGap = ({ colSpan }: { colSpan: number }) => (
   <tr aria-hidden="true">
-    <td colSpan={colSpan} className={`h-[20px] p-0 ${bodyCellSurfaceClass}`} />
+    <td colSpan={colSpan} className={`h-[var(--spacing-20)] p-0 ${bodyCellSurfaceClass}`} />
   </tr>
 );
 
@@ -421,6 +421,8 @@ const InsetTableDemo = () => (
 );
 
 const RecordTableDemo = () => {
+  const [price, setPrice] = useState('29.90');
+  const [stock, setStock] = useState('240');
   const [editingStock, setEditingStock] = useState(false);
 
   return (
@@ -432,7 +434,7 @@ const RecordTableDemo = () => {
         <RecordTableHeaderCell column="last" align="left" label="Action" sortable={false} className={recordHeaderBorderClass} />
         <RecordTableListingCell column="first" className={`${recordBodyBorderClass} ${recordFirstColumnBorderClass}`} />
         <TableCell inset className={`h-full !items-start border border-solid border-[color:var(--table-divider-border)] ${recordBodyBorderClass}`}>
-          <PrefixInput prefix="RM" value="29.90" className="!w-[124px]" />
+          <PrefixInput prefix="RM" value={price} onChange={setPrice} className="!w-[124px]" />
         </TableCell>
         <TableCell
           inset
@@ -441,11 +443,11 @@ const RecordTableDemo = () => {
         >
           {editingStock ? (
             <div onBlur={() => setEditingStock(false)}>
-              <NumberInput value="240" hideStepper className="!w-[124px]" inputRef={(el) => el?.focus()} />
+              <NumberInput value={stock} onChange={setStock} hideStepper className="!w-[124px]" inputRef={(el) => el?.focus()} />
             </div>
           ) : (
             <span className="inline-flex h-[35px] w-[124px] items-center justify-start rounded-[var(--radius-4)] px-[var(--spacing-12)] py-[var(--spacing-6)] text-left font-[family-name:var(--general-font-family)] text-[length:var(--general-form-value-size)] font-[weight:var(--general-body-weight)] leading-[var(--general-form-value-lineheight)] text-[color:var(--table-inset-body-text)]">
-              240
+              {stock}
             </span>
           )}
         </TableCell>
@@ -488,7 +490,7 @@ const RatingsCardTableDemo = () => (
         </TableCardCell>
         <TableCardCell tier="bottom" row="last" column="center" mode="default" className={`${cardBottomHeightClass} !rounded-none !border-0`}>
           <span className="flex flex-col items-start gap-[var(--spacing-4)]">
-            <span className="inline-flex items-center gap-[2px] text-[color:var(--color-sys-orange-light)]">
+            <span className="inline-flex items-center gap-[var(--spacing-2)] text-[color:var(--color-sys-orange-light)]">
               <Icon name="star-full" size={16} />
               <Icon name="star-full" size={16} />
               <Icon name="star-full" size={16} />
@@ -527,7 +529,7 @@ const OrderProcessingCardTableDemo = () => (
         <tr>
           <td className="p-0">
             <TableCardCell tier="top" column="first" mode="default">
-              <span className="flex flex-col gap-[2px]">
+              <span className="flex flex-col gap-[var(--spacing-2)]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Package ID</span>
                 <span className="font-[var(--font-weight-bold)]">7</span>
               </span>
@@ -535,7 +537,7 @@ const OrderProcessingCardTableDemo = () => (
           </td>
           <td className="p-0">
             <TableCardCell tier="top" column="center" mode="default" className={cardCenterNoBorderClass}>
-              <span className="flex flex-col gap-[2px]">
+              <span className="flex flex-col gap-[var(--spacing-2)]">
                 <span className="flex items-center gap-[var(--spacing-4)] text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">
                   Packing Note
                   <Icon name="edit-pen" size={17} color="var(--color-sys-blue-DEFAULT)" />
@@ -546,7 +548,7 @@ const OrderProcessingCardTableDemo = () => (
           </td>
           <td className="p-0">
             <TableCardCell tier="top" column="center" mode="default" className={cardCenterNoBorderClass}>
-              <span className="flex flex-col gap-[2px]">
+              <span className="flex flex-col gap-[var(--spacing-2)]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Tracking No</span>
                 <span>4678326478</span>
               </span>
@@ -554,7 +556,7 @@ const OrderProcessingCardTableDemo = () => (
           </td>
           <td className="p-0">
             <TableCardCell tier="top" column="last" mode="default" className={cardCenterNoBorderClass}>
-              <span className="flex flex-col gap-[2px]">
+              <span className="flex flex-col gap-[var(--spacing-2)]">
                 <span className="text-[length:var(--text-12)] leading-[var(--leading-17)] text-[color:var(--color-text-info)]">Courier Service</span>
                 <span>Others (Self-Delivery)</span>
               </span>
