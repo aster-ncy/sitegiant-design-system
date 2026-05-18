@@ -545,7 +545,8 @@ const WarehouseRowView = ({
           variant="default"
           label="Remove warehouse"
           onClick={onRemove}
-          className={isOnlyWarehouse ? 'invisible pointer-events-none' : undefined}
+          disabled={isOnlyWarehouse}
+          className={isOnlyWarehouse ? 'invisible' : undefined}
         />
 
         <IconButton
@@ -588,9 +589,12 @@ export const WarehouseInfoDemo = () => {
   const [batchMode, setBatchMode] = useState(true);
   const [warehouses, setWarehouses] = useState<WarehouseRow[]>(makeInitialWarehouses);
 
-  /* expand all */
-  const expandAll = () =>
-    setWarehouses((prev) => prev.map((wh) => ({ ...wh, expanded: true })));
+  /* expand / collapse all — toggles based on current state.
+     Guard against empty array: every() on [] returns true (vacuous truth),
+     so we explicitly require at least one warehouse. */
+  const allExpanded = warehouses.length > 0 && warehouses.every((wh) => wh.expanded);
+  const toggleExpandAll = () =>
+    setWarehouses((prev) => prev.map((wh) => ({ ...wh, expanded: !allExpanded })));
 
   /* toggle one warehouse expand state */
   const toggleExpand = (whId: string) =>
@@ -704,14 +708,14 @@ export const WarehouseInfoDemo = () => {
         <Toggle checked={batchMode} onChange={setBatchMode} label="Batch Mode" />
       </div>
 
-      {/* Expand All text link — right-aligned */}
+      {/* Expand All / Collapse All — label and icon flip based on state */}
       <div className="flex justify-end">
         <TextLink
-          label="Expand All"
+          label={allExpanded ? 'Collapse All' : 'Expand All'}
           variant="basic"
           iconPosition="left"
-          icon={<Icon name="plus-square" size={17} />}
-          onClick={expandAll}
+          icon={<Icon name={allExpanded ? 'minus-square' : 'plus-square'} size={17} />}
+          onClick={toggleExpandAll}
         />
       </div>
 
