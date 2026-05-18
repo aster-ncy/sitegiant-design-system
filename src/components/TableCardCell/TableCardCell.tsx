@@ -169,7 +169,9 @@ const topTierHPad: Record<TableCardCellMode, string> = {
 // <tr className="group/row">. See spec §"Hover behavior".
 const topTierBaseClasses = [
   // Outer flex layout per Figma. py-12 is shared across modes.
-  'relative flex items-start w-full',
+  // items-center: top tier is always a single content line — checkbox,
+  // icon and text all vertically centre on that line.
+  'relative flex items-center w-full',
   'py-[var(--spacing-12)]',
   // Constant fill — hover does NOT flip this.
   'bg-[var(--table-body-hover-fill)]',
