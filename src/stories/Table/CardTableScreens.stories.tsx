@@ -134,17 +134,21 @@ export const S10ShockingSale: Story = {
                 const row = i === variants.length - 1 ? 'last' : i === 0 ? 'first' : 'middle';
                 return (
                   <tr key={v.key} className="group/row">
-                    <td className="p-0">
+                    {/* align-middle on every <td> so vertical-align centres content
+                        against the tallest sibling (NumberInput) in the row.
+                        TableCardCell's form-field items-center only works when
+                        the td itself is vertically centred. */}
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell tier="bottom" row={row} column="first" mode="default" bottomVariant="form-field">
                         {v.label}
                       </TableCardCell>
                     </td>
-                    <td className="p-0">
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         RM{v.price}
                       </TableCardCell>
                     </td>
-                    <td className="p-0">
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         <NumberInput
                           value={v.price}
@@ -152,7 +156,7 @@ export const S10ShockingSale: Story = {
                         />
                       </TableCardCell>
                     </td>
-                    <td className="p-0">
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         <NumberInput
                           value={v.offPercent}
@@ -160,7 +164,7 @@ export const S10ShockingSale: Story = {
                         />
                       </TableCardCell>
                     </td>
-                    <td className="p-0">
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         <NumberInput
                           value={v.campaignStock}
@@ -168,12 +172,12 @@ export const S10ShockingSale: Story = {
                         />
                       </TableCardCell>
                     </td>
-                    <td className="p-0">
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell tier="bottom" row={row} column="center" mode="default" bottomVariant="form-field">
                         {v.stock}
                       </TableCardCell>
                     </td>
-                    <td className="p-0">
+                    <td className="p-0 h-px align-middle">
                       <TableCardCell
                         tier="bottom"
                         row={row}

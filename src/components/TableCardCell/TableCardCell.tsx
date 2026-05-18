@@ -133,9 +133,13 @@ export type TableCardCellProps =
  * <div className="rounded-[var(--radius-4)] overflow-hidden">
  *   <table className="border-collapse w-full table-fixed">
  *     <tbody>
- *       <tr><TableCardCell mode="default" tier="top" column="first">...</TableCardCell> ...</tr>
- *       <tr><TableCardCell mode="default" tier="bottom" row="first" column="first">...</TableCardCell> ...</tr>
- *       <tr><TableCardCell mode="default" tier="bottom" row="last" column="first">...</TableCardCell> ...</tr>
+ *       <tr><td className="p-0"><TableCardCell mode="default" tier="top" column="first">...</TableCardCell></td> ...</tr>
+ *       <tr>
+ *         {/* For rows that mix tall cells (NumberInput) with short cells (text/toggle),
+ *             add h-px align-middle to every <td> so h-full resolves and items-center works: */}
+ *         <td className="p-0 h-px align-middle"><TableCardCell mode="default" tier="bottom" row="first" bottomVariant="form-field" column="first">...</TableCardCell></td>
+ *         ...
+ *       </tr>
  *     </tbody>
  *   </table>
  * </div>
@@ -202,9 +206,8 @@ const topTierGapClass = (variant: TableCardCellTopVariant): string => {
 // 3453:8104 (Hover). Default fill white; hover flips to --table-body-
 // hover-fill via parent <tr className="group/row">.
 const bottomTierBaseClasses = [
-  // Outer flex layout per Figma. h-full ensures the cell fills the <td>
-  // height so items-center aligns content to the vertical midpoint of the
-  // tallest sibling cell in the same table row.
+  // Outer flex layout per Figma. h-full fills the <td> height (works when
+  // the <td> has h-px set — the CSS trick that enables % height in table cells).
   'relative flex w-full h-full',
   // Default fill — flips to hover-fill on parent-row hover.
   'bg-[var(--table-body-fill)]',
@@ -344,11 +347,17 @@ export const TableCardCell = (props: TableCardCellProps) => {
   const { row } = props;
   const bottomVariant = props.bottomVariant ?? 'default';
   const isFormField = bottomVariant === 'form-field';
+  // Variants that hold a single inline control (form input, toggle, action button)
+  // centre vertically; multi-row content variants (listing, data, status stacks) align top.
+  const isCentred =
+    bottomVariant === 'form-field' ||
+    bottomVariant === 'status-toggle' ||
+    bottomVariant === 'action-button';
   const fillOverride = selected ? '!bg-[var(--color-sys-blue-lighter)]' : '';
   const forcedHoverFill = hovered
     ? '!bg-[var(--table-body-hover-fill)]'
     : '';
-  const innerAlignment = isFormField ? 'items-center' : 'items-start';
+  const innerAlignment = isCentred ? 'items-center' : 'items-start';
 
   return (
     <div
@@ -373,7 +382,7 @@ export const TableCardCell = (props: TableCardCellProps) => {
       <span
         className={[
           bottomTierTextSpanClasses,
-          isFormField ? 'items-center' : 'items-start',
+          isCentred ? 'items-center' : 'items-start',
           textAlignmentClass[column],
         ].join(' ')}
       >
