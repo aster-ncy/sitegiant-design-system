@@ -55,9 +55,11 @@ export const RecordTableRowCell = ({
           {resolvedCheckbox}
         </span>
       )}
-      <div className="flex shrink-0 items-start gap-[var(--spacing-8)]">
-        {resolvedIcon}
-        <div className="flex w-[102px] shrink-0 flex-col items-start gap-[var(--spacing-2)]">
+      {/* Outer column: value row on top, hint below */}
+      <div className="flex shrink-0 flex-col items-start gap-[var(--spacing-2)]">
+        {/* Value row: icon + text + optional action icon — all centred on the single value line */}
+        <div className="flex items-center gap-[var(--spacing-8)]">
+          {resolvedIcon}
           <span
             className={[
               'whitespace-nowrap text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
@@ -67,25 +69,27 @@ export const RecordTableRowCell = ({
           >
             {value}
           </span>
-          {hint && (
-            <span
-              className={[
-                'whitespace-nowrap text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
-                'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
-                'text-[color:var(--color-text-info)]',
-              ].join(' ')}
-            >
-              {hint}
-            </span>
+          {showActionIcon && (
+            <IconLink
+              icon="plus"
+              aria-label="Action"
+              showTooltip={false}
+              className="inline-flex h-[21px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--button-primary-default-fill)]"
+            />
           )}
         </div>
-        {showActionIcon && (
-          <IconLink
-            icon="plus"
-            aria-label="Action"
-            showTooltip={false}
-            className="inline-flex h-[21px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--button-primary-default-fill)]"
-          />
+        {/* Hint caption — indented to sit under value text, not under icon */}
+        {hint && (
+          <span
+            className={[
+              'whitespace-nowrap text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+              'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
+              'text-[color:var(--color-text-info)]',
+              'pl-[calc(21px+var(--spacing-8))]',
+            ].join(' ')}
+          >
+            {hint}
+          </span>
         )}
       </div>
     </div>
