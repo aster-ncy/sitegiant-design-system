@@ -135,8 +135,8 @@ export type TableCardCellProps =
  *     <tbody>
  *       <tr><td className="p-0"><TableCardCell mode="default" tier="top" column="first">...</TableCardCell></td> ...</tr>
  *       <tr>
- *         {/* For rows that mix tall cells (NumberInput) with short cells (text/toggle),
- *             add h-px align-middle to every <td> so h-full resolves and items-center works: */}
+ *         // For rows mixing tall cells (NumberInput) with short cells (text/toggle):
+ *         // add h-px align-middle to every td so h-full resolves and items-center works.
  *         <td className="p-0 h-px align-middle"><TableCardCell mode="default" tier="bottom" row="first" bottomVariant="form-field" column="first">...</TableCardCell></td>
  *         ...
  *       </tr>
