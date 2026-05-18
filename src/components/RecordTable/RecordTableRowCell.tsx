@@ -51,11 +51,11 @@ export const RecordTableRowCell = ({
       ].filter(Boolean).join(' ')}
     >
       {resolvedCheckbox && (
-        <span className="shrink-0 inline-flex items-center self-center py-[var(--spacing-2)] leading-none">
+        <span className="shrink-0 inline-flex items-center self-start py-[var(--spacing-2)] leading-none">
           {resolvedCheckbox}
         </span>
       )}
-      <div className="flex shrink-0 items-center gap-[var(--spacing-8)]">
+      <div className="flex shrink-0 items-start gap-[var(--spacing-8)]">
         {resolvedIcon}
         <div className="flex w-[102px] shrink-0 flex-col items-start gap-[var(--spacing-2)]">
           <span
