@@ -30,6 +30,12 @@ export interface TableCellInfoProps {
    * N=2 is the s8 Order ID + COID pattern. N=3 is shown in Figma's matrix.
    */
   statuses: TableCellInfoStatus[];
+  /**
+   * When true, applies `group-hover/row:text-[color:var(--table-body-hover-text)]`
+   * only to the first (primary) status body. Secondary statuses stay at their
+   * normal colour. Pair with `boldOnRowHover` on the wrapping `TableCell`.
+   */
+  primaryGreenOnRowHover?: boolean;
 }
 
 // Body paragraphs render as <span class="block"> rather than <p> because
@@ -114,6 +120,7 @@ const bodyClasses = [
 export const TableCellInfo = ({
   alignment = 'horizontal',
   statuses,
+  primaryGreenOnRowHover = false,
 }: TableCellInfoProps) => {
   if (statuses.length === 0) return null;
 
@@ -153,7 +160,12 @@ export const TableCellInfo = ({
               occupies flex space and adds gap-2 before the body, pushing
               the body 2px below the cell's top padding edge. */}
           {status.label ? <span className={labelVerticalClasses}>{status.label}</span> : null}
-          <div className={bodyClasses}>{renderBody(status.body, status.maxLines)}</div>
+          <div className={[
+            bodyClasses,
+            primaryGreenOnRowHover && index === 0
+              ? 'group-hover/row:text-[color:var(--table-body-hover-text)]'
+              : '',
+          ].filter(Boolean).join(' ')}>{renderBody(status.body, status.maxLines)}</div>
         </div>
       ))}
     </div>
