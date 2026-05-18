@@ -117,7 +117,6 @@ export const S4Vehicle: Story = {
                     row={lastRow}
                     weight="bold"
                     boldOnRowHover
-                    tone={r.active ? 'success' : 'default'}
                     greenOnRowHover={!r.active}
                     checkbox={<Checkbox size="sm" />}
                   >
@@ -203,12 +202,12 @@ export const S7WebstoreOrderReturn: Story = {
                     column="first"
                     align="left"
                     row={lastRow}
-                    boldOnRowHover
                     checkbox={<Checkbox size="sm" />}
                   >
                     <TableCellInfo
                       alignment="vertical"
                       primaryBold
+                      primaryBoldOnRowHover
                       primaryGreenOnRowHover
                       statuses={[
                         { label: '', body: r.id },

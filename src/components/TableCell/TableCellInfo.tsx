@@ -38,6 +38,12 @@ export interface TableCellInfoProps {
    */
   primaryBold?: boolean;
   /**
+   * When true, on row hover the first body turns bold while secondary bodies
+   * stay regular. Use instead of `boldOnRowHover` on the wrapping `TableCell`
+   * when only the primary row should bold on hover.
+   */
+  primaryBoldOnRowHover?: boolean;
+  /**
    * When true, applies `group-hover/row:text-[color:var(--table-body-hover-text)]`
    * only to the first (primary) status body. Secondary statuses stay at their
    * normal colour. Pair with `boldOnRowHover` on the wrapping `TableCell`.
@@ -128,6 +134,7 @@ export const TableCellInfo = ({
   alignment = 'horizontal',
   statuses,
   primaryBold = false,
+  primaryBoldOnRowHover = false,
   primaryGreenOnRowHover = false,
 }: TableCellInfoProps) => {
   if (statuses.length === 0) return null;
@@ -176,6 +183,13 @@ export const TableCellInfo = ({
               ? index === 0
                 ? 'font-[var(--font-weight-bold)]'
                 : 'font-[var(--font-weight-regular)]'
+              : '',
+            // primaryBoldOnRowHover: first body bolds on hover, rest stay regular
+            // (overrides boldOnRowHover on the wrapping TableCell)
+            primaryBoldOnRowHover
+              ? index === 0
+                ? 'group-hover/row:font-[var(--font-weight-bold)]'
+                : 'group-hover/row:font-[var(--font-weight-regular)]'
               : '',
             primaryGreenOnRowHover && index === 0
               ? 'group-hover/row:text-[color:var(--table-body-hover-text)]'
