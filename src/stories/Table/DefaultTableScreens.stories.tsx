@@ -26,9 +26,11 @@ type Story = StoryObj;
 // Default-table rule: <td> always gets align-top so the browser's default
 // vertical-align:middle doesn't float single-line cells to the middle of a
 // taller multi-row sibling. TableCell already uses items-start in default mode.
+// TH puts the bottom border on the <th> itself — same approach as Cell —
+// so the divider spans the full header height regardless of content.
 const TH = (props: React.ComponentProps<typeof TableHeaderCell>) => (
-  <th className="p-0">
-    <TableHeaderCell {...props} />
+  <th className="p-0 border-b border-[color:var(--table-divider-border)]">
+    <TableHeaderCell className="shadow-none" {...props} />
   </th>
 );
 // Cell wraps TableCell in a <td>. The row divider is placed on the <td> itself
@@ -51,10 +53,11 @@ const tableShellClasses =
   'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[var(--table-body-fill)] overflow-hidden';
 
 // Tailwind selector that lights every cell in a hovered row.
-// Pair with `boldOnRowHover` on the first cell to wire the live ERP
-// "active row" affordance (whole row fills, first column bolds).
+// Targets <td> directly (not <td>div) so the hover fill covers the full
+// cell height — the TableCell div is only content-height tall, not full row height.
+// Also keeps the div fill in sync so the TableCell's own bg token is overridden.
 const rowHoverFill =
-  'group/row hover:[&>td>div]:bg-[var(--table-body-hover-fill)]';
+  'group/row hover:[&>td]:bg-[var(--table-body-hover-fill)] hover:[&>td>div]:bg-[var(--table-body-hover-fill)]';
 
 /* ── s4 Vehicle ───────────────────────────────────────── */
 
