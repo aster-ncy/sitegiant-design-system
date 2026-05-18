@@ -94,11 +94,12 @@ const insetRowHover = 'group/row hover:[&>td>div]:bg-[var(--table-inset-body-hov
 // Subrow hover fill
 const subrowHover = 'group/row hover:[&>td>div]:bg-[var(--table-inset-subrow-hover-fill)]';
 
+// Card frame padding per Figma: 24px left/right, 20px top, 40px bottom.
 const cardClasses = [
   'bg-[var(--color-surface-card)]',
   'border border-solid border-[color:var(--color-surface-card-border)]',
   'rounded-[var(--inset-card-radii)]',
-  'p-[var(--spacing-24)]',
+  'px-[var(--spacing-24)] pt-[var(--spacing-20)] pb-[var(--spacing-40)]',
 ].join(' ');
 
 /* ── s1 Wallet Record ──────────────────────────────────── */

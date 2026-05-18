@@ -56,9 +56,9 @@ const WebstoreIcon = () => (
   />
 );
 
-// Card-table outer container — white panel with 20px border-radius.
+// Card frame padding per Figma: 24px left/right, 20px top, 40px bottom.
 const cardClasses =
-  'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[color:var(--color-surface-card)] p-[var(--spacing-24)]';
+  'rounded-[var(--inset-card-radii)] border border-[color:var(--color-surface-card-border)] bg-[color:var(--color-surface-card)] px-[var(--spacing-24)] pt-[var(--spacing-20)] pb-[var(--spacing-40)]';
 
 // Fixed height for S13 bottom-tier card rows — matches the Figma 105px cell spec.
 const cardBottomHeightClass = '!h-[105px]';
