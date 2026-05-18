@@ -76,9 +76,8 @@ export const RecordTableMoreInfoCell = ({
           <div className="flex flex-col items-start gap-[var(--spacing-2)]">
             <InfoPair label={label} value={value} />
             {showExtraInfo && (
-              {/* pl-[21px] = structural indent to align sub-rows under the label text.
-                  No --spacing-21 token exists; value matches icon/avatar slot width used
-                  elsewhere in RecordTable cells (e.g. RecordTableListingCell). */}
+              // pl-[21px]: structural indent — no --spacing-21 token exists;
+              // matches icon/avatar slot width used across RecordTable cells.
               <div className="flex flex-col items-start gap-[var(--spacing-2)] pl-[21px]">
                 <InfoPair label="Info 1:" value="2" />
                 <InfoPair label="Info 2:" value="2" />
