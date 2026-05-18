@@ -47,7 +47,7 @@ type PlaygroundArgs = {
   rowColumn: TableColumnPosition;
   rowHovered: boolean;
   rowValue: string;
-  rowHint: string;
+  rowShowHint: boolean;
   rowShowActionIcon: boolean;
   // Form field
   formColumn: TableColumnPosition;
@@ -160,10 +160,10 @@ export const Playground: StoryObj<PlaygroundArgs> = {
       table: { category: '3. Row', defaultValue: { summary: 'Table Body Data' } },
       if: { arg: 'cellType', eq: 'row' },
     },
-    rowHint: {
-      control: 'text',
-      description: 'Secondary caption below value.',
-      table: { category: '3. Row', defaultValue: { summary: '' } },
+    rowShowHint: {
+      control: 'boolean',
+      description: 'Show secondary caption below value.',
+      table: { category: '3. Row', defaultValue: { summary: 'false' } },
       if: { arg: 'cellType', eq: 'row' },
     },
     rowShowActionIcon: {
@@ -224,7 +224,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     },
     actionLabel: {
       control: 'text',
-      description: 'Label for text-type actions.',
+      description: 'Label for text-type actions (no effect when action type is "icon").',
       table: { category: '5. Action', defaultValue: { summary: 'Button' } },
       if: { arg: 'cellType', eq: 'action' },
     },
@@ -297,7 +297,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     rowColumn: 'first',
     rowHovered: false,
     rowValue: 'Table Body Data',
-    rowHint: '',
+    rowShowHint: false,
     rowShowActionIcon: false,
     // Form field
     formColumn: 'first',
@@ -326,7 +326,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     cellType,
     showCheckbox,
     headerColumn, headerAlign, headerLabel, headerSortable,
-    rowColumn, rowHovered, rowValue, rowHint, rowShowActionIcon,
+    rowColumn, rowHovered, rowValue, rowShowHint, rowShowActionIcon,
     formColumn, formHovered, formPrefix, formValue, formPlaceholder,
     actionType, actionCount, actionHovered, actionLabel,
     listingColumn, listingHovered, listingProduct,
@@ -356,7 +356,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
             column={rowColumn}
             hovered={rowHovered}
             value={rowValue}
-            hint={rowHint || undefined}
+            hint={rowShowHint ? 'Hint caption' : undefined}
             showActionIcon={rowShowActionIcon}
             checkbox={checkboxProp}
           />
@@ -462,7 +462,7 @@ type RowArgs = {
   column: TableColumnPosition;
   hovered: boolean;
   value: string;
-  hint: string;
+  showHint: boolean;
   showActionIcon: boolean;
   showCheckbox: boolean;
 };
@@ -472,12 +472,12 @@ export const DefaultRow: StoryObj<RowArgs> = {
     column: { control: { type: 'inline-radio' }, options: ['first', 'center', 'last'] },
     hovered: { control: 'boolean' },
     value: { control: 'text', description: 'Primary cell value.' },
-    hint: { control: 'text', description: 'Secondary caption below value.' },
+    showHint: { control: 'boolean', description: 'Show secondary caption below value.' },
     showActionIcon: { control: 'boolean', description: 'Show inline + icon link.' },
     showCheckbox: { control: 'boolean', description: 'Show checkbox.' },
   },
-  args: { column: 'first', hovered: false, value: 'Table Body Data', hint: '', showActionIcon: false, showCheckbox: true },
-  render: ({ column, hovered, value, hint, showActionIcon, showCheckbox }: RowArgs) => {
+  args: { column: 'first', hovered: false, value: 'Table Body Data', showHint: false, showActionIcon: false, showCheckbox: true },
+  render: ({ column, hovered, value, showHint, showActionIcon, showCheckbox }: RowArgs) => {
     const checkboxProp: ReactNode = showCheckbox ? undefined : false;
     return (
       <div className="w-[220px]">
@@ -485,7 +485,7 @@ export const DefaultRow: StoryObj<RowArgs> = {
           column={column}
           hovered={hovered}
           value={value}
-          hint={hint || undefined}
+          hint={showHint ? 'Hint caption' : undefined}
           showActionIcon={showActionIcon}
           checkbox={checkboxProp}
         />
