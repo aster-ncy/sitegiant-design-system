@@ -36,7 +36,7 @@ export const RecordTableFormFieldCell = ({
   return (
     <div
       className={[
-        'relative flex box-border w-full items-start gap-[var(--spacing-12)]',
+        'relative flex box-border w-full items-center gap-[var(--spacing-12)]',
         'py-[var(--spacing-12)]',
         paddingByColumn[column],
         hovered ? 'bg-[var(--table-inset-body-hover-fill)]' : 'bg-[var(--table-inset-body-fill)]',

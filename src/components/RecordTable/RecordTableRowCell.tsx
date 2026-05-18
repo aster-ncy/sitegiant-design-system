@@ -42,7 +42,7 @@ export const RecordTableRowCell = ({
   return (
     <div
       className={[
-        'relative flex box-border w-full items-center gap-[var(--spacing-12)]',
+        'relative flex box-border w-full items-start gap-[var(--spacing-12)]',
         'py-[var(--spacing-12)]',
         paddingByColumn[column],
         hovered ? 'bg-[var(--table-inset-body-hover-fill)]' : 'bg-[var(--table-inset-body-fill)]',
@@ -84,7 +84,7 @@ export const RecordTableRowCell = ({
             icon="plus"
             aria-label="Action"
             showTooltip={false}
-            className="inline-flex h-[21px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
+            className="inline-flex h-[21px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--button-primary-default-fill)]"
           />
         )}
       </div>

@@ -32,7 +32,7 @@ const ActionIconButton = () => (
     icon="plus"
     aria-label="Button"
     showTooltip={false}
-    className="inline-flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[var(--button-primary-default-fill)]"
+    className="inline-flex h-[17px] w-[17px] shrink-0 items-center justify-center rounded-[var(--radius-120)] text-[color:var(--icon-link-basic-default)] hover:text-[color:var(--icon-link-basic-hover)] active:text-[color:var(--icon-link-basic-clicked)] focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-[color:var(--button-primary-default-fill)]"
   />
 );
 
@@ -56,7 +56,7 @@ export const RecordTableActionCell = ({
         'relative box-border border border-solid border-[color:var(--table-divider-border)]',
         hovered ? 'bg-[var(--table-inset-body-hover-fill)]' : 'bg-[var(--table-inset-body-fill)]',
         type === 'icon'
-          ? 'flex h-[57px] items-start gap-[var(--spacing-12)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]'
+          ? 'flex h-[57px] items-center gap-[var(--spacing-12)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]'
           : 'flex flex-col items-start gap-[var(--spacing-4)] pl-[var(--spacing-6)] pr-[var(--spacing-12)] py-[var(--spacing-12)]',
         className,
       ].filter(Boolean).join(' ')}
