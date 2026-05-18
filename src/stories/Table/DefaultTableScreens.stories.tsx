@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { TableCell, TableCellInfo } from '../../components/TableCell';
 import { TableHeaderCell } from '../../components/TableHeaderCell';
 import { Checkbox } from '../../components/Checkbox';
+import { Icon } from '../../components/Icon';
 import { Pip } from '../../components/Pip';
 
 /**
@@ -114,9 +115,10 @@ export const S4Vehicle: Story = {
                     column="first"
                     align="left"
                     row={lastRow}
+                    weight="bold"
                     boldOnRowHover
                     tone={r.active ? 'success' : 'default'}
-                    weight={r.active ? 'bold' : 'normal'}
+                    greenOnRowHover={!r.active}
                     checkbox={<Checkbox size="sm" />}
                   >
                     {r.reg}
@@ -201,7 +203,9 @@ export const S7WebstoreOrderReturn: Story = {
                     column="first"
                     align="left"
                     row={lastRow}
+                    weight="bold"
                     boldOnRowHover
+                    greenOnRowHover
                     checkbox={<Checkbox size="sm" />}
                   >
                     <TableCellInfo
@@ -232,7 +236,7 @@ export const S7WebstoreOrderReturn: Story = {
                       {['Received', 'Draft', 'Restore'].map((label) => (
                         <span key={label} className="inline-flex items-center gap-[var(--spacing-8)]">
                           <span>{label}</span>
-                          <span className="text-[color:var(--color-sys-red-DEFAULT)]">×</span>
+                          <Icon name="close" size={17} color="var(--color-sys-red-DEFAULT)" />
                         </span>
                       ))}
                     </div>
@@ -297,6 +301,7 @@ export const S8StockCheck: Story = {
                     row={lastRow}
                     weight="bold"
                     boldOnRowHover
+                    greenOnRowHover
                     checkbox={<Checkbox size="sm" />}
                   >
                     {r.id}

@@ -40,6 +40,13 @@ export interface TableCellProps {
    */
   boldOnRowHover?: boolean;
   /**
+   * When true, the cell's text turns the hover-green token
+   * (`--table-body-hover-text`) when the parent `<tr class="group/row">`
+   * is hovered. Pair with `boldOnRowHover` for the full default-table
+   * "active row" first-column affordance.
+   */
+  greenOnRowHover?: boolean;
+  /**
    * Row position. 'default' is the regular row style; 'last' uses the
    * final-row divider treatment.
    */
@@ -144,6 +151,7 @@ export const TableCell = ({
   subrow = false,
   tone = 'default',
   boldOnRowHover = false,
+  greenOnRowHover = false,
   checkbox,
   leadingIcon,
   trailing,
@@ -265,6 +273,7 @@ export const TableCell = ({
           'text-[length:var(--table-body-size)] leading-[var(--table-body-lineheight)]',
           weightClass,
           textColorClass,
+          greenOnRowHover ? 'group-hover/row:text-[color:var(--table-body-hover-text)]' : '',
           textAlignmentClass[align],
         ].join(' ')}
       >
