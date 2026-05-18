@@ -55,7 +55,7 @@ export const RecordTableMoreInfoCell = ({
   return (
     <div
       className={[
-        'relative flex box-border w-full items-start gap-[var(--spacing-12)]',
+        'relative flex box-border w-full items-start',
         'py-[var(--spacing-12)]',
         paddingByColumn[column],
         hovered ? 'bg-[var(--table-inset-body-hover-fill)]' : 'bg-[var(--table-inset-body-fill)]',
@@ -63,21 +63,28 @@ export const RecordTableMoreInfoCell = ({
         className,
       ].filter(Boolean).join(' ')}
     >
-      {resolvedCheckbox && (
-        <span className="shrink-0 inline-flex items-start py-[var(--spacing-2)] leading-none">
-          {resolvedCheckbox}
-        </span>
-      )}
-
       <div className="flex min-w-0 flex-1 flex-col items-start gap-[var(--spacing-8)]">
-        <div className="flex w-full flex-col items-start gap-[var(--spacing-2)]">
-          <InfoPair label={label} value={value} />
-          {showExtraInfo && (
-            <div className="flex flex-col items-start gap-[var(--spacing-2)] pl-[21px]">
-              <InfoPair label="Info 1:" value="2" />
-              <InfoPair label="Info 2:" value="2" />
-            </div>
+        {/* First row: checkbox + info stack.
+            Single row (showExtraInfo off): items-center centres checkbox on the InfoPair line.
+            Multi-row (showExtraInfo on): items-start pins checkbox to the top of the stack. */}
+        <div className={showExtraInfo ? 'flex w-full items-start gap-[var(--spacing-8)]' : 'flex w-full items-center gap-[var(--spacing-8)]'}>
+          {resolvedCheckbox && (
+            <span className="shrink-0 inline-flex items-center leading-none">
+              {resolvedCheckbox}
+            </span>
           )}
+          <div className="flex flex-col items-start gap-[var(--spacing-2)]">
+            <InfoPair label={label} value={value} />
+            {showExtraInfo && (
+              {/* pl-[21px] = structural indent to align sub-rows under the label text.
+                  No --spacing-21 token exists; value matches icon/avatar slot width used
+                  elsewhere in RecordTable cells (e.g. RecordTableListingCell). */}
+              <div className="flex flex-col items-start gap-[var(--spacing-2)] pl-[21px]">
+                <InfoPair label="Info 1:" value="2" />
+                <InfoPair label="Info 2:" value="2" />
+              </div>
+            )}
+          </div>
         </div>
 
         {showTextLink && (
