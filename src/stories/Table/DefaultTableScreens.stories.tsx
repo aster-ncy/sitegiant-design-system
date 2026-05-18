@@ -22,23 +22,17 @@ export default meta;
 type Story = StoryObj;
 
 // Story helpers — wrap each primitive in its semantic table cell so the
-// browser builds a real <thead>/<tbody> grid. The Cell helper accepts
-// an `alignTop` flag that swaps the cell's inner items-center for
-// items-start (already the default in non-inset mode, but kept here
-// in case a future story mixes modes).
+// browser builds a real <thead>/<tbody> grid.
+// Default-table rule: <td> always gets align-top so the browser's default
+// vertical-align:middle doesn't float single-line cells to the middle of a
+// taller multi-row sibling. TableCell already uses items-start in default mode.
 const TH = (props: React.ComponentProps<typeof TableHeaderCell>) => (
   <th className="p-0">
     <TableHeaderCell {...props} />
   </th>
 );
-type CellProps = React.ComponentProps<typeof TableCell> & {
-  /** Force vertical-align top on the wrapping <td> (default mode already
-   *  uses items-start, but multi-row layouts sometimes need explicit
-   *  td-level alignment). */
-  alignTop?: boolean;
-};
-const Cell = ({ children, alignTop = false, ...rest }: CellProps) => (
-  <td className={`p-0 ${alignTop ? 'align-top' : ''}`}>
+const Cell = ({ children, ...rest }: React.ComponentProps<typeof TableCell>) => (
+  <td className="p-0 align-top">
     <TableCell {...rest}>{children}</TableCell>
   </td>
 );
