@@ -203,12 +203,12 @@ export const S7WebstoreOrderReturn: Story = {
                     column="first"
                     align="left"
                     row={lastRow}
-                    weight="bold"
                     boldOnRowHover
                     checkbox={<Checkbox size="sm" />}
                   >
                     <TableCellInfo
                       alignment="vertical"
+                      primaryBold
                       primaryGreenOnRowHover
                       statuses={[
                         { label: '', body: r.id },

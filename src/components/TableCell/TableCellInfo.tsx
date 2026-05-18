@@ -31,6 +31,13 @@ export interface TableCellInfoProps {
    */
   statuses: TableCellInfoStatus[];
   /**
+   * When true, applies bold font-weight only to the first (primary) status body.
+   * Secondary statuses render at regular weight. Use this instead of
+   * `weight="bold"` on the wrapping `TableCell` when only the primary row
+   * should be bold (e.g. ID bold, secondary label/value regular).
+   */
+  primaryBold?: boolean;
+  /**
    * When true, applies `group-hover/row:text-[color:var(--table-body-hover-text)]`
    * only to the first (primary) status body. Secondary statuses stay at their
    * normal colour. Pair with `boldOnRowHover` on the wrapping `TableCell`.
@@ -120,6 +127,7 @@ const bodyClasses = [
 export const TableCellInfo = ({
   alignment = 'horizontal',
   statuses,
+  primaryBold = false,
   primaryGreenOnRowHover = false,
 }: TableCellInfoProps) => {
   if (statuses.length === 0) return null;
@@ -162,6 +170,13 @@ export const TableCellInfo = ({
           {status.label ? <span className={labelVerticalClasses}>{status.label}</span> : null}
           <div className={[
             bodyClasses,
+            // primaryBold: first body bold, rest explicitly regular
+            // (overrides weight="bold" on the wrapping TableCell)
+            primaryBold
+              ? index === 0
+                ? 'font-[var(--font-weight-bold)]'
+                : 'font-[var(--font-weight-regular)]'
+              : '',
             primaryGreenOnRowHover && index === 0
               ? 'group-hover/row:text-[color:var(--table-body-hover-text)]'
               : '',
