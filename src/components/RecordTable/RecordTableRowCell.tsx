@@ -50,15 +50,17 @@ export const RecordTableRowCell = ({
         className,
       ].filter(Boolean).join(' ')}
     >
-      {resolvedCheckbox && (
-        <span className="shrink-0 inline-flex items-center self-start py-[var(--spacing-2)] leading-none">
-          {resolvedCheckbox}
-        </span>
-      )}
-      {/* Outer column: value row on top, hint below */}
+      {/* Outer column: value row on top, hint below.
+          Checkbox lives inside the value row so it centres naturally
+          against the icon + text line in both single and multi-line cases. */}
       <div className="flex shrink-0 flex-col items-start gap-[var(--spacing-2)]">
-        {/* Value row: icon + text + optional action icon — all centred on the single value line */}
+        {/* Value row — everything on one horizontal centre line */}
         <div className="flex items-center gap-[var(--spacing-8)]">
+          {resolvedCheckbox && (
+            <span className="shrink-0 inline-flex items-center leading-none">
+              {resolvedCheckbox}
+            </span>
+          )}
           {resolvedIcon}
           <span
             className={[
@@ -78,14 +80,13 @@ export const RecordTableRowCell = ({
             />
           )}
         </div>
-        {/* Hint caption — indented to sit under value text, not under icon */}
+        {/* Hint caption — indented past checkbox + icon + gap to sit under value text */}
         {hint && (
           <span
             className={[
               'whitespace-nowrap text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
               'font-[family-name:var(--font-sans)] font-[var(--font-weight-regular)]',
               'text-[color:var(--color-text-info)]',
-              'pl-[calc(21px+var(--spacing-8))]',
             ].join(' ')}
           >
             {hint}
