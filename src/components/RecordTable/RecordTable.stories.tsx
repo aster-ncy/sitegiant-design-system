@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Fragment } from 'react';
+import type { ReactNode } from 'react';
 import { RecordTableActionCell } from './RecordTableActionCell';
 import { RecordTableFormFieldCell } from './RecordTableFormFieldCell';
 import { RecordTableHeaderCell } from './RecordTableHeaderCell';
@@ -40,6 +41,7 @@ type PlaygroundArgs = {
   headerAlign: 'left' | 'center' | 'right';
   headerLabel: string;
   headerSortable: boolean;
+  headerShowCheckbox: boolean;
   // Row
   rowColumn: TableColumnPosition;
   rowHovered: boolean;
@@ -129,6 +131,12 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     },
     headerSortable: {
       control: 'boolean',
+      table: { category: '2. Header', defaultValue: { summary: 'true' } },
+      if: { arg: 'cellType', eq: 'header' },
+    },
+    headerShowCheckbox: {
+      control: 'boolean',
+      description: 'Show checkbox in the header cell. Only has a visual effect when column is "first" — the component auto-inserts a checkbox for first columns only.',
       table: { category: '2. Header', defaultValue: { summary: 'true' } },
       if: { arg: 'cellType', eq: 'header' },
     },
@@ -281,6 +289,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     headerAlign: 'left',
     headerLabel: 'Table Header Title',
     headerSortable: true,
+    headerShowCheckbox: true,
     // Row
     rowColumn: 'first',
     rowHovered: false,
@@ -312,7 +321,7 @@ export const Playground: StoryObj<PlaygroundArgs> = {
   },
   render: ({
     cellType,
-    headerColumn, headerAlign, headerLabel, headerSortable,
+    headerColumn, headerAlign, headerLabel, headerSortable, headerShowCheckbox,
     rowColumn, rowHovered, rowValue, rowHint, rowShowActionIcon,
     formColumn, formHovered, formPrefix, formValue, formPlaceholder,
     actionType, actionCount, actionHovered, actionLabel,
@@ -320,14 +329,19 @@ export const Playground: StoryObj<PlaygroundArgs> = {
     moreInfoColumn, moreInfoHovered, moreInfoLabel, moreInfoValue, moreInfoShowExtra, moreInfoShowLink,
   }: PlaygroundArgs) => {
     if (cellType === 'header') {
+      // Pass checkbox={false} to suppress the auto-inserted checkbox when toggled off.
+      // checkbox={false} is falsy but not nullish, so `checkbox ?? default` resolves to false → renders nothing.
+      // false is a valid ReactNode (boolean ∈ ReactNode) and is non-nullish, so
+// `checkbox ?? default` resolves to false → {false && ...} renders nothing.
+const checkboxProp: ReactNode = headerShowCheckbox ? undefined : false;
       return (
         <div className="w-[220px]">
-          {/* checkbox omitted — auto-inserts for column='first', none for center/last */}
           <RecordTableHeaderCell
             column={headerColumn}
             align={headerAlign}
             label={headerLabel}
             sortable={headerSortable}
+            checkbox={checkboxProp}
           />
         </div>
       );
@@ -409,6 +423,7 @@ type HeaderArgs = {
   align: 'left' | 'center' | 'right';
   label: string;
   sortable: boolean;
+  showCheckbox: boolean;
 };
 
 export const Header: StoryObj<HeaderArgs> = {
@@ -417,19 +432,23 @@ export const Header: StoryObj<HeaderArgs> = {
     align: { control: { type: 'inline-radio' }, options: ['left', 'center', 'right'] },
     label: { control: 'text' },
     sortable: { control: 'boolean' },
+    showCheckbox: { control: 'boolean', description: 'Show checkbox. Only has a visual effect when column is "first" — the component auto-inserts a checkbox for first columns only.' },
   },
-  args: { column: 'first', align: 'left', label: 'Table Header Title', sortable: true },
-  render: ({ column, align, label, sortable }: HeaderArgs) => (
-    <div className="w-[220px]">
-      {/* checkbox omitted — auto-inserts for column='first', none for center/last */}
-      <RecordTableHeaderCell
-        column={column}
-        align={align}
-        label={label}
-        sortable={sortable}
-      />
-    </div>
-  ),
+  args: { column: 'first', align: 'left', label: 'Table Header Title', sortable: true, showCheckbox: true },
+  render: ({ column, align, label, sortable, showCheckbox }: HeaderArgs) => {
+    const checkboxProp = showCheckbox ? undefined : (false as unknown as ReactNode);
+    return (
+      <div className="w-[220px]">
+        <RecordTableHeaderCell
+          column={column}
+          align={align}
+          label={label}
+          sortable={sortable}
+          checkbox={checkboxProp}
+        />
+      </div>
+    );
+  },
 };
 
 type RowArgs = {
