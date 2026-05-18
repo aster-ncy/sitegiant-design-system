@@ -72,7 +72,10 @@ const labelHorizontalClasses = [
 
 const labelVerticalClasses = [
   'font-[family-name:var(--font-sans)]',
-  'text-[length:var(--general-caption-size)] leading-[var(--general-caption-lineheight)]',
+  // leading-none removes the half-leading space above the first text line
+  // so the label aligns flush with the cell's top padding edge (py-24).
+  // Spacing between label and body is handled by the parent flex gap-2.
+  'text-[length:var(--general-caption-size)] leading-none',
   'text-[color:var(--color-text-info)]',
   'whitespace-nowrap',
 ].join(' ');
@@ -146,7 +149,10 @@ export const TableCellInfo = ({
           key={index}
           className="flex w-full flex-col gap-[var(--spacing-2)] items-start"
         >
-          <span className={labelVerticalClasses}>{status.label}</span>
+          {/* Only render label when non-empty — an empty label still
+              occupies flex space and adds gap-2 before the body, pushing
+              the body 2px below the cell's top padding edge. */}
+          {status.label ? <span className={labelVerticalClasses}>{status.label}</span> : null}
           <div className={bodyClasses}>{renderBody(status.body, status.maxLines)}</div>
         </div>
       ))}
