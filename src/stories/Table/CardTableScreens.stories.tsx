@@ -139,7 +139,9 @@ export const S10ShockingSale: Story = {
                         TableCardCell's form-field items-center only works when
                         the td itself is vertically centred. */}
                     <td className="p-0 h-px align-middle">
-                      <TableCardCell tier="bottom" row={row} column="first" mode="default" bottomVariant="form-field">
+                      {/* Extra left padding to align with the top-tier text which is
+                          indented by checkbox(17px) + gap(12px) = 29px inside pl-24 */}
+                      <TableCardCell tier="bottom" row={row} column="first" mode="default" bottomVariant="form-field" className="!pl-[calc(var(--spacing-24)+17px+var(--spacing-12))]">
                         {v.label}
                       </TableCardCell>
                     </td>
